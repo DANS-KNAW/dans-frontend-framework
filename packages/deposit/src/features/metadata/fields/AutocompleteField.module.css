@@ -1,0 +1,11 @@
+.optionExtra {
+  width: 100%;
+  font-size: 60%;
+  color: #555;
+  border-radius: 3px;
+  padding: 1px 2px;
+}
+
+.optionExtra span {
+  font-weight: 600;
+}

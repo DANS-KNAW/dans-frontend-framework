@@ -1,0 +1,11 @@
+body {
+  background: #e0e0e0 !important;
+}
+
+#root {
+  background: #f6f6f6;
+}
+
+img {
+  max-width: 100%;
+}

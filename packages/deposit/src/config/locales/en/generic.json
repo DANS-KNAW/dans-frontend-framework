@@ -1,0 +1,5 @@
+{
+  "error": "Required. Please enter some more data.",
+  "warning": "Not required, but recommended you enter some data.",
+  "success": "Good to go!"
+}
