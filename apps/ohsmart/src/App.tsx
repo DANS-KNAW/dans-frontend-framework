@@ -16,6 +16,7 @@ import Deposit from '@dans-framework/deposit';
 // import NotificationList from '@dans-framework/Notification';
 import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
+import { useTranslation } from 'react-i18next';
 
 // Load variables
 import theme from './config/theme';
@@ -37,11 +38,12 @@ const formProps = {
 }
 
 const App = () => {
+  const { i18n } = useTranslation();
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
         <BrowserRouter>
-          <LanguageBar languages={languages} />
+          <LanguageBar languages={languages} changeLanguage={i18n.changeLanguage} />
           <MenuBar pages={pages} />
           <Suspense fallback={<Box sx={{display: 'flex', justifyContent: 'center'}}><Skeleton height={600} width={900} /></Box>}>
             <Routes>

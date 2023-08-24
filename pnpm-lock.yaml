@@ -199,6 +199,12 @@ importers:
       country-flag-icons:
         specifier: ^1.5.7
         version: 1.5.7
+      i18next:
+        specifier: ^23.4.1
+        version: 23.4.1
+      i18next-resources-to-backend:
+        specifier: ^1.1.4
+        version: 1.1.4
       react:
         specifier: ^18.2.0
         version: 18.2.0

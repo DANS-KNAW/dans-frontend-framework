@@ -5,8 +5,10 @@ import Stack from '@mui/material/Stack';
 import { NL, GB } from 'country-flag-icons/react/1x1';
 import { useTranslation } from 'react-i18next';
 import styles from './LanguageBar.module.css';
+import i18nProvider from './languages/i18n';
+import { I18nextProvider } from 'react-i18next';
 
-const LanguageBar = ({languages = []}) => {
+const LanguageBar = ({ languages = [], changeLanguage = (x) => null }) => {
   const { t, i18n } = useTranslation('languagebar');
 
   return (
@@ -30,7 +32,7 @@ const LanguageBar = ({languages = []}) => {
               sx={{mr: i === languages.length - 1 ? 0 : 2, color: '#fff'}}
               onClick={() => {
                 if (i18n.language !== lang) {
-                  i18n.changeLanguage(lang)
+                  changeLanguage(lang)
                 } 
               }}
             >
@@ -43,4 +45,9 @@ const LanguageBar = ({languages = []}) => {
   )
 }
 
-export default LanguageBar;
+const LanguageBarWrapper = ({...props}) => 
+  <I18nextProvider i18n={i18nProvider}>
+    <LanguageBar {...props} />
+  </I18nextProvider>
+
+export default LanguageBarWrapper;
