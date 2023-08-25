@@ -84,7 +84,7 @@ export const submitApi = createApi({
     submitData: build.mutation({
       // Custom query for chaining Post functions
       // TODO: responses and error handling.
-      async queryFn({data, targetRepo, submitKey, targetAuth, targetKey}, queryApi, extraOptions, fetchWithBQ) {
+      async queryFn({data, targetRepo, submitKey, targetAuth, targetKeys}, queryApi, extraOptions, fetchWithBQ) {
         console.log('submitting metadata...')
         console.log(data)
         // First post the metadata
@@ -95,7 +95,7 @@ export const submitApi = createApi({
           headers: {
             Authorization: `Bearer ${submitKey}`,
             'target-username': targetAuth,
-            'target-password': targetKey,
+            'target-password': targetKeys,
           },
         });
 

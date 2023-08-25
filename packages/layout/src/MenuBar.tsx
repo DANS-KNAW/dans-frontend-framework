@@ -11,13 +11,15 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { DansLogoWhite } from './images/DansLogo';
 import { NavLink as RouterLink } from 'react-router-dom';
-import type { MenuBarProps } from '../types/Pages';
+import type { Page } from '@dans-framework/pages';
 import { lookupLanguageString } from '@dans-framework/utils/language';
 import { useTranslation } from 'react-i18next';
-// import { UserMenu } from '../user/User';
+import { UserMenu } from '@dans-framework/auth';
+import { useAuth } from 'react-oidc-context';
 
-const MenuBar = ({pages = []}: MenuBarProps) => {
+const MenuBar = ({ pages = [] }: { pages: Page[] }) => {
   const { i18n } = useTranslation();
+  const auth = useAuth();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -61,7 +63,7 @@ const MenuBar = ({pages = []}: MenuBarProps) => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-            {pages && pages.map((page, i) => ( page.inMenu && page.menuTitle &&
+            {pages && pages.map((page, i) => (page.inMenu && page.menuTitle && ((page.restricted && auth.isAuthenticated) || !page.restricted) &&
               <MenuItem key={i} onClick={handleCloseNavMenu}>
                 <Link 
                   underline="none" 
@@ -84,7 +86,7 @@ const MenuBar = ({pages = []}: MenuBarProps) => {
             <DansLogoWhite/>
           </Link>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages && pages.map((page, i) => ( page.inMenu && page.menuTitle &&
+            {pages && pages.map((page, i) => (page.inMenu && page.menuTitle && ((page.restricted && auth.isAuthenticated) || !page.restricted) &&
               <Button
                 key={i}
                 onClick={handleCloseNavMenu}
@@ -97,7 +99,7 @@ const MenuBar = ({pages = []}: MenuBarProps) => {
             ))}
           </Box>
 
-          {/*{!import.meta.env.VITE_SKIP_AUTHENTICATION && <UserMenu />}*/}
+          <UserMenu />
         </Toolbar>
       </Container>
     </AppBar>

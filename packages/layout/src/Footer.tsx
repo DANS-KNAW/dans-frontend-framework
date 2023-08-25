@@ -2,16 +2,17 @@ import { useTranslation } from 'react-i18next';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import styles from './Footer.module.css';
-import type { Footer as FooterType } from './types/Pages';
+import type { Footer as FooterType, FooterContent } from './types';
 import { lookupLanguageString } from '@dans-framework/utils/language';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import EmailIcon from '@mui/icons-material/Email';
 
-const Footer = ({content = {top: [], bottom: []}}) => {
+const Footer = ({content = {top: [], bottom: []}}: {content: FooterType}) => {
   return (
     <>
       <Box
@@ -24,7 +25,7 @@ const Footer = ({content = {top: [], bottom: []}}) => {
       >
         <Container>
           <Grid container columns={4} spacing={2}>
-            {content.top.map( (item: FooterType, i) => 
+            {content.top.map( (item, i) => 
               <Grid xs={4} sm={2} md={1} key={`footer-${i}`}>
                 <FooterContent item={item} />
               </Grid>
@@ -42,7 +43,7 @@ const Footer = ({content = {top: [], bottom: []}}) => {
       >
         <Container>
           <Grid container columns={2}>
-            {content.bottom.map( (item: FooterType, i) => 
+            {content.bottom.map( (item, i) => 
               <Grid xs={2} md={1} key={i}>
                 <FooterContent item={item} />
               </Grid>
@@ -54,12 +55,12 @@ const Footer = ({content = {top: [], bottom: []}}) => {
   )
 }
 
-const FooterContent = ({ item }) => {
+const FooterContent = ({ item }: {item: FooterContent}) => {
   const { i18n } = useTranslation();
   return (
     <Stack direction="column" alignItems="start">
       {item.header && 
-        <h4>{lookupLanguageString(item.header, i18n.language)}</h4>
+        <Typography variant="h6">{lookupLanguageString(item.header, i18n.language)}</Typography>
       }
       {item.links && item.links.map( (link, j) =>
         <Link href={link.link} underline="none" target="_blank" key={`link-${j}`} sx={{ display: 'flex', alignItems: 'center'}}>

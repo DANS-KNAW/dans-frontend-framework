@@ -7,8 +7,9 @@ import { useTranslation } from 'react-i18next';
 import styles from './LanguageBar.module.css';
 import i18nProvider from './languages/i18n';
 import { I18nextProvider } from 'react-i18next';
+import type { Language } from '@dans-framework/utils/language';
 
-const LanguageBar = ({ languages = [], changeLanguage = (x) => null }) => {
+const LanguageBar = ({ languages = [], changeLanguage = (x) => null }: {languages?: Language[], changeLanguage?: (lang: Language) => void}) => {
   const { t, i18n } = useTranslation('languagebar');
 
   return (
@@ -20,7 +21,7 @@ const LanguageBar = ({ languages = [], changeLanguage = (x) => null }) => {
     }}>
       <Container>
         <Stack direction="row" justifyContent="end" pt={0.5} pb={0.5}>
-          {languages.map((lang: string, i: number) => 
+          {languages.map((lang: Language, i: number) => 
             <Button 
               key={lang} 
               size="small" 

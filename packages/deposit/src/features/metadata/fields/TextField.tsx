@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useAuth } from 'react-oidc-context';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -14,20 +15,23 @@ import { getMetadataSubmitStatus } from '../../submit/submitSlice';
 
 const SingleTextField = ({field, sectionIndex, groupedFieldId, currentField = 0, totalFields = 1}: TextFieldProps) => {
   const dispatch = useAppDispatch();
+  const auth = useAuth();
   const status = getFieldStatus(field);
   const { t, i18n } = useTranslation('metadata');
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
 
+  console.log(auth)
+
   useEffect(() => {
     // if requested, auto fill user data from oidc
-    if (field.autofill) {
+    if (field.autofill && auth.user) {
       dispatch(setField({
         sectionIndex: sectionIndex,
         id: field.id,
-        value: 'todo' as string,
+        value: auth.user.profile[field.autofill] as string,
       }));
     }
-  }, [dispatch, field.autofill, field.id, sectionIndex]);
+  }, [dispatch, field.autofill, field.id, sectionIndex, auth.user]);
 
   return (
     <Stack direction="row" alignItems="start">

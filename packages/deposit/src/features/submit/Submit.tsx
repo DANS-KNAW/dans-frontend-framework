@@ -17,7 +17,7 @@ import { formatFormData, formatFileData } from './submitHelpers';
 import { useTranslation } from 'react-i18next';
 import { getData } from '../../pages/depositSlice';
 
-const Submit = () => {
+const Submit = ({targetKeys}: {targetKeys: string[]}) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation('submit');
   const metadataStatus = useAppSelector(getMetadataStatus);
@@ -62,7 +62,7 @@ const Submit = () => {
       targetRepo: depositProps.targetRepo,
       submitKey: depositProps.submitKey,
       targetAuth: depositProps.targetAuth,
-      targetKey: depositProps.targetKey,
+      targetKeys: targetKeys.join(' '),
     });
   };
 

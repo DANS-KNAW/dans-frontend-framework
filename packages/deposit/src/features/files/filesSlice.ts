@@ -22,15 +22,13 @@ export const filesSlice = createSlice({
         file[action.payload.type] = action.payload.value;
       }
     },
-    resetFiles: (state) => {
-      return state = initialState;
-    }
+    resetFiles: state => state = initialState,
   }
 });
 
 export const { addFiles, removeFile, setFileMeta, resetFiles } = filesSlice.actions;
 
 // Select values from state
-export const getFiles = (state: RootState) => state.files;
+export const getFiles = (state: RootState) => state.files as SelectedFile[];
 
 export default filesSlice.reducer;

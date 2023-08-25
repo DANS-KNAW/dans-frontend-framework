@@ -24,6 +24,39 @@ const customTheme = createTheme({
       contrastText: grey[500],
     },
   },
+  typography: {
+    h1: {
+      fontSize: '2.5rem',
+      fontWeight: 500,
+      marginTop: '2rem',
+      marginBottom: '1rem',
+    },
+    h2: {
+      fontSize: '2rem',
+      fontWeight: 500,
+      marginBottom: '1rem',
+    },
+    h3: {
+      fontSize: '1.8rem',
+      fontWeight: 500,
+      marginBottom: '1rem',
+    },
+    h4: {
+      fontSize: '1.4rem',
+      fontWeight: 500,
+      marginBottom: '1rem',
+    },
+    h5: {
+      fontSize: '1.15rem',
+      fontWeight: 500,
+      marginBottom: '0.5rem',
+    },
+    h6: {
+      fontSize: '1rem',
+      fontWeight: 500,
+      marginBottom: '0.25rem',
+    },
+  },
   components: {
     MuiAppBar: {
       styleOverrides: {

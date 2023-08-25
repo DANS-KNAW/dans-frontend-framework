@@ -1,4 +1,4 @@
-import type { LanguageStrings } from './Language';
+import type { LanguageStrings } from '@dans-framework/utils/language';
 
 export interface FileActions {
   label: string | LanguageStrings;

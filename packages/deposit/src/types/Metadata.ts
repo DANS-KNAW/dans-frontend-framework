@@ -1,11 +1,11 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { Language, LanguageStrings } from './Language';
+import type { Language, LanguageStrings } from '@dans-framework/utils/language';
 
 // Accordion sections
 export interface InitialSectionType {
   id: string;
   title: string | LanguageStrings;
-  fields: TextFieldType[] | GroupedFieldType[] | AutocompleteFieldType[];
+  fields: Omit<TextFieldType[], 'id'> | Omit<GroupedFieldType[], 'id'> | Omit<AutocompleteFieldType[], 'id'>;
 }
 
 export type SectionStatus = 'error' | 'warning' | 'success' | undefined;
@@ -26,7 +26,7 @@ interface BasisFieldType {
   id: string; // auto generated uuid
   name: string; // gets mapped by packager
   label: string | LanguageStrings; // appears above field in UI
-  touched: boolean; // checks if user has interacted with field, for validation purposes
+  touched?: boolean; // checks if user has interacted with field, for validation purposes
   placeholder?: string; // appears if no text has been filled in in UI
   validation?: ValidationType; // optional field validation
   value?: string; // field value, can be pre-filled in config
@@ -277,10 +277,9 @@ export interface InitialFormType {
 export interface InitialFormProps {
   form: InitialSectionType[];
   targetRepo: string;
-  dataverseApiKeyIdentifier: string;
+  targetKeyIdentifiers: string[];
   submitKey?: string;
   targetAuth?: string;
-  targetKey?: string;
   skipValidation?: boolean;
   geonamesApiKey?: string;
   gsheetsApiKey?: string;

@@ -1,12 +1,12 @@
 import logo from './images/logo.png';
-// import type { Page } from '../../types/Pages';
+import type { Template } from '@dans-framework/pages';
 
 const pages = [
   {
     id: "home",
     name: "Home",
     slug: "",
-    template: "generic",
+    template: "generic" as Template,
     inMenu: true,
     menuTitle: "Home",
     content: {
@@ -27,7 +27,7 @@ const pages = [
     id: "deposit",
     name: "Deposit",
     slug: "deposit",
-    template: "deposit",
+    template: "deposit" as Template,
     inMenu: true,
     restricted: true,
     menuTitle: {
@@ -42,7 +42,7 @@ const pages = [
       nl: "Over OH-SMArt",
     },
     slug: "about",
-    template: "generic",
+    template: "generic" as Template,
     inMenu: true,
     menuTitle: {
       en: "About",
@@ -57,7 +57,7 @@ const pages = [
     id: "search",
     name: "Search",
     slug: "search",
-    template: "generic",
+    template: "generic" as Template,
     inMenu: true,
     menuTitle: {
       en: "Search",
@@ -68,7 +68,7 @@ const pages = [
     id: "guide",
     name: "User guide",
     slug: "guide",
-    template: "generic",
+    template: "generic" as Template,
     inMenu: true,
     menuTitle: {
       en: "User guide",
@@ -79,7 +79,7 @@ const pages = [
     id: "support",
     name: "Support",
     slug: "support",
-    template: "generic",
+    template: "generic" as Template,
     inMenu: true,
     menuTitle: {
       en: "Support",

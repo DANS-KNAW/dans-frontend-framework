@@ -23,7 +23,7 @@ import type { SelectedFile, FileLocation, RejectedFilesProps, DansSimpleListQuer
 import { v4 as uuidv4 } from 'uuid';
 import { useFetchSimpleListQuery } from './api/dansFormats';
 import { getMetadataSubmitStatus } from '../submit/submitSlice';
-import { setNotification } from '../notification/notificationSlice';
+import { enqueueSnackbar } from 'notistack';
 
 const FilesUpload = () => {
   const dispatch = useAppDispatch();
@@ -63,7 +63,7 @@ const FilesUpload = () => {
   const onDrop = async (acceptedFiles: File[]) => {
     // Check if a file with the same name has been added; if so, rename to (1), (2), etc
     // Transform the file to a file blob URL so we can save it to the Redux store
-    const serializedFiles = acceptedFiles.map( (file, i) => {
+    const serializedFiles = acceptedFiles.map( file => {
       const fileExists = currentFiles.find(f => f.name === file.name);
       // Logic to rename files to the next sequential number
       let updatedFile = file.name;
@@ -79,7 +79,7 @@ const FilesUpload = () => {
         }
 
         // Set a notification that file has been renamed
-        dispatch(setNotification({ message: t('fileRenamed', {file: updatedFile}), type: 'info' }));
+        enqueueSnackbar(t('fileRenamed', {file: updatedFile}), { variant: 'info' });
       }
 
       const fileName = fileExists ? updatedFile : file.name;

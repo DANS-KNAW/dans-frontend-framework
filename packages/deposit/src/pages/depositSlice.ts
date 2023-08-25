@@ -5,10 +5,9 @@ import type { InitialFormProps } from '../types/Metadata';
 // Save the props we need to redux store, for use in subcomponents
 const initialState: Omit<InitialFormProps, 'form'> = {
   targetRepo: '',
-  dataverseApiKeyIdentifier: '',
+  targetKeyIdentifiers: [],
   submitKey: '',
   targetAuth: '',
-  targetKey: '',
   skipValidation: false,
   geonamesApiKey: '',
   gsheetsApiKey: '',

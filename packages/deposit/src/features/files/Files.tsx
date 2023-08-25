@@ -1,4 +1,3 @@
-import Skeleton from '@mui/material/Skeleton';
 import Grid from '@mui/material/Unstable_Grid2';
 import FilesTable from './FilesTable';
 import FilesUpload from './FilesUpload';

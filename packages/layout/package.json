@@ -1,9 +1,12 @@
 {
   "name": "@dans-framework/layout",
+  "main": "lib/index.tsx",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
+    "@dans-framework/auth": "workspace:*",
+    "@dans-framework/pages": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@mui/icons-material": "^5.14.3",
     "@mui/material": "^5.14.3",
@@ -12,8 +15,11 @@
     "i18next-resources-to-backend": "^1.1.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-i18next": "^13.0.3"
+    "react-i18next": "^13.0.3",
+    "react-oidc-context": "^2.2.2",
+    "react-router-dom": "^6.14.2"
   },
   "devDependencies": {
+    "@types/react": "^18.2.15"
   }
 }

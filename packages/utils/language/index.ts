@@ -10,3 +10,4 @@ export const lookupLanguageString = (obj: LanguageStrings | string | undefined, 
   );
 }
 
+export type { LanguageStrings, Language };

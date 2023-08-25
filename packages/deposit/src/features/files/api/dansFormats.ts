@@ -10,7 +10,7 @@ export const dansFormatsApi = createApi({
         url: `dans-formats`,
         headers: {Accept: 'application/json'},
       }),
-      transformResponse: (response: DansFilesResponse[], meta, arg) => {
+      transformResponse: (response: DansFilesResponse[]) => {
         // transform this list for use in a MUI dropdown
         return response.length > 0 ? 
           ({
@@ -29,7 +29,7 @@ export const dansFormatsApi = createApi({
         url: `type-list-simple`,
         headers: {Accept: 'application/json'},
       }),
-      transformResponse: (response: DansSimpleList, meta, arg) => {
+      transformResponse: (response: DansSimpleList) => {
         return response.list;
       },
     }),

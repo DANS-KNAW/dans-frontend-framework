@@ -1,3 +1,4 @@
+import type { InitialFormProps } from '@dans-framework/deposit';
 import administrative from './formsections/administrative';
 import citation from './formsections/citation';
 import coverage from './formsections/coverage';
@@ -20,4 +21,14 @@ const sections = [
   rights,
 ];
 
-export default sections;
+const form = {
+  form: sections,
+  targetRepo: 'demo.ssh.datastations.nl', // todo: perhaps an array as well?
+  targetKeyIdentifiers: ['dataverse_api_key'], // keys to use from Keycloak user object, as array to support multiple api keys
+  targetAuth: 'API_KEY', // array?
+  submitKey: import.meta.env.VITE_PACKAGING_KEY, // still needed??
+  skipValidation: true,
+  geonamesApiKey: 'dans_deposit_webapp',
+} as InitialFormProps;
+
+export default form;

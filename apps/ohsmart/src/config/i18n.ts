@@ -1,10 +1,10 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import resourcesToBackend from 'i18next-resources-to-backend';
 import languages from '../config/languages';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { i18n as i18nLayout } from '@dans-framework/layout';
 import { i18n as i18nDeposit } from '@dans-framework/deposit';
+import { i18n as i18nAuth } from '@dans-framework/auth';
 
 // this is the main language provider for all subcomponents/libraries
 i18n
@@ -32,6 +32,7 @@ i18n
 i18n.on('languageChanged', (lng) => {
   i18nLayout.changeLanguage(lng);
   i18nDeposit.changeLanguage(lng);
+  i18nAuth.changeLanguage(lng);
 });
 
 export default i18n;

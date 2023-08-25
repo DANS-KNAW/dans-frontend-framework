@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Unstable_Grid2';
 import Metadata from '../features/metadata/Metadata';
 import Files from '../features/files/Files';
-import type { TabPanelProps, TabHeaderProps } from '../types/Pages';
+import type { TabPanelProps, TabHeaderProps } from '../types/Deposit';
 import type { InitialFormProps } from '../types/Metadata';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { getMetadataStatus, getSessionId, getOpenTab, setOpenTab } from '../features/metadata/metadataSlice';
@@ -23,12 +23,22 @@ import { Link as RouterLink } from 'react-router-dom';
 import { setData } from './depositSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { authApi, authStore } from '@dans-framework/auth';
+
+// Init user data call before render
+const init = authStore.dispatch(authApi.endpoints.fetchUserProfile.initiate(null));
 
 const Deposit = ({ ...props }: InitialFormProps) => {
   const dispatch = useAppDispatch();
   const sessionId = useAppSelector(getSessionId);
   const openTab = useAppSelector(getOpenTab);
-  const { t } = useTranslation('user');
+  const { t } = useTranslation('generic');
+
+  // We import this function from the Auth library. Don't have to add it to the Deposit store this way.
+  const { data: userData } = authApi.endpoints.fetchUserProfile.select(null)(authStore.getState());
+  console.log(userData)
+
+  const targetKeys = userData && props.targetKeyIdentifiers.map( tki => userData.attributes[tki][0]);
 
   // Initialize form on initial render when there's no sessionId yet
   // or when form gets reset
@@ -48,11 +58,11 @@ const Deposit = ({ ...props }: InitialFormProps) => {
       <Container>
         <Grid container>
           <Grid xs={12} mt={4}>
-            {!props.targetKey &&
+            {userData && props.targetKeyIdentifiers.filter(tki => !userData.attributes[tki][0]).length > 0 &&
               <Alert severity="warning">
                 <AlertTitle>{t('missingInfoHeader')}</AlertTitle>
                 <Trans
-                  i18nKey="user:missingInfoText"
+                  i18nKey="generic:missingInfoText"
                   components={[<Link component={RouterLink} to="/user-settings" />]}
                 />
               </Alert>
@@ -70,7 +80,7 @@ const Deposit = ({ ...props }: InitialFormProps) => {
             </AnimatePresence>
           </Grid>
           <Grid xs={12} mt={4} display="flex" justifyContent="end" alignItems="center">
-            <Submit />
+            <Submit targetKeys={targetKeys} />
           </Grid>
         </Grid>
       </Container>

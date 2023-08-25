@@ -1,0 +1,22 @@
+{
+	"userSettings": "Your settings",
+	"userSubmissions": "Your submissions",
+	"account": "Account",
+	"loggedIn": "Logged in as",
+	"userMenuSettings": "Settings",
+	"userMenuSubmissions": "Submissions",
+	"logout": "Log out",
+	"login": "Log in",
+	"signingIn": "Signing you in...",
+	"signingOut": "Signing you out...",
+	"isLoading": "Loading...",
+	"signinError": "Error signing you in!",
+	"chooseLogin": "Pick log in method",
+	"institution": "your institution",
+	"loginProvider": "Log in with {{provider}}",
+	"save": "Save",
+	"saving": "Saving...",
+	"apiKeyDescription": "<0>Get you key here</0> and paste it below.",
+	"apiKey": "Your personal {{type}}",
+	"dataverse_api_key": "Dataverse API key"
+}
