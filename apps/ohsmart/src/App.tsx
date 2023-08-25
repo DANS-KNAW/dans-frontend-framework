@@ -11,9 +11,6 @@ import '@fontsource/roboto/700.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Deposit } from '@dans-framework/deposit';
 import { Generic } from '@dans-framework/pages';
-// import { SignInCallback, AuthRoute } from '@dans-framework/Auth';
-// import { UserSettings, UserSubmissions } from '@dans-framework/Auth';
-// import NotificationList from '@dans-framework/Notification';
 import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
 import { useTranslation } from 'react-i18next';
@@ -30,42 +27,44 @@ import authProvider from './config/auth';
 import form from './config/form';
 
 const App = () => {
-  // Need to pass along root i18n functions to the language bar
   const { i18n } = useTranslation();
   return (
     <AuthWrapper authProvider={authProvider}>
       <ThemeProvider theme={theme}>
+        {/* Needed for CSS normalisation */}
         <CssBaseline />
-          <BrowserRouter>
-            <LanguageBar languages={languages} changeLanguage={i18n.changeLanguage} />
-            <MenuBar pages={pages} />
-            <Suspense fallback={<Box sx={{display: 'flex', justifyContent: 'center'}}><Skeleton height={600} width={900} /></Box>}>
-              <Routes>
-                <Route path="signin-callback" element={<SignInCallback />} />
-                <Route path="user-settings" element={<AuthRoute><UserSettings targetKeyIdentifiers={form.targetKeyIdentifiers} /></AuthRoute>} />
-                <Route path="user-submissions" element={<AuthRoute><UserSubmissions /></AuthRoute>} />
-                {(pages as Page[]).map( page => {
-                  return (
-                    <Route 
-                      key={page.id} 
-                      path={page.slug} 
-                      element={
-                        page.template === 'deposit' ? 
-                        <AuthRoute>
-                          <Deposit {...form} />
-                        </AuthRoute> 
-                        : 
-                        <Generic page={page} />
-                      } 
-                    />
-                  )
-                }
-                )}
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
-          <Footer content={footer} />
-          <SnackbarProvider />
+        <BrowserRouter>
+          {/* Need to pass along root i18n functions to the language bar */}
+          <LanguageBar languages={languages} changeLanguage={i18n.changeLanguage} />
+          <MenuBar pages={pages} />
+          {/* Suspense to make sure languages can load first */}
+          <Suspense fallback={<Box sx={{display: 'flex', justifyContent: 'center'}}><Skeleton height={600} width={900} /></Box>}>
+            <Routes>
+              <Route path="signin-callback" element={<SignInCallback />} />
+              <Route path="user-settings" element={<AuthRoute><UserSettings targetKeyIdentifiers={form.targetKeyIdentifiers} /></AuthRoute>} />
+              <Route path="user-submissions" element={<AuthRoute><UserSubmissions /></AuthRoute>} />
+              {(pages as Page[]).map( page => {
+                return (
+                  <Route 
+                    key={page.id} 
+                    path={page.slug} 
+                    element={
+                      page.template === 'deposit' ? 
+                      <AuthRoute>
+                        <Deposit {...form} />
+                      </AuthRoute> 
+                      : 
+                      <Generic page={page} />
+                    } 
+                  />
+                )
+              }
+              )}
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+        <Footer content={footer} />
+        <SnackbarProvider />
       </ThemeProvider>
     </AuthWrapper>
   );
