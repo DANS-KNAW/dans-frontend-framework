@@ -9,8 +9,5 @@ export default defineConfig({
     checker({
       typescript: true,
     }),
-  ],
-  server: {
-    port: 3000,
-  },
+  ]
 })
