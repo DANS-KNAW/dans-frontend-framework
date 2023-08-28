@@ -31,15 +31,15 @@ Tests are not implemented at the moment.
     pnpm run build
 
 #### Adding a library to an app/package
- Add a package for all apps/packages. 
+ Add a lib to all apps/packages. 
 
      pnpm i <package_name>
 
 Add the `-D` flag for devDependencies.
-To install a package for a single app/pack, use the `--filter` flag:
+To install a lib for a single app/package, e.g. @dans-framework/ohsmart, use the `--filter` flag:
 
-    pnpm i <package_name> --filter '@dans-framework/ohsmart'
-Alternatively, you can edit the package.json file of the appropriate package, and run `pnpm -i` again from the root.
+    pnpm i <lib_you_want_to_add> --filter '@dans-framework/ohsmart'
+Alternatively, you can edit the package.json file of the appropriate app or package, and run `pnpm i` again from the root.
 
 #### Creating a new app or package
 To quickly create a new Vite app, run `pnpm create vite` and follow the prompt.
@@ -58,6 +58,6 @@ You can use the `pnpm i` command from above using e.g. `@dans-framework/utils` a
 Alternatively, since all packages are referenced locally, edit the dependencies or devDependencies in the package.json file of the app you're working on by adding a line like this:
 
     "@dans-framework/utils": "workspace:*"
-    
+
 #### Configuring build/dev scripts of individual packages
 Open up the appropriate package/app folder and edit the **package.json**, **tsconfig.json**,  **tsconfig.node.json** and **vite.config.ts** where neccessary.
