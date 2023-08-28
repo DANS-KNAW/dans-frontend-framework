@@ -2,7 +2,7 @@
 The DANS framework is a monorepo, using Turbo and PNPM package management and Vite build tools.
 
 ## Structure
-Apps that are meant to run standalone are lockated in the ./apps folder. Custom libraries that these apps can use are in ./packages.
+Apps that are meant to run standalone are lockated in the **./apps** folder. Custom libraries that these apps can use are in **./packages**.
 
 ## Usage
 Management of packages is done with PNPM from the **root** folder. Make sure PNPM and Turbo are installed on your system.
@@ -33,7 +33,7 @@ Tests are not implemented at the moment.
 #### Adding a library to an app/package
  Add a package for all apps/packages. 
 
-     pnpm add <package_name>
+     pnpm i <package_name>
 
 Add the `-D` flag for devDependencies.
 To install a package for a single app/pack, use the `--filter` flag:
