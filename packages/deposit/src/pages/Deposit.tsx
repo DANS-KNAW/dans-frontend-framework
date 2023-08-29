@@ -23,10 +23,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { setData } from './depositSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { authApi, authStore } from '@dans-framework/auth';
-
-// Init user data call before render
-const init = authStore.dispatch(authApi.endpoints.fetchUserProfile.initiate(null));
+import { getUserProfile } from '@dans-framework/auth';
 
 const Deposit = ({ ...props }: InitialFormProps) => {
   const dispatch = useAppDispatch();
@@ -35,7 +32,7 @@ const Deposit = ({ ...props }: InitialFormProps) => {
   const { t } = useTranslation('generic');
 
   // We import this function from the Auth library. Don't have to add it to the Deposit store this way.
-  const { data: userData } = authApi.endpoints.fetchUserProfile.select(null)(authStore.getState());
+  const { data: userData } = getUserProfile();
   console.log(userData)
 
   const targetKeys = userData && props.targetKeyIdentifiers.map( tki => userData.attributes[tki][0]);

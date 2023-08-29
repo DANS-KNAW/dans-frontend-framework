@@ -105,6 +105,19 @@ export const UserSubmissions = () => {
 
 export const UserMenu = () => {
   const auth = useAuth();
+
+  if (auth.isAuthenticated && auth.user) {
+    return (
+      <SettingsMenu />
+    );
+  }
+  return (
+    <LoginButton />
+  );
+}
+
+const SettingsMenu = () => {
+  const auth = useAuth();
   const { t } = useTranslation('user');
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -114,51 +127,49 @@ export const UserMenu = () => {
     setAnchorElUser(null);
   };
 
-  if (auth.isAuthenticated && auth.user) {
-    return (
-      <Box sx={{ flexGrow: 0 }}>
-        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-          <Avatar sx={{bgcolor: grey[300], color: 'black'}}>
-            {((auth.user?.profile.given_name as string) || '').charAt(0).toUpperCase()}
-            {((auth.user?.profile.family_name as string) || '').charAt(0).toUpperCase()}
-          </Avatar>
-        </IconButton>
-        <Menu
-          sx={{ mt: '45px' }}
-          id="menu-appbar"
-          anchorEl={anchorElUser}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          open={Boolean(anchorElUser)}
-          onClose={handleCloseUserMenu}
-        >
-          <Box sx={{pl: 2, pr: 2, pb: 1, pt: 1}}>
-            <Typography sx={{fontSize: '80%', fontWeight: 600, mb: 1}}>{t('loggedIn')}</Typography>
-            <Typography>{auth.user?.profile.name}</Typography>
-            <Typography sx={{fontSize: '90%', color: 'neutralDark.contrastText'}}>{auth.user?.profile.email}</Typography>
-          </Box>
-          <Divider />
-          <Link component={RouterLink} to="/user-settings" underline="none" color="inherit" onClick={handleCloseUserMenu}>
-            <MenuItem>{t('userMenuSettings')}</MenuItem>
-          </Link>
-          <Link component={RouterLink} to="/user-submissions" underline="none" color="inherit" onClick={handleCloseUserMenu}>
-            <MenuItem divider={true}>{t('userMenuSubmissions')}</MenuItem>
-          </Link>
-          <LogoutButton />
-        </Menu>
-      </Box>
-    );
-  }
+  // Fetch users profile
+  const { data } = useFetchUserProfileQuery(null);
+
   return (
-    <LoginButton />
-  );
+    <Box sx={{ flexGrow: 0 }}>
+      <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+        <Avatar sx={{bgcolor: grey[300], color: 'black'}}>
+          {((auth.user?.profile.given_name as string) || '').charAt(0).toUpperCase()}
+          {((auth.user?.profile.family_name as string) || '').charAt(0).toUpperCase()}
+        </Avatar>
+      </IconButton>
+      <Menu
+        sx={{ mt: '45px' }}
+        id="menu-appbar"
+        anchorEl={anchorElUser}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        open={Boolean(anchorElUser)}
+        onClose={handleCloseUserMenu}
+      >
+        <Box sx={{pl: 2, pr: 2, pb: 1, pt: 1}}>
+          <Typography sx={{fontSize: '80%', fontWeight: 600, mb: 1}}>{t('loggedIn')}</Typography>
+          <Typography>{auth.user?.profile.name}</Typography>
+          <Typography sx={{fontSize: '90%', color: 'neutralDark.contrastText'}}>{auth.user?.profile.email}</Typography>
+        </Box>
+        <Divider />
+        <Link component={RouterLink} to="/user-settings" underline="none" color="inherit" onClick={handleCloseUserMenu}>
+          <MenuItem>{t('userMenuSettings')}</MenuItem>
+        </Link>
+        <Link component={RouterLink} to="/user-submissions" underline="none" color="inherit" onClick={handleCloseUserMenu}>
+          <MenuItem divider={true}>{t('userMenuSubmissions')}</MenuItem>
+        </Link>
+        <LogoutButton />
+      </Menu>
+    </Box>
+  )
 }
 
 export const LoginButton = ({variant}: {variant?: 'contained'}) => {

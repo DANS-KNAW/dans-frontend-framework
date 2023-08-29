@@ -1,0 +1,12 @@
+{
+  "name": "@dans-framework/utils/error",
+  "main": "index.ts",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.9.5",
+    "notistack": "^3.0.1"
+  }
+}

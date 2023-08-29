@@ -12,7 +12,7 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import EmailIcon from '@mui/icons-material/Email';
 
-const Footer = ({content = {top: [], bottom: []}}: {content: FooterType}) => {
+const Footer = ({top, bottom}: FooterType) => {
   return (
     <>
       <Box
@@ -25,9 +25,9 @@ const Footer = ({content = {top: [], bottom: []}}: {content: FooterType}) => {
       >
         <Container>
           <Grid container columns={4} spacing={2}>
-            {content.top.map( (item, i) => 
+            {top.map( (item, i) => 
               <Grid xs={4} sm={2} md={1} key={`footer-${i}`}>
-                <FooterContent item={item} />
+                <FooterContent {...item} />
               </Grid>
             )}
           </Grid>
@@ -43,9 +43,9 @@ const Footer = ({content = {top: [], bottom: []}}: {content: FooterType}) => {
       >
         <Container>
           <Grid container columns={2}>
-            {content.bottom.map( (item, i) => 
+            {bottom.map( (item, i) => 
               <Grid xs={2} md={1} key={i}>
-                <FooterContent item={item} />
+                <FooterContent {...item} />
               </Grid>
             )}
           </Grid>
@@ -55,14 +55,14 @@ const Footer = ({content = {top: [], bottom: []}}: {content: FooterType}) => {
   )
 }
 
-const FooterContent = ({ item }: {item: FooterContent}) => {
+const FooterContent = ({ header, links, freetext }: FooterContent) => {
   const { i18n } = useTranslation();
   return (
     <Stack direction="column" alignItems="start">
-      {item.header && 
-        <Typography variant="h6">{lookupLanguageString(item.header, i18n.language)}</Typography>
+      {header && 
+        <Typography variant="h6">{lookupLanguageString(header, i18n.language)}</Typography>
       }
-      {item.links && item.links.map( (link, j) =>
+      {links && links.map( (link, j) =>
         <Link href={link.link} underline="none" target="_blank" key={`link-${j}`} sx={{ display: 'flex', alignItems: 'center'}}>
           {link.icon && link.icon === 'twitter' && <TwitterIcon sx={{mr: 1}} fontSize="small" />}
           {link.icon && link.icon === 'youtube' && <YouTubeIcon sx={{mr: 1}} fontSize="small" />}
@@ -70,8 +70,8 @@ const FooterContent = ({ item }: {item: FooterContent}) => {
           {lookupLanguageString(link.name, i18n.language)}
         </Link>
       )}
-      {item.freetext && 
-        <span dangerouslySetInnerHTML={{__html: lookupLanguageString(item.freetext, i18n.language) || '' }} className={styles.footerFreeText} />
+      {freetext && 
+        <span dangerouslySetInnerHTML={{__html: lookupLanguageString(freetext, i18n.language) || '' }} className={styles.footerFreeText} />
       }
     </Stack>
   );

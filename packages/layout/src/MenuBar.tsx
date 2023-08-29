@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { UserMenu } from '@dans-framework/auth';
 import { useAuth } from 'react-oidc-context';
 
-const MenuBar = ({ pages = [] }: { pages: Page[] }) => {
+const MenuBar = ({pages}: {pages: Page[]} ) => {
   const { i18n } = useTranslation();
   const auth = useAuth();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
@@ -26,7 +26,7 @@ const MenuBar = ({ pages = [] }: { pages: Page[] }) => {
   };
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
-  };  
+  };
 
   return (
     <AppBar position="static">

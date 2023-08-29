@@ -99,6 +99,9 @@ importers:
 
   packages/auth:
     dependencies:
+      '@dans-framework/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@mui/icons-material':
         specifier: ^5.14.3
         version: 5.14.3(@mui/material@5.14.3)(@types/react@18.2.15)(react@18.2.0)
@@ -317,20 +320,16 @@ importers:
         specifier: ^18.2.15
         version: 18.2.15
 
-  packages/pik:
-    dependencies:
-      '@dans-framework/utils':
-        specifier: workspace:^
-        version: link:../utils
-    devDependencies:
-      typescript:
-        specifier: ^5.0.2
-        version: 5.1.6
-      vite:
-        specifier: ^4.4.5
-        version: 4.4.5(@types/node@18.0.6)
-
   packages/utils: {}
+
+  packages/utils/error:
+    dependencies:
+      '@reduxjs/toolkit':
+        specifier: ^1.9.5
+        version: 1.9.5(react-redux@8.1.2)(react@18.2.0)
+      notistack:
+        specifier: ^3.0.1
+        version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
 
 packages:
 

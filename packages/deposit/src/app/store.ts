@@ -12,7 +12,7 @@ import { datastationsApi } from '../features/metadata/api/datastations';
 import { submitApi } from '../features/submit/submitApi';
 import { dansFormatsApi } from '../features/files/api/dansFormats';
 import { dansUtilityApi } from '../features/files/api/dansUtility';
-import { rtkQueryErrorLogger } from './error';
+import { errorLogger } from '@dans-framework/utils/error';
 
 export const store = configureStore({
   reducer: {
@@ -41,7 +41,7 @@ export const store = configureStore({
       .concat(submitApi.middleware)
       .concat(dansFormatsApi.middleware)
       .concat(dansUtilityApi.middleware)
-      .concat(rtkQueryErrorLogger)
+      .concat(errorLogger)
 });
 
 export type AppDispatch = typeof store.dispatch;

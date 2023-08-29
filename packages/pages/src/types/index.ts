@@ -18,6 +18,5 @@ export interface Page {
   content?: string | LanguageStrings;
   action?: PageAction;
   logo?: any;
-  form?: any;
   restricted?: boolean; // display only when logged in
 }

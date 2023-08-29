@@ -1,7 +1,5 @@
 import { Suspense } from 'react';
-import { LanguageBar } from '@dans-framework/layout';
-import { MenuBar } from '@dans-framework/layout';
-import { Footer } from '@dans-framework/layout';
+import { LanguageBar, MenuBar, Footer } from '@dans-framework/layout';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import '@fontsource/roboto/300.css';
@@ -54,7 +52,7 @@ const App = () => {
                         <Deposit {...form} />
                       </AuthRoute> 
                       : 
-                      <Generic page={page} />
+                      <Generic {...page} />
                     } 
                   />
                 )
@@ -63,7 +61,7 @@ const App = () => {
             </Routes>
           </Suspense>
         </BrowserRouter>
-        <Footer content={footer} />
+        <Footer {...footer} />
         <SnackbarProvider />
       </ThemeProvider>
     </AuthWrapper>
