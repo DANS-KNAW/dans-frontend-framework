@@ -14,7 +14,7 @@ Takes the following props:
 
 ## Menu bar
     import { MenuBar } from @dans-framework/layout
-The navigation menu of your app. Takes an array of Page props: `<MenuBar pages={pages} />`. See [@dans-framework/pages](packages/pages/README.md)
+The navigation menu of your app. Takes an array of Page props: `<MenuBar pages={pages} />`. See [@dans-framework/pages](/packages/pages/README.md)
 
 ## Footer
     import { Footer } from @dans-framework/layout
