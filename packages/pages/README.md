@@ -2,6 +2,7 @@
 The Pages component makes up the pages of the applications. 
 
 ### Page props
+    import Page from '@dans-framework/pages'
 A page component takes the following props:
 
     <Page props=

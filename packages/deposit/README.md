@@ -2,6 +2,7 @@
 The Deposit component consists of the metadata form and a file upload section. 
 
 ### Props
+    import Deposit from '@dans-framework/deposit'
 The Deposit component takes a props object like so:
 
     <Deposit props=
