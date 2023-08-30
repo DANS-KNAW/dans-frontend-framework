@@ -27,7 +27,7 @@ The framework uses the i18next library. Define an array of languages your app us
 To ensure language files are loaded before the UI is loaded, wrap your Routes in a Suspense component.
 
 #### Theming
-Configure a theme file and use this in the ThemeWrapper from [@dans-framework/theme](/packages/theme/README.md) to wrap your app with.
+Configure a theme file and use this in the ThemeWrapper from [@dans-framework/theme](/packages/theme/README.md) to wrap your app with. Be sure to edit **./src/index.css** to match body and app background color to your theme.
 
 #### Snackbar
 To display error messages from the Redux stores of several components, you need to a add a SnackbarProvider somewhere in your app.
