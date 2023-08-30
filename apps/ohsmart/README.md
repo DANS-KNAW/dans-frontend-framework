@@ -2,6 +2,7 @@
 This is a wrapper application for the components of the DANS framework. Add and configure the components you need.
 
 ## Full configuration
+Make sure required dependencies are installed in your **package.json**.
 
 #### Form
 The form should be an array of section objects. A section can be configured as indicated in the [@dans-framework/deposit](/packages/deposit/README.md) package.
