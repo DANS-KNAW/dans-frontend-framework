@@ -27,15 +27,7 @@ The framework uses the i18next library. Define an array of languages your app us
 To ensure language files are loaded before the UI is loaded, wrap your Routes in a Suspense component.
 
 #### Theming
-The DANS framework uses the [MUI library](https://mui.com/material-ui/getting-started/) and its [theming customisation](https://mui.com/material-ui/customization/theming/). Configure a theme file and use this in a ThemeProvider to wrap your app with.
-
-    import { ThemeProvider } from '@mui/material/styles'
-
-    <ThemeProvider theme={theme}>
-      // rest of your app
-    </ThemeProvider>
-
-Note that the components use some custom colors that need to be specified in the themes color palette: **footerTop**, **footerBottom**, **neutral**.
+Configure a theme file and use this in the ThemeWrapper from [@dans-framework/theme](/packages/theme/README.md) to wrap your app with.
 
 #### Snackbar
 To display error messages from the Redux stores of several components, you need to a add a SnackbarProvider somewhere in your app.

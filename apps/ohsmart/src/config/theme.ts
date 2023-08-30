@@ -15,24 +15,6 @@ const customTheme = createTheme({
       dark: '#ba000d',
       contrastText: '#000',
     },
-    neutral: {
-      light: grey[300],
-      main: grey[400],
-      dark: grey[500],
-      contrastText: grey[700],
-    },
-    footerTop: {
-      main: grey[200],
-      light: grey[100],
-      dark: grey[300],
-      contrastText: grey[800],
-    },
-    footerBottom: {
-      main: grey[400],
-      light: grey[300],
-      dark: grey[500],
-      contrastText: grey[500],
-    },
   },
   typography: {
     h1: {
@@ -86,19 +68,5 @@ const customTheme = createTheme({
     }
   }
 });
-
-declare module '@mui/material/styles' {
-  interface Palette {
-    neutral: Palette['primary'];
-    footerTop: Palette['primary'];
-    footerBottom: Palette['primary'];
-  }
-
-  interface PaletteOptions {
-    neutral: PaletteOptions['primary'];
-    footerTop: Palette['primary'];
-    footerBottom: Palette['primary'];
-  }
-}
 
 export default customTheme;

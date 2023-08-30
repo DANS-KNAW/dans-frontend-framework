@@ -9,6 +9,7 @@ import '@fontsource/roboto/700.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Deposit } from '@dans-framework/deposit';
 import { Generic } from '@dans-framework/pages';
+import { ThemeWrapper } from '@dans-framework/theme';
 import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +29,7 @@ const App = () => {
   const { i18n } = useTranslation();
   return (
     <AuthWrapper authProvider={authProvider}>
-      <ThemeProvider theme={theme}>
+      <ThemeWrapper theme={theme}>
         {/* Needed for CSS normalisation */}
         <CssBaseline />
         <BrowserRouter>
@@ -67,7 +68,7 @@ const App = () => {
         </BrowserRouter>
         <Footer {...footer} />
         <SnackbarProvider />
-      </ThemeProvider>
+      </ThemeWrapper>
     </AuthWrapper>
   );
 }
