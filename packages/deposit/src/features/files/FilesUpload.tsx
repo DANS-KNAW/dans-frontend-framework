@@ -15,7 +15,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import Collapse from '@mui/material/Collapse';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import IconButton from '@mui/material/IconButton';
-import blue from '@mui/material/colors/blue';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getFiles, addFiles } from './filesSlice';
@@ -34,6 +33,7 @@ const FilesUpload = () => {
 
   // Validate added files, needs to be synchronous, so no API calls possible here
   const fileValidator = (file: File) => {
+    if (!file.name) return null;
     // No duplicate files
     const extensionIndex = file.name.lastIndexOf('.');
     const baseName = file.name.slice(0, extensionIndex);
@@ -114,8 +114,9 @@ const FilesUpload = () => {
       <CardContent>
         <Box 
           sx={{
-            border: '1px dashed grey',
-            backgroundColor: isDragActive ? blue[100] : 'white',
+            border: '1px dashed',
+            borderColor: 'neutral.main',
+            backgroundColor: isDragActive ? 'primary.light' : 'transparent',
           }}
           p={3}
           {...getRootProps({className: 'dropzone'})}
@@ -123,9 +124,9 @@ const FilesUpload = () => {
           {data ?
             <>
               {!metadataSubmitStatus && <input {...getInputProps()} />}
-              <Typography color="grey" sx={{textAlign: 'center', cursor: 'pointer'}}>{t('drop')}</Typography>
+              <Typography color="neutral.contrastText" sx={{textAlign: 'center', cursor: 'pointer'}}>{isDragActive ? t('dropNow') : t('drop')}</Typography>
             </> :
-            <Typography color="grey" sx={{textAlign: 'center', cursor: 'pointer'}}>{t('dropLoading')}</Typography>
+            <Typography color="neutral.contrastText" sx={{textAlign: 'center', cursor: 'pointer'}}>{t('dropLoading')}</Typography>
           }
         </Box>
         {fileRejections.length > 0 && <RejectedFiles fileRejections={fileRejections} />}

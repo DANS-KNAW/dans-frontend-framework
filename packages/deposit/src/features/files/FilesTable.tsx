@@ -25,7 +25,6 @@ import fileProcessing from '../../config/files/processing';
 import type { SelectedFile, FileActionOptionsProps, FileItemProps } from '../../types/Files';
 import { dansUtilityApi, useCheckTypeQuery } from './api/dansUtility';
 import { LightTooltip } from '../generic/Tooltip';
-import styles from './FilesTable.module.css';
 import { getSessionId } from '../metadata/metadataSlice';
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
@@ -155,7 +154,7 @@ const FileTableRow = ({file}: FileItemProps) => {
 
   return (
     <>
-      <TableRow className={file.valid === false ? styles.invalid : ''}>
+      <TableRow sx={{backgroundColor: file.valid === false ? 'warning.light' : ''}}>
         <TableCell sx={{p: 0, pl: 1, borderBottom: 0}}>
           <IconButton color="primary" size="small" onClick={() => !metadataSubmitStatus && dispatch(removeFile(file))} disabled={metadataSubmitStatus !== ''}>
             <DeleteIcon fontSize="small" />

@@ -7,7 +7,6 @@ import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
 import { memo } from 'react';
 import type { SingleFieldProps, GroupedFieldProps, TextFieldType, DateFieldType, InputField } from '../../types/Metadata';
-import grey from '@mui/material/colors/grey';
 import { DeleteButton, AddButtonText } from './MetadataButtons';
 import { OrcidField, RorField, MultiApiField, GeonamesField, GettyField, SheetsField, DatastationsField, DansFormatsField } from './fields/AutocompleteAPIField';
 import AutocompleteField from './fields/AutocompleteField';
@@ -101,7 +100,7 @@ const GroupedField = ({field, sectionIndex}: GroupedFieldProps) => {
                     key={i} 
                     sx={{
                       borderTop: i > 0 ? '1px solid' : 'none',
-                      borderColor: grey[300],
+                      borderColor: 'neutralDark.main',
                       pt: i > 0 ? 1 : 0,
                       mt: i > 0 ? 1 : 0
                     }}

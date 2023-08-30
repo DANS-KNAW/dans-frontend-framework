@@ -16,7 +16,6 @@ import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import Divider from '@mui/material/Divider';
-import { grey } from '@mui/material/colors';
 import InputAdornment from '@mui/material/InputAdornment';
 import CheckIcon from '@mui/icons-material/Check';
 import { NavLink as RouterLink } from 'react-router-dom';
@@ -133,7 +132,7 @@ const SettingsMenu = () => {
   return (
     <Box sx={{ flexGrow: 0 }}>
       <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-        <Avatar sx={{bgcolor: grey[300], color: 'black'}}>
+        <Avatar>
           {((auth.user?.profile.given_name as string) || '').charAt(0).toUpperCase()}
           {((auth.user?.profile.family_name as string) || '').charAt(0).toUpperCase()}
         </Avatar>
@@ -157,7 +156,7 @@ const SettingsMenu = () => {
         <Box sx={{pl: 2, pr: 2, pb: 1, pt: 1}}>
           <Typography sx={{fontSize: '80%', fontWeight: 600, mb: 1}}>{t('loggedIn')}</Typography>
           <Typography>{auth.user?.profile.name}</Typography>
-          <Typography sx={{fontSize: '90%', color: 'neutralDark.contrastText'}}>{auth.user?.profile.email}</Typography>
+          <Typography sx={{fontSize: '90%', color: 'neutral.contrastText'}}>{auth.user?.profile.email}</Typography>
         </Box>
         <Divider />
         <Link component={RouterLink} to="/user-settings" underline="none" color="inherit" onClick={handleCloseUserMenu}>

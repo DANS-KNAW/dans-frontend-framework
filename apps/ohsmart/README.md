@@ -35,6 +35,8 @@ The DANS framework uses the [MUI library](https://mui.com/material-ui/getting-st
       // rest of your app
     </ThemeProvider>
 
+Note that the components use some custom colors that need to be specified in the themes color palette: **footerTop**, **footerBottom**, **neutral**.
+
 #### Snackbar
 To display error messages from the Redux stores of several components, you need to a add a SnackbarProvider somewhere in your app.
 

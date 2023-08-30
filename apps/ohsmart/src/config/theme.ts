@@ -16,11 +16,21 @@ const customTheme = createTheme({
       contrastText: '#000',
     },
     neutral: {
-      main: grey[200],
-      contrastText: 'black',
+      light: grey[300],
+      main: grey[400],
+      dark: grey[500],
+      contrastText: grey[700],
     },
-    neutralDark: {
-      main: grey[300],
+    footerTop: {
+      main: grey[200],
+      light: grey[100],
+      dark: grey[300],
+      contrastText: grey[800],
+    },
+    footerBottom: {
+      main: grey[400],
+      light: grey[300],
+      dark: grey[500],
       contrastText: grey[500],
     },
   },
@@ -66,18 +76,28 @@ const customTheme = createTheme({
         }
       }
     },
+    MuiAvatar: {
+      styleOverrides: {
+        colorDefault: {
+           backgroundColor: grey[300],
+           color: 'black'
+         }
+      }
+    }
   }
 });
 
 declare module '@mui/material/styles' {
   interface Palette {
     neutral: Palette['primary'];
-    neutralDark: Palette['primary'];
+    footerTop: Palette['primary'];
+    footerBottom: Palette['primary'];
   }
 
   interface PaletteOptions {
     neutral: PaletteOptions['primary'];
-    neutralDark: PaletteOptions['primary'];
+    footerTop: Palette['primary'];
+    footerBottom: Palette['primary'];
   }
 }
 

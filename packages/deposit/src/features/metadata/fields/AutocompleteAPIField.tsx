@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Stack from '@mui/material/Stack';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useDebounce } from 'use-debounce';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +24,6 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import MenuItem from '@mui/material/MenuItem';
-import styles from './AutocompleteField.module.css';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
 import LaunchIcon from '@mui/icons-material/Launch';
@@ -342,14 +342,14 @@ const AutocompleteAPIField = ({
           <li {...props} key={option.value} style={{flexWrap: 'wrap'}} >
             {lookupLanguageString(option.label, i18n.language)}
             {option.extraContent && option.extraLabel &&
-              <div className={styles.optionExtra}>
-                <span>{t(option.extraLabel)}</span>: {option.extraContent}
-              </div>
+              <Typography component="div" sx={{width: '100%', fontSize: '0.8rem'}} color="neutral.contrastText">
+                <Typography component="span" sx={{fontWeight: '600', fontSize: 'inherit'}}>{t(option.extraLabel)}</Typography>: {option.extraContent}
+              </Typography>
             }
             {option.id && option.idLabel &&
-              <div className={styles.optionExtra}>
-                <span>{t(option.idLabel)}</span>: {option.id}
-              </div>
+              <Typography component="div" sx={{width: '100%', fontSize: '0.8rem'}} color="neutral.contrastText">
+                <Typography component="span" sx={{fontWeight: '600', fontSize: 'inherit'}}>{t(option.idLabel)}</Typography>: {option.id}
+              </Typography>
             }
           </li>
         }

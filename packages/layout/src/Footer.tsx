@@ -17,7 +17,8 @@ const Footer = ({top, bottom}: FooterType) => {
     <>
       <Box
         sx={{
-          bgcolor: 'neutral.main',
+          color: 'footerTop.contrastText',
+          bgcolor: 'footerTop.main',
           mt: 8,
           pt: 4,
           pb: 4,
@@ -35,8 +36,8 @@ const Footer = ({top, bottom}: FooterType) => {
       </Box>
       <Box
         sx={{
-          bgcolor: 'neutralDark.main',
-          color: 'neutralDark.contrastText',
+          bgcolor: 'footerBottom.light',
+          color: 'footerBottom.contrastText',
           pt: 4,
           pb: 4,
         }}
