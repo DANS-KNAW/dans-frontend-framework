@@ -1,9 +1,7 @@
 # DANS Pages component
-The Pages component makes up the pages of the applications. 
+The Pages component makes up the pages of the applications. Only exports a Generic page component at the moment.
 
-### Page props
-    import Page from '@dans-framework/pages'
-A page component takes the following props:
+    import { Generic } from '@dans-framework/pages'
 
     <Page props=
       {

@@ -36,7 +36,11 @@ const App = () => {
           <LanguageBar languages={languages} changeLanguage={i18n.changeLanguage} />
           <MenuBar pages={pages} />
           {/* Suspense to make sure languages can load first */}
-          <Suspense fallback={<Box sx={{display: 'flex', justifyContent: 'center'}}><Skeleton height={600} width={900} /></Box>}>
+          <Suspense fallback={
+            <Box sx={{display: 'flex', justifyContent: 'center'}}>
+              <Skeleton height={600} width={900} />
+            </Box>
+          }>
             <Routes>
               <Route path="signin-callback" element={<SignInCallback />} />
               <Route path="user-settings" element={<AuthRoute><UserSettings targetKeyIdentifiers={form.targetKeyIdentifiers} /></AuthRoute>} />

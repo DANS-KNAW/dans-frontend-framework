@@ -1,9 +1,20 @@
 # DANS helper utilities
 
 ### @dans-framework/utils/language
-	import { lookupLanguageString } from '@dans-framework/utils/language'
-Exposes a `lookupLanguageString(languageObject, language)` function. Converts a languageObject like `{en: '', nl: ''}` to the appropriate string, or displays a string in case a plain string is passed instead of a languageObject.
+    import { lookupLanguageString } from '@dans-framework/utils/language'
+
+Returns a language sensitive string from a languageObject like `{en: '', nl: ''}`. Can also take a plain string as argument and will return that same string.
+
+    lookupLanguageString(
+      languageObject, // can also be a string
+      language // current language, usually i18n.language
+    )
 
 ### @dans-framework/utils/error
-	import { errorLogger } from '@dans-framework/utils/error'
-Helper function to show errors created by RTK. Don't forget to add it to your middleware.
+    import { errorLogger } from '@dans-framework/utils/error'
+
+Helper function to show errors created by RTK as popup notification. Import in a store and add it to the middleware of the store config.
+
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware()
+      .concat(errorLogger)

@@ -1,9 +1,7 @@
 # DANS Deposit component
 The Deposit component consists of the metadata form and a file upload section. 
 
-### Props
-    import Deposit from '@dans-framework/deposit'
-The Deposit component takes a props object like so:
+    import { Deposit } from '@dans-framework/deposit'
 
     <Deposit props=
       { 
@@ -18,7 +16,6 @@ The Deposit component takes a props object like so:
       }
     />
 
-#### Form sections
 Each section is a collapsible accordion in the front-end. A section is formatted like so:
 
     {
@@ -135,3 +132,8 @@ Each section is a collapsible accordion in the front-end. A section is formatted
         },
       ]
     }
+
+### i18n
+Exposes the Deposit components language config. Use this in the main apps language config.
+
+    import { i18n as i18nDeposit } from '@dans-framework/deposit'
