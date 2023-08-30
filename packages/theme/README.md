@@ -10,4 +10,7 @@ The DANS framework uses the [MUI library](https://mui.com/material-ui/getting-st
     </ThemeWrapper>
 
 Custom config used in the DANS framework:
-- palette: neutral, footerTop, footerBottom
+- palette: 
+  - neutral
+  - footerTop
+  - footerBottom
