@@ -1,5 +1,5 @@
 import { Provider as ReduxProvider } from 'react-redux';
-import { store } from './app/store';
+import { store } from './redux/store';
 import DepositPage from './pages/Deposit';
 import i18n from './languages/i18n';
 import { I18nextProvider } from 'react-i18next';

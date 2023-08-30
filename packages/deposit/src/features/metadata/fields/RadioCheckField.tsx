@@ -5,12 +5,12 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setField } from '../metadataSlice';
 import { getFieldStatus } from '../metadataHelpers';
 import { StatusIcon } from '../../generic/Icons';
 import { lookupLanguageString } from '@dans-framework/utils/language';
-import type { RadioFieldProps, CheckFieldProps } from '../../../types/Metadata';
+import type { RadioFieldProps, CheckFieldProps } from '../../../types/MetadataProps';
 import { getMetadataSubmitStatus } from '../../submit/submitSlice';
 import { useTranslation } from 'react-i18next';
 

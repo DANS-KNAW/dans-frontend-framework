@@ -16,7 +16,7 @@ import Collapse from '@mui/material/Collapse';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import IconButton from '@mui/material/IconButton';
 import { useTranslation } from 'react-i18next';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getFiles, addFiles } from './filesSlice';
 import type { SelectedFile, FileLocation, RejectedFilesProps, DansSimpleListQueryResponse } from '../../types/Files';
 import { v4 as uuidv4 } from 'uuid';

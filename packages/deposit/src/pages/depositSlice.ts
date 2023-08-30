@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../app/store';
+import { RootState } from '../redux/store';
 import type { InitialFormProps } from '../types/Metadata';
 
 // Save the props we need to redux store, for use in subcomponents

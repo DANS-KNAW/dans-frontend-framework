@@ -1,12 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import type { 
-  SectionStatus,
-  InputField,
-  Field,
-  InitialSectionType,
-  SectionType,
-  ValidationType,
-} from '../../types/Metadata';
+import type { SectionStatus, InitialSectionType, SectionType } from '../../types/Metadata';
+import type { InputField, Field, ValidationType } from '../../types/MetadataFields';
 
 // Helper functions for the Metadata form
 

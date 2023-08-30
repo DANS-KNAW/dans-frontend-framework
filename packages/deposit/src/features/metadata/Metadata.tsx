@@ -8,7 +8,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import type { SectionType } from '../../types/Metadata';
 import { SingleField, GroupedField } from './MetadataFields';
 import { StatusIcon } from '../generic/Icons';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { getMetadata, getOpenPanel, setOpenPanel } from './metadataSlice';
 import { lookupLanguageString } from '@dans-framework/utils/language';
 import { useTranslation } from 'react-i18next';

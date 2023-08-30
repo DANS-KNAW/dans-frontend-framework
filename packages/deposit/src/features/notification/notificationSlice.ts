@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
-import { RootState } from '../../app/store';
+import { RootState } from '../../redux/store';
 import type { Notification, NotificationState } from '../../types/Notification';
 
 // Basic snackbar. Set open state and contents separately, to ensure proper transitions

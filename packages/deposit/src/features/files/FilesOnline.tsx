@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { useTranslation } from 'react-i18next';
 import { addFiles } from './filesSlice';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import type { FileLocation } from '../../types/Files';
 import { v4 as uuidv4 } from 'uuid';
 

@@ -2,11 +2,12 @@ import Stack from '@mui/material/Stack';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { useTranslation } from 'react-i18next';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { getFieldStatus } from '../metadataHelpers';
 import { StatusIcon } from '../../generic/Icons';
 import { setField } from '../metadataSlice';
-import type { AutocompleteFieldProps, OptionsType } from '../../../types/Metadata';
+import type { AutocompleteFieldProps } from '../../../types/MetadataProps';
+import type { OptionsType } from '../../../types/MetadataFields';
 import { lookupLanguageString } from '@dans-framework/utils/language';
 import { getMetadataSubmitStatus } from '../../submit/submitSlice';
 

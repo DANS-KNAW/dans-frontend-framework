@@ -1,6 +1,6 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 import type { DatastationsResponse } from '../../../types/Api';
-import type { Datastations } from '../../../types/Metadata';
+import type { Datastations } from '../../../types/MetadataFields';
 
 // map short vocab terms to their API vocab counterparts
 const vocabMap: Record<Datastations, string> = {

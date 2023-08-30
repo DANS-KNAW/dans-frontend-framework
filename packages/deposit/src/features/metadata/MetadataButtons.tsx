@@ -4,9 +4,9 @@ import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { useTranslation } from 'react-i18next';
-import { useAppDispatch } from '../../app/hooks';
+import { useAppDispatch } from '../../redux/hooks';
 import { addField, deleteField } from './metadataSlice';
-import type { AddFieldButtonProps, DeleteFieldButtonProps } from '../../types/Metadata';
+import type { AddFieldButtonProps, DeleteFieldButtonProps } from '../../types/MetadataProps';
 
 export const DeleteButton = ({sectionIndex, groupedFieldId, deleteFieldIndex, size = 'small', mt}: DeleteFieldButtonProps) => {
   const dispatch = useAppDispatch();

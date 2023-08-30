@@ -6,7 +6,8 @@ import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
 import { memo } from 'react';
-import type { SingleFieldProps, GroupedFieldProps, TextFieldType, DateFieldType, InputField } from '../../types/Metadata';
+import type { Field, TextFieldType, DateFieldType, InputField } from '../../types/MetadataFields';
+import type { SingleFieldProps, GroupedFieldProps } from '../../types/MetadataProps';
 import { DeleteButton, AddButtonText } from './MetadataButtons';
 import { OrcidField, RorField, MultiApiField, GeonamesField, GettyField, SheetsField, DatastationsField, DansFormatsField } from './fields/AutocompleteAPIField';
 import AutocompleteField from './fields/AutocompleteField';
@@ -16,7 +17,7 @@ import { RadioField, CheckField } from './fields/RadioCheckField';
 import { TransitionGroup } from 'react-transition-group';
 import { lookupLanguageString } from '@dans-framework/utils/language';
 import { getMetadataSubmitStatus } from '../submit/submitSlice';
-import { useAppSelector } from '../../app/hooks';
+import { useAppSelector } from '../../redux/hooks';
 import { useTranslation } from 'react-i18next';
 
 // Memoized Field function, so only the affected field rerenders when form/metadata props change.

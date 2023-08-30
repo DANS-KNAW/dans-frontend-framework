@@ -1,21 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../../app/store';
+import { RootState } from '../../redux/store';
+import type { SetFieldPayload, AddFieldPayload, DeleteFieldPayload, SectionStatusPayload } from '../../types/MetadataPayloads';
 import type { 
-  SetFieldPayload, 
-  AddFieldPayload,
-  DeleteFieldPayload,
-  SectionStatusPayload,
-  InitialStateType, 
   RepeatTextFieldType,
   RepeatGroupedFieldType,
-  InputField,
   TextFieldType,
-  InitialSectionType,
-  TypeaheadAPI,
   ValidationType,
-  DateTimeFormat,
-  InitialFormType,
-} from '../../types/Metadata';
+  InputField,
+  TypeaheadAPI,
+  DateTimeFormat
+} from '../../types/MetadataFields';
+import type { InitialStateType, InitialSectionType, InitialFormType } from '../../types/Metadata';
 import { getValid, getFieldStatus, getSectionStatus, formatInitialState, findById } from './metadataHelpers';
 import { v4 as uuidv4 } from 'uuid';
 

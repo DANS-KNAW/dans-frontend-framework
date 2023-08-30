@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { getNotification, closeNotification, clearNotification } from './notificationSlice';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 

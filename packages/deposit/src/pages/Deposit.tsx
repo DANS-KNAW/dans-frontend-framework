@@ -8,7 +8,7 @@ import Metadata from '../features/metadata/Metadata';
 import Files from '../features/files/Files';
 import type { TabPanelProps, TabHeaderProps } from '../types/Deposit';
 import type { InitialFormProps } from '../types/Metadata';
-import { useAppSelector, useAppDispatch } from '../app/hooks';
+import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import { getMetadataStatus, getSessionId, getOpenTab, setOpenTab } from '../features/metadata/metadataSlice';
 import { getFiles } from '../features/files/filesSlice';
 import { StatusIcon } from '../features/generic/Icons';

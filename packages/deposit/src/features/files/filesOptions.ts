@@ -1,4 +1,21 @@
-const roles = [
+// Defines actions a user can select for file processing and roles
+
+export const fileProcessing = [
+  {
+    label: "Test 1",
+    value: "t1",
+  },
+  {
+    label: "Test 2",
+    value: "t2",
+  },
+  {
+    label: "Test 3",
+    value: "t3",
+  },
+];
+
+export const fileRoles = [
   {
     value: "data_file",
     label: "Data File"
@@ -64,5 +81,3 @@ const roles = [
     label: "Original Metadata",
   },
 ];
-
-export default roles;

@@ -1,4 +1,4 @@
-import type { AutocompleteAPIFieldData, Datastations } from './Metadata';
+import type { AutocompleteAPIFieldData, Datastations } from './MetadataFields';
 
 interface RorCountry {
   country_name: string;

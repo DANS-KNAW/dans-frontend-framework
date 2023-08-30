@@ -3,7 +3,7 @@ import type { BaseQueryFn, FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import axios from 'axios'
 import type { AxiosRequestConfig, AxiosError, AxiosProgressEvent } from 'axios'
 import { setMetadataSubmitStatus, setFilesSubmitStatus } from './submitSlice';
-import { store } from '../../app/store';
+import { store } from '../../redux/store';
 
 // We use Axios to enable file upload progress monitoring
 const axiosBaseQuery =

@@ -7,12 +7,12 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import MenuItem from '@mui/material/MenuItem';
 import { useTranslation } from 'react-i18next';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { StatusIcon } from '../../generic/Icons';
 import { AddButton, DeleteButton } from '../MetadataButtons';
 import { setField, setDateTypeField } from '../metadataSlice';
 import { getFieldStatus } from '../metadataHelpers';
-import type { DateFieldProps } from '../../../types/Metadata';
+import type { DateFieldProps } from '../../../types/MetadataProps';
 import { lookupLanguageString } from '@dans-framework/utils/language';
 import { getMetadataSubmitStatus } from '../../submit/submitSlice';
 

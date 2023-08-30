@@ -4,12 +4,12 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useTranslation } from 'react-i18next';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { StatusIcon } from '../../generic/Icons';
 import { AddButton, DeleteButton } from '../MetadataButtons';
 import { setField } from '../metadataSlice';
 import { getFieldStatus } from '../metadataHelpers';
-import type { TextFieldProps } from '../../../types/Metadata';
+import type { TextFieldProps } from '../../../types/MetadataProps';
 import { lookupLanguageString } from '@dans-framework/utils/language';
 import { getMetadataSubmitStatus } from '../../submit/submitSlice';
 
