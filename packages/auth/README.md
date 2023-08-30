@@ -60,13 +60,13 @@ TBD. Displays a current users metadata submissions. Needs to be a child of `<Aut
     } />
 
 ### UserSettings
-Displays a current users settings, like API keys. Needs to be a child of `<AuthRoute />`. Takes `targetKeyIdentifiers` as props, usually set in the form config.
+Displays a current users settings, like API keys. Needs to be a child of `<AuthRoute />`. Takes `targetKeyIdentifiers` as props, usually set in the form config. This is an array of strings the component uses as keys to pull data from a user profile.
 
     import { UserSettings } from '@dans-framework/auth'
 
     <Route path="user-settings" element={
       <AuthRoute>
-        <UserSettings targetKeyIdentifiers={form.targetKeyIdentifiers} />
+        <UserSettings targetKeyIdentifiers={['']} />
       </AuthRoute>
     } />
 
