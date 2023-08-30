@@ -31,12 +31,12 @@ Tests are not implemented at the moment.
     pnpm run build
 
 #### Adding a library to an app/package
- Add a lib to all apps/packages. 
+Add a library to all apps/packages. 
 
     pnpm i <lib_you_want_to_add>
 
 Add the `-D` flag for devDependencies.
-To install a lib for a single app/package, e.g. @dans-framework/ohsmart, use the `--filter` flag:
+To install a library for a single app/package, e.g. @dans-framework/ohsmart, use the `--filter` flag:
 
     pnpm i <lib_you_want_to_add> --filter '@dans-framework/ohsmart'
 Alternatively, you can edit the package.json file of the appropriate app or package, and run `pnpm i` again from the root.
