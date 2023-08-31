@@ -31,7 +31,7 @@ import LaunchIcon from '@mui/icons-material/Launch';
 import InputAdornment from '@mui/material/InputAdornment';
 import AutocompleteField from './AutocompleteField';
 import { getMetadataSubmitStatus } from '../../submit/submitSlice';
-import { getData } from '../../../pages/depositSlice';
+import { getData } from '../../../deposit/depositSlice';
 
 /*
  *  Type ahead fields for different API endpoints

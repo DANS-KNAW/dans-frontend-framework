@@ -16,11 +16,13 @@ import { useTranslation } from 'react-i18next';
 import { SnackbarProvider } from 'notistack';
 import type { Page } from '@dans-framework/pages';
 import { AuthWrapper, AuthRoute, UserSettings, UserSubmissions, SignInCallback } from '@dans-framework/auth';
+import { SiteInfoProvider } from '@dans-framework/utils/hooks';
 
 // Load config variables
 import theme from './config/theme';
 import footer from './config/footer';
 import pages from './config/pages';
+import siteInfo from './config/siteInfo';
 import languages from './config/languages';
 import authProvider from './config/auth';
 import form from './config/form';
@@ -42,28 +44,30 @@ const App = () => {
               <Skeleton height={600} width={900} />
             </Box>
           }>
-            <Routes>
-              <Route path="signin-callback" element={<SignInCallback />} />
-              <Route path="user-settings" element={<AuthRoute><UserSettings targetKeyIdentifiers={form.targetKeyIdentifiers} /></AuthRoute>} />
-              <Route path="user-submissions" element={<AuthRoute><UserSubmissions /></AuthRoute>} />
-              {(pages as Page[]).map( page => {
-                return (
-                  <Route 
-                    key={page.id} 
-                    path={page.slug} 
-                    element={
-                      page.template === 'deposit' ? 
-                      <AuthRoute>
-                        <Deposit {...form} />
-                      </AuthRoute> 
-                      : 
-                      <Generic {...page} />
-                    } 
-                  />
-                )
-              }
-              )}
-            </Routes>
+            <SiteInfoProvider value={siteInfo}>
+              <Routes>
+                <Route path="signin-callback" element={<SignInCallback />} />
+                <Route path="user-settings" element={<AuthRoute><UserSettings targetKeyIdentifiers={form.targetKeyIdentifiers} /></AuthRoute>} />
+                <Route path="user-submissions" element={<AuthRoute><UserSubmissions /></AuthRoute>} />
+                {(pages as Page[]).map( page => {
+                  return (
+                    <Route 
+                      key={page.id} 
+                      path={page.slug} 
+                      element={
+                        page.template === 'deposit' ? 
+                        <AuthRoute>
+                          <Deposit config={form} page={page} />
+                        </AuthRoute> 
+                        : 
+                        <Generic {...page} />
+                      } 
+                    />
+                  )
+                }
+                )}
+              </Routes>
+            </SiteInfoProvider>
           </Suspense>
         </BrowserRouter>
         <Footer {...footer} />

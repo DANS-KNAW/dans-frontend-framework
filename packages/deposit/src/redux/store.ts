@@ -2,7 +2,7 @@ import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import metadataReducer from '../features/metadata/metadataSlice';
 import filesReducer from '../features/files/filesSlice';
 import submitReducer from '../features/submit/submitSlice';
-import depositReducer from '../pages/depositSlice';
+import depositReducer from '../deposit/depositSlice';
 import { orcidApi } from '../features/metadata/api/orcid';
 import { rorApi } from '../features/metadata/api/ror';
 import { gettyApi } from '../features/metadata/api/getty';

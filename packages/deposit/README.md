@@ -3,7 +3,7 @@ The Deposit component consists of the metadata form and a file upload section.
 
     import { Deposit } from '@dans-framework/deposit'
 
-    <Deposit props=
+    <Deposit config=
       { 
         form: [{...}], // an array of form sections, see below 
         targetRepo: '', // the destination of the submission, as configured in the submit processing server, e.g. ssh.datastations.nl
@@ -14,7 +14,10 @@ The Deposit component consists of the metadata form and a file upload section.
         geonamesApiKey: '' // optional Geonames API key
         gsheetsApiKey: '', // optional Google sheets API key
       }
+      page={...} // A page object
     />
+
+For page objects, see [@dans-framework/pages](/packages/pages/README.md). 
 
 Each section is a collapsible accordion in the front-end. A section is formatted like so:
 

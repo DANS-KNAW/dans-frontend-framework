@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Button from '@mui/material/Button';
@@ -5,14 +6,21 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
 import type { Page } from './types';
-import { lookupLanguageString } from '@dans-framework/utils/language';
+import { lookupLanguageString } from '@dans-framework/utils';
 import { useAuth } from 'react-oidc-context';
 import { useTranslation } from 'react-i18next';
 import { LoginButton } from '@dans-framework/auth';
+import { useSiteInfo } from '@dans-framework/utils';
+import { setTitle } from '@dans-framework/utils/pagemeta';
 
 const Generic = ({ logo, name, content, action }: Page) => {
   const auth = useAuth();
   const { i18n } = useTranslation();
+  const siteInfo = useSiteInfo();
+
+  useEffect( () => { 
+    setTitle(siteInfo.name, lookupLanguageString(name, i18n.language) as string);
+  }, [siteInfo.name, name, i18n.language]);
 
   return (
     <Container>

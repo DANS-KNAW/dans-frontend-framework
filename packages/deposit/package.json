@@ -6,6 +6,7 @@
   "type": "module",
   "dependencies": {
     "@dans-framework/auth": "workspace:*",
+    "@dans-framework/pages": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",

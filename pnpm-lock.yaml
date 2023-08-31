@@ -35,6 +35,9 @@ importers:
       '@dans-framework/theme':
         specifier: workspace:*
         version: link:../../packages/theme
+      '@dans-framework/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@fontsource/roboto':
         specifier: ^5.0.7
         version: 5.0.7
@@ -151,6 +154,9 @@ importers:
       '@dans-framework/auth':
         specifier: workspace:*
         version: link:../auth
+      '@dans-framework/pages':
+        specifier: workspace:*
+        version: link:../pages
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../utils
@@ -322,6 +328,9 @@ importers:
       '@types/react':
         specifier: ^18.2.15
         version: 18.2.15
+      '@types/react-helmet':
+        specifier: ^6.1.6
+        version: 6.1.6
 
   packages/theme:
     dependencies:
@@ -349,6 +358,16 @@ importers:
       notistack:
         specifier: ^3.0.1
         version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
+
+  packages/utils/hooks:
+    dependencies:
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.15
+        version: 18.2.15
 
 packages:
 
@@ -1407,6 +1426,12 @@ packages:
     resolution: {integrity: sha512-GRaAEriuT4zp9N4p1i8BDBYmEyfo+xQ3yHjJU4eiK5NDa1RmUZG+unZABUTK4/Ox/M+GaHwb6Ow8rUITrtjszA==}
     dependencies:
       '@types/react': 18.2.15
+
+  /@types/react-helmet@6.1.6:
+    resolution: {integrity: sha512-ZKcoOdW/Tg+kiUbkFCBtvDw0k3nD4HJ/h/B9yWxN4uDO8OkRksWTO+EL+z/Qu3aHTeTll3Ro0Cc/8UhwBCMG5A==}
+    dependencies:
+      '@types/react': 18.2.15
+    dev: true
 
   /@types/react-is@18.2.1:
     resolution: {integrity: sha512-wyUkmaaSZEzFZivD8F2ftSyAfk6L+DfFliVj/mYdOXbVjRcS87fQJLTnhk6dRZPuJjI+9g6RZJO4PNCngUrmyw==}

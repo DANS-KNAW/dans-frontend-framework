@@ -24,30 +24,37 @@ import { setData } from './depositSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { getUserProfile } from '@dans-framework/auth';
+import { useSiteInfo, setTitle, lookupLanguageString } from '@dans-framework/utils';
+import type { Page } from '@dans-framework/pages';
 
-const Deposit = ({ ...props }: InitialFormProps) => {
+const Deposit = ({ config, page }: {config: InitialFormProps, page: Page}) => {
   const dispatch = useAppDispatch();
   const sessionId = useAppSelector(getSessionId);
   const openTab = useAppSelector(getOpenTab);
-  const { t } = useTranslation('generic');
+  const { t, i18n } = useTranslation('generic');
+  const siteInfo = useSiteInfo();
+
+  // set page title
+  useEffect( () => { 
+    setTitle(siteInfo.name, lookupLanguageString(page.name, i18n.language) as string);
+  }, [siteInfo.name, name, i18n.language]);
 
   // We import this function from the Auth library. Don't have to add it to the Deposit store this way.
   const { data: userData } = getUserProfile();
-  console.log(userData)
 
-  const targetKeys = userData && props.targetKeyIdentifiers.map( tki => userData.attributes[tki][0]);
+  const targetKeys = userData && config.targetKeyIdentifiers.map( tki => userData.attributes[tki][0]);
 
   // Initialize form on initial render when there's no sessionId yet
   // or when form gets reset
   useEffect(() => {
     if (!sessionId) {
-      dispatch(initForm(props.form));  
+      dispatch(initForm(config.form));  
     }
-  }, [dispatch, sessionId, props.form]);
+  }, [dispatch, sessionId, config.form]);
 
-  // Set props in redux
+  // Set init form props in redux
   useEffect(() => {
-    dispatch(setData(props));
+    dispatch(setData(config));
   }, []);
 
   return (
@@ -55,7 +62,7 @@ const Deposit = ({ ...props }: InitialFormProps) => {
       <Container>
         <Grid container>
           <Grid xs={12} mt={4}>
-            {userData && props.targetKeyIdentifiers.filter(tki => !userData.attributes[tki][0]).length > 0 &&
+            {userData && config.targetKeyIdentifiers.filter(tki => !userData.attributes[tki][0]).length > 0 &&
               <Alert severity="warning">
                 <AlertTitle>{t('missingInfoHeader')}</AlertTitle>
                 <Trans

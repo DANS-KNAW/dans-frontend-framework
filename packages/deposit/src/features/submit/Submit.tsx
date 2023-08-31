@@ -15,7 +15,7 @@ import { useSubmitDataMutation, useSubmitFilesMutation } from './submitApi';
 import { setMetadataSubmitStatus, getMetadataSubmitStatus, getFilesSubmitStatus, resetFilesSubmitStatus } from './submitSlice';
 import { formatFormData, formatFileData } from './submitHelpers';
 import { useTranslation } from 'react-i18next';
-import { getData } from '../../pages/depositSlice';
+import { getData } from '../../deposit/depositSlice';
 
 const Submit = ({targetKeys}: {targetKeys: string[]}) => {
   const dispatch = useAppDispatch();

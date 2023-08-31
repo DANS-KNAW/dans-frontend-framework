@@ -24,6 +24,8 @@ const SingleTextField = ({field, sectionIndex, groupedFieldId, currentField = 0,
 
   useEffect(() => {
     // if requested, auto fill user data from oidc
+    // atm, this gets data from the possibly stale auth.user.profile object
+    // change to getUserProfile (from @dans-framework/auth) function if we need up-to-date data in the future
     if (field.autofill && auth.user) {
       dispatch(setField({
         sectionIndex: sectionIndex,

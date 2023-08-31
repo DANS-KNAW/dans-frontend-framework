@@ -1,0 +1,14 @@
+{
+  "name": "@dans-framework/utils/hooks",
+  "main": "index.ts",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "dependencies": {
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15"
+  }
+}

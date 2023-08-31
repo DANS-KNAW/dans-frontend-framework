@@ -12,6 +12,7 @@
   "dependencies": {
     "@dans-framework/auth": "workspace:*",
     "@dans-framework/deposit": "workspace:*",
+    "@dans-framework/utils": "workspace:*",
     "@dans-framework/layout": "workspace:*",
     "@dans-framework/pages": "workspace:*",
     "@dans-framework/theme": "workspace:*",
