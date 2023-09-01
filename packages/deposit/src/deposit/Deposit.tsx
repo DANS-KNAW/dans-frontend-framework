@@ -7,7 +7,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Metadata from '../features/metadata/Metadata';
 import Files from '../features/files/Files';
 import type { TabPanelProps, TabHeaderProps } from '../types/Deposit';
-import type { InitialFormProps } from '../types/Metadata';
+import type { FormConfig } from '../types/Metadata';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import { getMetadataStatus, getSessionId, getOpenTab, setOpenTab } from '../features/metadata/metadataSlice';
 import { getFiles } from '../features/files/filesSlice';
@@ -27,7 +27,7 @@ import { getUserProfile } from '@dans-framework/auth';
 import { useSiteInfo, setTitle, lookupLanguageString } from '@dans-framework/utils';
 import type { Page } from '@dans-framework/pages';
 
-const Deposit = ({ config, page }: {config: InitialFormProps, page: Page}) => {
+const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
   const dispatch = useAppDispatch();
   const sessionId = useAppSelector(getSessionId);
   const openTab = useAppSelector(getOpenTab);
@@ -41,8 +41,6 @@ const Deposit = ({ config, page }: {config: InitialFormProps, page: Page}) => {
 
   // We import this function from the Auth library. Don't have to add it to the Deposit store this way.
   const { data: userData } = getUserProfile();
-
-  const targetKeys = userData && config.targetKeyIdentifiers.map( tki => userData.attributes[tki][0]);
 
   // Initialize form on initial render when there's no sessionId yet
   // or when form gets reset
@@ -62,7 +60,10 @@ const Deposit = ({ config, page }: {config: InitialFormProps, page: Page}) => {
       <Container>
         <Grid container>
           <Grid xs={12} mt={4}>
-            {userData && config.targetKeyIdentifiers.filter(tki => !userData.attributes[tki][0]).length > 0 &&
+            {userData && config.target.filter(t => 
+              (userData.attributes[t.authKey] && !userData.attributes[t.authKey][0]) || !userData.attributes[t.authKey]
+            ).length > 0 &&
+              // show a message if keys are missing
               <Alert severity="warning">
                 <AlertTitle>{t('missingInfoHeader')}</AlertTitle>
                 <Trans
@@ -84,7 +85,7 @@ const Deposit = ({ config, page }: {config: InitialFormProps, page: Page}) => {
             </AnimatePresence>
           </Grid>
           <Grid xs={12} mt={4} display="flex" justifyContent="end" alignItems="center">
-            <Submit targetKeys={targetKeys} />
+            <Submit />
           </Grid>
         </Grid>
       </Container>

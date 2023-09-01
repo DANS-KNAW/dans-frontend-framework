@@ -13,22 +13,26 @@ Clone the repo and run:
     pnpm i
 
 #### Running the app(s)
-    pnpm run dev
+    pnpm dev
 
-To run just a single app, add a line to the package.json scripts section like so:
+To run just a single app, you can add a line to the package.json scripts section like so:
 
     "dev:ohsmart": "turbo run dev --filter=@dans-framework/ohsmart"
 
-Then run `pnpm run dev:ohsmart` to start.
+Then run `pnpm dev:ohsmart` to start.
+
+Or simply run
+
+    pnpm --filter @dans-framework/ohsmart dev
 
 #### Testing the app(s)
 Tests are not implemented at the moment.
 
-    pnpm run test
+    pnpm test
 
 #### Building the app(s)
 
-    pnpm run build
+    pnpm build
 
 #### Adding a library to an app/package
 Add a library to all apps/packages. 

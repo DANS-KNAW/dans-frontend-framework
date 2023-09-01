@@ -1,5 +1,6 @@
-import type { Language, LanguageStrings } from '@dans-framework/utils/language';
+import type { Language, LanguageStrings } from '@dans-framework/utils';
 import type { Field, TextFieldType, GroupedFieldType, AutocompleteFieldType } from './MetadataFields';
+import type { Target } from '@dans-framework/auth';
 
 // Accordion sections
 export interface InitialSectionType {
@@ -28,12 +29,10 @@ export interface InitialFormType {
   'file-metadata'?: any;
 }
 
-export interface InitialFormProps {
+export interface FormConfig {
   form: InitialSectionType[];
-  targetRepo: string;
-  targetKeyIdentifiers: string[];
+  target: Target[];
   submitKey?: string;
-  targetAuth?: string;
   skipValidation?: boolean;
   geonamesApiKey?: string;
   gsheetsApiKey?: string;

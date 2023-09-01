@@ -10,7 +10,7 @@ import { AddButton, DeleteButton } from '../MetadataButtons';
 import { setField } from '../metadataSlice';
 import { getFieldStatus } from '../metadataHelpers';
 import type { TextFieldProps } from '../../../types/MetadataProps';
-import { lookupLanguageString } from '@dans-framework/utils/language';
+import { lookupLanguageString } from '@dans-framework/utils';
 import { getMetadataSubmitStatus } from '../../submit/submitSlice';
 
 const SingleTextField = ({field, sectionIndex, groupedFieldId, currentField = 0, totalFields = 1}: TextFieldProps) => {

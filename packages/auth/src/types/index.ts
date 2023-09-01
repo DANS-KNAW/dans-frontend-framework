@@ -5,3 +5,11 @@ export interface AuthProviderConfig {
   redirect_uri: string;
   loadUserInfo: boolean;
 }
+
+export interface Target {
+  name: string;
+  repo: string;
+  auth: string;
+  authKey: string;
+  keyUrl: string;
+}

@@ -1,12 +1,11 @@
 {
   "name": "@dans-framework/deposit",
+  "type": "module",
   "main": "lib/index.tsx",
   "private": true,
   "version": "1.0.0",
-  "type": "module",
   "dependencies": {
     "@dans-framework/auth": "workspace:*",
-    "@dans-framework/pages": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
@@ -36,6 +35,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@dans-framework/pages": "workspace:*",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/react-transition-group": "^4.4.6",

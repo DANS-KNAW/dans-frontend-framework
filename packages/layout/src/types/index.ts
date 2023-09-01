@@ -1,4 +1,4 @@
-import type { LanguageStrings } from '@dans-framework/utils/language';
+import type { LanguageStrings } from '@dans-framework/utils';
 
 export interface Footer {
   top: FooterContent[];

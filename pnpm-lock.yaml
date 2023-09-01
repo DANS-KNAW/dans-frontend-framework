@@ -53,9 +53,6 @@ importers:
       i18next-resources-to-backend:
         specifier: ^1.1.4
         version: 1.1.4
-      notistack:
-        specifier: ^3.0.1
-        version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -123,6 +120,9 @@ importers:
       i18next-resources-to-backend:
         specifier: ^1.1.4
         version: 1.1.4
+      notistack:
+        specifier: ^3.0.1
+        version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
       oidc-client-ts:
         specifier: ^2.2.4
         version: 2.2.4
@@ -154,9 +154,6 @@ importers:
       '@dans-framework/auth':
         specifier: workspace:*
         version: link:../auth
-      '@dans-framework/pages':
-        specifier: workspace:*
-        version: link:../pages
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../utils
@@ -239,6 +236,9 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
     devDependencies:
+      '@dans-framework/pages':
+        specifier: workspace:*
+        version: link:../pages
       '@types/react':
         specifier: ^18.2.15
         version: 18.2.15
@@ -340,6 +340,9 @@ importers:
       '@mui/utils':
         specifier: ^5.14.7
         version: 5.14.7(react@18.2.0)
+      notistack:
+        specifier: ^3.0.1
+        version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0

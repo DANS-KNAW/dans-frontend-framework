@@ -60,13 +60,19 @@ TBD. Displays a current users metadata submissions. Needs to be a child of `<Aut
     } />
 
 ### UserSettings
-Displays a current users settings, like API keys. Needs to be a child of `<AuthRoute />`. Takes `targetKeyIdentifiers` as props, usually set in the form config. This is an array of strings the component uses as keys to pull data from a user profile.
+Displays a current users settings, like API keys. Needs to be a child of `<AuthRoute />`. Takes `target` as props, usually set in the form config. This is an array of target objects the component uses for form submission authentication.
 
     import { UserSettings } from '@dans-framework/auth'
 
     <Route path="user-settings" element={
       <AuthRoute>
-        <UserSettings targetKeyIdentifiers={['']} />
+        <UserSettings target={[
+            name: '', // user readable name for the target repository, e.g. 'Dataverse'
+            repo: '', // the destination of the submission, as configured in the submission processing server, e.g. ssh.datastations.nl
+            authKey: '', // key that the app needs to pull from the keycloak user profile
+            auth: '', // type of authentication that the target repository requires. Depends on config of submission processing server, usually API_KEY.
+            keyUrl: '' // URL where user can get their API key for this target repo
+        ]} />
       </AuthRoute>
     } />
 

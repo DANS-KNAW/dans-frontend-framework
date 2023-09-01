@@ -1,11 +1,11 @@
 # DANS Metadata form application for OH-SMArt
 This is a wrapper application for the components of the DANS framework. Add and configure the components you need.
 
-## Full configuration
+## Configuration and usage
 Make sure required dependencies are installed in your **package.json**.
 
 #### Form
-The form should be an array of section objects. A section can be configured as indicated in the [@dans-framework/deposit](/packages/deposit/README.md) package.
+The form should be an array of section objects. A section can be configured as indicated in the [@dans-framework/deposit](/packages/deposit/README.md) package. To be used in `<Deposit />`.
 
 #### Pages
 The pages should be an array of page objects. A page can be configured as indicated in the [@dans-framework/pages](/packages/pages/README.md) package.
@@ -36,10 +36,3 @@ To display error messages from the Redux stores of several components, you need 
     import { SnackbarProvider } from 'notistack';
 
     <SnackbarProvider />
-
-#### CSS normalisation
-Ensure styling is normalised amongst different browsers. Add a CssBasline component somewhere in your app.
-
-    import CssBaseline from '@mui/material/CssBaseline';
-
-    <CssBaseline />

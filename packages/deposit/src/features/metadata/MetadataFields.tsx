@@ -15,7 +15,7 @@ import TextField from './fields/TextField';
 import DateTimeField from './fields/DateTimeField';
 import { RadioField, CheckField } from './fields/RadioCheckField';
 import { TransitionGroup } from 'react-transition-group';
-import { lookupLanguageString } from '@dans-framework/utils/language';
+import { lookupLanguageString } from '@dans-framework/utils';
 import { getMetadataSubmitStatus } from '../submit/submitSlice';
 import { useAppSelector } from '../../redux/hooks';
 import { useTranslation } from 'react-i18next';

@@ -17,6 +17,6 @@
 	"save": "Opslaan",
 	"saving": "Bezig...",
 	"apiKeyDescription": "<0>Haal je sleutel hier op</0> en plak hem hieronder.",
-	"apiKey": "Jouw persoonlijke API sleutel",
-	"dataverse_api_key": "Dataverse API sleutel"
+	"apiKeyHeader": "{{type}} API sleutel",
+	"apiKeyLabel": "Je persoonlijke {{type}} API sleutel"
 }

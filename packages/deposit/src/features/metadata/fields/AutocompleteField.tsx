@@ -8,7 +8,7 @@ import { StatusIcon } from '../../generic/Icons';
 import { setField } from '../metadataSlice';
 import type { AutocompleteFieldProps } from '../../../types/MetadataProps';
 import type { OptionsType } from '../../../types/MetadataFields';
-import { lookupLanguageString } from '@dans-framework/utils/language';
+import { lookupLanguageString } from '@dans-framework/utils';
 import { getMetadataSubmitStatus } from '../../submit/submitSlice';
 
 const AutocompleteField = ({field, sectionIndex, isLoading}: AutocompleteFieldProps) => {

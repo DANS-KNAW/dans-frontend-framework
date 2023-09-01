@@ -1,4 +1,4 @@
-import type { Language, LanguageStrings } from '@dans-framework/utils/language';
+import type { Language, LanguageStrings } from '@dans-framework/utils';
 
 // All user input field types
 export type InputField = TextFieldType | DateFieldType | AutocompleteFieldType | RadioFieldType | CheckFieldType | RepeatTextFieldType;

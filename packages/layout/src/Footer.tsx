@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import styles from './Footer.module.css';
 import type { Footer as FooterType, FooterContent } from './types';
-import { lookupLanguageString } from '@dans-framework/utils/language';
+import { lookupLanguageString } from '@dans-framework/utils';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import EmailIcon from '@mui/icons-material/Email';

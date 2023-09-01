@@ -19,16 +19,18 @@ import Divider from '@mui/material/Divider';
 import InputAdornment from '@mui/material/InputAdornment';
 import CheckIcon from '@mui/icons-material/Check';
 import { NavLink as RouterLink } from 'react-router-dom';
+import type { Target } from './types';
+import { enqueueSnackbar } from 'notistack';
 
-export const UserSettings = ({targetKeyIdentifiers}: {targetKeyIdentifiers: string[]}) => {
+export const UserSettings = ({target}: {target: Target[]}) => {
   const { t } = useTranslation('user');
   return (
     <Container>
       <Grid container>
         <Grid xs={12} mdOffset={2.5} md={7}>
           <Typography variant="h1">{t('userSettings')}</Typography>
-          {targetKeyIdentifiers.map( targetKeyIdentifier =>
-            <UserSettingsItem key={targetKeyIdentifier} targetKeyIdentifier={targetKeyIdentifier} />
+          {target.map( t =>
+            <UserSettingsItem key={t.authKey} target={t} />
           )}
         </Grid>
       </Grid>
@@ -36,32 +38,31 @@ export const UserSettings = ({targetKeyIdentifiers}: {targetKeyIdentifiers: stri
   )
 }
 
-const UserSettingsItem = ({targetKeyIdentifier}: {targetKeyIdentifier: string}) => {
+const UserSettingsItem = ({target}: {target: Target}) => {
   const { t } = useTranslation('user');
   const { data } = useFetchUserProfileQuery(null);
   const [apiValue, setApiValue] = useState('Loading...');
 
   // set API key value once it's been retrieved
-  useEffect(() => data && setApiValue(data.attributes[targetKeyIdentifier][0] || ''), [data, targetKeyIdentifier]);
+  useEffect(() => data && setApiValue((data.attributes[target.authKey] && data.attributes[target.authKey][0]) || ''), [data, target.authKey]);
 
   // call keycloak to save new API key
   const [saveData, {isUninitialized, isLoading, isSuccess, isError}] = useSaveUserDataMutation();
 
   return (
     <Stack direction="column" alignItems="flex-start" mb={4}>
-      <Typography variant="h6">{t(targetKeyIdentifier)}</Typography>
+      <Typography variant="h6">{t('apiKeyHeader', {type: target.name})}</Typography>
       <Typography mb={3}>
         <Trans
           i18nKey="user:apiKeyDescription"
           components={[
-            // todo get url from var/config
-            <Link href="https://demo.ssh.datastations.nl/dataverseuser.xhtml?selectTab=apiTokenTab" target="_blank"/>
+            <Link href={target.keyUrl} target="_blank"/>
           ]}
         />
       </Typography>
       <TextField 
-        id={targetKeyIdentifier} 
-        label={t('apiKey', {type: t(targetKeyIdentifier)})} 
+        id={target.authKey} 
+        label={t('apiKeyLabel', {type: target.name})} 
         variant="outlined" 
         sx={{width: '100%', flex: 1}}
         value={apiValue}
@@ -71,12 +72,12 @@ const UserSettingsItem = ({targetKeyIdentifier}: {targetKeyIdentifier: string}) 
             ...data,
             attributes: {
               ...data.attributes,
-              [targetKeyIdentifier]: apiValue
+              [target.authKey]: apiValue
             },
           })
         }
         InputProps={{
-          endAdornment: data && data.attributes[targetKeyIdentifier][0] &&
+          endAdornment: data && data.attributes[target.authKey] && data.attributes[target.authKey][0] &&
             <InputAdornment position="end">
               <CheckIcon />
             </InputAdornment>
@@ -186,7 +187,10 @@ export const LoginButton = ({variant}: {variant?: 'contained'}) => {
           backgroundColor: 'rgba(255,255,255,0.1)'
         },
       } : {}}
-      onClick={() => void auth.signinRedirect()}
+      onClick={
+        () => void auth.signinRedirect()
+          .catch(e => enqueueSnackbar('Error redirecting to sign-in server!', {variant: 'error'}))
+      }
     >
       {t('login')}
     </Button>

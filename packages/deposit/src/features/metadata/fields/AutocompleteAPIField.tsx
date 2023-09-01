@@ -20,7 +20,7 @@ import { setField, setMultiApiField } from '../metadataSlice';
 import type { AutocompleteFieldProps, AutocompleteAPIFieldProps, ApiLinkProps } from '../../../types/MetadataProps';
 import type { TypeaheadAPI, OptionsType } from '../../../types/MetadataFields';
 import type { QueryReturnType } from '../../../types/Api';
-import { lookupLanguageString } from '@dans-framework/utils/language';
+import { lookupLanguageString } from '@dans-framework/utils';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';

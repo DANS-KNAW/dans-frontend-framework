@@ -6,10 +6,8 @@ The Deposit component consists of the metadata form and a file upload section.
     <Deposit config=
       { 
         form: [{...}], // an array of form sections, see below 
-        targetRepo: '', // the destination of the submission, as configured in the submit processing server, e.g. ssh.datastations.nl
-        targetKeyIdentifiers: [''], // an array of values for the object keys that the app needs to pull from the keycloak user profile, like a Dataverse API key.
+        target: [{...}] // Target object, the destination of the submission.
         submitKey: '', // A string that gets passed along in the header of the form submission: 'Bearer <submitKey>'
-        targetAuth: '', // Type of authentication that the target repository requires. Depends on config of submit destination, usually API_KEY.
         skipValidation: false, // if true, a form can always be submitted, handy for testing purposes
         geonamesApiKey: '' // optional Geonames API key
         gsheetsApiKey: '', // optional Google sheets API key
@@ -17,6 +15,7 @@ The Deposit component consists of the metadata form and a file upload section.
       page={...} // A page object
     />
 
+For target objects, see [@dans-framework/auth](/packes/auth/README.md).
 For page objects, see [@dans-framework/pages](/packages/pages/README.md). 
 
 Each section is a collapsible accordion in the front-end. A section is formatted like so:

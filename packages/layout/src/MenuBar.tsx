@@ -12,7 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { DansLogoWhite } from './images/DansLogo';
 import { NavLink as RouterLink } from 'react-router-dom';
 import type { Page } from '@dans-framework/pages';
-import { lookupLanguageString } from '@dans-framework/utils/language';
+import { lookupLanguageString } from '@dans-framework/utils';
 import { useTranslation } from 'react-i18next';
 import { UserMenu } from '@dans-framework/auth';
 import { useAuth } from 'react-oidc-context';

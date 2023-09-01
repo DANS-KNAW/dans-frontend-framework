@@ -17,6 +17,6 @@
 	"save": "Save",
 	"saving": "Saving...",
 	"apiKeyDescription": "<0>Get you key here</0> and paste it below.",
-	"apiKey": "Your personal {{type}}",
-	"dataverse_api_key": "Dataverse API key"
+	"apiKeyHeader": "{{type}} API key",
+	"apiKeyLabel": "Your personal {{type}} API key"
 }

@@ -1,6 +1,7 @@
 {
   "name": "@dans-framework/pages",
   "main": "lib/index.tsx",
+  "types": "lib/index.tsx",
   "private": true,
   "version": "0.0.0",
   "type": "module",

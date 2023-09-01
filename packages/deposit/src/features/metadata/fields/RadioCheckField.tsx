@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setField } from '../metadataSlice';
 import { getFieldStatus } from '../metadataHelpers';
 import { StatusIcon } from '../../generic/Icons';
-import { lookupLanguageString } from '@dans-framework/utils/language';
+import { lookupLanguageString } from '@dans-framework/utils';
 import type { RadioFieldProps, CheckFieldProps } from '../../../types/MetadataProps';
 import { getMetadataSubmitStatus } from '../../submit/submitSlice';
 import { useTranslation } from 'react-i18next';

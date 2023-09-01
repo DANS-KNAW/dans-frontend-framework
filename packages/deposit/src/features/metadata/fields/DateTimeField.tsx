@@ -13,7 +13,7 @@ import { AddButton, DeleteButton } from '../MetadataButtons';
 import { setField, setDateTypeField } from '../metadataSlice';
 import { getFieldStatus } from '../metadataHelpers';
 import type { DateFieldProps } from '../../../types/MetadataProps';
-import { lookupLanguageString } from '@dans-framework/utils/language';
+import { lookupLanguageString } from '@dans-framework/utils';
 import { getMetadataSubmitStatus } from '../../submit/submitSlice';
 
 // Date and time selection component

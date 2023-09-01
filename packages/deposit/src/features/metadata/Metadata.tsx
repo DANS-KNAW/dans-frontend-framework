@@ -10,7 +10,7 @@ import { SingleField, GroupedField } from './MetadataFields';
 import { StatusIcon } from '../generic/Icons';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { getMetadata, getOpenPanel, setOpenPanel } from './metadataSlice';
-import { lookupLanguageString } from '@dans-framework/utils/language';
+import { lookupLanguageString } from '@dans-framework/utils';
 import { useTranslation } from 'react-i18next';
 
 const Form = () => {

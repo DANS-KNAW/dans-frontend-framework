@@ -16,8 +16,9 @@ import { setMetadataSubmitStatus, getMetadataSubmitStatus, getFilesSubmitStatus,
 import { formatFormData, formatFileData } from './submitHelpers';
 import { useTranslation } from 'react-i18next';
 import { getData } from '../../deposit/depositSlice';
+import { getUserProfile } from '@dans-framework/auth';
 
-const Submit = ({targetKeys}: {targetKeys: string[]}) => {
+const Submit = () => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation('submit');
   const metadataStatus = useAppSelector(getMetadataStatus);
@@ -25,8 +26,14 @@ const Submit = ({targetKeys}: {targetKeys: string[]}) => {
   const metadata = useAppSelector(getMetadata);
   const selectedFiles = useAppSelector(getFiles);
   const sessionId = useAppSelector(getSessionId);
+  // get form config
+  const formConfig = useAppSelector(getData);
   // File status exists in an array, so we need to do some processing and filtering. 
   const filesSubmitStatus = useAppSelector(getFilesSubmitStatus).filter(f => f.id !== '');
+  // Get the users API keys
+  const { data: userData } = getUserProfile();
+  const targetKeys = userData && formConfig.target.map( t => userData.attributes[t.authKey] && userData.attributes[t.authKey][0]);
+  // Calculate total upload progress
   const totalFileProgress = filesSubmitStatus.reduce( (n, {progress}) => n + (progress || 0), 0) / filesSubmitStatus.length || undefined;
   // If any file has an error, the form should indicate that.
   const fileStatusArray = [...new Set(filesSubmitStatus.map(f => f.status))];
@@ -51,17 +58,15 @@ const Submit = ({targetKeys}: {targetKeys: string[]}) => {
     reset: resetSubmittedFiles, 
   }] = useSubmitFilesMutation();
 
-  const depositProps = useAppSelector(getData);
-
   const handleButtonClick = () => {
     // First submit the metadata
     const formattedMetadata = formatFormData(sessionId, metadata, selectedFiles);
     dispatch(setMetadataSubmitStatus('submitting'));
     submitData({
       data: formattedMetadata, 
-      targetRepo: depositProps.targetRepo,
-      submitKey: depositProps.submitKey,
-      targetAuth: depositProps.targetAuth,
+      submitKey: formConfig.submitKey,
+      targetRepo: formConfig.target.map( t => t.repo ).join(' '),
+      targetAuth: formConfig.target.map( t => t.auth ).join(' '),
       targetKeys: targetKeys.join(' '),
     });
   };
@@ -73,7 +78,7 @@ const Submit = ({targetKeys}: {targetKeys: string[]}) => {
         .then( d => {
           submitFiles({
             data: d, 
-            submitKey: depositProps.submitKey,
+            submitKey: formConfig.submitKey,
           });
         });
     }
@@ -172,7 +177,7 @@ const Submit = ({targetKeys}: {targetKeys: string[]}) => {
         }
         <Button
           variant="contained"
-          disabled={isSuccessMeta || isLoadingMeta || (metadataStatus === 'error' && !depositProps.skipValidation)}
+          disabled={isSuccessMeta || isLoadingMeta || (metadataStatus === 'error' && !formConfig.skipValidation)}
           onClick={handleButtonClick}
           size="large"
         >
