@@ -18,3 +18,13 @@ Helper function to show errors created by RTK as popup notification. Import in a
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware()
       .concat(errorLogger)
+
+### @dans-framework/utils/hooks
+    import { SiteInfoProvider, useSiteInfo } from '@dans-framework/utils'
+
+Provides and gets context for site info (name, description).
+
+### @dans-framework/utils/pagemeta
+    import { setTitle } from '@dans-framework/utils'
+
+Function to set document title `setTitle('site name', 'page title')`

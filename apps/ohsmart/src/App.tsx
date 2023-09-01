@@ -34,6 +34,7 @@ const App = () => {
               <Skeleton height={600} width={900} />
             </Box>
           }>
+            {/* Provider to make sure we can set proper page title info when switching routes */}
             <SiteInfoProvider value={siteInfo}>
               <Routes>
                 <Route path="signin-callback" element={<SignInCallback />} />
