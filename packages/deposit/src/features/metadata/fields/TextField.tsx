@@ -20,8 +20,6 @@ const SingleTextField = ({field, sectionIndex, groupedFieldId, currentField = 0,
   const { t, i18n } = useTranslation('metadata');
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
 
-  console.log(auth)
-
   useEffect(() => {
     // if requested, auto fill user data from oidc
     // atm, this gets data from the possibly stale auth.user.profile object

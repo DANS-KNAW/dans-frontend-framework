@@ -9,8 +9,10 @@ import type {
   CheckFieldType,
   AutocompleteFieldType,
   AutocompleteAPIFieldData,
-  TypeaheadAPI
+  TypeaheadAPI,
+  OptionsType,
 } from './MetadataFields';
+import type { AutocompleteRenderGetTagProps } from '@mui/material';
 
 // Props for components
 export interface SingleFieldProps {
@@ -78,4 +80,11 @@ export interface InfoLinkProps {
   apiValue?: TypeaheadAPI;
   chip?: boolean;
   checkValue?: string;
+}
+
+export interface InfoChipProps {
+  option: OptionsType;
+  apiValue?: TypeaheadAPI;
+  getTagProps: AutocompleteRenderGetTagProps;
+  index: number;
 }

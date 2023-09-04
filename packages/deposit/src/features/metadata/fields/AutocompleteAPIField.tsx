@@ -266,7 +266,7 @@ const AutocompleteAPIField = ({
         }
         renderTags={(value, getTagProps) => 
           value.map((option, index) => 
-            <InfoChip option={option} index={index} getTagProps={getTagProps} apiValue={apiValue} />
+            <InfoChip key={index} option={option} apiValue={apiValue} getTagProps={getTagProps} index={index} />
           )
         }
         onChange={(e, newValue, reason) => {

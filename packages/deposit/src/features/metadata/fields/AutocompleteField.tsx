@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { getFieldStatus } from '../metadataHelpers';
 import { StatusIcon } from '../../generic/Icons';
 import { setField } from '../metadataSlice';
-import type { AutocompleteFieldProps, InfoLinkProps } from '../../../types/MetadataProps';
+import type { AutocompleteFieldProps, InfoLinkProps, InfoChipProps } from '../../../types/MetadataProps';
 import type { OptionsType } from '../../../types/MetadataFields';
 import { lookupLanguageString } from '@dans-framework/utils';
 import { getMetadataSubmitStatus } from '../../submit/submitSlice';
@@ -50,7 +50,7 @@ const AutocompleteField = ({field, sectionIndex, isLoading}: AutocompleteFieldPr
         }
         renderTags={(value, getTagProps) => 
           value.map((option, index) => 
-            <InfoChip key={index} option={option} index={index} getTagProps={getTagProps} />
+            <InfoChip option={option} key={index} getTagProps={getTagProps} index={index} />
           )
         }
         onChange={(e, newValue) => dispatch(setField({
@@ -84,12 +84,12 @@ export const InfoLink = ({link, apiValue, chip, checkValue}: InfoLinkProps) => {
   )
 }
 
-export const InfoChip = ({option, apiValue, getTagProps, index}: any) => {
+export const InfoChip = ({option, apiValue, getTagProps, index}: InfoChipProps) => {
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const { i18n } = useTranslation('metadata');
-
   return (
     <Chip
+      {...getTagProps({index})}
       label={
         option.freetext ? 
         option.value : 
@@ -106,7 +106,6 @@ export const InfoChip = ({option, apiValue, getTagProps, index}: any) => {
         /> :
         undefined
       }
-      {...getTagProps({ index })}
       disabled={option.mandatory || metadataSubmitStatus !== ''}
     />
   )
