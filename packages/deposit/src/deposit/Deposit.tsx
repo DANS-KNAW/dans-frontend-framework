@@ -23,12 +23,14 @@ import { Link as RouterLink } from 'react-router-dom';
 import { setData } from './depositSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { getUserProfile } from '@dans-framework/auth';
+import { fetchUserProfile } from '@dans-framework/auth';
 import { useSiteInfo, setTitle, lookupLanguageString } from '@dans-framework/utils';
 import type { Page } from '@dans-framework/pages';
+import { useAuth } from 'react-oidc-context';
 
 const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
   const dispatch = useAppDispatch();
+  const auth = useAuth();
   const sessionId = useAppSelector(getSessionId);
   const openTab = useAppSelector(getOpenTab);
   const { t, i18n } = useTranslation('generic');
@@ -40,7 +42,7 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
   }, [siteInfo.name, name, i18n.language]);
 
   // We import this function from the Auth library. Don't have to add it to the Deposit store this way.
-  const { data: userData } = getUserProfile();
+  const { data: userData } = fetchUserProfile({provider: auth.user?.profile.iss as string, id: auth.user?.profile.aud as string});
 
   // Initialize form on initial render when there's no sessionId yet
   // or when form gets reset

@@ -76,12 +76,12 @@ Displays a current users settings, like API keys. Needs to be a child of `<AuthR
       </AuthRoute>
     } />
 
-### getUserProfile
+### fetchUserProfile
 Helper function to get the current users profile information.
 
-    import { getUserProfile } from '@dans-framework/auth'
+    import { fetchUserProfile } from '@dans-framework/auth'
 
-    const { data } = getUserProfile();
+    const { data } = fetchUserProfile();
 
 ### i18n
 Exposes the Auth components language config. Use this in the main apps language config.

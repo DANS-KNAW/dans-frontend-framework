@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { User } from 'oidc-client-ts';
 
-function getUser() {
-    const oidcStorage = sessionStorage.getItem(`oidc.user:${import.meta.env.VITE_OIDC_AUTHORITY}:${import.meta.env.VITE_OIDC_CLIENT_ID}`)
+function getUser(provider: string, id: string) {
+    const oidcStorage = sessionStorage.getItem(`oidc.user:${provider}:${id}`)
     if (!oidcStorage) {
         return null;
     }
@@ -11,15 +11,15 @@ function getUser() {
 
 export const authApi = createApi({
   reducerPath: 'auth',
-  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_OIDC_AUTHORITY }),
+  baseQuery: fetchBaseQuery(),
   tagTypes: ['User'],
   endpoints: (build) => ({
     fetchUserProfile: build.query({
-      query: () => {
-        const user = getUser();
+      query: ({provider, id}) => {
+        const user = getUser(provider, id);
         const token = user?.access_token;
         return ({
-          url: 'account',
+          url: `${provider}/account`,
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${token}`,
@@ -29,11 +29,11 @@ export const authApi = createApi({
       providesTags: ['User'],
     }),
     saveUserData: build.mutation({
-      query: (content) => {
-        const user = getUser();
+      query: ({provider, id, content}) => {
+        const user = getUser(provider, id);
         const token = user?.access_token;
         return ({
-          url: 'account',
+          url: `${provider}/account`,
           method: 'POST',
           headers: {
             Accept: 'application/json',

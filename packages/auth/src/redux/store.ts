@@ -21,5 +21,7 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   Action<string>
 >;
 
-export const initUserProfile = () => store.dispatch(authApi.endpoints.fetchUserProfile.initiate(null));
-export const getUserProfile = () => authApi.endpoints.fetchUserProfile.select(null)(store.getState());
+export const initUserProfile = ({provider, id}: {provider: string, id: string}) => 
+  store.dispatch(authApi.endpoints.fetchUserProfile.initiate({provider: provider, id: id}));
+export const fetchUserProfile = ({provider, id}: {provider: string, id: string}) => 
+  authApi.endpoints.fetchUserProfile.select({provider: provider, id: id})(store.getState());
