@@ -40,7 +40,35 @@ const section = {
             en: 'DANS Licence',
             nl: 'DANS Licentie',
           },
-          value: 'dans-licence',
+          value: 'https://dans.knaw.nl/wp-content/uploads/2022/01/DANS_Licence_EN.pdf',
+        },
+        {
+          label: 'CC0-1.0',
+          value: 'https://creativecommons.org/publicdomain/zero/1.0/',
+        },
+        {
+          label: 'CC-BY-4.0',
+          value: 'https://creativecommons.org/licenses/by/4.0/',
+        },
+        {
+          label: 'CC-BY-SA-4.0',
+          value: 'https://creativecommons.org/licenses/by-sa/4.0/',
+        },
+        {
+          label: 'CC BY-NC 4.0',
+          value: 'https://creativecommons.org/licenses/by-nc/4.0/',
+        },
+        {
+          label: 'CC BY-ND 4.0',
+          value: 'https://creativecommons.org/licenses/by-nd/4.0/',
+        },
+        {
+          label: 'CC BY-NC-ND 4.0',
+          value: 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
+        },
+        {
+          label: 'CC BY-NC-SA 4.0',
+          value: 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
         },
       ],
     },

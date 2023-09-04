@@ -73,8 +73,9 @@ export interface AddFieldButtonProps extends FieldButtonProps {
   type: 'single' | 'group';
 }
 
-export interface ApiLinkProps {
+export interface InfoLinkProps {
   link: string;
-  apiValue: TypeaheadAPI;
+  apiValue?: TypeaheadAPI;
   chip?: boolean;
+  checkValue?: string;
 }

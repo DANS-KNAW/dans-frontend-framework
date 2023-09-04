@@ -56,7 +56,6 @@ const section = {
             nl: 'Geboortedatum',
           },
           name: 'interviewee_dob',
-          required: true,
           private: true,
         },
         {
@@ -143,6 +142,16 @@ const section = {
           
           private: true,
           repeatable: true,
+        },
+        {
+          type: 'date',
+          format: 'DD-MM-YYYY',
+          label: {
+            en: 'Date of birth',
+            nl: 'Geboortedatum',
+          },
+          name: 'interviewer_dob',
+          private: true,
         },
         {
           type: 'text',
@@ -336,6 +345,7 @@ const section = {
       name: 'interview_location',
       required: true,
       multiselect: true,
+      allowFreeText: true,
       description: {
         en: 'Location where interview was conducted',
         nl: 'Plek waar het interview is afgenomen',
@@ -357,7 +367,8 @@ const section = {
       fields: [
         {
           type: 'date',
-          format: 'DD-MM-YYYY HH:mm',
+          format: 'DD-MM-YYYY',
+          formatOptions: ['YYYY', 'MM-YYYY', 'DD-MM-YYYY', 'DD-MM-YYYY HH:mm'],
           label: {
             en: 'Start time and date',
             nl: 'Starttijd en -datum',
@@ -367,7 +378,8 @@ const section = {
         },
         {
           type: 'date',
-          format: 'DD-MM-YYYY HH:mm',
+          format: 'DD-MM-YYYY',
+          formatOptions: ['YYYY', 'MM-YYYY', 'DD-MM-YYYY', 'DD-MM-YYYY HH:mm'],
           label: {
             en: 'End time and date',
             nl: 'Eindtijd en -datum',
@@ -396,7 +408,7 @@ const section = {
             nl: 'Voornaam',
           },
           name: 'recorded_by_first_name',
-          required: true,
+          required: false,
         },
         {
           type: 'text',
@@ -405,7 +417,7 @@ const section = {
             nl: 'Achternaam',
           },
           name: 'recorded_by_last_name',
-          required: true,
+          required: false,
         },
         {
           type: 'text',
@@ -414,7 +426,7 @@ const section = {
             nl: 'Affiliatie',
           },
           name: 'recorded_by_affiliation',
-          required: true,
+          required: false,
         },
       ],
     },
@@ -444,14 +456,14 @@ const section = {
     {
       type: 'group',
       label: {
-        en: 'Transcript by human',
-        nl: 'Transcriptie door persoon',
+        en: 'Transcriper',
+        nl: 'Transcribent',
       },
       name: 'transcript_human',
       repeatable: true,
       description: {
-        en: 'Information about the transcriber. This data will not be public.',
-        nl: 'Informatie over de persoon die de transcriptie heeft gedaan. Deze data wordt niet gepubliceerd.',
+        en: 'In case of transcript by human. This data will not be public.',
+        nl: 'Wanneer de transcriptie door een persoon is gedaan. Deze data wordt niet gepubliceerd.',
       },
       fields: [
         {
@@ -461,7 +473,6 @@ const section = {
             nl: 'Voornaam',
           },
           name: 'transcript_human_first_name',
-          required: true,
           private: true,
         },
         {
@@ -471,7 +482,6 @@ const section = {
             nl: 'Achternaam',
           },
           name: 'transcript_human_last_name',
-          required: true,
           private: true,
         },
         {
@@ -480,8 +490,7 @@ const section = {
             en: 'Function',
             nl: 'Functie',
           },
-          name: 'transcript_human_function',
-          
+          name: 'transcript_human_function',       
           private: true,
           repeatable: true,
         },
@@ -492,7 +501,6 @@ const section = {
             nl: 'Affiliatie',
           },
           name: 'transcript_human_affiliation',
-          
           private: true,
           repeatable: true,
         },
@@ -503,7 +511,6 @@ const section = {
             nl: 'Toestemmingsformulier',
           },
           name: 'transcript_human_consent',
-          
           private: true,
           options: [
             {

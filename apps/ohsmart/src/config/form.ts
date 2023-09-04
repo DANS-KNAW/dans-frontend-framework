@@ -14,9 +14,9 @@ import humanities from './formsections/humanities';
 const sections = [
   administrative,
   citation,
+  oralHistorySpecific,
   coverage,
   humanities,
-  oralHistorySpecific,
   relations,
   rights,
 ];

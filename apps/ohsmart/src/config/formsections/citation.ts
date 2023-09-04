@@ -37,6 +37,7 @@ const section = {
         nl: 'Beschrijving',
       },
       name: 'description',
+      multiline: true,
       required: true,
       description: {
         en: 'Some context on the interview. What is the role and relevance of the interviewee in the project? What led to the interview being conducted? Summary of what was discussed in the interview, with time breakdown, and describe important events in the interview. Improves discoverability and reusability of the interview data. Briefly describe the setting and atmosphere of the interview to indicate what does not emerge when only the text is read.',

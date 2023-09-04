@@ -49,18 +49,6 @@ const section = {
       },
       fields: [
         {
-          type: 'text',
-          label: {
-            en: 'Related item',
-            nl: 'Gerelateerd item',
-          },
-          name: 'relation_item',     
-          description: {
-            en: 'Title of an external item related to this dataset',
-            nl: 'Titel van een extern item gerelateerd aan deze dataset',
-          },
-        },
-        {
           type: 'autocomplete',
           label: {
             en: 'Type of relation',
@@ -72,6 +60,18 @@ const section = {
             nl: 'Type relatie met dit externe item',
           },
           options: relationships.map((r: string) => ({label: r, value: r})),
+        },
+        {
+          type: 'text',
+          label: {
+            en: 'Related item',
+            nl: 'Gerelateerd item',
+          },
+          name: 'relation_item',     
+          description: {
+            en: 'Title of an external item related to this dataset',
+            nl: 'Titel van een extern item gerelateerd aan deze dataset',
+          },
         },
         {
           type: 'text',

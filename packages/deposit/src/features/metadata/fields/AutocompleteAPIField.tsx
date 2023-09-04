@@ -17,7 +17,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { getFieldStatus } from '../metadataHelpers';
 import { StatusIcon } from '../../generic/Icons';
 import { setField, setMultiApiField } from '../metadataSlice';
-import type { AutocompleteFieldProps, AutocompleteAPIFieldProps, ApiLinkProps } from '../../../types/MetadataProps';
+import type { AutocompleteFieldProps, AutocompleteAPIFieldProps } from '../../../types/MetadataProps';
 import type { TypeaheadAPI, OptionsType } from '../../../types/MetadataFields';
 import type { QueryReturnType } from '../../../types/Api';
 import { lookupLanguageString } from '@dans-framework/utils';
@@ -25,11 +25,7 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import MenuItem from '@mui/material/MenuItem';
-import Chip from '@mui/material/Chip';
-import Tooltip from '@mui/material/Tooltip';
-import LaunchIcon from '@mui/icons-material/Launch';
-import InputAdornment from '@mui/material/InputAdornment';
-import AutocompleteField from './AutocompleteField';
+import AutocompleteField, { InfoLink, InfoChip } from './AutocompleteField';
 import { getMetadataSubmitStatus } from '../../submit/submitSlice';
 import { getData } from '../../../deposit/depositSlice';
 
@@ -222,19 +218,6 @@ export const MultiApiField = ({field, sectionIndex}: AutocompleteFieldProps) => 
   )
 }
 
-const ApiLink = ({link, apiValue, chip}: ApiLinkProps) => {
-  const { t } = useTranslation('metadata');
-  return (
-    <InputAdornment position="start" sx={{ml: chip ? 1.5 : 0.5, mr: chip ? -0.75 : 0.25}}>
-      <Tooltip title={t('checkApi', {api: t(apiValue)})}>
-        <a href={link} target="_blank" style={{lineHeight:0}} rel="noreferrer">
-          <LaunchIcon color="primary" sx={{fontSize: 16, '&:hover': {color: 'primary.dark'}}} />
-        </a>
-      </Tooltip>
-    </InputAdornment>
-  )
-}
-
 const AutocompleteAPIField = ({
   field, 
   sectionIndex, 
@@ -276,20 +259,14 @@ const AutocompleteAPIField = ({
               InputProps={{
                 ...params.InputProps,
                 startAdornment: !field.multiselect && field.value && !Array.isArray(field.value) && field.value.value && field.value.value.startsWith('http') ? 
-                  <ApiLink link={field.value.value} apiValue={apiValue} /> :
+                  <InfoLink link={field.value.value} apiValue={apiValue} /> :
                   params.InputProps.startAdornment,
               }}
             />
         }
         renderTags={(value, getTagProps) => 
           value.map((option, index) => 
-            <Chip
-              label={(option.freetext ? (option.value) : lookupLanguageString(option.label, i18n.language)) as string}
-              size="medium"
-              icon={option.value && option.value.startsWith('http') ? <ApiLink link={option.value} apiValue={apiValue} chip={true} /> : undefined}
-              {...getTagProps({ index })}
-              disabled={option.mandatory || metadataSubmitStatus !== ''}
-            />
+            <InfoChip option={option} index={index} getTagProps={getTagProps} apiValue={apiValue} />
           )
         }
         onChange={(e, newValue, reason) => {
