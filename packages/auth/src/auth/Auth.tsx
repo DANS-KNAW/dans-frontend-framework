@@ -7,11 +7,11 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import type { ReactNode } from 'react';
 import { AuthProvider } from 'react-oidc-context';
-import type { AuthProviderConfig } from './types';
 import { I18nextProvider } from 'react-i18next';
-import i18nProvider from './languages/i18n';
 import { Provider as ReduxProvider } from 'react-redux';
-import { store } from './redux/store';
+import i18nProvider from '../languages/i18n';
+import type { AuthProviderConfig } from '../types';
+import { store } from '../redux/store';
 
 export const AuthWrapper = ({ authProvider, children }: {authProvider: AuthProviderConfig, children: ReactNode}) => {
   return (
@@ -42,7 +42,7 @@ export const AuthRoute = ({ children }: { children: ReactNode }) => {
 
 export const SignInCallback = () => {
   const auth = useAuth();
-  const { t } = useTranslation('user');
+  const { t } = useTranslation('auth');
 
   if (auth.isLoading || auth.activeNavigator) {
     return (

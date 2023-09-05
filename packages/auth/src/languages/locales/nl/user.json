@@ -7,10 +7,6 @@
 	"userMenuSubmissions": "Submissies",
 	"logout": "Uitloggen",
 	"login": "Inloggen",
-	"signingIn": "Bezig met inloggen...",
-	"signingOut": "Bezig met uitloggen...",
-	"isLoading": "Momentje...",
-	"signinError": "Fout bij inloggen!",
 	"chooseLogin": "Kies loginmethode",
 	"institution": "jouw onderwijsinstelling",
 	"loginProvider": "Log in met {{provider}}",
@@ -18,5 +14,13 @@
 	"saving": "Bezig...",
 	"apiKeyDescription": "<0>Haal je sleutel hier op</0> en plak hem hieronder.",
 	"apiKeyHeader": "{{type}} API sleutel",
-	"apiKeyLabel": "Je persoonlijke {{type}} API sleutel"
+	"apiKeyLabel": "Je persoonlijke {{type}} API sleutel",
+	"userSubmissionsDrafts": "Opgeslagen formulieren",
+	"userSubmissionsCompleted": "Verstuurde formulieren",
+	"editSubmission": "Edit dit formulier en stuur het op",
+	"errorSubmission": "Er is iets misgegaan bij het verwerken van dit formulier",
+	"viewSubmission": "Bekijk de metadata",
+	"retrySubmission": "There was an error processing this submission, please edit and try again",
+	"continueSubmission": "Continue filling out this form. Currently {{percent}}% complete.",
+	"viewSubmissionExtended": "View this submission on {{location}}"
 }

@@ -1,5 +1,5 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import { authApi } from '../authApi';
+import { authApi } from '../auth/authApi';
 import { errorLogger } from '@dans-framework/utils';
 
 export const store = configureStore({

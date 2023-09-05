@@ -7,10 +7,6 @@
 	"userMenuSubmissions": "Submissions",
 	"logout": "Log out",
 	"login": "Log in",
-	"signingIn": "Signing you in...",
-	"signingOut": "Signing you out...",
-	"isLoading": "Loading...",
-	"signinError": "Error signing you in!",
 	"chooseLogin": "Pick log in method",
 	"institution": "your institution",
 	"loginProvider": "Log in with {{provider}}",
@@ -18,5 +14,13 @@
 	"saving": "Saving...",
 	"apiKeyDescription": "<0>Get you key here</0> and paste it below.",
 	"apiKeyHeader": "{{type}} API key",
-	"apiKeyLabel": "Your personal {{type}} API key"
+	"apiKeyLabel": "Your personal {{type}} API key",
+	"userSubmissionsDrafts": "Saved forms",
+	"userSubmissionsCompleted": "Submitted forms",
+	"editSubmission": "Edit this submission",
+	"errorSubmission": "Something went wrong processing this submission",
+	"viewSubmission": "View this submission",
+	"retrySubmission": "There was an error processing this submission, please edit and try again",
+	"continueSubmission": "Continue filling out this form. Currently {{percent}}% complete.",
+	"viewSubmissionExtended": "View this submission on {{location}}"
 }
