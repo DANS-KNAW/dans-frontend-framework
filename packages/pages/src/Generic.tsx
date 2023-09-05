@@ -10,17 +10,16 @@ import { lookupLanguageString } from '@dans-framework/utils';
 import { useAuth } from 'react-oidc-context';
 import { useTranslation } from 'react-i18next';
 import { LoginButton } from '@dans-framework/auth';
-import { useSiteInfo } from '@dans-framework/utils';
-import { setTitle } from '@dans-framework/utils/pagemeta';
+import { useSiteTitle, setSiteTitle } from '@dans-framework/utils';
 
 const Generic = ({ logo, name, content, action }: Page) => {
   const auth = useAuth();
   const { i18n } = useTranslation();
-  const siteInfo = useSiteInfo();
+  const siteTitle = useSiteTitle();
 
   useEffect( () => { 
-    setTitle(siteInfo.name, lookupLanguageString(name, i18n.language) as string);
-  }, [siteInfo.name, name, i18n.language]);
+    setSiteTitle(siteTitle, lookupLanguageString(name, i18n.language));
+  }, [siteTitle, name]);
 
   return (
     <Container>

@@ -6,6 +6,7 @@
   "keywords": [],
   "author": "",
   "dependencies": {
+    "@dans-framework/utils": "workspace:*",
     "@mui/material": "^5.14.3",
     "@mui/utils": "^5.14.7",
     "notistack": "^3.0.1",

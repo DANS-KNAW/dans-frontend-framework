@@ -5,11 +5,13 @@ The DANS framework uses the [MUI library](https://mui.com/material-ui/getting-st
 
     import { ThemeWrapper } from '@dans-framework/theme'
 
-    <ThemeWrapper theme={theme}>
+    <ThemeWrapper theme={theme} siteTitle="Site name">
       // rest of your app
     </ThemeWrapper>
 
-Custom config used in the DANS framework:
+Passing along a siteTitle prop ensures appropriate setting of the HTML document title.
+
+Custom theme config used in the DANS framework, which can be overwritten:
 - palette: 
   - neutral
   - footerTop

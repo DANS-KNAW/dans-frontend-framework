@@ -77,11 +77,14 @@ Displays a current users settings, like API keys. Needs to be a child of `<AuthR
     } />
 
 ### fetchUserProfile
-Helper function to get the current users profile information.
+Helper function to get the current users profile information. Exposes the Auth library's Redux store.
 
     import { fetchUserProfile } from '@dans-framework/auth'
 
-    const { data } = fetchUserProfile();
+    const { data } = fetchUserProfile({
+        provider: '', // URL of OIDC provider/authority
+        id: '' // OIDC client id
+    });
 
 ### i18n
 Exposes the Auth components language config. Use this in the main apps language config.

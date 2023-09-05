@@ -24,7 +24,7 @@ import { setData } from './depositSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { fetchUserProfile } from '@dans-framework/auth';
-import { useSiteInfo, setTitle, lookupLanguageString } from '@dans-framework/utils';
+import { useSiteTitle, setSiteTitle, lookupLanguageString } from '@dans-framework/utils';
 import type { Page } from '@dans-framework/pages';
 import { useAuth } from 'react-oidc-context';
 
@@ -34,12 +34,12 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
   const sessionId = useAppSelector(getSessionId);
   const openTab = useAppSelector(getOpenTab);
   const { t, i18n } = useTranslation('generic');
-  const siteInfo = useSiteInfo();
+  const siteTitle = useSiteTitle();
 
   // set page title
   useEffect( () => { 
-    setTitle(siteInfo.name, lookupLanguageString(page.name, i18n.language) as string);
-  }, [siteInfo.name, name, i18n.language]);
+    setSiteTitle(siteTitle, lookupLanguageString(page.name, i18n.language));
+  }, [siteTitle, page.name]);
 
   // We import this function from the Auth library. Don't have to add it to the Deposit store this way.
   const { data: userData } = fetchUserProfile({provider: auth.user?.profile.iss as string, id: auth.user?.profile.aud as string});

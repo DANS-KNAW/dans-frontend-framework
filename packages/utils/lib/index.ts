@@ -1,4 +1,3 @@
 export * from '../language';
-export * from '../pagemeta';
-export * from '../hooks';
+export * from '../siteTitle';
 export * from '../error';

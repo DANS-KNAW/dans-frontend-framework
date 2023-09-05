@@ -27,6 +27,9 @@ The framework uses the i18next library. Define an array of languages your app us
 
 To ensure language files are loaded before the UI is loaded, wrap your Routes in a Suspense component.
 
+#### Site title
+Pass along a string as site title to the ThemeWrapper component, so the app can set the appropriate document title.
+
 #### Theming
 Configure a theme file and use this in the ThemeWrapper from [@dans-framework/theme](/packages/theme/README.md) to wrap your app with. Be sure to edit **./src/index.css** to match body and app background color to your theme.
 
