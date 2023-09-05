@@ -20,7 +20,7 @@
 	"editSubmission": "Edit dit formulier en stuur het op",
 	"errorSubmission": "Er is iets misgegaan bij het verwerken van dit formulier",
 	"viewSubmission": "Bekijk de metadata",
-	"retrySubmission": "There was an error processing this submission, please edit and try again",
-	"continueSubmission": "Continue filling out this form. Currently {{percent}}% complete.",
-	"viewSubmissionExtended": "View this submission on {{location}}"
+	"retrySubmission": "Fout bij het verwerken van dit formulier; pas het aan en probeer opnieuw.",
+	"continueSubmission": "Ga verder met invullen. Momenteel {{percent}}% compleet.",
+	"viewSubmissionExtended": "Bekijk deze metadata op {{location}}"
 }
