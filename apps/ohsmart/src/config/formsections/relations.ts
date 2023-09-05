@@ -1,3 +1,5 @@
+import type { InitialSectionType } from '@dans-framework/deposit';
+
 const relationships = [
   "Conforms to",
   "Has Format",
@@ -14,7 +16,7 @@ const relationships = [
   "Is version of",
 ];
 
-const section = {
+const section: InitialSectionType = {
   id: 'relations',
   title: {
     en: 'Relations',

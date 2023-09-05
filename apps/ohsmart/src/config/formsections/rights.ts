@@ -1,4 +1,6 @@
-const section = {
+import type { InitialSectionType } from '@dans-framework/deposit';
+
+const section: InitialSectionType = {
   id: 'rights',
   title: {
     en: 'Rights, licencing and re-use',
@@ -7,7 +9,7 @@ const section = {
   fields: [
     {
       type: 'autocomplete',
-      freetext: true,
+      allowFreeText: true,
       label: {
         en: 'Rights holder',
         nl: 'Rechthebbende',
@@ -20,7 +22,6 @@ const section = {
       },
       multiApiValue: 'orcid',
       options: ['ror', 'orcid'],
-      allowFreeText: true,
     },
     {
       type: 'autocomplete',

@@ -80,7 +80,7 @@ export const CheckField = ({field, sectionIndex}: CheckFieldProps) => {
                 onChange={(e) => dispatch(setField({
                   sectionIndex: sectionIndex,
                   id: field.id,
-                  value: e.target.checked ? [...field.value || '', e.target.name] : field.value.filter( item => item !== e.target.name),
+                  value: e.target.checked ? [...field.value || '', e.target.name] : field.value!.filter( item => item !== e.target.name),
                 }))} 
                 name={option.value}
                 disabled={metadataSubmitStatus !== ''}

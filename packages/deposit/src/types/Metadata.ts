@@ -1,12 +1,12 @@
-import type { Language, LanguageStrings } from '@dans-framework/utils';
-import type { Field, TextFieldType, GroupedFieldType, AutocompleteFieldType } from './MetadataFields';
+import type { Language, LanguageStrings, RecursiveOmit } from '@dans-framework/utils';
+import type { Field, InputField, GroupedFieldType } from './MetadataFields';
 import type { Target } from '@dans-framework/auth';
 
 // Accordion sections
 export interface InitialSectionType {
   id: string;
   title: string | LanguageStrings;
-  fields: Omit<TextFieldType[], 'id'> | Omit<GroupedFieldType[], 'id'> | Omit<AutocompleteFieldType[], 'id'>;
+  fields: RecursiveOmit<Field, 'id'>[];
 }
 
 export type SectionStatus = 'error' | 'warning' | 'success' | undefined;

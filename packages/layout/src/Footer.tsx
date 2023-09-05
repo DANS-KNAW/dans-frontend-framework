@@ -11,6 +11,7 @@ import { lookupLanguageString } from '@dans-framework/utils';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import EmailIcon from '@mui/icons-material/Email';
+import parse from 'html-react-parser';
 
 const Footer = ({top, bottom}: FooterType) => {
   return (
@@ -72,7 +73,9 @@ const FooterContent = ({ header, links, freetext }: FooterContent) => {
         </Link>
       )}
       {freetext && 
-        <span dangerouslySetInnerHTML={{__html: lookupLanguageString(freetext, i18n.language) || '' }} className={styles.footerFreeText} />
+        <Box sx={{a: {color: 'primary.main', textDecoration: 'none'}}}>
+          {parse(lookupLanguageString(freetext, i18n.language) || '')}
+        </Box>
       }
     </Stack>
   );

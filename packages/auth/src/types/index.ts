@@ -13,3 +13,6 @@ export interface Target {
   authKey: string;
   keyUrl: string;
 }
+
+// Some values that the system can pull and fill in from the User Auth object
+export type AuthProperty = 'name' | 'email' | 'voperson_external_affiliation' | 'family_name' | 'given_name'; 

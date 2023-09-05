@@ -9,6 +9,7 @@
     "@dans-framework/auth": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@mui/material": "^5.14.3",
+    "html-react-parser": "^4.2.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^13.0.3",

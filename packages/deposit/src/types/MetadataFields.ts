@@ -1,4 +1,5 @@
 import type { Language, LanguageStrings } from '@dans-framework/utils';
+import type { AuthProperty } from '@dans-framework/auth';
 
 // All user input field types
 export type InputField = TextFieldType | DateFieldType | AutocompleteFieldType | RadioFieldType | CheckFieldType | RepeatTextFieldType;
@@ -28,7 +29,7 @@ export interface TextFieldType extends BasisFieldType {
   maxValue?: number; // for numbers only
   minValue?: number; // for numbers only
   multiline?: boolean; // creates a textarea
-  autofill?: AuthProperty;
+  autofill?: AuthProperty; // auto fill data from user object
   format?: never;
   fields?: never;
   multiApiValue?: never;
@@ -90,13 +91,12 @@ export interface RepeatTextFieldType extends Omit<BasisFieldType, 'value' | 'val
   touched?: never;
 }
 
-export interface RadioFieldType extends Omit<BasisFieldType, 'validation' | 'valid' | 'required'> {
+export interface RadioFieldType extends Omit<BasisFieldType, 'validation' | 'valid'> {
   type: 'radio';
   layout?: 'row'; // if specified, radiobuttons will appear inline
   options: OptionsType[];
   valid?: never;
   validation?: never;
-  required?: never;
   multiApiValue?: never;
   fields?: never;
   format?: never;
@@ -104,7 +104,7 @@ export interface RadioFieldType extends Omit<BasisFieldType, 'validation' | 'val
 
 export interface CheckFieldType extends Omit<BasisFieldType, 'value' | 'validation' | 'valid'> {
   type: 'check';
-  value: string[];
+  value?: string[];
   options: OptionsType[];
   validation?: never;
   valid?: never;
@@ -130,11 +130,8 @@ interface SheetOptions {
   headerCol: number;
 }
 
-// Some values that the system can pull and fill in from the User Auth object
-type AuthProperty = 'name' | 'email' | 'voperson_external_affiliation' | 'family_name' | 'given_name'; 
-
 // Option format for values in the autocomplete dropdown
-export type OptionsType = {
+export interface OptionsType {
   label: string | LanguageStrings;
   value: string;
   header?: string | LanguageStrings; // if options need to be grouped, you can specify the header group this option belongs to

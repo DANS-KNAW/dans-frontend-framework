@@ -1,4 +1,6 @@
-const section = {
+import type { InitialSectionType } from '@dans-framework/deposit';
+
+const section: InitialSectionType = {
   id: 'humanities',
   title: {
     en: 'Humanities',

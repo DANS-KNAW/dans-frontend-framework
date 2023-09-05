@@ -1,4 +1,6 @@
-const section = {
+import type { InitialSectionType } from '@dans-framework/deposit';
+
+const section: InitialSectionType = {
   id: 'coverage',
   title: {
     en: 'Coverage',
@@ -17,10 +19,6 @@ const section = {
       description: {
         en: 'List of relevant keywords: Audiovisual-specific',
         nl: 'Een lijst van audiovisueelspecifieke relevante trefwoorden',
-      },
-      placeholder: {
-        en: 'Enter keywords...',
-        nl: 'Trefwoorden...',
       },
       options: 'getty',
       allowFreeText: true,

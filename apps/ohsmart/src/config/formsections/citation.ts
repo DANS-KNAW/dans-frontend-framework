@@ -1,4 +1,6 @@
-const section = {
+import type { InitialSectionType } from '@dans-framework/deposit';
+
+const section: InitialSectionType = {
   id: 'citation',
   title: {
     en: 'Citation',
@@ -104,7 +106,6 @@ const section = {
       fields: [
         {
           type: 'autocomplete',
-          freetext: true,
           label: {
             en: 'Name',
             nl: 'Naam',

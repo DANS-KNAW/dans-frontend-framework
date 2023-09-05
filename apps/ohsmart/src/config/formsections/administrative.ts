@@ -1,6 +1,7 @@
 import languageList from '../data/languageList.json';
+import type { InitialSectionType } from '@dans-framework/deposit';
 
-const section = {
+const section: InitialSectionType = {
   id: 'administrative',
   title: {
     en: 'Administrative',

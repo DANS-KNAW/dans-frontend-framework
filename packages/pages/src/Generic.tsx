@@ -11,6 +11,7 @@ import { useAuth } from 'react-oidc-context';
 import { useTranslation } from 'react-i18next';
 import { LoginButton } from '@dans-framework/auth';
 import { useSiteTitle, setSiteTitle } from '@dans-framework/utils';
+import parse from 'html-react-parser';
 
 const Generic = ({ logo, name, content, action }: Page) => {
   const auth = useAuth();
@@ -42,7 +43,9 @@ const Generic = ({ logo, name, content, action }: Page) => {
 
         <Grid xs={12} mdOffset={2.5} md={7}>
           {content && 
-            <div dangerouslySetInnerHTML={{__html: lookupLanguageString(content, i18n.language) || ''}} />
+            <Box>
+              {parse(lookupLanguageString(content, i18n.language) || '')}
+            </Box>
           }
           {action && 
             <Box mt={4} display="flex" justifyContent="center">

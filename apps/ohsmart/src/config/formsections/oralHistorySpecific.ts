@@ -1,4 +1,6 @@
-const section = {
+import type { InitialSectionType } from '@dans-framework/deposit';
+
+const section: InitialSectionType = {
   id: 'ohs',
   title: {
     en: 'Oral-history specific',
@@ -12,7 +14,6 @@ const section = {
         nl: 'Geinterviewde',
       },
       name: 'interviewee',
-      repeatable: false,
       description: {
         en: 'Information about the person being interviewed. This data will not be public.',
         nl: 'Informatie over de persoon die wordt geinterviewd. Deze data wordt niet gepubliceerd.',

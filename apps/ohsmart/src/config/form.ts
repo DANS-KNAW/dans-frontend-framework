@@ -1,4 +1,4 @@
-import type { FormConfig } from '@dans-framework/deposit';
+import type { FormConfig, InitialSectionType } from '@dans-framework/deposit';
 import administrative from './formsections/administrative';
 import citation from './formsections/citation';
 import coverage from './formsections/coverage';
@@ -21,20 +21,21 @@ const sections = [
   rights,
 ];
 
-const form = {
-  form: sections,
+const form: FormConfig = {
+  form: sections as InitialSectionType[],
   target: [
+    // Formatted as array, to support multiple submission targets
     {
       name: 'Dataverse',
       repo: 'demo.ssh.datastations.nl',
       auth: 'API_KEY',
-      authKey: 'dataverse_api_key', // keys to use from Keycloak user object, as array to support multiple api keys
+      authKey: 'dataverse_api_key',
       keyUrl: 'https://demo.ssh.datastations.nl/dataverseuser.xhtml?selectTab=apiTokenTab',
     },
   ],
   submitKey: import.meta.env.VITE_PACKAGING_KEY, // still needed??
   skipValidation: true,
   geonamesApiKey: 'dans_deposit_webapp',
-} as FormConfig;
+};
 
 export default form;
