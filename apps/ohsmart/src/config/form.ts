@@ -34,7 +34,7 @@ const form: FormConfig = {
     },
   ],
   submitKey: import.meta.env.VITE_PACKAGING_KEY, // still needed??
-  skipValidation: true,
+  skipValidation: import.meta.env.DEV,
   geonamesApiKey: 'dans_deposit_webapp',
 };
 

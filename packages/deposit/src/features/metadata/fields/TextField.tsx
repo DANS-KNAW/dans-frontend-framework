@@ -46,7 +46,7 @@ const SingleTextField = ({field, sectionIndex, groupedFieldId, currentField = 0,
         multiline={field.multiline}
         rows={field.multiline ? 4 : ''}
         value={field.value || ''}
-        disabled={field.disabled || metadataSubmitStatus !== ''}
+        disabled={(field.disabled && !(field.autofill && !field.value)) || metadataSubmitStatus !== ''}
         onChange={(e) => dispatch(setField({
           sectionIndex: sectionIndex,
           id: field.id,
