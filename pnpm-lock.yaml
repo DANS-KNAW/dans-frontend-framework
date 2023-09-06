@@ -20,9 +20,6 @@ importers:
 
   apps/ohsmart:
     dependencies:
-      '@dans-framework/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
       '@dans-framework/deposit':
         specifier: workspace:*
         version: link:../../packages/deposit
@@ -35,6 +32,9 @@ importers:
       '@dans-framework/theme':
         specifier: workspace:*
         version: link:../../packages/theme
+      '@dans-framework/user-auth':
+        specifier: workspace:*
+        version: link:../../packages/user-auth
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -100,63 +100,11 @@ importers:
         specifier: ^0.6.2
         version: 0.6.2(eslint@8.45.0)(typescript@5.1.6)(vite@4.4.5)
 
-  packages/auth:
-    dependencies:
-      '@dans-framework/utils':
-        specifier: workspace:*
-        version: link:../utils
-      '@mui/icons-material':
-        specifier: ^5.14.3
-        version: 5.14.3(@mui/material@5.14.3)(@types/react@18.2.15)(react@18.2.0)
-      '@mui/material':
-        specifier: ^5.14.3
-        version: 5.14.3(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)
-      '@reduxjs/toolkit':
-        specifier: ^1.9.5
-        version: 1.9.5(react-redux@8.1.2)(react@18.2.0)
-      i18next:
-        specifier: ^23.4.1
-        version: 23.4.1
-      i18next-resources-to-backend:
-        specifier: ^1.1.4
-        version: 1.1.4
-      moment:
-        specifier: ^2.29.4
-        version: 2.29.4
-      notistack:
-        specifier: ^3.0.1
-        version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
-      oidc-client-ts:
-        specifier: ^2.2.4
-        version: 2.2.4
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
-      react-i18next:
-        specifier: ^13.0.3
-        version: 13.0.3(i18next@23.4.1)(react-dom@18.2.0)(react@18.2.0)
-      react-oidc-context:
-        specifier: ^2.2.2
-        version: 2.2.2(oidc-client-ts@2.2.4)(react@18.2.0)
-      react-redux:
-        specifier: ^8.1.2
-        version: 8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
-      react-router-dom:
-        specifier: ^6.14.2
-        version: 6.14.2(react-dom@18.2.0)(react@18.2.0)
-    devDependencies:
-      '@types/react':
-        specifier: ^18.2.15
-        version: 18.2.15
-
   packages/deposit:
     dependencies:
-      '@dans-framework/auth':
+      '@dans-framework/user-auth':
         specifier: workspace:*
-        version: link:../auth
+        version: link:../user-auth
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../utils
@@ -257,12 +205,12 @@ importers:
 
   packages/layout:
     dependencies:
-      '@dans-framework/auth':
-        specifier: workspace:*
-        version: link:../auth
       '@dans-framework/pages':
         specifier: workspace:*
         version: link:../pages
+      '@dans-framework/user-auth':
+        specifier: workspace:*
+        version: link:../user-auth
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../utils
@@ -306,9 +254,9 @@ importers:
 
   packages/pages:
     dependencies:
-      '@dans-framework/auth':
+      '@dans-framework/user-auth':
         specifier: workspace:*
-        version: link:../auth
+        version: link:../user-auth
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../utils
@@ -363,6 +311,58 @@ importers:
         specifier: ^18.2.15
         version: 18.2.15
 
+  packages/user-auth:
+    dependencies:
+      '@dans-framework/utils':
+        specifier: workspace:*
+        version: link:../utils
+      '@mui/icons-material':
+        specifier: ^5.14.3
+        version: 5.14.3(@mui/material@5.14.3)(@types/react@18.2.15)(react@18.2.0)
+      '@mui/material':
+        specifier: ^5.14.3
+        version: 5.14.3(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)
+      '@reduxjs/toolkit':
+        specifier: ^1.9.5
+        version: 1.9.5(react-redux@8.1.2)(react@18.2.0)
+      i18next:
+        specifier: ^23.4.1
+        version: 23.4.1
+      i18next-resources-to-backend:
+        specifier: ^1.1.4
+        version: 1.1.4
+      moment:
+        specifier: ^2.29.4
+        version: 2.29.4
+      notistack:
+        specifier: ^3.0.1
+        version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
+      oidc-client-ts:
+        specifier: ^2.2.4
+        version: 2.2.4
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      react-i18next:
+        specifier: ^13.0.3
+        version: 13.0.3(i18next@23.4.1)(react-dom@18.2.0)(react@18.2.0)
+      react-oidc-context:
+        specifier: ^2.2.2
+        version: 2.2.2(oidc-client-ts@2.2.4)(react@18.2.0)
+      react-redux:
+        specifier: ^8.1.2
+        version: 8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
+      react-router-dom:
+        specifier: ^6.14.2
+        version: 6.14.2(react-dom@18.2.0)(react@18.2.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.15
+        version: 18.2.15
+
   packages/utils: {}
 
   packages/utils/error:
@@ -374,7 +374,7 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
 
-  packages/utils/siteTitle:
+  packages/utils/sitetitle:
     dependencies:
       react:
         specifier: ^18.2.0
@@ -1161,7 +1161,7 @@ packages:
       '@mui/core-downloads-tracker': 5.14.5
       '@mui/system': 5.14.5(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@types/react@18.2.15)(react@18.2.0)
       '@mui/types': 7.2.4(@types/react@18.2.15)
-      '@mui/utils': 5.14.5(react@18.2.0)
+      '@mui/utils': 5.14.7(react@18.2.0)
       '@types/react': 18.2.15
       '@types/react-transition-group': 4.4.6
       clsx: 2.0.0
@@ -1234,7 +1234,7 @@ packages:
       '@mui/private-theming': 5.14.5(@types/react@18.2.15)(react@18.2.0)
       '@mui/styled-engine': 5.13.2(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react@18.2.0)
       '@mui/types': 7.2.4(@types/react@18.2.15)
-      '@mui/utils': 5.14.5(react@18.2.0)
+      '@mui/utils': 5.14.7(react@18.2.0)
       '@types/react': 18.2.15
       clsx: 2.0.0
       csstype: 3.1.2

@@ -6,7 +6,7 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@dans-framework/auth": "workspace:*",
+    "@dans-framework/user-auth": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@mui/material": "^5.14.3",
     "html-react-parser": "^4.2.2",

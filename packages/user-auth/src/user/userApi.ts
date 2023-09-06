@@ -9,7 +9,7 @@ function getUser(provider: string, id: string) {
     return User.fromStorageString(oidcStorage);
 }
 
-export const authApi = createApi({
+export const userApi = createApi({
   reducerPath: 'auth',
   baseQuery: fetchBaseQuery(),
   tagTypes: ['User'],
@@ -50,4 +50,4 @@ export const authApi = createApi({
 export const {
   useFetchUserProfileQuery,
   useSaveUserDataMutation,
-} = authApi;
+} = userApi;

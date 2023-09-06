@@ -16,7 +16,7 @@ import { setMetadataSubmitStatus, getMetadataSubmitStatus, getFilesSubmitStatus,
 import { formatFormData, formatFileData } from './submitHelpers';
 import { useTranslation } from 'react-i18next';
 import { getData } from '../../deposit/depositSlice';
-import { fetchUserProfile } from '@dans-framework/auth';
+import { fetchUserProfile } from '@dans-framework/user-auth';
 import { useAuth } from 'react-oidc-context';
 
 const Submit = () => {

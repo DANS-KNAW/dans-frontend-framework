@@ -14,7 +14,7 @@ The pages should be an array of page objects. A page can be configured as indica
 The footer consists of a top and bottom section. See the [@dans-framework/layout](/packages/layout/README.md) package.
 
 #### Auth
-For user authentication, you need to supply the proper OIDC configuration. See the [@dans-framework/auth](/packages/auth/README.md) package.
+For user authentication, you need to supply the proper OIDC configuration. See the [@dans-framework/user-auth](/packages/auth/README.md) package.
 
 #### Languages, i18n and Suspense
 The framework uses the i18next library. Define an array of languages your app uses, using their two letter identifiers, e.g. `['en', 'nl']`. Setup an i18n config file and import that in your app. Be sure to add the i18n subcomponent configs to your main app, e.g.

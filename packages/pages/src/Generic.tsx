@@ -9,7 +9,7 @@ import type { Page } from './types';
 import { lookupLanguageString } from '@dans-framework/utils';
 import { useAuth } from 'react-oidc-context';
 import { useTranslation } from 'react-i18next';
-import { LoginButton } from '@dans-framework/auth';
+import { LoginButton } from '@dans-framework/user-auth';
 import { useSiteTitle, setSiteTitle } from '@dans-framework/utils';
 import parse from 'html-react-parser';
 

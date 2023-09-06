@@ -1,14 +1,14 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import { authApi } from '../auth/authApi';
+import { userApi } from '../user/userApi';
 import { errorLogger } from '@dans-framework/utils';
 
 export const store = configureStore({
   reducer: {
-    [authApi.reducerPath]: authApi.reducer,
+    [userApi.reducerPath]: userApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
-    .concat(authApi.middleware)
+    .concat(userApi.middleware)
     .concat(errorLogger)
 });
 
@@ -22,6 +22,6 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 >;
 
 export const initUserProfile = ({provider, id}: {provider: string, id: string}) => 
-  store.dispatch(authApi.endpoints.fetchUserProfile.initiate({provider: provider, id: id}));
+  store.dispatch(userApi.endpoints.fetchUserProfile.initiate({provider: provider, id: id}));
 export const fetchUserProfile = ({provider, id}: {provider: string, id: string}) => 
-  authApi.endpoints.fetchUserProfile.select({provider: provider, id: id})(store.getState());
+  userApi.endpoints.fetchUserProfile.select({provider: provider, id: id})(store.getState());

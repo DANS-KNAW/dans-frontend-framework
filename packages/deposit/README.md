@@ -15,7 +15,7 @@ The Deposit component consists of the metadata form and a file upload section.
       page={...} // A page object
     />
 
-For target objects, see [@dans-framework/auth](/packes/auth/README.md).
+For target objects, see [@dans-framework/user-auth](/packes/auth/README.md).
 For page objects, see [@dans-framework/pages](/packages/pages/README.md). 
 
 Each section is a collapsible accordion in the front-end. A section is formatted like so:

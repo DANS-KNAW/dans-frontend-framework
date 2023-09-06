@@ -4,7 +4,7 @@ Uses its own Redux store for authentication management. Manages authentication a
 ### AuthWrapper
 User this as a wrapper for your application. Needs props for OIDC authProvider.
 
-    import { AuthWrapper } from '@dans-framework/auth'
+    import { AuthWrapper } from '@dans-framework/user-auth'
 
     <AuthWrapper
       authProvider={
@@ -21,7 +21,7 @@ User this as a wrapper for your application. Needs props for OIDC authProvider.
 ### AuthRoute
 Wrapper for routes that should be accessible only to logged in users
 
-    import { AuthRoute } from '@dans-framework/auth'
+    import { AuthRoute } from '@dans-framework/user-auth'
 
     <AuthRoute>
       <Route {...} />
@@ -30,28 +30,28 @@ Wrapper for routes that should be accessible only to logged in users
 ### SignInCallback
 Component to be used within a Route. Return location for OIDC login attempts.
 
-    import { SignInCallback } from '@dans-framework/auth'
+    import { SignInCallback } from '@dans-framework/user-auth'
 
     <Route path="signin-callback" element={<SignInCallback />} />
 
 ### UserMenu
 Displays the user menu or a login button when a user is not logged in. Used by layout component `<MenuBar />`.
 
-    import { UserMenu } from '@dans-framework/auth'
+    import { UserMenu } from '@dans-framework/user-auth'
 
     <UserMenu />
 
 ### LoginButton
 Displays a login button which redirects to the OIDC provider.
 
-    import { LoginButton } from '@dans-framework/auth'
+    import { LoginButton } from '@dans-framework/user-auth'
 
     <LoginButton />
 
 ### UserSubmissions
 TBD. Displays a current users metadata submissions. Needs to be a child of `<AuthRoute />`.
 
-    import { UserSubmissions } from '@dans-framework/auth'
+    import { UserSubmissions } from '@dans-framework/user-auth'
 
     <Route path="user-submissions" element={
       <AuthRoute>
@@ -62,7 +62,7 @@ TBD. Displays a current users metadata submissions. Needs to be a child of `<Aut
 ### UserSettings
 Displays a current users settings, like API keys. Needs to be a child of `<AuthRoute />`. Takes `target` as props, usually set in the form config. This is an array of target objects the component uses for form submission authentication.
 
-    import { UserSettings } from '@dans-framework/auth'
+    import { UserSettings } from '@dans-framework/user-auth'
 
     <Route path="user-settings" element={
       <AuthRoute>
@@ -79,7 +79,7 @@ Displays a current users settings, like API keys. Needs to be a child of `<AuthR
 ### fetchUserProfile
 Helper function to get the current users profile information. Exposes the Auth library's Redux store.
 
-    import { fetchUserProfile } from '@dans-framework/auth'
+    import { fetchUserProfile } from '@dans-framework/user-auth'
 
     const { data } = fetchUserProfile({
         provider: '', // URL of OIDC provider/authority
@@ -89,4 +89,4 @@ Helper function to get the current users profile information. Exposes the Auth l
 ### i18n
 Exposes the Auth components language config. Use this in the main apps language config.
 
-    import { i18n as i18nAuth } from '@dans-framework/auth'
+    import { i18n as i18nAuth } from '@dans-framework/user-auth'

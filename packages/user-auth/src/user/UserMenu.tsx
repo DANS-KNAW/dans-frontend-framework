@@ -10,7 +10,7 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import Divider from '@mui/material/Divider';
 import { NavLink as RouterLink } from 'react-router-dom';
-import { useFetchUserProfileQuery } from '../auth/authApi';
+import { useFetchUserProfileQuery } from './userApi';
 import { LoginButton, LogoutButton } from './Buttons';
 
 export const UserMenu = () => {

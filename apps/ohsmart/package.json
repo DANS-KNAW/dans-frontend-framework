@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dans-framework/auth": "workspace:*",
+    "@dans-framework/user-auth": "workspace:*",
     "@dans-framework/deposit": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@dans-framework/layout": "workspace:*",

@@ -1,7 +1,6 @@
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
-import { useAuth } from 'react-oidc-context';
 import { useTranslation } from 'react-i18next';
 import List from '@mui/material/List';
 import Tooltip from '@mui/material/Tooltip';
@@ -15,7 +14,6 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ErrorIcon from '@mui/icons-material/Error';
 import Divider from '@mui/material/Divider';
 import moment from 'moment';
-import { useFetchUserProfileQuery } from '../auth/authApi';
 import ListSubheader from '@mui/material/ListSubheader';
 
 const fakeDrafts = [
@@ -50,7 +48,6 @@ const fakeSubmissions = [
 ]
 
 export const UserSubmissions = () => {
-  const auth = useAuth();
   const { t } = useTranslation('user');
   // const { data } = useFetchUserProfileQuery({provider: auth.user?.profile.iss, id: auth.user?.profile.aud});
 

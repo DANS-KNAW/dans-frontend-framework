@@ -9,7 +9,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useAuth } from 'react-oidc-context';
-import { useFetchUserProfileQuery, useSaveUserDataMutation } from '../auth/authApi';
+import { useFetchUserProfileQuery, useSaveUserDataMutation } from './userApi';
 import type { Target } from '../types';
 
 export const UserSettings = ({target}: {target: Target[]}) => {

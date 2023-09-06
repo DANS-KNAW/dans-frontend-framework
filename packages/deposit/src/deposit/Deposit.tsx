@@ -23,7 +23,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { setData } from './depositSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { fetchUserProfile } from '@dans-framework/auth';
+import { fetchUserProfile } from '@dans-framework/user-auth';
 import { useSiteTitle, setSiteTitle, lookupLanguageString } from '@dans-framework/utils';
 import type { Page } from '@dans-framework/pages';
 import { useAuth } from 'react-oidc-context';

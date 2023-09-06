@@ -1,6 +1,6 @@
 import type { Language, LanguageStrings, RecursiveOmit } from '@dans-framework/utils';
 import type { Field, InputField, GroupedFieldType } from './MetadataFields';
-import type { Target } from '@dans-framework/auth';
+import type { Target } from '@dans-framework/user-auth';
 
 // Accordion sections
 export interface InitialSectionType {

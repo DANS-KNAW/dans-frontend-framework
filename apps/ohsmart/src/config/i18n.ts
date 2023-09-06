@@ -4,7 +4,7 @@ import languages from '../config/languages';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { i18n as i18nLayout } from '@dans-framework/layout';
 import { i18n as i18nDeposit } from '@dans-framework/deposit';
-import { i18n as i18nAuth } from '@dans-framework/auth';
+import { i18n as i18nAuth } from '@dans-framework/user-auth';
 
 // this is the main language provider for all subcomponents/libraries
 i18n

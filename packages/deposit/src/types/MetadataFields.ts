@@ -1,5 +1,5 @@
 import type { Language, LanguageStrings } from '@dans-framework/utils';
-import type { AuthProperty } from '@dans-framework/auth';
+import type { AuthProperty } from '@dans-framework/user-auth';
 
 // All user input field types
 export type InputField = TextFieldType | DateFieldType | AutocompleteFieldType | RadioFieldType | CheckFieldType | RepeatTextFieldType;

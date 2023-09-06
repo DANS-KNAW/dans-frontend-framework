@@ -1,5 +1,5 @@
 {
-  "name": "@dans-framework/auth",
+  "name": "@dans-framework/user-auth",
   "main": "lib/index.tsx",
   "private": true,
   "version": "0.0.0",

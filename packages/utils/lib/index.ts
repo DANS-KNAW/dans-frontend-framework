@@ -1,4 +1,4 @@
 export * from '../language';
-export * from '../siteTitle';
+export * from '../sitetitle';
 export * from '../error';
 export * from '../typescript';

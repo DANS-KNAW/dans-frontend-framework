@@ -14,7 +14,7 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import type { Page } from '@dans-framework/pages';
 import { lookupLanguageString } from '@dans-framework/utils';
 import { useTranslation } from 'react-i18next';
-import { UserMenu } from '@dans-framework/auth';
+import { UserMenu } from '@dans-framework/user-auth';
 import { useAuth } from 'react-oidc-context';
 
 const MenuBar = ({pages}: {pages: Page[]} ) => {

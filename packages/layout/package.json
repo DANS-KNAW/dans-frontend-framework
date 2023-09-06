@@ -5,7 +5,7 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@dans-framework/auth": "workspace:*",
+    "@dans-framework/user-auth": "workspace:*",
     "@dans-framework/pages": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@mui/icons-material": "^5.14.3",
