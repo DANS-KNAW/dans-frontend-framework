@@ -42,7 +42,7 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
   }, [siteTitle, page.name]);
 
   // We import this function from the Auth library. Don't have to add it to the Deposit store this way.
-  const { data: userData } = fetchUserProfile({provider: auth.user?.profile.iss as string, id: auth.user?.profile.aud as string});
+  const { data: userData } = fetchUserProfile({provider: auth.settings.authority, id: auth.settings.client_id});
 
   // Initialize form on initial render when there's no sessionId yet
   // or when form gets reset

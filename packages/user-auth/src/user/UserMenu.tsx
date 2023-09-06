@@ -16,8 +16,6 @@ import { LoginButton, LogoutButton } from './Buttons';
 export const UserMenu = () => {
   const auth = useAuth();
 
-  console.log(auth)
-
   if (auth.isAuthenticated && auth.user) {
     return (
       <SettingsMenu />
@@ -40,7 +38,7 @@ const SettingsMenu = () => {
   };
 
   // Fetch users profile
-  const { data } = useFetchUserProfileQuery({provider: auth.user?.profile.iss, id: auth.user?.profile.aud});
+  const { data } = useFetchUserProfileQuery({provider: auth.settings.authority, id: auth.settings.client_id});
 
   return (
     <Box sx={{ flexGrow: 0 }}>

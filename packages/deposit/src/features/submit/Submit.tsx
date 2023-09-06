@@ -33,7 +33,7 @@ const Submit = () => {
   // File status exists in an array, so we need to do some processing and filtering. 
   const filesSubmitStatus = useAppSelector(getFilesSubmitStatus).filter(f => f.id !== '');
   // Get the users API keys
-  const { data: userData } = fetchUserProfile({provider: auth.user?.profile.iss as string, id: auth.user?.profile.aud as string});
+  const { data: userData } = fetchUserProfile({provider: auth.settings.authority, id: auth.settings.client_id});
   const targetKeys = userData && formConfig.target.map( t => userData.attributes[t.authKey] && userData.attributes[t.authKey][0]);
   // Calculate total upload progress
   const totalFileProgress = filesSubmitStatus.reduce( (n, {progress}) => n + (progress || 0), 0) / filesSubmitStatus.length || undefined;

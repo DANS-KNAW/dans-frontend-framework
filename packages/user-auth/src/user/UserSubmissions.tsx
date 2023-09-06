@@ -49,7 +49,6 @@ const fakeSubmissions = [
 
 export const UserSubmissions = () => {
   const { t } = useTranslation('user');
-  // const { data } = useFetchUserProfileQuery({provider: auth.user?.profile.iss, id: auth.user?.profile.aud});
 
   return (
     <Container>

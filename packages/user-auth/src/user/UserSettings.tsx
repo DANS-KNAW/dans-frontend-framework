@@ -31,8 +31,10 @@ export const UserSettings = ({target}: {target: Target[]}) => {
 const UserSettingsItem = ({target}: {target: Target}) => {
   const auth = useAuth();
   const { t } = useTranslation('user');
-  const { data } = useFetchUserProfileQuery({provider: auth.user?.profile.iss, id: auth.user?.profile.aud});
+  const { data } = useFetchUserProfileQuery({provider: auth.settings.authority, id: auth.settings.client_id});
   const [apiValue, setApiValue] = useState('Loading...');
+
+  console.log(auth)
 
   // set API key value once it's been retrieved
   useEffect(() => data && setApiValue((data.attributes[target.authKey] && data.attributes[target.authKey][0]) || ''), [data, target.authKey]);
