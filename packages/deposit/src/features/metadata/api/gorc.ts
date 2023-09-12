@@ -1996,10 +1996,6 @@ const gorcDataElements = [
   },
 ];
 
-const gorcDataAttributes = [];
-
-const gorcDataFeatures = [];
-
 export const gorcApi = createApi({
   reducerPath: "gorc",
   baseQuery: (args) => {
