@@ -11,17 +11,6 @@ const section: InitialSectionType = {
     {
       type: 'autocomplete',
       label: {
-        en: 'GORC EN',
-        nl: 'GORC NL',
-      },
-      required: true,
-      options: 'gorc',
-      name: 'gorc',
-      multiselect: true,
-    },
-    {
-      type: 'autocomplete',
-      label: {
         en: 'Language',
         nl: 'Taal',
       },
