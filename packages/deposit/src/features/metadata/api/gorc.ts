@@ -2009,6 +2009,10 @@ export const gorcApi = createApi({
       item.title.toLowerCase().startsWith(content.toLowerCase())
     );
 
+    /**
+     * We check if the item has a parent and take the title of the parent.
+     * We keep doing this until we reach the top level.
+     */
     filteredItems.forEach((item) => {
       if (!item.parent_id) {
         return;
