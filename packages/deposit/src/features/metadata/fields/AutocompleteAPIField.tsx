@@ -94,26 +94,6 @@ export const GorcField = ({field, sectionIndex}: AutocompleteFieldProps) => {
         isLoading={isLoading} 
         isFetching={isFetching} 
       />
-      {/* <AutocompleteAPIField 
-        field={field} 
-        sectionIndex={sectionIndex} 
-        inputValue={inputValue} 
-        setInputValue={setInputValue} 
-        debouncedInputValue={debouncedInputValue} 
-        data={data} 
-        isLoading={isLoading} 
-        isFetching={isFetching} 
-      />
-      <AutocompleteAPIField 
-        field={field} 
-        sectionIndex={sectionIndex} 
-        inputValue={inputValue} 
-        setInputValue={setInputValue} 
-        debouncedInputValue={debouncedInputValue} 
-        data={data} 
-        isLoading={isLoading} 
-        isFetching={isFetching} 
-      /> */}
     </>
   )
 }
