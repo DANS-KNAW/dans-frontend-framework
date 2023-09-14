@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -15,6 +16,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import Divider from '@mui/material/Divider';
 import moment from 'moment';
 import ListSubheader from '@mui/material/ListSubheader';
+import { useSiteTitle, setSiteTitle } from '@dans-framework/utils';
 
 const fakeDrafts = [
   {
@@ -49,6 +51,11 @@ const fakeSubmissions = [
 
 export const UserSubmissions = () => {
   const { t } = useTranslation('user');
+  const siteTitle = useSiteTitle();
+
+  useEffect( () => { 
+    setSiteTitle(siteTitle, t('userSubmissions'));
+  }, [siteTitle, name]);
 
   return (
     <Container>

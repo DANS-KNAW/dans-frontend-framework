@@ -10,10 +10,17 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useAuth } from 'react-oidc-context';
 import { useFetchUserProfileQuery, useSaveUserDataMutation } from './userApi';
+import { useSiteTitle, setSiteTitle } from '@dans-framework/utils';
 import type { Target } from '../types';
 
 export const UserSettings = ({target}: {target: Target[]}) => {
   const { t } = useTranslation('user');
+  const siteTitle = useSiteTitle();
+
+  useEffect( () => { 
+    setSiteTitle(siteTitle, t('userSettings'));
+  }, [siteTitle, name]);
+
   return (
     <Container>
       <Grid container>

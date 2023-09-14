@@ -4,6 +4,8 @@ This is a wrapper application for the components of the DANS framework. Add and 
 ## Configuration and usage
 Make sure required dependencies are installed in your **package.json**.
 
+Create the appropriate **.env** files. Use **.env** as a template for your **.env.development** and **.env.production** files.
+
 #### Form
 The form should be an array of section objects. A section can be configured as indicated in the [@dans-framework/deposit](/packages/deposit/README.md) package. To be used in `<Deposit />`.
 
