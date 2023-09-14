@@ -13,6 +13,7 @@ import { submitApi } from '../features/submit/submitApi';
 import { dansFormatsApi } from '../features/files/api/dansFormats';
 import { dansUtilityApi } from '../features/files/api/dansUtility';
 import { errorLogger } from '@dans-framework/utils/error';
+import { gorcApi } from '../features/metadata/api/gorc';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     files: filesReducer,
     [orcidApi.reducerPath]: orcidApi.reducer,
     [rorApi.reducerPath]: rorApi.reducer,
+    [gorcApi.reducerPath]: gorcApi.reducer,
     [gettyApi.reducerPath]: gettyApi.reducer,
     [geonamesApi.reducerPath]: geonamesApi.reducer,
     [sheetsApi.reducerPath]: sheetsApi.reducer,
@@ -34,6 +36,7 @@ export const store = configureStore({
     getDefaultMiddleware()
       .concat(orcidApi.middleware)
       .concat(rorApi.middleware)
+      .concat(gorcApi.middleware)
       .concat(gettyApi.middleware)
       .concat(geonamesApi.middleware)
       .concat(sheetsApi.middleware)

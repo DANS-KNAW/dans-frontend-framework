@@ -9,7 +9,7 @@ import { memo } from 'react';
 import type { Field, TextFieldType, DateFieldType, InputField } from '../../types/MetadataFields';
 import type { SingleFieldProps, GroupedFieldProps } from '../../types/MetadataProps';
 import { DeleteButton, AddButtonText } from './MetadataButtons';
-import { OrcidField, RorField, MultiApiField, GeonamesField, GettyField, SheetsField, DatastationsField, DansFormatsField } from './fields/AutocompleteAPIField';
+import { OrcidField, RorField, MultiApiField, GeonamesField, GettyField, SheetsField, DatastationsField, DansFormatsField, GorcField } from './fields/AutocompleteAPIField';
 import AutocompleteField from './fields/AutocompleteField';
 import TextField from './fields/TextField';
 import DateTimeField from './fields/DateTimeField';
@@ -53,6 +53,8 @@ const SingleField = memo(({field, sectionIndex}: SingleFieldProps) => {
         <OrcidField field={field} sectionIndex={sectionIndex} /> :
         field.options === 'ror' ?
         <RorField field={field} sectionIndex={sectionIndex} /> :
+        field.options === 'gorc' ?
+        <GorcField field={field} sectionIndex={sectionIndex} /> :
         field.options === 'geonames' ?
         <GeonamesField field={field} sectionIndex={sectionIndex} /> :
         field.options === 'getty' ?
