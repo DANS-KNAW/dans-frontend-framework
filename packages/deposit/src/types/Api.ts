@@ -1,5 +1,17 @@
 import type { AutocompleteAPIFieldData, Datastations } from './MetadataFields';
 
+interface GorcItem {
+  id: string;
+  parent_id?: string;
+  title: string;
+  description: string;
+}
+
+export interface GorcResponse {
+  number_of_results: number;
+  items: GorcItem[];
+}
+
 interface RorCountry {
   country_name: string;
   country_code: string;

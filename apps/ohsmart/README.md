@@ -41,3 +41,6 @@ To display error messages from the Redux stores of several components, you need 
     import { SnackbarProvider } from 'notistack';
 
     <SnackbarProvider />
+
+#### SURF Local Auth
+To use SURF for local authentication, ensure that the URL is set to `localhost` and that the port is `3000`.
