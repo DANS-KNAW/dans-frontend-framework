@@ -2,7 +2,7 @@
 The DANS framework is a monorepo, using Turbo and PNPM package management and Vite build tools.
 
 ## Structure
-Apps that are meant to run standalone are lockated in the **./apps** folder. Custom libraries that these apps can use are in **./packages**.
+Apps that are meant to run standalone are located in the **./apps** folder. Custom libraries that these apps can use are in **./packages**.
 
 ## Usage
 Management of packages is done with PNPM from the **root** folder. Make sure PNPM and Turbo are installed on your system.
@@ -24,6 +24,10 @@ Then run `pnpm dev:ohsmart` to start.
 Or simply run
 
     pnpm --filter @dans-framework/ohsmart dev
+
+To run this application on a specific port, run
+
+    pnpm --filter @dans-framework/ohsmart dev --port 3000
 
 #### Testing the app(s)
 Tests are not implemented at the moment.
