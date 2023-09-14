@@ -1,0 +1,42 @@
+{
+  "name": "@dans-framework/rda",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@dans-framework/user-auth": "workspace:*",
+    "@dans-framework/deposit": "workspace:*",
+    "@dans-framework/utils": "workspace:*",
+    "@dans-framework/layout": "workspace:*",
+    "@dans-framework/pages": "workspace:*",
+    "@dans-framework/theme": "workspace:*",
+    "@fontsource/roboto": "^5.0.7",
+    "@mui/material": "^5.14.3",
+    "i18next": "^23.4.1",
+    "i18next-browser-languagedetector": "^7.1.0",
+    "i18next-resources-to-backend": "^1.1.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^13.0.3",
+    "react-router-dom": "^6.14.2",
+    "web-vitals": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "vite": "^4.4.5",
+    "vite-plugin-checker": "^0.6.2"
+  }
+}
