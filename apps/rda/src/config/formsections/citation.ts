@@ -9,162 +9,269 @@ const section: InitialSectionType = {
   fields: [
     {
       type: 'text',
-      label:  {
+      name: 'title',
+      label: {
         en: 'Title',
         nl: 'Titel',
       },
-      name: 'title',
       required: true,
-      description:  {
-        en: 'Title of the interview',
-        nl: 'Titel van het interview',
+      description: {
+        en: 'Title of the deposit',
+        nl: 'Titel van het deposit',
       },
     },
     {
       type: 'text',
-      label:  {
+      name: 'subtitle',
+      label: {
         en: 'Subtitle',
         nl: 'Ondertitel',
       },
-      name: 'subtitle',
-      description:  {
-        en: 'Optional subtitle for the interview',
-        nl: 'Optionele ondertitel bij het interview',
+      description: {
+        en: 'Optional subtitle for the deposit',
+        nl: 'Optionele ondertitel bij het deposit',
       },
+      repeatable: true,
+    },
+    {
+      type: 'group',
+      name: 'contributors',
+      label: {
+        en: 'Contributors',
+        nl: 'Bijdragers',
+      },
+      description: {
+        en: 'Add one or more contributors.',
+        nl: 'Voeg een of meerdere bijdragers toe',
+      },
+      repeatable: true,
+      fields: [
+        {
+          type: 'autocomplete',
+          name: 'contributor',
+          label: {
+            en: 'Contributor',
+            nl: 'Bijdrager',
+          },
+          description: {
+            en: 'Orcid of the contributor',
+            nl: 'Orcid van de bijdrager',
+          },
+          options: 'orcid',
+          allowFreeText: true,
+        },
+        {
+          type: 'autocomplete',
+          name: 'contributorType',
+          label: {
+            en: 'Contributor type',
+            nl: 'Type bijdrager',
+          },
+          description: {
+            en: 'Type of contribution',
+            nl: 'Type bijdrage',
+          },
+          options: [
+            {
+              label: {
+                en: 'Author',
+                nl: 'Auteur',
+              },
+              value: 'Author',
+            },
+            {
+              label: {
+                en: 'Contact Person',
+                nl: 'Contactpersoon',
+              },
+              value: 'ContactPerson',
+            },
+            {
+              label: {
+                en: 'Data Collector',
+                nl: 'Data Verzamelaar',
+              },
+              value: 'DataCollector',
+            },
+            {
+              label: {
+                en: 'Data Curator',
+                nl: 'Data Curator',
+              },
+              value: 'DataCurator',
+            },
+            {
+              label: {
+                en: 'Data Manager',
+                nl: 'Data Beheerder',
+              },
+              value: 'DataManager',
+            },
+            {
+              label: {
+                en: 'Distributor',
+                nl: 'Distributeur',
+              },
+              value: 'Distributor',
+            },
+            {
+              label: {
+                en: 'Editor',
+                nl: 'Redacteur',
+              },
+              value: 'Editor',
+            },
+            {
+              label: {
+                en: 'Hosting Institution',
+                nl: 'Hostende Instelling',
+              },
+              value: 'HostingInstitution',
+            },
+            {
+              label: {
+                en: 'Other',
+                nl: 'Overige',
+              },
+              value: 'Other',
+            },
+            {
+              label: {
+                en: 'Producer',
+                nl: 'Producent',
+              },
+              value: 'Producer',
+            },
+            {
+              label: {
+                en: 'Project Leader',
+                nl: 'Projectleider',
+              },
+              value: 'ProjectLeader',
+            },
+            {
+              label: {
+                en: 'Project Manager',
+                nl: 'Projectmanager',
+              },
+              value: 'ProjectManager',
+            },
+            {
+              label: {
+                en: 'Project Member',
+                nl: 'Projectlid',
+              },
+              value: 'ProjectMember',
+            },
+            {
+              label: {
+                en: 'Registration Agency',
+                nl: 'Registratieagentschap',
+              },
+              value: 'RegistrationAgency',
+            },
+            {
+              label: {
+                en: 'Registration Authority',
+                nl: 'Registratieautoriteit',
+              },
+              value: 'RegistrationAuthority',
+            },
+            {
+              label: {
+                en: 'Related Person',
+                nl: 'Gerelateerde Persoon',
+              },
+              value: 'RelatedPerson',
+            },
+            {
+              label: {
+                en: 'Researcher',
+                nl: 'Onderzoeker',
+              },
+              value: 'Researcher',
+            },
+            {
+              label: {
+                en: 'Research Group',
+                nl: 'Onderzoeksgroep',
+              },
+              value: 'ResearchGroup',
+            },
+            { 
+              label: {
+                en: 'Rights Holder',
+                nl: 'Rechthebbende',
+              },
+              value: 'RightsHolder',
+            },
+            {
+              label: {
+                en: 'Sponsor',
+                nl: 'Sponsor',
+              },
+              value: 'Sponsor',
+            },
+            {
+              label: {
+                en: 'Supervisor',
+                nl: 'Supervisor',
+              },
+              value: 'Supervisor',
+            },
+            {
+              label: {
+                en: 'Work Package Leader',
+                nl: 'Werkpakketleider',
+              },
+              value: 'WorkPackageLeader',
+            }
+          ]
+        }
+      ]
     },
     {
       type: 'text',
+      name: 'description',
       label: {
         en: 'Description',
         nl: 'Beschrijving',
       },
-      name: 'description',
       multiline: true,
       required: true,
       description: {
-        en: 'Some context on the interview. What is the role and relevance of the interviewee in the project? What led to the interview being conducted? Summary of what was discussed in the interview, with time breakdown, and describe important events in the interview. Improves discoverability and reusability of the interview data. Briefly describe the setting and atmosphere of the interview to indicate what does not emerge when only the text is read.',
-        nl: 'Wat context bij het interview. Wat is de rol en relevantie van de geinterviewde bij dit project? Waarom is dit interview afgenomen? Samenvatting van wat er besproken is in het interview, met een tijdindicatie. Beschrijf belangrijke gebeurtenissen in hter interview. Verbetert zichtbaarheid en herbruikbaarheid van de data. Beschrijf kort de setting en sfeer van het interview om meer dan alleen de tekst die gelezen wordt duidelijk te maken.'
+        en: 'Some context on the deposit.',
+        nl: 'Wat context bij het deposit.',
       },
     },
     {
       type: 'autocomplete',
-      label: {
-        en: 'Subject',
-        nl: 'Onderwerp',
-      },
-      name: 'subject',
-      required: true,
-      multiselect: true,
-      description: {
-        en: 'Broad data station end use community or domain',
-        nl: '',
-      },
-      options: 'narcis',
-      value: [{
-        label: 'Humanities',
-        value: 'https://www.narcis.nl/classification/D30000',
-        id: 'D30000',
-      }],
-    },
-    {
-      type: 'autocomplete',
+      name: 'publisher',
       label: {
         en: 'Publisher',
         nl: 'Uitgever',
       },
-      name: 'publisher',
       required: true,
       description: {
         en: 'Institution - often the rights holder',
         nl: 'Instituut - vaak de rechthebbende',
       },
       options: 'ror',
-      allowFreeText: true,
     },
     {
-      type: 'text',
+      type: 'date',
+      name: 'publicationDate',
       label: {
-        en: 'Depositor',
-        nl: 'Indiener',
+        en: 'Publication date',
+        nl: 'Publicatiedatum',
       },
-      name: 'depositor',
-      disabled: true,
-      autofill: 'email',
-    },
-    {
-      type: 'group',
-      label: {
-        en: 'Author',
-        nl: 'Auteur',
-      },
-      name: 'author',
-      repeatable: true,
+      required: true,
       description: {
-        en: 'Add one or more authors.',
-        nl: 'Voeg een of meerdere auteurs toe',
+        en: 'Date of publication',
+        nl: 'Datum van publicatie',
       },
-      fields: [
-        {
-          type: 'autocomplete',
-          label: {
-            en: 'Name',
-            nl: 'Naam',
-          },
-          name: 'name',
-          required: true,
-          description: {
-            en: 'First and last name',
-            nl: 'Voor en achternaam',
-          },
-          options: 'orcid',
-          allowFreeText: true,
-        },
-        {
-          type: 'text',
-          label: {
-            en: 'Affiliation',
-            nl: 'Affiliatie',
-          },
-          name: 'affiliation',
-          required: true,
-          description: {
-            en: '',
-            nl: '',
-          },
-        },
-      ]
+      format: 'DD-MM-YYYY HH:mm',
     },
-    {
-      type: 'group',
-      label: {
-        en: 'Grant information',
-        nl: 'Beursinformatie',
-      },
-      name: 'grant',
-      repeatable: true,
-      description: {
-        en: 'Optional information if a grant was involved in financing the project',
-        nl: 'Optionele informatie als het project met behulp van subsidie tot stand is gekomen',
-      },
-      fields: [
-        {
-          type: 'text',
-          label: {
-            en: 'Grant agency',
-            nl: 'Subsidieverstrekker',
-          },
-          name: 'grant_agency',
-        },
-        {
-          type: 'text',
-          label: {
-            en: 'Grant number/identifier',
-            nl: 'Dossiernummer van de verstrekte subsidie',
-          },
-          name: 'grant_number',
-        },
-      ]
-    },   
   ],
 };
 

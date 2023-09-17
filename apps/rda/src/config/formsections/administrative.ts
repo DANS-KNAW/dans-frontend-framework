@@ -9,76 +9,88 @@ const section: InitialSectionType = {
   },
   fields: [
     {
+      type: 'text',
+      name: 'identifier',
+      label: {
+        en: 'Identifier',
+        nl: 'Identificatie',
+      },
+      required: true,
+      description: {
+        en: 'Unique identifier for the dataset',
+        nl: 'Unieke identificatie voor het dataset',
+      },
+    },
+    {
+      type: 'text',
+      name: 'depositor',
+      label: {
+        en: 'Depositor',
+        nl: 'Depositor',
+      },
+      required: true,
+      description: {
+        en: 'The person who deposits the dataset',
+        nl: 'De persoon die het dataset deponeert',
+      },
+      autofill: 'name',
+      disabled: true,
+    },
+    {
+      type: 'date',
+      name: 'created',
+      label: {
+        en: 'Created',
+        nl: 'Aangemaakt',
+      },
+      required: true,
+      description: {
+        en: 'Date of creation of the deposit',
+        nl: 'Datum van aanmaak van het deposit',
+      },
+      format: 'DD-MM-YYYY HH:mm',
+    },
+    {
+      type: 'date',
+      name: 'modified',
+      label: {
+        en: 'Modified',
+        nl: 'Gewijzigd',
+      },
+      required: true,
+      description: {
+        en: 'Date of last modification of the deposit',
+        nl: 'Datum van laatste wijziging van het deposit',
+      },
+      format: 'DD-MM-YYYY HH:mm',
+    },
+    {
+      type: 'date',
+      name: 'available',
+      label: {
+        en: 'Available',
+        nl: 'Beschikbaar',
+      },
+      required: true,
+      description: {
+        en: 'Date of availability of the deposit',
+        nl: 'Datum van beschikbaarheid van het deposit',
+      },
+      format: 'DD-MM-YYYY HH:mm',
+    },
+    {
       type: 'autocomplete',
+      name: 'language',
       label: {
         en: 'Language',
         nl: 'Taal',
       },
-      name: 'language',
       required: true,
       description: {
-        en: 'Language of interview',
-        nl: 'Taal van het interview',
+        en: 'Language of the deposit',
+        nl: 'Taal van het deposit',
       },
       options: languageList,
-    },
-    {
-      type: 'date',
-      format: 'DD-MM-YYYY',
-      label:  {
-        en: 'Date available',
-        nl: 'Datum beschikbaarheid',
-      },
-      name: 'date_available',
-      required: true,
-      description:  {
-        en: 'In case of an embargo, else publication date',
-        nl: 'In het geval van een embargo, anders publicatiedatum',
-      },
-    },
-    {
-      type: 'group',
-      label: {
-        en: 'Contact information',
-        nl: 'Contactinformatie',
-      },
-      name: 'contact',
-      description: {
-        en: 'The person to contact regarding the metadata (curator)',
-        nl: 'Contactpersoon voor de metadata (curator)',
-      },
-      fields: [
-        {
-          type: 'text',
-          label: {
-            en: 'Name',
-            nl: 'Naam',
-          },
-          name: 'contact_name',
-          autofill: 'name',
-          disabled: true,
-        },
-        {
-          type: 'text',
-          label: {
-            en: 'Affiliation',
-            nl: 'Affiliatie',
-          },
-          name: 'contact_affiliation',
-          autofill: 'voperson_external_affiliation',
-          disabled: true,
-        },
-        {
-          type: 'text',
-          label: {
-            en: 'Email',
-            nl: 'Email',
-          },
-          name: 'contact_email',
-          autofill: 'email',
-          disabled: true,
-        },
-      ]
     },
   ],
 };

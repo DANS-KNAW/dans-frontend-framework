@@ -25,69 +25,241 @@ const section: InitialSectionType = {
   fields: [
     {
       type: 'autocomplete',
-      label: {
-        en: 'Audience',
-        nl: 'Publiek',
-      },
-      name: 'audience',
-      multiselect: true,
-      description: {
-        en: 'Humanities; Arts and Culture; History of Arts and Architecture (for example)',
-        nl: 'Bijvoorbeeld geesteswetenschappen, kunst en cultuur, etc.',
-      },
-      options: 'narcis',
-    },
-    {
-      type: 'group',
+      name: 'relatedto',
       label: {
         en: 'Related to',
         nl: 'Gerelateerd aan',
       },
-      name: 'relation',
-      repeatable: true,
+      required: true,
+      multiselect: true,
       description: {
-        en: 'Other interviews, publications, projects',
-        nl: 'Andere interviews, publicaties, projecten',
+        en: 'Other PID\'s, publications, projects',
+        nl: 'Andere PID\'s, publicaties, projecten',
       },
-      fields: [
+      options: [
         {
-          type: 'autocomplete',
           label: {
-            en: 'Type of relation',
-            nl: 'Type relatie',
+            en: 'Is Cited By',
+            nl: 'Wordt Geciteerd Door',
           },
-          name: 'relation_type',     
-          description: {
-            en: 'The type of relation to this external item',
-            nl: 'Type relatie met dit externe item',
-          },
-          options: relationships.map((r: string) => ({label: r, value: r})),
+          value: 'isCitedBy',
         },
         {
-          type: 'text',
           label: {
-            en: 'Related item',
-            nl: 'Gerelateerd item',
+            en: 'Cites',
+            nl: 'Citeert',
           },
-          name: 'relation_item',     
-          description: {
-            en: 'Title of an external item related to this dataset',
-            nl: 'Titel van een extern item gerelateerd aan deze dataset',
-          },
+          value: 'cites',
         },
         {
-          type: 'text',
           label: {
-            en: 'Item reference',
-            nl: 'Item referentie',
+            en: 'Is Supplement To',
+            nl: 'Is Een Supplement Op',
           },
-          name: 'relation_reference',
-          placeholder: 'https://...',
-          validation: 'uri',
-          description: {
-            en: 'A web link or PID reference for this external item',
-            nl: 'Een weblink of PID referentie naar dit externe item',
+          value: 'isSupplementTo',
+        },
+        {
+          label: {
+            en: 'Is Supplemented By',
+            nl: 'Wordt Aangevuld Door',
           },
+          value: 'isSupplementedBy',
+        },
+        {
+          label: {
+            en: 'Is Continued By',
+            nl: 'Wordt Voortgezet Door',
+          },
+          value: 'isContinuedBy',
+        },
+        {
+          label: {
+            en: 'Continues',
+            nl: 'Gaat Verder',
+          },
+          value: 'continues',
+        },
+        {
+          label: {
+            en: 'Is Described By',
+            nl: 'Wordt Beschreven Door',
+          },
+          value: 'isDescribedBy',
+        },
+        {
+          label: {
+            en: 'Describes',
+            nl: 'Beschrijft',
+          },
+          value: 'describes',
+        },
+        {
+          label: {
+            en: 'Has Metadata',
+            nl: 'Heeft Metadata',
+          },
+          value: 'hasMetadata',
+        },
+        {
+          label: {
+            en: 'Is Metadata For',
+            nl: 'Is Metadata Voor',
+          },
+          value: 'isMetadataFor',
+        },
+        {
+          label: {
+            en: 'Is New Version Of',
+            nl: 'Is Nieuwe Versie Van',
+          },
+          value: 'isNewVersionOf',
+        },
+        {
+          label: {
+            en: 'Is Previous Version Of',
+            nl: 'Is Vorige Versie Van',
+          },
+          value: 'isPreviousVersionOf',
+        },
+        {
+          label: {
+            en: 'Is Part Of',
+            nl: 'Is Onderdeel Van',
+          },
+          value: 'isPartOf',
+        },
+        {
+          label: {
+            en: 'Has Part',
+            nl: 'Heeft Deel',
+          },
+          value: 'hasPart',
+        },
+        {
+          label: {
+            en: 'Is Referenced By',
+            nl: 'Wordt Verwezen Door',
+          },
+          value: 'isReferencedBy',
+        },
+        {
+          label: {
+            en: 'References',
+            nl: 'Verwijst',
+          },
+          value: 'references',
+        },
+        {
+          label: {
+            en: 'Is Documented By',
+            nl: 'Wordt Gedocumenteerd Door',
+          },
+          value: 'isDocumentedBy',
+        },
+        {
+          label: {
+            en: 'Documents',
+            nl: 'Documenteert',
+          },
+          value: 'documents',
+        },
+        {
+          label: {
+            en: 'Is Compiled By',
+            nl: 'Wordt Samengesteld Door',
+          },
+          value: 'isCompiledBy',
+        },
+        {
+          label: {
+            en: 'Compiles',
+            nl: 'Stelt Samen',
+          },
+          value: 'compiles',
+        },
+        {
+          label: {
+            en: 'Is Variant Form Of',
+            nl: 'Is Variant Vorm Van',
+          },
+          value: 'isVariantFormOf',
+        },
+        {
+          label: {
+            en: 'Is Original Form Of',
+            nl: 'Is Originele Vorm Van',
+          },
+          value: 'isOrignialFormOf',
+        },
+        {
+          label: {
+            en: 'Is Identical To',
+            nl: 'Is Identiek Aan',
+          },
+          value: 'isIdenticalTo',
+        },
+        {
+          label: {
+            en: 'Is Reviewed By',
+            nl: 'Wordt Beoordeeld Door',
+          },
+          value: 'isReviewedBy',
+        },
+        {
+          label: {
+            en: 'Reviews',
+            nl: 'Beoordeelt',
+          },
+          value: 'reviews',
+        },
+        {
+          label: {
+            en: 'Is Derived From',
+            nl: 'Is Afgeleid Van',
+          },
+          value: 'isDerivedFrom',
+        },
+        {
+          label: {
+            en: 'Is Source Of',
+            nl: 'Is Bron Van',
+          },
+          value: 'isSourceOf',
+        },
+        {
+          label: {
+            en: 'Requires',
+            nl: 'Vereist',
+          },
+          value: 'requires',
+        },
+        {
+          label: {
+            en: 'Is Required By',
+            nl: 'Is Vereist Door',
+          },
+          value: 'isRequiredBy',
+        },
+        {
+          label: {
+            en: 'Is Obsoleted By',
+            nl: 'Wordt Verouderd Door',
+          },
+          value: 'isObsoletedBy',
+        },
+        {
+          label: {
+            en: 'Obsoletes',
+            nl: 'Maakt Verouderd',
+          },
+          value: 'obsoletes',
+        },
+        {
+          label: {
+            en: 'Is Published In',
+            nl: 'Wordt Gepubliceerd In',
+          },
+          value: 'isPublishedIn',
         },
       ],
     },

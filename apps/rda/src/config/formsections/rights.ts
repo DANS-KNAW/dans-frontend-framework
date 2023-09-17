@@ -9,12 +9,11 @@ const section: InitialSectionType = {
   fields: [
     {
       type: 'autocomplete',
-      allowFreeText: true,
+      name: 'rightsholder',
       label: {
         en: 'Rights holder',
         nl: 'Rechthebbende',
       },
-      name: 'rightsholder',
       required: true,
       description: {
         en: 'Name of the organisation or individual(s) owning the work',
@@ -25,87 +24,102 @@ const section: InitialSectionType = {
     },
     {
       type: 'autocomplete',
+      name: 'accessTypes',
+      label: {
+        en: 'Access types',
+        nl: 'Toegangstypen',
+      },
+      required: true,
+      description: {
+        en: 'The access types that apply to this deposit',
+        nl: 'De toegangstypen die van toepassing zijn op dit deposit',
+      },
+      options: [
+        {
+          label: {
+            en: 'Open',
+            nl: 'Open',
+          },
+          value: 'open',
+        },
+        {
+          label: {
+            en: 'Embargoed',
+            nl: 'Embargoed',
+          },
+          value: 'embargoed',
+        },
+        {
+          label: {
+            en: 'Restricted',
+            nl: 'Beperkt',
+          },
+          value: 'restricted',
+        },
+        {
+          label: {
+            en: 'Closed',
+            nl: 'Gesloten',
+          },
+          value: 'closed',
+        }
+      ], 
+    },
+    {
+      type: 'autocomplete',
+      name: 'licence',
       label: {
         en: 'Licence',
         nl: 'Licentie',
       },
-      name: 'licence_type',
       required: true,
       description: {
         en: 'One of a number of specific licences',
         nl: 'Eén of meerdere specifieke licenties',
       },
-      options: [
-        {
-          label: {
-            en: 'DANS Licence',
-            nl: 'DANS Licentie',
-          },
-          value: 'https://dans.knaw.nl/wp-content/uploads/2022/01/DANS_Licence_EN.pdf',
-        },
-        {
-          label: 'CC0-1.0',
-          value: 'https://creativecommons.org/publicdomain/zero/1.0/',
-        },
-        {
-          label: 'CC-BY-4.0',
-          value: 'https://creativecommons.org/licenses/by/4.0/',
-        },
-        {
-          label: 'CC-BY-SA-4.0',
-          value: 'https://creativecommons.org/licenses/by-sa/4.0/',
-        },
-        {
-          label: 'CC BY-NC 4.0',
-          value: 'https://creativecommons.org/licenses/by-nc/4.0/',
-        },
-        {
-          label: 'CC BY-ND 4.0',
-          value: 'https://creativecommons.org/licenses/by-nd/4.0/',
-        },
-        {
-          label: 'CC BY-NC-ND 4.0',
-          value: 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
-        },
-        {
-          label: 'CC BY-NC-SA 4.0',
-          value: 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
-        },
-      ],
+      options: [],
     },
     {
-      type: 'radio',
+      type: 'autocomplete',
+      name: 'uploadType',
       label: {
-        en: 'Does this submission contain personal data?',
-        nl: 'Bevat deze dataset persoonlijke gegevens?',
+        en: 'Upload type',
+        nl: 'Upload type',
       },
-      name: 'personal_data',
       required: true,
-      layout: 'row',
-      value: 'personal_data_true',
-      options: [
-        {
-          value: 'personal_data_true',
-          label: {
-            en: 'Yes',
-            nl: 'Ja',
-          },
-        },
-        {
-          value: 'personal_data_false',
-          label: {
-            en: 'No',
-            nl: 'Nee',
-          },
-        },
-        {
-          value: 'personal_data_unknown',
-          label: {
-            en: 'Unknown',
-            nl: 'Onbekend',
-          },
-        },
-      ],
+      description: {
+        en: 'The type of upload that applies to this deposit',
+        nl: 'Het type upload dat van toepassing is op dit deposit',
+      },
+      options: [],
+    },
+    {
+      type: 'autocomplete',
+      name: 'PublicationType',
+      label: {
+        en: 'Publication type',
+        nl: 'Publicatietype',
+      },
+      required: false,
+      description: {
+        en: 'The type of publication that applies to this deposit',
+        nl: 'Het type publicatie dat van toepassing is op dit deposit',
+      },
+      options: [],
+    },
+    {
+      type: 'autocomplete',
+      name: 'imageType',
+      label: {
+        en: 'Image type',
+        nl: 'Afbeeldingstype',
+      },
+      required: false,
+      description: {
+        en: 'The type of image that applies to this deposit',
+        nl: 'Het type afbeelding dat van toepassing is op dit deposit',
+      },
+      options: [],
     },
   ],
 };
