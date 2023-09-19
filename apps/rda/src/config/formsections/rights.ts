@@ -77,7 +77,7 @@ const section: InitialSectionType = {
         en: 'One of a number of specific licences',
         nl: 'Eén of meerdere specifieke licenties',
       },
-      options: [],
+      options: 'licenses',
     },
     {
       type: 'autocomplete',

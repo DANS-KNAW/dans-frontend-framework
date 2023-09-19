@@ -12,6 +12,26 @@ export interface GorcResponse {
   items: GorcItem[];
 }
 
+interface License {
+  domain_content: boolean;
+  domain_data: boolean;
+  domain_software: boolean;
+  family: string;
+  id: string;
+  maintainer: string;
+  od_conformance: string;
+  osd_conformance: string;
+  status: string;
+  title: string;
+  url: string;
+  legacy_ids?: string[];
+}
+
+export interface LicenceResponse {
+  number_of_results: number;
+  items: License[];
+}
+
 interface RorCountry {
   country_name: string;
   country_code: string;

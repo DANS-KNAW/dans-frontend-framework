@@ -29,6 +29,7 @@ import AutocompleteField, { InfoLink, InfoChip } from './AutocompleteField';
 import { getMetadataSubmitStatus } from '../../submit/submitSlice';
 import { getData } from '../../../deposit/depositSlice';
 import { useFetchGorcQuery } from '../api/gorc';
+import { useFetchLicensesQuery } from '../api/licenses';
 
 /*
  *  Type ahead fields for different API endpoints
@@ -95,6 +96,26 @@ export const GorcField = ({field, sectionIndex}: AutocompleteFieldProps) => {
         isFetching={isFetching} 
       />
     </>
+  )
+}
+
+export const LicensesField = ({field, sectionIndex}: AutocompleteFieldProps) => {
+  const [inputValue, setInputValue] = useState<string>('');
+  const debouncedInputValue = useDebounce(inputValue, 500)[0];
+  // Fetch data on input change
+  const {data, isFetching, isLoading} = useFetchLicensesQuery<QueryReturnType>(debouncedInputValue, {skip: debouncedInputValue === ''});
+
+  return (
+    <AutocompleteAPIField
+      field={field}
+      sectionIndex={sectionIndex}
+      inputValue={inputValue}
+      setInputValue={setInputValue}
+      debouncedInputValue={debouncedInputValue}
+      data={data}
+      isLoading={isLoading}
+      isFetching={isFetching}
+    />
   )
 }
 
