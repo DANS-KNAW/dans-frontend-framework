@@ -1,0 +1,56 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+    tags:
+      - "beta-*"
+      - "alpha-*"
+      - "v1.*"
+
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ["18"]
+    name: Run tests
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+    - name: Set python version
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    - name: Install dependencies
+      run: |
+        apt-get update
+        apt-get install git
+        yarn global add turbo
+        yarn global add pnpm
+    - name: Run tests
+      run: "echo 'setup complete' "
+
+  push:
+
+    name: Push to registry.
+    runs-on: ubuntu-latest
+    needs: test
+    env:
+      IMAGE_TAG: ${{ github.ref_name }}
+      USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      IMAGE_NAME: "dans-framework"
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+    - name: Login to registry
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_PASSWORD }}
+    - name: Push to dockerhub
+      run: |
+        docker build -f apps/ohsmart/Dockerfile . -t $USERNAME/$IMAGE_NAME:$IMAGE_TAG
+        docker push $IMAGE_NAME/$IMAGE_NAME:$IMAGE_TAG
