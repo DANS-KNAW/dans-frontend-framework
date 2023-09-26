@@ -34,6 +34,48 @@ const section: InitialSectionType = {
       repeatable: true,
     },
     {
+      type: 'autocomplete',
+      name: 'publisher',
+      label: {
+        en: 'Publisher',
+        nl: 'Uitgever',
+      },
+      required: true,
+      description: {
+        en: 'Institution - often the rights holder',
+        nl: 'Instituut - vaak de rechthebbende',
+      },
+      options: 'ror',
+    },
+    {
+      type: 'date',
+      name: 'publicationDate',
+      label: {
+        en: 'Publication date',
+        nl: 'Publicatiedatum',
+      },
+      required: true,
+      description: {
+        en: 'Date of publication',
+        nl: 'Datum van publicatie',
+      },
+      format: 'DD-MM-YYYY HH:mm',
+    },
+    {
+      type: 'text',
+      name: 'description',
+      label: {
+        en: 'Description',
+        nl: 'Beschrijving',
+      },
+      multiline: true,
+      required: true,
+      description: {
+        en: 'Some context on the deposit.',
+        nl: 'Wat context bij het deposit.',
+      },
+    },
+    {
       type: 'group',
       name: 'contributors',
       label: {
@@ -229,48 +271,6 @@ const section: InitialSectionType = {
           ]
         }
       ]
-    },
-    {
-      type: 'text',
-      name: 'description',
-      label: {
-        en: 'Description',
-        nl: 'Beschrijving',
-      },
-      multiline: true,
-      required: true,
-      description: {
-        en: 'Some context on the deposit.',
-        nl: 'Wat context bij het deposit.',
-      },
-    },
-    {
-      type: 'autocomplete',
-      name: 'publisher',
-      label: {
-        en: 'Publisher',
-        nl: 'Uitgever',
-      },
-      required: true,
-      description: {
-        en: 'Institution - often the rights holder',
-        nl: 'Instituut - vaak de rechthebbende',
-      },
-      options: 'ror',
-    },
-    {
-      type: 'date',
-      name: 'publicationDate',
-      label: {
-        en: 'Publication date',
-        nl: 'Publicatiedatum',
-      },
-      required: true,
-      description: {
-        en: 'Date of publication',
-        nl: 'Datum van publicatie',
-      },
-      format: 'DD-MM-YYYY HH:mm',
     },
   ],
 };

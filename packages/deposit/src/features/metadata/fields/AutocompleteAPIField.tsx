@@ -251,6 +251,7 @@ export const MultiApiField = ({field, sectionIndex}: AutocompleteFieldProps) => 
       </FormControl>
       {field.multiApiValue === 'ror' && <RorField field={field} sectionIndex={sectionIndex} />}
       {field.multiApiValue === 'orcid' && <OrcidField field={field} sectionIndex={sectionIndex} />}
+      {field.multiApiValue === 'gorc' && <GorcField field={field} sectionIndex={sectionIndex} />}
       {field.multiApiValue === 'geonames' && <GeonamesField field={field} sectionIndex={sectionIndex} />}
       {field.multiApiValue === 'getty' && <GettyField field={field} sectionIndex={sectionIndex} />}
       {field.multiApiValue === 'sheets' && <SheetsField field={field} sectionIndex={sectionIndex} />}
