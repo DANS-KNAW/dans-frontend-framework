@@ -15,6 +15,7 @@ import { dansUtilityApi } from '../features/files/api/dansUtility';
 import { errorLogger } from '@dans-framework/utils/error';
 import { gorcApi } from '../features/metadata/api/gorc';
 import { licenceApi } from '../features/metadata/api/licenses';
+import { rdaWorkingGroupsApi } from '../features/metadata/api/rdaWorkgroup';
 
 export const store = configureStore({
   reducer: {
@@ -31,6 +32,7 @@ export const store = configureStore({
     [datastationsApi.reducerPath]: datastationsApi.reducer,
     [dansFormatsApi.reducerPath]: dansFormatsApi.reducer,
     [dansUtilityApi.reducerPath]: dansUtilityApi.reducer,
+    [rdaWorkingGroupsApi.reducerPath]: rdaWorkingGroupsApi.reducer,
     submit: submitReducer,
     deposit: depositReducer,
   },
@@ -47,6 +49,7 @@ export const store = configureStore({
       .concat(submitApi.middleware)
       .concat(dansFormatsApi.middleware)
       .concat(dansUtilityApi.middleware)
+      .concat(rdaWorkingGroupsApi.middleware)
       .concat(errorLogger)
 });
 

@@ -76,7 +76,15 @@ const section: InitialSectionType = {
         en: 'List of relevant keywords',
         nl: 'Een lijst van relevante trefwoorden',
       },
-      options: [],
+      options: [
+        {
+          label: {
+            en: 'Dummy',
+            nl: 'Dummy',
+          },
+          value: 'dummy',
+        }
+      ],
       multiselect: true,
       allowFreeText: true,
     },
@@ -108,9 +116,9 @@ const section: InitialSectionType = {
         en: 'List of relevant keywords',
         nl: 'Een lijst van relevante trefwoorden',
       },
-      options: [],
+      options: "rdaworkinggroups",
       multiselect: true,
-      allowFreeText: true,
+      allowFreeText: false,
     },
     {
       type: 'autocomplete',

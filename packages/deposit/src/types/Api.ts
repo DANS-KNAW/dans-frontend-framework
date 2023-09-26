@@ -12,6 +12,17 @@ export interface GorcResponse {
   items: GorcItem[];
 }
 
+interface RdaWorkGroupItem {
+  id: string;
+  title: string;
+  parent_id: string;
+}
+
+export interface RdaWorkGroupResponse {
+  number_of_results: number;
+  items: RdaWorkGroupItem[];
+}
+
 interface License {
   domain_content: boolean;
   domain_data: boolean;
