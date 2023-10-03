@@ -62,7 +62,7 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
       <Container>
         <Grid container>
           <Grid xs={12} mt={4}>
-            {userData && config.target.filter(t => 
+            {userData && config.targetCredentials.filter(t => 
               (userData.attributes[t.authKey] && !userData.attributes[t.authKey][0]) || !userData.attributes[t.authKey]
             ).length > 0 &&
               // show a message if keys are missing

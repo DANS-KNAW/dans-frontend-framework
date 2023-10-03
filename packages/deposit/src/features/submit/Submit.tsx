@@ -34,7 +34,8 @@ const Submit = () => {
   const filesSubmitStatus = useAppSelector(getFilesSubmitStatus).filter(f => f.id !== '');
   // Get the users API keys
   const { data: userData } = fetchUserProfile({provider: auth.settings.authority, id: auth.settings.client_id});
-  const targetKeys = userData && formConfig.target.map( t => userData.attributes[t.authKey] && userData.attributes[t.authKey][0]);
+  // Map API keys to an object
+  const targetKeys = userData && Object.assign({}, ...formConfig.targetCredentials.map( t => userData.attributes[t.authKey] && {[t.authKey]: userData.attributes[t.authKey][0]}));
   // Calculate total upload progress
   const totalFileProgress = filesSubmitStatus.reduce( (n, {progress}) => n + (progress || 0), 0) / filesSubmitStatus.length || undefined;
   // If any file has an error, the form should indicate that.
@@ -61,16 +62,20 @@ const Submit = () => {
   }] = useSubmitFilesMutation();
 
   const handleButtonClick = () => {
-    // First submit the metadata
     const formattedMetadata = formatFormData(sessionId, metadata, selectedFiles);
     dispatch(setMetadataSubmitStatus('submitting'));
-    submitData({
-      data: formattedMetadata, 
-      submitKey: formConfig.submitKey,
-      targetRepo: formConfig.target.map( t => t.repo ).join(' '),
-      targetAuth: formConfig.target.map( t => t.auth ).join(' '),
-      targetKeys: targetKeys.join(' '),
-    });
+    // for fringe cases, where the access token might just be expiring,
+    // we call the submission as a callback to signinSilent, which refreshes the current users token
+    auth.signinSilent().then(() => {
+      submitData({
+        data: formattedMetadata, 
+        // we use the Keycloak access token if no auth key is set manually in the form config
+        submitKey: formConfig.submitKey || auth.user?.access_token,
+        targetCredentials: formConfig.targetCredentials,
+        target: formConfig.target,
+        targetKeys: targetKeys,
+      });
+    });    
   };
 
   useEffect(() => {

@@ -1,9 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import type { BaseQueryFn, FetchBaseQueryError } from '@reduxjs/toolkit/query'
-import axios from 'axios'
-import type { AxiosRequestConfig, AxiosError, AxiosProgressEvent } from 'axios'
+import type { BaseQueryFn, FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import axios from 'axios';
+import type { AxiosRequestConfig, AxiosError, AxiosProgressEvent } from 'axios';
 import { setMetadataSubmitStatus, setFilesSubmitStatus } from './submitSlice';
 import { store } from '../../redux/store';
+import type { Target } from '@dans-framework/user-auth';
 
 // We use Axios to enable file upload progress monitoring
 const axiosBaseQuery =
@@ -83,20 +84,32 @@ export const submitApi = createApi({
   endpoints: (build) => ({
     submitData: build.mutation({
       // Custom query for chaining Post functions
-      // TODO: responses and error handling.
-      async queryFn({data, targetRepo, submitKey, targetAuth, targetKeys}, queryApi, extraOptions, fetchWithBQ) {
+      // submitKey is the current users Keycloak token
+      async queryFn({data, submitKey, targetCredentials, target, targetKeys}, queryApi, extraOptions, fetchWithBQ) {
         console.log('submitting metadata...')
         console.log(data)
+        // Format the headers
+        const headers = {
+          Authorization: `Bearer ${submitKey}`,
+          'auth-env-name': target.envName,
+          'assistant-config-name': target.configName,
+          'targets-credentials': targetCredentials.map((t: Target) => ({
+            'target-repo-name': t.repo,
+            'credentials': {
+              'username': t.auth,
+              'password': targetKeys[t.authKey],
+            },
+          }))
+        };
+        console.log('submitting with headers...')
+        console.log(headers);
+
         // First post the metadata
         const metadataResult = await fetchWithBQ({
-          url: `metadata?repo_target=${targetRepo}`,
+          url: `metadata`,
           method: 'POST',
           data: data,
-          headers: {
-            Authorization: `Bearer ${submitKey}`,
-            'target-username': targetAuth,
-            'target-password': targetKeys,
-          },
+          headers: headers,
         });
 
         console.log(metadataResult)
@@ -110,7 +123,7 @@ export const submitApi = createApi({
     submitFiles: build.mutation({
       async queryFn({data, submitKey}, queryApi, extraOptions, fetchWithBQ) {
         console.log('submitting files...')
-        console.log(data)
+        console.log(data.map((d: any) => [...d]))
         const filesResults = Array.isArray(data) && await Promise.all(data.map((file: any) => fetchWithBQ({
           url: 'file',
           method: 'POST',

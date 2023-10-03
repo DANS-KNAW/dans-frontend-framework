@@ -23,11 +23,15 @@ const sections = [
 
 const form: FormConfig = {
   form: sections as InitialSectionType[],
-  target: [
+  target: {
+    envName: 'ohsmart_demo',
+    configName: 'ohsmart.ds.ssh.demo',
+  },
+  targetCredentials: [
     // Formatted as array, to support multiple submission targets
     {
       name: 'Dataverse',
-      repo: 'demo.ssh.datastations.nl',
+      repo: 'ds.ssh.sword2.demo',
       auth: 'API_KEY',
       authKey: 'dataverse_api_key',
       keyUrl: 'https://demo.ssh.datastations.nl/dataverseuser.xhtml?selectTab=apiTokenTab',

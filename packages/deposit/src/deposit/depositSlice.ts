@@ -4,7 +4,8 @@ import type { FormConfig } from '../types/Metadata';
 
 // Save the props we need to redux store, for use in subcomponents
 const initialState: Omit<FormConfig, 'form'> = {
-  target: [],
+  targetCredentials: [],
+  target: {},
   submitKey: '',
   skipValidation: false,
   geonamesApiKey: '',
