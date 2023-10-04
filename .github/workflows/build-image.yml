@@ -26,8 +26,8 @@ jobs:
         node-version: '18'
     - name: Install dependencies
       run: |
-        apt-get update
-        apt-get install git
+        sudo apt-get update
+        sudo apt-get install git
         npm install --global yarn
         yarn global add turbo
         yarn global add pnpm
@@ -44,7 +44,7 @@ jobs:
         node-version: ["18"]
     env:
       IMAGE_TAG: ${{ github.ref_name }}
-      USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       IMAGE_NAME: "dans-framework"
     steps:
     - name: Checkout repo
@@ -52,8 +52,8 @@ jobs:
     - name: Login to registry
       uses: docker/login-action@v3
       with:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_ACCESS_PASSWORD }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
     - name: Push to dockerhub
       run: |
         docker build -f apps/ohsmart/Dockerfile . -t $USERNAME/$IMAGE_NAME:$IMAGE_TAG
