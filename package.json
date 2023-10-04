@@ -8,7 +8,8 @@
     "lint": "turbo run lint",
     "dev": "turbo run dev",
     "dev:ohsmart": "turbo run dev --filter=@dans-framework/ohsmart",
-    "dev:rda": "turbo run dev --filter=@dans-framework/rda"
+    "dev:rda": "turbo run dev --filter=@dans-framework/rda",
+    "dev:faircore4eosc": "turbo run dev --filter=@dans-framework/faircore4eosc"
   },
   "workspaces": ["packages/*", "apps/*"],
   "keywords": [],
