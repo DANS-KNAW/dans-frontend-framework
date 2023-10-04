@@ -45,6 +45,7 @@ jobs:
       IMAGE_TAG: ${{ github.ref_name }}
       USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       IMAGE_NAME: "dans-frontend-framework"
+      ORG: "dansknaw"
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
@@ -55,5 +56,5 @@ jobs:
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
     - name: Push to dockerhub
       run: |
-        docker build -f apps/ohsmart/Dockerfile . -t $USERNAME/$IMAGE_NAME:$IMAGE_TAG
-        docker push $IMAGE_NAME:$IMAGE_TAG
+        docker build -f apps/ohsmart/Dockerfile . -t $ORG/$IMAGE_NAME:$IMAGE_TAG
+        docker push $ORG/$IMAGE_NAME:$IMAGE_TAG
