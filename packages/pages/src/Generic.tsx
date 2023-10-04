@@ -33,7 +33,7 @@ const Generic = ({ logo, name, content, action }: Page) => {
           xs={logo ? 8 : 12} 
           xsOffset={logo ? 2 : 0}
         >
-          <Typography variant="h1">
+          <Typography variant="h1" sx={{textAlign: 'center'}}>
             {logo ? 
               <img src={logo} alt="OH-SMArt" title="OH-SMArt" /> :
               lookupLanguageString(name, i18n.language)

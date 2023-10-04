@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-import { DansLogoWhite } from './images/DansLogo';
+import dansLogoWhite from './images/logo-dans-white.svg';
 import { NavLink as RouterLink } from 'react-router-dom';
 import type { Page } from '@dans-framework/pages';
 import { lookupLanguageString } from '@dans-framework/utils';
@@ -17,7 +17,12 @@ import { useTranslation } from 'react-i18next';
 import { UserMenu } from '@dans-framework/user-auth';
 import { useAuth } from 'react-oidc-context';
 
-const MenuBar = ({pages}: {pages: Page[]} ) => {
+const MenuBar = ({pages, logo = dansLogoWhite, userSettings = true, userSubmissions = true}: {
+  pages: Page[];
+  logo?: any;
+  userSettings?: boolean;
+  userSubmissions?: boolean;
+} ) => {
   const { i18n } = useTranslation();
   const auth = useAuth();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
@@ -77,20 +82,20 @@ const MenuBar = ({pages}: {pages: Page[]} ) => {
             ))}
             </Menu>
             <Link component={RouterLink} to="/" sx={{ ml: 2, width: 100, display: { xs: 'flex', md: 'none' } }}>
-              <DansLogoWhite/>
+              <img src={logo} />
             </Link>
           </Box>
 
           {/* desktop menu */}
           <Link component={RouterLink} to="/" sx={{ mr: 2, width: 100, display: { xs: 'none', md: 'flex' } }}>
-            <DansLogoWhite/>
+            <img src={logo} />
           </Link>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages && pages.map((page, i) => (page.inMenu && page.menuTitle && ((page.restricted && auth.isAuthenticated) || !page.restricted) &&
               <Button
                 key={i}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                sx={{ my: 2, display: 'block', color: 'inherit' }}
                 component={RouterLink} 
                 to={page.slug}
               >
@@ -99,7 +104,7 @@ const MenuBar = ({pages}: {pages: Page[]} ) => {
             ))}
           </Box>
 
-          <UserMenu />
+          <UserMenu userSettings={userSettings} userSubmissions={userSubmissions} />
         </Toolbar>
       </Container>
     </AppBar>

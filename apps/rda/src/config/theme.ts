@@ -3,14 +3,13 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { createTheme } from '@mui/material/styles';
-import grey from '@mui/material/colors/grey';
 
 const customTheme = createTheme({
   palette: {
     primary: {
-      light: '#E4F9FF',
-      main: '#38a7d4',
-      dark: '#1f97c8',
+      light: '#bed3ba',
+      main: '#4F8E31',
+      dark: '#4F8E31;',
       contrastText: '#fff',
     },
     secondary: {
@@ -57,15 +56,16 @@ const customTheme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         colorPrimary: {
-          color: 'white',
-        }
-      }
+          backgroundColor: '#bed3ba',
+          color: '#222',
+        },
+      },
     },
     MuiAvatar: {
       styleOverrides: {
         colorDefault: {
-           backgroundColor: grey[300],
-           color: 'black'
+           backgroundColor: '#6A1D0D',
+           color: '#fff'
          }
       }
     }

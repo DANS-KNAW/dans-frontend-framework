@@ -22,11 +22,11 @@ const form: FormConfig = {
   target: [
     // Formatted as array, to support multiple submission targets
     {
-      name: 'Dataverse',
+      name: 'Zenodo',
       repo: 'demo.ssh.datastations.nl',
-      auth: 'API_KEY',
-      authKey: 'dataverse_api_key',
-      keyUrl: 'https://demo.ssh.datastations.nl/dataverseuser.xhtml?selectTab=apiTokenTab',
+      auth: '',
+      authKey: '',
+      keyUrl: '',
     },
   ],
   submitKey: import.meta.env.VITE_PACKAGING_KEY, // still needed??
