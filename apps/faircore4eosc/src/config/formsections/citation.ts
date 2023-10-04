@@ -8,90 +8,162 @@ const section: InitialSectionType = {
     nl: 'Citation Metadata',
   },
   fields: [
-    // {
-    //   type: 'text',
-    //   name: 'identifier',
-    //   label: {
-    //     en: 'Identifier',
-    //     nl: 'Identificatie',
-    //   },
-    //   required: true,
-    //   description: {
-    //     en: 'Unique identifier for the dataset',
-    //     nl: 'Unieke identificatie voor het dataset',
-    //   },
-    // },
-    // {
-    //   type: 'text',
-    //   name: 'depositor',
-    //   label: {
-    //     en: 'Depositor',
-    //     nl: 'Depositor',
-    //   },
-    //   required: true,
-    //   description: {
-    //     en: 'The person who deposits the dataset',
-    //     nl: 'De persoon die het dataset deponeert',
-    //   },
-    //   autofill: 'name',
-    //   disabled: true,
-    // },
-    // {
-    //   type: 'date',
-    //   name: 'created',
-    //   label: {
-    //     en: 'Created',
-    //     nl: 'Aangemaakt',
-    //   },
-    //   required: true,
-    //   description: {
-    //     en: 'Date of creation of the deposit',
-    //     nl: 'Datum van aanmaak van het deposit',
-    //   },
-    //   format: 'DD-MM-YYYY HH:mm',
-    // },
-    // {
-    //   type: 'date',
-    //   name: 'modified',
-    //   label: {
-    //     en: 'Modified',
-    //     nl: 'Gewijzigd',
-    //   },
-    //   required: true,
-    //   description: {
-    //     en: 'Date of last modification of the deposit',
-    //     nl: 'Datum van laatste wijziging van het deposit',
-    //   },
-    //   format: 'DD-MM-YYYY HH:mm',
-    // },
-    // {
-    //   type: 'date',
-    //   name: 'available',
-    //   label: {
-    //     en: 'Available',
-    //     nl: 'Beschikbaar',
-    //   },
-    //   required: true,
-    //   description: {
-    //     en: 'Date of availability of the deposit',
-    //     nl: 'Datum van beschikbaarheid van het deposit',
-    //   },
-    //   format: 'DD-MM-YYYY HH:mm',
-    // },
-    // {
-    //   type: 'autocomplete',
-    //   name: 'language',
-    //   label: {
-    //     en: 'Language',
-    //     nl: 'Taal',
-    //   },
-    //   required: true,
-    //   description: {
-    //     en: 'Language of the deposit',
-    //     nl: 'Taal van het deposit',
-    //   },
-    //   options: languageList,
-    // },
+    {
+      type: 'text',
+      name: 'title',
+      label: {
+        en: 'Title',
+        nl: 'Titel',
+      },
+      required: true,
+      description: {
+        en: 'Title of the dataset',
+        nl: 'Titel van het dataset',
+      },
+    },
+    {
+      type: 'autocomplete',
+      name: 'subject',
+      label: {
+        en: 'Subject',
+        nl: 'Onderwerp',
+      },
+      required: true,
+      options: [
+        {
+          label: {
+            en: "Agricultural Sciences",
+            nl: 'Agrarische wetenschappen',
+          },
+          value: "Agricultural Sciences",
+        },
+        {
+          label: {
+            en: "Arts and Humanities",
+            nl: 'Kunst en Geesteswetenschappen',
+          },
+          value: "Arts and Humanities",
+        },
+        {
+          label: {
+            en: 'Astronomy and Astrophysics',
+            nl: 'Astronomie en Astrofysica',
+          },
+          value: 'Astronomy and Astrophysics',
+        },
+        {
+          label: {
+            en: 'Business and Management',
+            nl: 'Bedrijfskunde en Management',
+          },
+          value: 'Business and Management',
+        },
+        {
+          label: {
+            en: 'Chemistry',
+            nl: 'Chemie',
+          },
+          value: 'Chemistry',
+        },
+        {
+          label: {
+            en: 'Computer and Information Science',
+            nl: 'Computer- en Informatiewetenschappen',
+          },
+          value: 'Computer and Information Science',
+        },
+        {
+          label: {
+            en: 'Earth and Environmental Sciences',
+            nl: 'Aard- en Milieuwetenschappen',
+          },
+          value: 'Earth and Environmental Sciences',
+        },
+        {
+          label: {
+            en: 'Engineering',
+            nl: 'Techniek',
+          },
+          value: 'Engineering',
+        },
+        {
+          label: {
+            en: 'Law',
+            nl: 'Rechten',
+          },
+          value: 'Law',
+        },
+        {
+          label: {
+            en: 'Mathematical Sciences',
+            nl: 'Wiskunde',
+          },
+          value: 'Mathematical Sciences',
+        },
+        {
+          label: {
+            en: 'Medicine, Health and Life Sciences',
+            nl: 'Geneeskunde, Gezondheid en Levenswetenschappen',
+          },
+          value: 'Medicine, Health and Life Sciences',
+        },
+        {
+          label: {
+            en: 'Physics',
+            nl: 'Natuurkunde',
+          },
+          value: 'Physics',
+        },
+        {
+          label: {
+            en: 'Social Sciences',
+            nl: 'Sociale Wetenschappen',
+          },
+          value: 'Social Sciences',
+        },
+        {
+          label: {
+            en: 'Other',
+            nl: 'Anders',
+          },
+          value: 'Other',
+        }
+      ]
+    },
+    {
+      type: 'text',
+      name: 'author',
+      label: {
+        en: 'Author',
+        nl: 'Auteur',
+      },
+      autofill: 'name',
+      required: true,
+      description: {
+        en: 'Author of the dataset',
+        nl: 'Auteur van het dataset',
+      },
+    },
+    {
+      type: 'text',
+      label: {
+        en: 'Email',
+        nl: 'Email',
+      },
+      name: 'contact_email',
+      autofill: 'email',
+      disabled: true,
+    },
+    {
+      type: 'text',
+      name: 'description',
+      label: {
+        en: 'Description',
+        nl: 'Beschrijving',
+      },
+      required: true,
+      multiline: true,
+    },
   ],
 };
 
