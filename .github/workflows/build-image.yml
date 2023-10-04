@@ -45,7 +45,7 @@ jobs:
     env:
       IMAGE_TAG: ${{ github.ref_name }}
       USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      IMAGE_NAME: "dans-framework"
+      IMAGE_NAME: "dans-frontend-framework"
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
@@ -57,4 +57,4 @@ jobs:
     - name: Push to dockerhub
       run: |
         docker build -f apps/ohsmart/Dockerfile . -t $USERNAME/$IMAGE_NAME:$IMAGE_TAG
-        docker push $IMAGE_NAME/$IMAGE_NAME:$IMAGE_TAG
+        docker push $IMAGE_NAME:$IMAGE_TAG
