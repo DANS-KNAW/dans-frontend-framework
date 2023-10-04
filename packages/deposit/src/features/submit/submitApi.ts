@@ -80,7 +80,7 @@ const axiosBaseQuery =
 
 export const submitApi = createApi({
   reducerPath: 'submitApi',
-  baseQuery: axiosBaseQuery({ baseUrl: 'https://packaging.labs.dans.knaw.nl/inbox/' }),
+  baseQuery: axiosBaseQuery({ baseUrl: import.meta.env.VITE_PACKAGING_TARGET }),
   endpoints: (build) => ({
     submitData: build.mutation({
       // Custom query for chaining Post functions
@@ -93,13 +93,13 @@ export const submitApi = createApi({
           Authorization: `Bearer ${submitKey}`,
           'auth-env-name': target.envName,
           'assistant-config-name': target.configName,
-          'targets-credentials': targetCredentials.map((t: Target) => ({
+          'targets-credentials': JSON.stringify(targetCredentials.map((t: Target) => ({
             'target-repo-name': t.repo,
             'credentials': {
               'username': t.auth,
               'password': targetKeys[t.authKey],
             },
-          }))
+          }))),
         };
         console.log('submitting with headers...')
         console.log(headers);

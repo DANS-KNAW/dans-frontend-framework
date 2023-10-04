@@ -85,7 +85,7 @@ const Submit = () => {
         .then( d => {
           submitFiles({
             data: d, 
-            submitKey: formConfig.submitKey,
+            submitKey: formConfig.submitKey || auth.user?.access_token,
           });
         });
     }
