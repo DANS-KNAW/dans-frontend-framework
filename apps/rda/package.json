@@ -16,6 +16,7 @@
     "@dans-framework/layout": "workspace:*",
     "@dans-framework/pages": "workspace:*",
     "@dans-framework/theme": "workspace:*",
+    "@dans-framework/rdt-search-ui": "workspace:*",
     "@fontsource/roboto": "^5.0.7",
     "@mui/material": "^5.14.3",
     "i18next": "^23.4.1",

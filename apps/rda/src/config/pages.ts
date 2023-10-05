@@ -1,13 +1,15 @@
 import home from './pages/home';
+import dashboard from './pages/dashboard';
 import deposit from './pages/deposit';
-import about from './pages/about';
-import support from './pages/support';
+import search from './pages/search';
+import record from './pages/record';
 
 const pages = [
   home,
+  dashboard,
+  search,
   deposit,
-  about,
-  support,
+  record,
 ];
 
 export default pages;

@@ -9,6 +9,8 @@ import { Deposit } from '@dans-framework/deposit';
 import { Generic, Page } from '@dans-framework/pages';
 import { AuthWrapper, AuthRoute, UserSettings, UserSubmissions, SignInCallback } from '@dans-framework/user-auth';
 import logo from './config/images/logo.png';
+import { RdaSearch } from './pages/search';
+import { RdaRecord } from './pages/record';
 
 // import { AuthWrapper, AuthRoute, SignInCallback } from '@dans-framework/auth';
 // import { UserSettings, UserSubmissions } from '@dans-framework/user';
@@ -24,6 +26,22 @@ import form from './config/form';
 
 const App = () => {
   const { i18n } = useTranslation();
+
+  const createElementByTemplate = (page: Page) => {
+    switch (page.template) {
+      case 'dashboard':
+        return <RdaSearch dashboard={{areas: ["indi date date date date", "indi rights rights lang lang", "pw pw wf restype reltype"]}} />;
+      case 'search':
+        return <RdaSearch />;
+      case 'record':
+        return <RdaRecord />;
+      case 'deposit':
+        return <AuthRoute><Deposit config={form} page={page} /></AuthRoute>;
+      default:
+        return <Generic {...page} />;
+    }
+  }
+
   return (
     <AuthWrapper authProvider={authProvider}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
@@ -41,18 +59,13 @@ const App = () => {
               <Route path="signin-callback" element={<SignInCallback />} />
               <Route path="user-submissions" element={<AuthRoute><UserSubmissions /></AuthRoute>} />
               {(pages as Page[]).map( page => {
+                console.log(page);
+                
                 return (
                   <Route 
                     key={page.id} 
                     path={page.slug} 
-                    element={
-                      page.template === 'deposit' ? 
-                      <AuthRoute>
-                        <Deposit config={form} page={page} />
-                      </AuthRoute> 
-                      : 
-                      <Generic {...page} />
-                    } 
+                    element={createElementByTemplate(page)} 
                   />
                 )
               }
