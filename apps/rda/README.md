@@ -42,5 +42,35 @@ To display error messages from the Redux stores of several components, you need 
 
     <SnackbarProvider />
 
-#### SURF Local Auth
-To use SURF for local authentication, ensure that the URL is set to `localhost` and that the port is `3000`.
+### Elastic API
+The search discovery domain of the framework needs an elasticsearch endpoint simply the domain that directs to elesticsearch port 9200 is enough.
+
+## How to integrate RDT search package
+***Note:*** This package will be made more easily avaiable but at this point in time it is not so this is the easiest workaround.
+
+---
+- The repo for the rdt-search-ui lives here: https://github.com/danspartners/rdt-search-ui
+- You need to clone it to the directory `packages/`.
+- Inside the repo change the package.json name from to:
+```json
+// From
+{
+    "name": "rdt-search-ui",
+}
+
+// To
+{
+    "name": "@dans-framework/rdt-search-ui",
+}
+```
+
+- Build the rdt-search-ui by running both:
+```bash
+ npm run watch
+ # and afterwards
+ npm run watch:types
+```
+- Lastly install all workspace package again:
+```bash
+ pnpm i
+```
