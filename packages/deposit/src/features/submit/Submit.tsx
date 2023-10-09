@@ -61,33 +61,40 @@ const Submit = () => {
     reset: resetSubmittedFiles, 
   }] = useSubmitFilesMutation();
 
+  // for fringe cases, where the access token might just be expiring,
+  // we get the required submit header data as a callback to signinSilent, which refreshes the current users token
+  const getHeaderData = () => auth.signinSilent().then(() => ({
+    // we use the Keycloak access token if no auth key is set manually in the form config
+    submitKey: formConfig.submitKey || auth.user?.access_token,
+    userId: auth.user?.profile.sub,
+    targetCredentials: formConfig.targetCredentials,
+    target: formConfig.target,
+    targetKeys: targetKeys,
+  }));
+
   const handleButtonClick = () => {
     const formattedMetadata = formatFormData(sessionId, metadata, selectedFiles);
     dispatch(setMetadataSubmitStatus('submitting'));
-    // for fringe cases, where the access token might just be expiring,
-    // we call the submission as a callback to signinSilent, which refreshes the current users token
-    auth.signinSilent().then(() => {
+    getHeaderData().then( headerData =>
       submitData({
-        data: formattedMetadata, 
-        // we use the Keycloak access token if no auth key is set manually in the form config
-        submitKey: formConfig.submitKey || auth.user?.access_token,
-        targetCredentials: formConfig.targetCredentials,
-        target: formConfig.target,
-        targetKeys: targetKeys,
-      });
-    });    
+        data: formattedMetadata,
+        headerData: headerData,
+      })
+    );
   };
 
   useEffect(() => {
     // Then submit the files if metadata submit is successful
     if (isSuccessMeta && selectedFiles) {
-      formatFileData(sessionId, selectedFiles)
+      getHeaderData()
+      .then( headerData => formatFileData(sessionId, selectedFiles)
         .then( d => {
           submitFiles({
             data: d, 
-            submitKey: formConfig.submitKey,
+            headerData: headerData,
           });
-        });
+        })
+      );
     }
   }, [isSuccessMeta, selectedFiles, sessionId, submitFiles]);
 

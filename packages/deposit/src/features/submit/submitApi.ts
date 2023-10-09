@@ -1,10 +1,11 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import type { BaseQueryFn, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import axios from 'axios';
-import type { AxiosRequestConfig, AxiosError, AxiosProgressEvent } from 'axios';
+import type { AxiosHeaders, AxiosRequestConfig, AxiosError, AxiosProgressEvent } from 'axios';
 import { setMetadataSubmitStatus, setFilesSubmitStatus } from './submitSlice';
 import { store } from '../../redux/store';
 import type { Target } from '@dans-framework/user-auth';
+import type { HeaderData, SubmitHeaders } from '../../types/Submit';
 
 // We use Axios to enable file upload progress monitoring
 const axiosBaseQuery =
@@ -78,6 +79,20 @@ const axiosBaseQuery =
     }
   }
 
+const formatHeaderData = (headerData: HeaderData) => ({
+  Authorization: `Bearer ${headerData.submitKey}`,
+  'user-id': headerData.userId,
+  'auth-env-name': headerData.target.envName,
+  'assistant-config-name': headerData.target.configName,
+  'targets-credentials': headerData.targetCredentials.map((t: Target) => ({
+    'target-repo-name': t.repo,
+    'credentials': {
+      'username': t.auth,
+      'password': headerData.targetKeys[t.authKey],
+    },
+  }))
+}) as SubmitHeaders;
+
 export const submitApi = createApi({
   reducerPath: 'submitApi',
   baseQuery: axiosBaseQuery({ baseUrl: 'https://packaging.labs.dans.knaw.nl/inbox/' }),
@@ -85,22 +100,11 @@ export const submitApi = createApi({
     submitData: build.mutation({
       // Custom query for chaining Post functions
       // submitKey is the current users Keycloak token
-      async queryFn({data, submitKey, targetCredentials, target, targetKeys}, queryApi, extraOptions, fetchWithBQ) {
+      async queryFn({data, headerData}, queryApi, extraOptions, fetchWithBQ) {
         console.log('submitting metadata...')
         console.log(data)
         // Format the headers
-        const headers = {
-          Authorization: `Bearer ${submitKey}`,
-          'auth-env-name': target.envName,
-          'assistant-config-name': target.configName,
-          'targets-credentials': targetCredentials.map((t: Target) => ({
-            'target-repo-name': t.repo,
-            'credentials': {
-              'username': t.auth,
-              'password': targetKeys[t.authKey],
-            },
-          }))
-        };
+        const headers = formatHeaderData(headerData);
         console.log('submitting with headers...')
         console.log(headers);
 
@@ -121,16 +125,15 @@ export const submitApi = createApi({
       },
     }),
     submitFiles: build.mutation({
-      async queryFn({data, submitKey}, queryApi, extraOptions, fetchWithBQ) {
+      async queryFn({data, headerData}, queryApi, extraOptions, fetchWithBQ) {
         console.log('submitting files...')
         console.log(data.map((d: any) => [...d]))
+        const headers = formatHeaderData(headerData);
         const filesResults = Array.isArray(data) && await Promise.all(data.map((file: any) => fetchWithBQ({
           url: 'file',
           method: 'POST',
           data: file,
-          headers: {
-            Authorization: `Bearer ${submitKey}`,
-          },
+          headers: headers,
         })));
 
         console.log(filesResults)
