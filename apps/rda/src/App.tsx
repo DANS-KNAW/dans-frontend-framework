@@ -59,8 +59,6 @@ const App = () => {
               <Route path="signin-callback" element={<SignInCallback />} />
               <Route path="user-submissions" element={<AuthRoute><UserSubmissions /></AuthRoute>} />
               {(pages as Page[]).map( page => {
-                console.log(page);
-                
                 return (
                   <Route 
                     key={page.id} 
