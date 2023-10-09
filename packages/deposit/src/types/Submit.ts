@@ -39,6 +39,7 @@ export interface HeaderData {
   };
 }
 
+// not needed anymore, submitted as json string
 interface SubmitRepo {
   'target-repo-name': string;
   'credentials': {
@@ -46,11 +47,12 @@ interface SubmitRepo {
     'password': string;
   },
 }
+// end not needed
 
 export interface SubmitHeaders extends AxiosHeaders {
   Authorization: string;
   'user-id': string;
   'auth-env-name': string;
   'assistant-config-name': string;
-  'targets-credentials': SubmitRepo[];
+  'targets-credentials': string;
 }

@@ -84,18 +84,18 @@ const formatHeaderData = (headerData: HeaderData) => ({
   'user-id': headerData.userId,
   'auth-env-name': headerData.target.envName,
   'assistant-config-name': headerData.target.configName,
-  'targets-credentials': headerData.targetCredentials.map((t: Target) => ({
+  'targets-credentials': JSON.stringify(headerData.targetCredentials.map((t: Target) => ({
     'target-repo-name': t.repo,
     'credentials': {
       'username': t.auth,
       'password': headerData.targetKeys[t.authKey],
     },
-  }))
+  })))
 }) as SubmitHeaders;
 
 export const submitApi = createApi({
   reducerPath: 'submitApi',
-  baseQuery: axiosBaseQuery({ baseUrl: 'https://packaging.labs.dans.knaw.nl/inbox/' }),
+  baseQuery: axiosBaseQuery({ baseUrl: import.meta.env.VITE_PACKAGING_TARGET }),
   endpoints: (build) => ({
     submitData: build.mutation({
       // Custom query for chaining Post functions
