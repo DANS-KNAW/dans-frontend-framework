@@ -1,0 +1,3 @@
+[submodule "packages/rdt-search-ui"]
+	path = packages/rdt-search-ui
+	url = https://github.com/DANS-KNAW/rdt-search-ui

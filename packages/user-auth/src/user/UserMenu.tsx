@@ -13,12 +13,12 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import { useFetchUserProfileQuery } from './userApi';
 import { LoginButton, LogoutButton } from './Buttons';
 
-export const UserMenu = () => {
+export const UserMenu = ({userSettings, userSubmissions}: {userSettings: boolean, userSubmissions: boolean}) => {
   const auth = useAuth();
 
   if (auth.isAuthenticated && auth.user) {
     return (
-      <SettingsMenu />
+      <SettingsMenu userSettings={userSettings} userSubmissions={userSubmissions} />
     );
   }
   return (
@@ -26,7 +26,7 @@ export const UserMenu = () => {
   );
 }
 
-const SettingsMenu = () => {
+const SettingsMenu = ({userSettings, userSubmissions}: {userSettings: boolean, userSubmissions: boolean}) => {
   const auth = useAuth();
   const { t } = useTranslation('user');
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -70,12 +70,16 @@ const SettingsMenu = () => {
           <Typography sx={{fontSize: '90%', color: 'neutral.contrastText'}}>{auth.user?.profile.email}</Typography>
         </Box>
         <Divider />
-        <Link component={RouterLink} to="/user-settings" underline="none" color="inherit" onClick={handleCloseUserMenu}>
-          <MenuItem>{t('userMenuSettings')}</MenuItem>
-        </Link>
-        <Link component={RouterLink} to="/user-submissions" underline="none" color="inherit" onClick={handleCloseUserMenu}>
-          <MenuItem divider={true}>{t('userMenuSubmissions')}</MenuItem>
-        </Link>
+        {userSettings && 
+          <Link component={RouterLink} to="/user-settings" underline="none" color="inherit" onClick={handleCloseUserMenu}>
+            <MenuItem>{t('userMenuSettings')}</MenuItem>
+          </Link>
+        }
+        {userSubmissions && 
+          <Link component={RouterLink} to="/user-submissions" underline="none" color="inherit" onClick={handleCloseUserMenu}>
+            <MenuItem divider={true}>{t('userMenuSubmissions')}</MenuItem>
+          </Link>
+        }
         <LogoutButton />
       </Menu>
     </Box>
