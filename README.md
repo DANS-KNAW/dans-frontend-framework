@@ -7,6 +7,23 @@ Apps that are meant to run standalone are located in the **./apps** folder. Cust
 ## Usage
 Management of packages is done with PNPM from the **root** folder. Make sure PNPM and Turbo are installed on your system.
 
+### Cloning the Repository
+
+#### Cloning with Submodules
+To clone the repository along with its required submodules, use the following command:
+```bash
+git clone --recurse-submodules git@github.com:DANS-KNAW/dans-frontend-framework.git
+```
+
+> **Note**: If you're trying to clone a branch that includes a submodule not present in the main branch, make sure to specify the branch using the `-b` flag.
+
+#### Cloning Without Submodules
+If you've already cloned the repository without the submodules, you can initialize and update them later with the following command:
+```bash
+git submodule update --init --recursive
+```
+
+
 #### Installation
 Clone the repo and run:
 
