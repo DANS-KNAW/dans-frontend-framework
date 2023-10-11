@@ -1,4 +1,4 @@
-# DANS Metadata form application for OH-SMArt
+# DANS Metadata form application for RDA
 This is a wrapper application for the components of the DANS framework. Add and configure the components you need.
 
 ## Configuration and usage
@@ -43,14 +43,14 @@ To display error messages from the Redux stores of several components, you need 
     <SnackbarProvider />
 
 ### Elastic API
-The search discovery domain of the framework needs an elasticsearch endpoint simply the domain that directs to elesticsearch port 9200 is enough.
+The search discovery domain of the framework needs an Elastic Search endpoint. You can define the root domain and port of your Elastic Search server in your .env file under `VITE_ELEASTICSEARCH_API_ENDPOINT`.
 
 ## How to integrate RDT search package
-- Build the rdt-search-ui run the command inside `packages/rdt-search-ui`:
+- To build the rdt-search-ui, run this command inside `packages/rdt-search-ui`:
 ```bash
  npm run build
 ```
-- Lastly install all workspace package again in the root directory:
+- Install all workspace packages again by running this command from the root directory:
 ```bash
  pnpm i
 ```
