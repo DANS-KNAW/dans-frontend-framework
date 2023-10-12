@@ -1,7 +1,4 @@
-import { FacetedSearch, RDTSearchUIProps } from '@dans-framework/rdt-search-ui'
-import { DateChartFacet, PieChartFacet } from '@dans-framework/rdt-search-ui/build/facets/chart/view'
-import { ListFacet } from '@dans-framework/rdt-search-ui/build/facets/list/view'
-import '@dans-framework/rdt-search-ui/build/index.css'
+import { FacetedSearch, DateChartFacet, PieChartFacet, ListFacet, RDTSearchUIProps, Result } from '@dans-framework/rdt-search-ui'
 import { Rda2Result } from './result'
 import { useNavigate } from 'react-router-dom'
 
@@ -29,7 +26,7 @@ export function RdaSearch({ dashboard }: { dashboard?: RDTSearchUIProps['dashboa
 				dashboard={dashboard}
 				fullTextFields={config.fullTextFields}
 				fullTextHighlight={config.fullTextHighlight}
-				onClickResult={(result) => navigate(`/record/${result.id}`)}
+				onClickResult={(result: Result) => navigate(`/record/${result.id}`)}
 				ResultBodyComponent={Rda2Result}
 				url="/api/search/dans-rda2/_search"
 				style={config.style}

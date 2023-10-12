@@ -9,8 +9,8 @@ const page: Page = {
   inMenu: true,
   menuTitle: "Home",
   content: {
-    en: "<p>DANS collaborates with the OH-SMArt project to provide infrastructure for the deposit, preservation, processing and application of audiovisual materials collected by museums and research institutions. OH-SMArt concentrates on oral histories - interviews conducted at art museums.</p>",
-    nl: '<p>DANS werkt samen met het OH-SMArt project om een infrastructuur te bieden voor het indienen, verwerken, behouden en toepassen van audiovisueel materiaal dat verzameld wordt door musea en onderzoeksinstituten. OH-SMArt richt zich op mondelinge geschiedenis - interviews afgenomen bij musea.</p>',
+    en: "<p>DANS collaborates with the RDA to provide infrastructure for the deposit, preservation, processing and application of...</p>",
+    nl: '<p>DANS werkt samen met de RDA om een infrastructuur te bieden voor het indienen, verwerken, behouden en toepassen van...</p>',
   },
   action: {
     link: "deposit",

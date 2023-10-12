@@ -19,11 +19,15 @@ const sections = [
 
 const form: FormConfig = {
   form: sections as InitialSectionType[],
-  target: [
+  target: {
+    envName: 'rda_demo',
+    configName: '',
+  },
+  targetCredentials: [
     // Formatted as array, to support multiple submission targets
     {
       name: 'Zenodo',
-      repo: 'demo.ssh.datastations.nl',
+      repo: '',
       auth: '',
       authKey: '',
       keyUrl: '',

@@ -1,5 +1,5 @@
 import { Chip, Container } from "@mui/material"
-import { Result } from "@dans-framework/rdt-search-ui/build/context/state/use-search/types"
+import type { Result } from "@dans-framework/rdt-search-ui"
 import React from "react"
 import { useParams } from "react-router-dom"
 
