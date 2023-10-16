@@ -39,6 +39,7 @@ const App = () => {
           }>
             <Routes>
               <Route path="signin-callback" element={<SignInCallback />} />
+              <Route path="user-settings" element={<AuthRoute><UserSettings target={form.targetCredentials} /></AuthRoute>} />
               <Route path="user-submissions" element={<AuthRoute><UserSubmissions /></AuthRoute>} />
               {(pages as Page[]).map( page => {
                 return (
