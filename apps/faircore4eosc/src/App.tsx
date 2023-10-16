@@ -30,7 +30,7 @@ const App = () => {
         <BrowserRouter>
           {/* Need to pass along root i18n functions to the language bar */}
           <LanguageBar languages={languages} changeLanguage={i18n.changeLanguage} />
-          <MenuBar pages={pages} logo={logo} userSettings={false} />
+          <MenuBar pages={pages} logo={logo} userSettings={true} />
           {/* Suspense to make sure languages can load first */}
           <Suspense fallback={
             <Box sx={{display: 'flex', justifyContent: 'center'}}>
