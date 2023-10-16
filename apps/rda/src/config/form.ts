@@ -27,8 +27,12 @@ const form: FormConfig = {
     // Formatted as array, to support multiple submission targets
     {
       name: 'Zenodo',
+      helpText: {
+        en: 'Create a personal access token at Zenodo. Give it a name and make sure to enable both deposit scopes. Click create, copy your token and paste it here.',
+        nl: 'Maak een personal access token aan bij Zenodo. Voer een naam in and vink beide deposit scopes aan. Create je token, kopiëer hem en plak hem hieronder.'
+      },
       repo: import.meta.env.VITE_TARGET_1_REPO,
-      auth: 'API_KEY',
+      auth: 'access_token',
       authKey: 'zenodo_api_key',
       keyUrl: import.meta.env.VITE_TARGET_1_KEY_URL,
     },

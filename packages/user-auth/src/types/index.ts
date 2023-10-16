@@ -1,3 +1,5 @@
+import type { LanguageStrings } from '@dans-framework/utils';
+
 export interface AuthProviderConfig {
   authority: string;
   client_id: string;
@@ -8,6 +10,7 @@ export interface AuthProviderConfig {
 
 export interface Target {
   name: string;
+  helpText?: string | LanguageStrings;
   repo: string;
   auth: string;
   authKey: string;
