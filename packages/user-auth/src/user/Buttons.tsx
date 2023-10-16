@@ -13,10 +13,10 @@ export const LoginButton = ({variant}: {variant?: 'contained'}) => {
     <Button
       variant={variant || "outlined"}
       sx={!variant ? {
-        color: '#fff', 
-        borderColor: '#fff',
+        color: 'inherit', 
+        borderColor: 'inherit',
         '&:hover': {
-          borderColor: '#fff',
+          borderColor: 'inherit',
           backgroundColor: 'rgba(255,255,255,0.1)'
         },
       } : {}}

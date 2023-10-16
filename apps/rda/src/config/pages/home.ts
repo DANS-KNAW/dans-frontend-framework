@@ -9,8 +9,8 @@ const page: Page = {
   inMenu: true,
   menuTitle: "Home",
   content: {
-    en: "<p>DANS collaborates with the RDA to provide infrastructure for the deposit, preservation, processing and application of...</p>",
-    nl: '<p>DANS werkt samen met de RDA om een infrastructuur te bieden voor het indienen, verwerken, behouden en toepassen van...</p>',
+    en: "<p>Welcome to the RDA deposit tool. Log in and deposit your research data using our form.</p>",
+    nl: '<p>Welkom bij de RDA deposit tool. Log in en stuur je onderzoeksdata op via ons formulier.</p>',
   },
   action: {
     link: "deposit",
