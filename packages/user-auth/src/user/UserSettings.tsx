@@ -26,7 +26,7 @@ export const UserSettings = ({target}: {target: Target[]}) => {
       <Grid container>
         <Grid xs={12} mdOffset={2.5} md={7}>
           <Typography variant="h1">{t('userSettings')}</Typography>
-          {target.map( t =>
+          {target.map( t => t.authKey &&
             <UserSettingsItem key={t.authKey} target={t} />
           )}
         </Grid>
