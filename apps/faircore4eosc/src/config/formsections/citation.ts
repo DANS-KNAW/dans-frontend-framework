@@ -155,6 +155,77 @@ const section: InitialSectionType = {
       disabled: true,
     },
     {
+      type: 'group',
+      label: {
+        en: 'Additional Authors',
+        nl: 'Extra auteurs',
+      },
+      name: 'additional_authors',
+      repeatable: true,
+      description: {
+        en: 'Additional authors of the dataset and or software',
+        nl: 'Extra auteurs van het dataset en of software',
+      },
+      fields: [
+        {
+          type: 'text',
+          name: 'additional_author',
+          label: {
+            en: 'Additional Author',
+            nl: 'Extra auteur',
+          },
+        },
+        {
+          type: 'autocomplete',
+          name: 'additional_author_type',
+          label: {
+            en: 'Type',
+            nl: 'Type',
+          },
+          options: [
+            {
+              label: {
+                en: 'Dataset author',
+                nl: 'Dataset auteur',
+              },
+              value: 'Dataset author',
+            },
+            {
+              label: {
+                en: 'Software author',
+                nl: 'Software auteur',
+              },
+              value: 'Software author',
+            },
+          ]
+        }
+      ]
+    },
+    {
+      type: 'text',
+      name: 'SWHID',
+      label: {
+        en: 'Software Heritage ID (SWHID)',
+        nl: 'Software Heritage ID (SWHID)',
+      },
+      description: {
+        en: 'The Software Heritage ID (SWHID) of the software',
+        nl: 'De Software Heritage ID (SWHID) van de software',
+      },
+    },
+    {
+      type: 'text',
+      name: 'repository_url',
+      label: {
+        en: 'Repository URL',
+        nl: 'Repository URL',
+      },
+      description: {
+        en: 'The URL of the repository',
+        nl: 'De URL van de repository',
+      },
+    },
+    {
       type: 'text',
       name: 'description',
       label: {
