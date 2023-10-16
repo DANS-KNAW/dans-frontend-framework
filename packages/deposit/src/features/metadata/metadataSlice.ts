@@ -37,7 +37,8 @@ export const metadataSlice = createSlice({
         // otherwise initialize a brand new form
         state.id = uuidv4();
         state.form = formatInitialState(action.payload as InitialSectionType[]);
-        state.panel = '';
+        // open up the first panel by default
+        state.panel = (action.payload as InitialSectionType[])[0].id;
       }
       // and set initial validation status
       metadataSlice.caseReducers.setSectionStatus(state, {payload: null, type: ''});
