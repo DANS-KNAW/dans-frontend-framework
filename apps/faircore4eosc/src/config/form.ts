@@ -17,11 +17,18 @@ const form: FormConfig = {
   targetCredentials: [
     // Formatted as array, to support multiple submission targets
     {
-      name: 'Zenodo',
+      name: 'Dataverse',
       repo: import.meta.env.VITE_TARGET_1_REPO,
       auth: 'API_KEY',
-      authKey: 'zenodo_api_key',
+      authKey: 'dataverse_api_key',
       keyUrl: import.meta.env.VITE_TARGET_1_KEY_URL,
+    },
+    {
+      name: 'Software Heritage',
+      repo: import.meta.env.VITE_TARGET_2_REPO,
+      auth: 'API_KEY',
+      authKey: 'swh_api_key',
+      keyUrl: import.meta.env.VITE_TARGET_2_KEY_URL,
     },
   ],
   submitKey: import.meta.env.VITE_PACKAGING_KEY, // still needed??

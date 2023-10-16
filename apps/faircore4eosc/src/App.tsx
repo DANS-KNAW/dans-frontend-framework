@@ -30,7 +30,7 @@ const App = () => {
         <BrowserRouter>
           {/* Need to pass along root i18n functions to the language bar */}
           <LanguageBar languages={languages} changeLanguage={i18n.changeLanguage} />
-          <MenuBar pages={pages} logo={logo} userSettings={false} />
+          <MenuBar pages={pages} logo={logo} />
           {/* Suspense to make sure languages can load first */}
           <Suspense fallback={
             <Box sx={{display: 'flex', justifyContent: 'center'}}>
@@ -39,6 +39,7 @@ const App = () => {
           }>
             <Routes>
               <Route path="signin-callback" element={<SignInCallback />} />
+              <Route path="user-settings" element={<AuthRoute><UserSettings target={form.targetCredentials} /></AuthRoute>} />
               <Route path="user-submissions" element={<AuthRoute><UserSubmissions /></AuthRoute>} />
               {(pages as Page[]).map( page => {
                 return (
