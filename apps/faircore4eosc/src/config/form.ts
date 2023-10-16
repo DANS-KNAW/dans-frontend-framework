@@ -10,14 +10,18 @@ const sections = [
 
 const form: FormConfig = {
   form: sections as InitialSectionType[],
-  target: [
+  target: {
+    envName: import.meta.env.VITE_ENV_NAME,
+    configName: import.meta.env.VITE_CONFIG_NAME,
+  },
+  targetCredentials: [
     // Formatted as array, to support multiple submission targets
     {
       name: 'Zenodo',
-      repo: 'demo.ssh.datastations.nl',
-      auth: '',
-      authKey: '',
-      keyUrl: '',
+      repo: import.meta.env.VITE_TARGET_1_REPO,
+      auth: 'API_KEY',
+      authKey: 'zenodo_api_key',
+      keyUrl: import.meta.env.VITE_TARGET_1_KEY_URL,
     },
   ],
   submitKey: import.meta.env.VITE_PACKAGING_KEY, // still needed??
