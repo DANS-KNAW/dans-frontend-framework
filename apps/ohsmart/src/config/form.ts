@@ -24,17 +24,17 @@ const sections = [
 const form: FormConfig = {
   form: sections as InitialSectionType[],
   target: {
-    envName: 'ohsmart_demo',
-    configName: 'ohsmart.ds.ssh.demo',
+    envName: 'ohsmart_demo', // move to env
+    configName: 'ohsmart.ds.ssh.demo', // move to env
   },
   targetCredentials: [
     // Formatted as array, to support multiple submission targets
     {
       name: 'Dataverse',
-      repo: 'ds.ssh.sword2.demo',
+      repo: 'ds.ssh.sword2.demo',  // move to env
       auth: 'API_KEY',
       authKey: 'dataverse_api_key',
-      keyUrl: 'https://demo.ssh.datastations.nl/dataverseuser.xhtml?selectTab=apiTokenTab',
+      keyUrl: 'https://demo.ssh.datastations.nl/dataverseuser.xhtml?selectTab=apiTokenTab',  // move to env
     },
   ],
   submitKey: import.meta.env.VITE_PACKAGING_KEY, // still needed??

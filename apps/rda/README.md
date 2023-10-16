@@ -44,13 +44,3 @@ To display error messages from the Redux stores of several components, you need 
 
 ### Elastic API
 The search discovery domain of the framework needs an Elastic Search endpoint. You can define the root domain and port of your Elastic Search server in your .env file under `VITE_ELEASTICSEARCH_API_ENDPOINT`.
-
-## How to integrate RDT search package
-- To build the rdt-search-ui, run this command inside `packages/rdt-search-ui`:
-```bash
- npm run build
-```
-- Install all workspace packages again by running this command from the root directory:
-```bash
- pnpm i
-```
