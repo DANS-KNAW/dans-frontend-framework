@@ -51,6 +51,8 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
+    - name: Copy file
+      run: "cp /data/secrets/fc4e/.env.production ."
     - name: Login to registry
       uses: docker/login-action@v3
       with:
