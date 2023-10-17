@@ -2,10 +2,6 @@ name: Docker Image CI
 
 on:
   push:
-    tags:
-      - "beta-*"
-      - "alpha-*"
-      - "v1.*"
     paths:
       - 'apps/rda/**'
 
