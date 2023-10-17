@@ -13,7 +13,7 @@ jobs:
 
   test:
 
-    runs-on: ubuntu-latest
+    runs-on: ohsmart
     strategy:
       matrix:
         node-version: ["18"]
