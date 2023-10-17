@@ -10,19 +10,6 @@ const section: InitialSectionType = {
   fields: [
     {
       type: 'text',
-      name: 'identifier',
-      label: {
-        en: 'Identifier',
-        nl: 'Identificatie',
-      },
-      required: true,
-      description: {
-        en: 'Unique identifier for the dataset',
-        nl: 'Unieke identificatie voor het dataset',
-      },
-    },
-    {
-      type: 'text',
       name: 'depositor',
       label: {
         en: 'Depositor',
