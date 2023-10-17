@@ -1,5 +1,48 @@
 import type { AutocompleteAPIFieldData, Datastations } from './MetadataFields';
 
+interface GorcItem {
+  id: string;
+  parent_id?: string;
+  title: string;
+  description: string;
+}
+
+export interface GorcResponse {
+  number_of_results: number;
+  items: GorcItem[];
+}
+
+interface RdaWorkGroupItem {
+  id: string;
+  title: string;
+  parent_id: string;
+}
+
+export interface RdaWorkGroupResponse {
+  number_of_results: number;
+  items: RdaWorkGroupItem[];
+}
+
+interface License {
+  domain_content: boolean;
+  domain_data: boolean;
+  domain_software: boolean;
+  family: string;
+  id: string;
+  maintainer: string;
+  od_conformance: string;
+  osd_conformance: string;
+  status: string;
+  title: string;
+  url: string;
+  legacy_ids?: string[];
+}
+
+export interface LicenceResponse {
+  number_of_results: number;
+  items: License[];
+}
+
 interface RorCountry {
   country_name: string;
   country_code: string;

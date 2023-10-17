@@ -34,7 +34,8 @@ const Submit = () => {
   const filesSubmitStatus = useAppSelector(getFilesSubmitStatus).filter(f => f.id !== '');
   // Get the users API keys
   const { data: userData } = fetchUserProfile({provider: auth.settings.authority, id: auth.settings.client_id});
-  const targetKeys = userData && formConfig.target.map( t => userData.attributes[t.authKey] && userData.attributes[t.authKey][0]);
+  // Map API keys to an object
+  const targetKeys = userData && Object.assign({}, ...formConfig.targetCredentials.map( t => userData.attributes[t.authKey] && {[t.authKey]: userData.attributes[t.authKey][0]}));
   // Calculate total upload progress
   const totalFileProgress = filesSubmitStatus.reduce( (n, {progress}) => n + (progress || 0), 0) / filesSubmitStatus.length || undefined;
   // If any file has an error, the form should indicate that.
@@ -60,29 +61,40 @@ const Submit = () => {
     reset: resetSubmittedFiles, 
   }] = useSubmitFilesMutation();
 
+  // for fringe cases, where the access token might just be expiring,
+  // we get the required submit header data as a callback to signinSilent, which refreshes the current users token
+  const getHeaderData = () => auth.signinSilent().then(() => ({
+    // we use the Keycloak access token if no auth key is set manually in the form config
+    submitKey: formConfig.submitKey || auth.user?.access_token,
+    userId: auth.user?.profile.sub,
+    targetCredentials: formConfig.targetCredentials,
+    target: formConfig.target,
+    targetKeys: targetKeys,
+  }));
+
   const handleButtonClick = () => {
-    // First submit the metadata
     const formattedMetadata = formatFormData(sessionId, metadata, selectedFiles);
     dispatch(setMetadataSubmitStatus('submitting'));
-    submitData({
-      data: formattedMetadata, 
-      submitKey: formConfig.submitKey,
-      targetRepo: formConfig.target.map( t => t.repo ).join(' '),
-      targetAuth: formConfig.target.map( t => t.auth ).join(' '),
-      targetKeys: targetKeys.join(' '),
-    });
+    getHeaderData().then( headerData =>
+      submitData({
+        data: formattedMetadata,
+        headerData: headerData,
+      })
+    );
   };
 
   useEffect(() => {
     // Then submit the files if metadata submit is successful
     if (isSuccessMeta && selectedFiles) {
-      formatFileData(sessionId, selectedFiles)
+      getHeaderData()
+      .then( headerData => formatFileData(sessionId, selectedFiles)
         .then( d => {
           submitFiles({
             data: d, 
-            submitKey: formConfig.submitKey,
+            headerData: headerData,
           });
-        });
+        })
+      );
     }
   }, [isSuccessMeta, selectedFiles, sessionId, submitFiles]);
 

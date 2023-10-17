@@ -31,7 +31,11 @@ export interface InitialFormType {
 
 export interface FormConfig {
   form: InitialSectionType[];
-  target: Target[];
+  target?: {
+    envName?: string;
+    configName?: string;
+  };
+  targetCredentials: Target[];
   submitKey?: string;
   skipValidation?: boolean;
   geonamesApiKey?: string;

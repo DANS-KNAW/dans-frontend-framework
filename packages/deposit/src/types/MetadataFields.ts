@@ -118,7 +118,7 @@ export type DateTimeFormat = 'DD-MM-YYYY HH:mm' | 'DD-MM-YYYY' | 'MM-YYYY' | 'YY
 
 // API's that can be used by Autocomplete fields
 export type Datastations = 'elsst' | 'narcis';
-export type TypeaheadAPI = 'orcid' | 'ror' | 'geonames' | 'getty' | 'sheets' | 'dansFormats' | Datastations;
+export type TypeaheadAPI = 'orcid' | 'ror' | 'gorc' | 'licenses' | 'geonames' | 'getty' | 'sheets' | 'dansFormats' | 'rdaworkinggroups' | Datastations;
 
 // Options that should be specified if Google Sheet API is used in Autocomplete
 interface SheetOptions {
@@ -141,6 +141,8 @@ export interface OptionsType {
   id?: string;
   mandatory?: boolean; // if true, this option will always be pre-selected. Can be set in config.
   freetext?: boolean; // indicates if a value is manually entered by user
+  categoryLabel?: string; // used for nested options
+  categoryContent?: string; // used for nested options
 };
 
 // Validation for text fields

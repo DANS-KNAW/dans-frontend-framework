@@ -1,18 +1,35 @@
-# DANS framework monorepo
-The DANS framework is a monorepo, using Turbo and PNPM package management and Vite build tools.
+# DANS front-end framework monorepo
+The DANS front-end framework is a monorepo, using Turbo and PNPM package management and Vite build tools.
 
 ## Structure
-Apps that are meant to run standalone are lockated in the **./apps** folder. Custom libraries that these apps can use are in **./packages**.
+Apps that are meant to run standalone are located in the **./apps** folder. Custom libraries that these apps can use are in **./packages**.
 
 ## Usage
 Management of packages is done with PNPM from the **root** folder. Make sure PNPM and Turbo are installed on your system.
 
-#### Installation
-Clone the repo and run:
+## Cloning the Repository
+
+#### Cloning with Submodules
+To clone the repository along with its required submodules, use the following command:
+```bash
+git clone --recurse-submodules git@github.com:DANS-KNAW/dans-frontend-framework.git
+```
+
+> **Note**: If you're trying to clone a branch that includes a submodule not present in the main branch, make sure to specify the branch using the `-b` flag.
+
+#### Cloning Without Submodules
+If you've already cloned the repository without the submodules, you can initialize and update them later with the following command:
+```bash
+git submodule update --init --recursive
+```
+
+
+## Installation
+After cloning, run:
 
     pnpm i
 
-#### Running the app(s)
+## Running the app(s)
     pnpm dev
 
 To run just a single app, you can add a line to the package.json scripts section like so:
@@ -25,16 +42,26 @@ Or simply run
 
     pnpm --filter @dans-framework/ohsmart dev
 
-#### Testing the app(s)
+To run this application on a specific port, run
+
+    pnpm --filter @dans-framework/ohsmart dev --port 3000
+
+## Testing the app(s)
 Tests are not implemented at the moment.
 
     pnpm test
 
-#### Building the app(s)
+## Building the app(s)
+
+For all apps:
 
     pnpm build
 
-#### Adding a library to an app/package
+Or for a single app:
+
+    pnpm --filter @dans-framework/ohsmart build
+
+## Adding a library to an app/package
 Add a library to all apps/packages. 
 
     pnpm i <lib_you_want_to_add>
@@ -45,7 +72,15 @@ To install a library for a single app/package, e.g. @dans-framework/ohsmart, use
     pnpm i <lib_you_want_to_add> --filter '@dans-framework/ohsmart'
 Alternatively, you can edit the package.json file of the appropriate app or package, and run `pnpm i` again from the root.
 
-#### Creating a new app or package
+#### Adding a custom library to your app or package
+You can use the `pnpm i` command from above using e.g. `@dans-framework/utils` as package name.
+Alternatively, since all packages are referenced locally, edit the dependencies or devDependencies in the package.json file of the app you're working on by adding a line like this:
+
+    "@dans-framework/utils": "workspace:*"
+ 
+and then running `pnpm i` again.
+
+## Creating a new app or package
 To quickly create a new Vite app, run `pnpm create vite` and follow the prompt.
 
 To create your app in the appropriate folder:
@@ -57,11 +92,8 @@ To create your app in the appropriate folder:
 
 Alternatively, you can create the appropriate folder structure and package.json manually.
 
-#### Adding a custom library to your app or package
-You can use the `pnpm i` command from above using e.g. `@dans-framework/utils` as package name
-Alternatively, since all packages are referenced locally, edit the dependencies or devDependencies in the package.json file of the app you're working on by adding a line like this:
-
-    "@dans-framework/utils": "workspace:*"
-
 #### Configuring build/dev scripts of individual packages
 Open up the appropriate package/app folder and edit the **package.json**, **tsconfig.json**,  **tsconfig.node.json** and **vite.config.ts** where neccessary.
+
+## Deployment
+Deployment is done using Docker containers. TBD.

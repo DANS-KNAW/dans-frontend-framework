@@ -23,17 +23,21 @@ const sections = [
 
 const form: FormConfig = {
   form: sections as InitialSectionType[],
-  target: [
+  target: {
+    envName: import.meta.env.VITE_ENV_NAME,
+    configName: import.meta.env.VITE_CONFIG_NAME,
+  },
+  targetCredentials: [
     // Formatted as array, to support multiple submission targets
     {
       name: 'Dataverse',
-      repo: 'demo.ssh.datastations.nl',
+      repo: import.meta.env.VITE_TARGET_1_REPO,
       auth: 'API_KEY',
       authKey: 'dataverse_api_key',
-      keyUrl: 'https://demo.ssh.datastations.nl/dataverseuser.xhtml?selectTab=apiTokenTab',
+      keyUrl: import.meta.env.VITE_TARGET_1_KEY_URL,
     },
   ],
-  submitKey: import.meta.env.VITE_PACKAGING_KEY, // still needed??
+  submitKey: import.meta.env.VITE_PACKAGING_KEY, // only if we dont use keycloak
   skipValidation: import.meta.env.DEV,
   geonamesApiKey: 'dans_deposit_webapp',
 };

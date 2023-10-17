@@ -28,6 +28,9 @@ import MenuItem from '@mui/material/MenuItem';
 import AutocompleteField, { InfoLink, InfoChip } from './AutocompleteField';
 import { getMetadataSubmitStatus } from '../../submit/submitSlice';
 import { getData } from '../../../deposit/depositSlice';
+import { useFetchGorcQuery } from '../api/gorc';
+import { useFetchLicensesQuery } from '../api/licenses';
+import { useFetchRdaWorkingGroupQuery } from '../api/rdaWorkgroup';
 
 /*
  *  Type ahead fields for different API endpoints
@@ -76,13 +79,53 @@ export const RorField = ({field, sectionIndex}: AutocompleteFieldProps) => {
   )
 }
 
+export const GorcField = ({field, sectionIndex}: AutocompleteFieldProps) => {
+  const [inputValue, setInputValue] = useState<string>('');
+  const debouncedInputValue = useDebounce(inputValue, 500)[0];
+  // Fetch data on input change
+  const {data, isFetching, isLoading} = useFetchGorcQuery<QueryReturnType>(debouncedInputValue, {skip: debouncedInputValue === ''});
+  return (
+    <>
+      <AutocompleteAPIField 
+        field={field} 
+        sectionIndex={sectionIndex} 
+        inputValue={inputValue} 
+        setInputValue={setInputValue} 
+        debouncedInputValue={debouncedInputValue} 
+        data={data} 
+        isLoading={isLoading} 
+        isFetching={isFetching} 
+      />
+    </>
+  )
+}
+
+export const LicensesField = ({field, sectionIndex}: AutocompleteFieldProps) => {
+  const [inputValue, setInputValue] = useState<string>('');
+  const debouncedInputValue = useDebounce(inputValue, 500)[0];
+  // Fetch data on input change
+  const {data, isFetching, isLoading} = useFetchLicensesQuery<QueryReturnType>(debouncedInputValue, {skip: debouncedInputValue === ''});
+
+  return (
+    <AutocompleteAPIField
+      field={field}
+      sectionIndex={sectionIndex}
+      inputValue={inputValue}
+      setInputValue={setInputValue}
+      debouncedInputValue={debouncedInputValue}
+      data={data}
+      isLoading={isLoading}
+      isFetching={isFetching}
+    />
+  )
+}
+
 export const GeonamesField = ({field, sectionIndex}: AutocompleteFieldProps) => {
   const [inputValue, setInputValue] = useState<string>('');
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   const apiKey = useAppSelector(getData).geonamesApiKey;
   // Fetch data on input change
   const {data, isFetching, isLoading} = useFetchGeonamesFreeTextQuery<QueryReturnType>({value: debouncedInputValue, apiKey: apiKey}, {skip: debouncedInputValue === ''});
-  console.log(data)
 
   return (
     <AutocompleteAPIField 
@@ -159,6 +202,26 @@ export const DansFormatsField = ({field, sectionIndex}: AutocompleteFieldProps) 
   )
 }
 
+export const RdaWorkingGroupsField = ({field, sectionIndex}: AutocompleteFieldProps) => {
+  const [inputValue, setInputValue] = useState<string>('');
+  const debouncedInputValue = useDebounce(inputValue, 500)[0];
+
+  const {data, isFetching, isLoading} = useFetchRdaWorkingGroupQuery<QueryReturnType>(debouncedInputValue, {skip: debouncedInputValue === ''});
+
+  return (
+    <AutocompleteAPIField 
+      field={field} 
+      sectionIndex={sectionIndex} 
+      inputValue={inputValue} 
+      setInputValue={setInputValue} 
+      debouncedInputValue={debouncedInputValue} 
+      data={data} 
+      isLoading={isLoading} 
+      isFetching={isFetching} 
+    />
+  )
+}
+
 export const SheetsField = ({field, sectionIndex}: AutocompleteFieldProps) => {
   const apiKey = useAppSelector(getData).gsheetsApiKey;
   const {data, isFetching, isLoading} = useFetchSheetsQuery<QueryReturnType>({options: field.sheetOptions, apiKey: apiKey});
@@ -209,11 +272,13 @@ export const MultiApiField = ({field, sectionIndex}: AutocompleteFieldProps) => 
       </FormControl>
       {field.multiApiValue === 'ror' && <RorField field={field} sectionIndex={sectionIndex} />}
       {field.multiApiValue === 'orcid' && <OrcidField field={field} sectionIndex={sectionIndex} />}
+      {field.multiApiValue === 'gorc' && <GorcField field={field} sectionIndex={sectionIndex} />}
       {field.multiApiValue === 'geonames' && <GeonamesField field={field} sectionIndex={sectionIndex} />}
       {field.multiApiValue === 'getty' && <GettyField field={field} sectionIndex={sectionIndex} />}
       {field.multiApiValue === 'sheets' && <SheetsField field={field} sectionIndex={sectionIndex} />}
       {field.multiApiValue === 'dansFormats' && <DansFormatsField field={field} sectionIndex={sectionIndex} />}
       {(field.multiApiValue === 'elsst' || field.multiApiValue === 'narcis') && <DatastationsField field={field} sectionIndex={sectionIndex} />}
+      {field.multiApiValue === 'rdaworkinggroups' && <RdaWorkingGroupsField field={field} sectionIndex={sectionIndex} />}
     </Stack>
   )
 }
@@ -316,8 +381,13 @@ const AutocompleteAPIField = ({
           // otherwise the loading indicator
           <Stack direction="row" justifyContent="space-between" alignItems="end">{t('loading')} <CircularProgress size={18} /></Stack>
         }
-        renderOption={(props, option) => 
+        renderOption={(props, option) =>
           <li {...props} key={option.value} style={{flexWrap: 'wrap'}} >
+            {option.categoryLabel && option.categoryContent && 
+              <Typography component="div" sx={{width: '100%', fontSize: '0.8rem'}} color="neutral.contrastText">
+                <Typography component="span" sx={{fontWeight: '600', fontSize: 'inherit'}}>{t(option.categoryLabel)}</Typography>: {option.categoryContent}
+              </Typography>
+            }
             {lookupLanguageString(option.label, i18n.language)}
             {option.extraContent && option.extraLabel &&
               <Typography component="div" sx={{width: '100%', fontSize: '0.8rem'}} color="neutral.contrastText">
