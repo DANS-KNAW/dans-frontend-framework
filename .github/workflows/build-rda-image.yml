@@ -56,5 +56,5 @@ jobs:
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
     - name: Push to dockerhub
       run: |
-        docker build -f apps/ohsmart/Dockerfile . -t $ORG/$IMAGE_NAME:$IMAGE_TAG
+        docker build -f apps/rda/Dockerfile . -t $ORG/$IMAGE_NAME:$IMAGE_TAG
         docker push $ORG/$IMAGE_NAME:$IMAGE_TAG
