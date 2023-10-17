@@ -79,48 +79,6 @@ const section: InitialSectionType = {
       },
       options: 'licenses',
     },
-    {
-      type: 'autocomplete',
-      name: 'uploadType',
-      label: {
-        en: 'Upload type',
-        nl: 'Upload type',
-      },
-      required: true,
-      description: {
-        en: 'The type of upload that applies to this deposit',
-        nl: 'Het type upload dat van toepassing is op dit deposit',
-      },
-      options: [],
-    },
-    {
-      type: 'autocomplete',
-      name: 'PublicationType',
-      label: {
-        en: 'Publication type',
-        nl: 'Publicatietype',
-      },
-      required: false,
-      description: {
-        en: 'The type of publication that applies to this deposit',
-        nl: 'Het type publicatie dat van toepassing is op dit deposit',
-      },
-      options: [],
-    },
-    {
-      type: 'autocomplete',
-      name: 'imageType',
-      label: {
-        en: 'Image type',
-        nl: 'Afbeeldingstype',
-      },
-      required: false,
-      description: {
-        en: 'The type of image that applies to this deposit',
-        nl: 'Het type afbeelding dat van toepassing is op dit deposit',
-      },
-      options: [],
-    },
   ],
 };
 
