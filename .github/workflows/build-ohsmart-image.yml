@@ -53,7 +53,7 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
     - name: Copy file
-      run: "cp /data/secrets/ohsmart/.env.production ."
+      run: "cp /data/secrets/ohsmart/.env.production apps/ohsmart/."
     - name: Push to dockerhub
       run: |
         docker build -f apps/ohsmart/Dockerfile . -t $ORG/$IMAGE_NAME:$IMAGE_TAG
