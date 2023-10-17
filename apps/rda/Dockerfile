@@ -1,18 +1,15 @@
 # Fetching the latest node image on apline linux
 FROM node:18-alpine AS builder
-RUN apk update
-RUN apk add git
+RUN apk update && apk add git && yarn global add turbo && yarn global add pnpm
 
 # Setting up the work directory
 WORKDIR /app
 
-RUN yarn global add turbo
-RUN yarn global add pnpm
-
 COPY . .
+RUN git submodule update --init --recursive
+
 ## RUN turbo prune --scope=@dans-framework/rda --docker
-RUN pnpm i
-RUN pnpm build --filter=@dans-framework/rda
+RUN pnpm i && pnpm build --filter=@dans-framework/rda
 
 # Fetching the latest nginx image
 FROM nginx
