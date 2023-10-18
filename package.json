@@ -9,7 +9,7 @@
     "dev": "turbo run dev",
     "dev:ohsmart": "turbo run dev --filter=@dans-framework/ohsmart",
     "dev:rda": "turbo run dev --filter=@dans-framework/rda",
-    "dev:faircore4eosc": "turbo run dev --filter=@dans-framework/faircore4eosc"
+    "dev:swh": "turbo run dev --filter=@dans-framework/swh"
   },
   "workspaces": ["packages/*", "apps/*"],
   "keywords": [],
