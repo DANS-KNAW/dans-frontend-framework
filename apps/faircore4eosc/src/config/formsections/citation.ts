@@ -205,24 +205,12 @@ const section: InitialSectionType = {
       type: 'text',
       name: 'SWHID',
       label: {
-        en: 'Software Heritage ID (SWHID)',
-        nl: 'Software Heritage ID (SWHID)',
+        en: 'Software Heritage URL (SWH)',
+        nl: 'Software Heritage URL (SWH)',
       },
       description: {
-        en: 'The Software Heritage ID (SWHID) of the software',
-        nl: 'De Software Heritage ID (SWHID) van de software',
-      },
-    },
-    {
-      type: 'text',
-      name: 'repository_url',
-      label: {
-        en: 'Repository URL',
-        nl: 'Repository URL',
-      },
-      description: {
-        en: 'The URL of the repository',
-        nl: 'De URL van de repository',
+        en: 'The Software Heritage URL (SWH) of the software',
+        nl: 'De Software Heritage URL (SWH) van de software',
       },
     },
     {
