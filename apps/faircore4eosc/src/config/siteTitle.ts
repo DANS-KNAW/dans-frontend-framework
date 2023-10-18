@@ -1,3 +1,3 @@
-const siteTitle = 'FAIRCORE4EOSC';
+const siteTitle = 'SWH';
 
 export default siteTitle
