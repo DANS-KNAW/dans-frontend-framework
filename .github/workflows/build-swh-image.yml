@@ -7,7 +7,7 @@ on:
       - "alpha-*"
       - "v1.*"
     paths:
-      - 'apps/faircore4eosc/**'
+      - 'apps/swh/**'
 
 jobs:
 
@@ -46,7 +46,7 @@ jobs:
     env:
       IMAGE_TAG: ${{ github.ref_name }}
       USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      IMAGE_NAME: "dans-frontend-framework-fc4e"
+      IMAGE_NAME: "dans-frontend-framework-swh"
       ORG: "dansknaw"
     steps:
     - name: Checkout repo

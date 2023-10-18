@@ -3,8 +3,8 @@ import type { Page } from '@dans-framework/pages';
 const page: Page = {
   id: "about",
   name: {
-    en: "About FAIRCORE4EOSC",
-    nl: "Over FAIRCORE4EOSC",
+    en: "About SWH",
+    nl: "Over SWH",
   },
   slug: "about",
   template: "generic",
