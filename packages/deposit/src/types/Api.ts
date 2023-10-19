@@ -23,6 +23,17 @@ export interface RdaWorkGroupResponse {
   items: RdaWorkGroupItem[];
 }
 
+interface RdaDomainItem {
+  id: string;
+  title: string;
+  url: string;
+}
+
+export interface RdaDomainsResponse {
+  number_of_results: number;
+  items: RdaDomainItem[];
+}
+
 interface RdaPathwayItem {
   id: string;
   title: string;

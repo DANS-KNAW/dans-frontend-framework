@@ -17,6 +17,7 @@ import { gorcApi } from '../features/metadata/api/gorc';
 import { licenceApi } from '../features/metadata/api/licenses';
 import { rdaWorkingGroupsApi } from '../features/metadata/api/rdaWorkgroup';
 import { rdaPathwaysApi } from '../features/metadata/api/rdaPathways';
+import { rdaDomainsApi } from '../features/metadata/api/rdaDomains';
 
 export const store = configureStore({
   reducer: {
@@ -35,6 +36,7 @@ export const store = configureStore({
     [dansUtilityApi.reducerPath]: dansUtilityApi.reducer,
     [rdaWorkingGroupsApi.reducerPath]: rdaWorkingGroupsApi.reducer,
     [rdaPathwaysApi.reducerPath]: rdaPathwaysApi.reducer,
+    [rdaDomainsApi.reducerPath]: rdaDomainsApi.reducer,
     submit: submitReducer,
     deposit: depositReducer,
   },
@@ -53,6 +55,7 @@ export const store = configureStore({
       .concat(dansUtilityApi.middleware)
       .concat(rdaWorkingGroupsApi.middleware)
       .concat(rdaPathwaysApi.middleware)
+      .concat(rdaDomainsApi.middleware)
       .concat(errorLogger)
 });
 
