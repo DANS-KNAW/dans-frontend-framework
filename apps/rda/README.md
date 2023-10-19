@@ -29,7 +29,7 @@ The framework uses the i18next library. Define an array of languages your app us
 
 To ensure language files are loaded before the UI is loaded, wrap your Routes in a Suspense component.
 
-#### Site title
+#### Site title 
 Pass along a string as site title to the ThemeWrapper component, so the app can set the appropriate document title.
 
 #### Theming
