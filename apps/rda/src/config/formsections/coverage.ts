@@ -76,17 +76,10 @@ const section: InitialSectionType = {
         en: 'List of relevant keywords',
         nl: 'Een lijst van relevante trefwoorden',
       },
-      options: [
-        {
-          label: {
-            en: 'Dummy',
-            nl: 'Dummy',
-          },
-          value: 'dummy',
-        }
-      ],
+      multiApiValue: 'domains',
+      options: ['domains'],
       multiselect: true,
-      allowFreeText: true,
+      allowFreeText: false,
     },
     {
       type: 'autocomplete',
@@ -100,10 +93,9 @@ const section: InitialSectionType = {
         en: 'List of relevant keywords',
         nl: 'Een lijst van relevante trefwoorden',
       },
-      multiApiValue: 'pathways',
-      options: ['pathways', 'rdaworkinggroups'],
+      options: 'domains',
       multiselect: true,
-      allowFreeText: true,
+      allowFreeText: false,
     },
     {
       type: 'autocomplete',
