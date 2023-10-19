@@ -9,7 +9,7 @@ import { memo } from 'react';
 import type { Field, TextFieldType, DateFieldType, InputField } from '../../types/MetadataFields';
 import type { SingleFieldProps, GroupedFieldProps } from '../../types/MetadataProps';
 import { DeleteButton, AddButtonText } from './MetadataButtons';
-import { OrcidField, RorField, MultiApiField, GeonamesField, GettyField, SheetsField, DatastationsField, DansFormatsField, GorcField, LicensesField, RdaWorkingGroupsField, RdaPathwaysField, RdaDomainsField } from './fields/AutocompleteAPIField';
+import { OrcidField, RorField, MultiApiField, GeonamesField, GettyField, SheetsField, DatastationsField, DansFormatsField, GorcField, LicensesField, RdaWorkingGroupsField, RdaPathwaysField, RdaDomainsField, RdaInterestGroupsField } from './fields/AutocompleteAPIField';
 import AutocompleteField from './fields/AutocompleteField';
 import TextField from './fields/TextField';
 import DateTimeField from './fields/DateTimeField';
@@ -73,6 +73,8 @@ const SingleField = memo(({field, sectionIndex}: SingleFieldProps) => {
         <RdaPathwaysField field={field} sectionIndex={sectionIndex} /> :
         field.options === 'domains' ?
         <RdaDomainsField field={field} sectionIndex={sectionIndex} /> :
+        field.options === 'interest groups' ?
+        <RdaInterestGroupsField field={field} sectionIndex={sectionIndex} /> :
         field.multiApiValue ?
         <MultiApiField field={field} sectionIndex={sectionIndex} /> :
         null
