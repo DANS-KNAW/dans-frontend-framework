@@ -10,7 +10,7 @@ export default ({mode}) => {
     server: {
       proxy: {
         '/api/search': {
-          target: 'http://localhost:9200',
+          target: process.env.VITE_ELASTICSEARCH_API_ENDPOINT,
           changeOrigin: true,
           rewrite: path => {
             return path.replace(/^\/api\/search/, '')

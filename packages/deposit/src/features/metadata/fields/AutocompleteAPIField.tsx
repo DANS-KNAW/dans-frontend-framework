@@ -33,6 +33,7 @@ import { useFetchLicensesQuery } from '../api/licenses';
 import { useFetchRdaWorkingGroupQuery } from '../api/rdaWorkgroup';
 import { useFetchRdaPathwayQuery } from '../api/rdaPathways';
 import { useFetchRdaDomainQuery } from '../api/rdaDomains';
+import { useFetchRdaInterestGroupQuery } from '../api/rdaInterestGroups';
 
 /*
  *  Type ahead fields for different API endpoints
@@ -244,6 +245,26 @@ export const RdaDomainsField = ({field, sectionIndex}: AutocompleteFieldProps) =
   )
 }
 
+export const RdaInterestGroupsField = ({field, sectionIndex}: AutocompleteFieldProps) => {
+  const [inputValue, setInputValue] = useState<string>('');
+  const debouncedInputValue = useDebounce(inputValue, 500)[0];
+
+  const {data, isFetching, isLoading} = useFetchRdaInterestGroupQuery<QueryReturnType>(debouncedInputValue, {skip: debouncedInputValue === ''});
+
+  return (
+    <AutocompleteAPIField 
+      field={field} 
+      sectionIndex={sectionIndex} 
+      inputValue={inputValue} 
+      setInputValue={setInputValue} 
+      debouncedInputValue={debouncedInputValue} 
+      data={data} 
+      isLoading={isLoading} 
+      isFetching={isFetching} 
+    />
+  )
+}
+
 export const RdaWorkingGroupsField = ({field, sectionIndex}: AutocompleteFieldProps) => {
   const [inputValue, setInputValue] = useState<string>('');
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
@@ -323,6 +344,7 @@ export const MultiApiField = ({field, sectionIndex}: AutocompleteFieldProps) => 
       {field.multiApiValue === 'rdaworkinggroups' && <RdaWorkingGroupsField field={field} sectionIndex={sectionIndex} />}
       {field.multiApiValue === 'pathways' && <RdaPathwaysField field={field} sectionIndex={sectionIndex} />}
       {field.multiApiValue === 'domains' && <RdaDomainsField field={field} sectionIndex={sectionIndex} />}
+      {field.multiApiValue === 'interest groups' && <RdaInterestGroupsField field={field} sectionIndex={sectionIndex} />}
     </Stack>
   )
 }

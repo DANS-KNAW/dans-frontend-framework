@@ -18,6 +18,7 @@ import { licenceApi } from '../features/metadata/api/licenses';
 import { rdaWorkingGroupsApi } from '../features/metadata/api/rdaWorkgroup';
 import { rdaPathwaysApi } from '../features/metadata/api/rdaPathways';
 import { rdaDomainsApi } from '../features/metadata/api/rdaDomains';
+import { rdaInterestGroupsApi } from '../features/metadata/api/rdaInterestGroups';
 
 export const store = configureStore({
   reducer: {
@@ -37,6 +38,7 @@ export const store = configureStore({
     [rdaWorkingGroupsApi.reducerPath]: rdaWorkingGroupsApi.reducer,
     [rdaPathwaysApi.reducerPath]: rdaPathwaysApi.reducer,
     [rdaDomainsApi.reducerPath]: rdaDomainsApi.reducer,
+    [rdaInterestGroupsApi.reducerPath]: rdaInterestGroupsApi.reducer,
     submit: submitReducer,
     deposit: depositReducer,
   },
@@ -56,6 +58,7 @@ export const store = configureStore({
       .concat(rdaWorkingGroupsApi.middleware)
       .concat(rdaPathwaysApi.middleware)
       .concat(rdaDomainsApi.middleware)
+      .concat(rdaInterestGroupsApi.middleware)
       .concat(errorLogger)
 });
 
