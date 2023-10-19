@@ -12,6 +12,17 @@ export interface GorcResponse {
   items: GorcItem[];
 }
 
+interface RdaInterestGroupItem {
+  id: string;
+  title: string;
+  url: string;
+}
+
+export interface RdaInterestGroupsResponse {
+  number_of_results: number;
+  items: RdaInterestGroupItem[];
+}
+
 interface RdaWorkGroupItem {
   id: string;
   title: string;
