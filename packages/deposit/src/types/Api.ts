@@ -23,6 +23,17 @@ export interface RdaWorkGroupResponse {
   items: RdaWorkGroupItem[];
 }
 
+interface RdaPathwayItem {
+  id: string;
+  title: string;
+  description: string;
+}
+
+export interface RdaPathwaysResponse {
+  number_of_results: number;
+  items: RdaPathwayItem[];
+}
+
 interface License {
   domain_content: boolean;
   domain_data: boolean;
