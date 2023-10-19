@@ -56,5 +56,5 @@ jobs:
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
     - name: Push to dockerhub
       run: |
-        docker build -f apps/faircore4eosc/Dockerfile . -t $ORG/$IMAGE_NAME:$IMAGE_TAG
+        docker build -f apps/swh/Dockerfile . -t $ORG/$IMAGE_NAME:$IMAGE_TAG
         docker push $ORG/$IMAGE_NAME:$IMAGE_TAG
