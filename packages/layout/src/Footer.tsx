@@ -78,12 +78,6 @@ const FooterContent = ({ header, links, freetext, image }: FooterContent) => {
           {lookupLanguageString(link.name, i18n.language)}
         </Link>
       )}
-      {image && <img src={image.src} alt={image.alt} />}
-      {freetext && 
-        <Box sx={{a: {color: 'primary.main', textDecoration: 'none'}}}>
-          {parse(lookupLanguageString(freetext, i18n.language) || '')}
-        </Box>
-      }
     </Stack>
   );
 }
