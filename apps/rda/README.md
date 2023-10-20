@@ -35,7 +35,7 @@ Pass along a string as site title to the ThemeWrapper component, so the app can 
 #### Theming
 Configure a theme file and use this in the ThemeWrapper from [@dans-framework/theme](/packages/theme/README.md) to wrap your app with. Be sure to edit **./src/index.css** to match body and app background color to your theme.
 
-#### Snackbar
+#### Snackbars
 To display error messages from the Redux stores of several components, you need to a add a SnackbarProvider somewhere in your app.
 
     import { SnackbarProvider } from 'notistack';
