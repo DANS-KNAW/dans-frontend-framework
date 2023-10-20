@@ -57,7 +57,7 @@ const Footer = ({top, bottom}: FooterType) => {
   )
 }
 
-const FooterContent = ({ header, links, freetext }: FooterContent) => {
+const FooterContent = ({ header, links, freetext, image }: FooterContent) => {
   const { i18n } = useTranslation();
   return (
     <Stack direction="column" alignItems="start">
@@ -72,6 +72,7 @@ const FooterContent = ({ header, links, freetext }: FooterContent) => {
           {lookupLanguageString(link.name, i18n.language)}
         </Link>
       )}
+      {image && <img src={image.src} alt={image.alt} />}
       {freetext && 
         <Box sx={{a: {color: 'primary.main', textDecoration: 'none'}}}>
           {parse(lookupLanguageString(freetext, i18n.language) || '')}
