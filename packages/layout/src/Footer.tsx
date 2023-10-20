@@ -26,7 +26,7 @@ const Footer = ({top, bottom}: FooterType) => {
         }}
       >
         <Container>
-          <Grid container columns={4} spacing={2}>
+          <Grid container columns={5} spacing={2}>
             {top.map( (item, i) => 
               <Grid xs={4} sm={2} md={1} key={`footer-${i}`}>
                 <FooterContent {...item} />
@@ -64,6 +64,12 @@ const FooterContent = ({ header, links, freetext, image }: FooterContent) => {
       {header && 
         <Typography variant="h6">{lookupLanguageString(header, i18n.language)}</Typography>
       }
+      {image && <img src={image.src} alt={image.alt} />}
+      {freetext && 
+        <Box sx={{a: {color: 'primary.main', textDecoration: 'none'}}}>
+          {parse(lookupLanguageString(freetext, i18n.language) || '')}
+        </Box>
+      }
       {links && links.map( (link, j) =>
         <Link href={link.link} underline="none" target="_blank" key={`link-${j}`} sx={{ display: 'flex', alignItems: 'center'}}>
           {link.icon && link.icon === 'twitter' && <TwitterIcon sx={{mr: 1}} fontSize="small" />}
@@ -72,12 +78,6 @@ const FooterContent = ({ header, links, freetext, image }: FooterContent) => {
           {lookupLanguageString(link.name, i18n.language)}
         </Link>
       )}
-      {image && <img src={image.src} alt={image.alt} />}
-      {freetext && 
-        <Box sx={{a: {color: 'primary.main', textDecoration: 'none'}}}>
-          {parse(lookupLanguageString(freetext, i18n.language) || '')}
-        </Box>
-      }
     </Stack>
   );
 }

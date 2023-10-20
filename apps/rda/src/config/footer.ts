@@ -1,6 +1,7 @@
+import { Footer } from '@dans-framework/layout/src/types';
 import rdaImage from './images/logo_tiger.png';
 
-const footer = { 
+const footer: Footer = { 
   top: [
     {
       header: {
@@ -100,6 +101,18 @@ const footer = {
           name: "Twitter",
           link: "",
           icon: "twitter"
+        }
+      ]
+    },
+    {
+      header: "RDA Tiger",
+      freetext: {
+        en: "The RDA Tiger Project is supporting the use of this application through engagement with RDA Groups and members."
+      },
+      links: [
+        {
+          name: "Contact RDA TIGER",
+          link: "",
         }
       ]
     },
