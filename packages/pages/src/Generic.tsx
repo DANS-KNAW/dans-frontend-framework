@@ -35,7 +35,7 @@ const Generic = ({ logo, name, content, action }: Page) => {
         >
           <Typography variant="h1" sx={{textAlign: 'center'}}>
             {logo ? 
-              <img src={logo} alt="OH-SMArt" title="OH-SMArt" /> :
+              <img src={logo} alt="RDA" title="RDA" /> :
               lookupLanguageString(name, i18n.language)
             }
           </Typography>

@@ -1,3 +1,5 @@
+import rdaImage from './images/logo_tiger.png';
+
 const footer = { 
   top: [
     {
@@ -11,35 +13,21 @@ const footer = {
             en: "Contact",
             nl: "Contact",
           },
-          link: "https://dans.knaw.nl/contact/",
+          link: "",
         },
         {
           name: {
-            en: "Legal information",
-            nl: "Juridische informatie",
+            en: "Helpdesk",
+            nl: "Helpdesk",
           },
-          link: "https://dans.knaw.nl/legal-information/",
-        },
-        {
-          name: {
-            en: "DANS products and services",
-            nl: "DANS producten en services",
-          },
-          link: "https://dans.knaw.nl/data-stations/",
-        },
-        {
-          name: {
-            en: "Rate Information",
-            nl: "Tariefinformatie",
-          },
-          link: "https://dans.knaw.nl/rate-information/",
+          link: "",
         },
       ]
     },
     {
       header: { 
-        en: "About DANS",
-        nl: "Over DANS",
+        en: "About RDA",
+        nl: "Over RDA",
       },
       links: [
         {
@@ -47,48 +35,48 @@ const footer = {
             en: "About us",
             nl: "Over ons",
           },
-          link: "https://dans.knaw.nl/about/",
+          link: "",
         },
         {
           name: { 
             en: "Our team",
             nl: "Ons team",
           },
-          link: "https://dans.knaw.nl/about/team/",
+          link: "",
         },
         {
           name: { 
-            en: "Working at DANS",
-            nl: "Werken bij DANS",
+            en: "Legal information",
+            nl: "Juridische informatie",
           },
-          link: "https://dans.knaw.nl/working-for-dans/",
+          link: "",
         },
         {
           name: { 
             en: "Press Releases",
             nl: "Pers",
           },
-          link: "https://dans.knaw.nl/press/",
+          link: "",
         },
         {
           name: { 
             en: "Disclaimer",
             nl: "Disclaimer",
           },
-          link: "https://dans.knaw.nl/disclaimer/",
+          link: "",
         },
         {
           name: { 
             en: "Data Licenses",
             nl: "Datalicenties",
           },
-          link: "https://dans.knaw.nl/reuse-data-manual/",
+          link: "",
         },{
           name: { 
             en: "Privacy",
             nl: "Privacy",
           },
-          link: "https://dans.knaw.nl/privacy-declaration/",
+          link: "",
         }
       ]
     },
@@ -100,39 +88,39 @@ const footer = {
       links: [
         {
           name: "Newsletter",
-          link: "https://laposta.nl/f/ssyy3ox9lfh8",
+          link: "",
           icon: "email"
         },
         {
           name: "YouTube",
-          link: "https://www.youtube.com/user/DANSDataArchiving",
+          link: "",
           icon: "youtube"
         },
         {
           name: "Twitter",
-          link: "https://twitter.com/dans_knaw_nwo",
+          link: "",
           icon: "twitter"
         }
       ]
     },
     {
-      freetext: {
-        en: "DANS is an institute of <a href=\"https://www.knaw.nl/\" target=\"_blank\">KNAW</a> and <a href=\"https://www.nwo.nl/\" target=\"_blank\">NWO</a>",
-        nl: "DANS is een intituut van <a href=\"https://www.knaw.nl/\" target=\"_blank\">KNAW</a> en <a href=\"https://www.nwo.nl/\" target=\"_blank\">NWO</a>",
-      },
+      image: {
+        src: rdaImage,
+        alt: "DANS Logo",
+      }
     },
   ],
   bottom: [
     {
       freetext: {
-        en: "© DANS 2022, 2023 using DANS Open Data APIs.",
-        nl: "© DANS 2022, 2023. Gebruikt DANS Open Data API's.",
+        en: "",
+        nl: "",
       }
     },
     {
       freetext: {
-        en: "Includes Functionality by The Dataverse Project 5.10.1 build 907-b844672",
-        nl: "Gebruikt functionaliteit van The Dataverse Project 5.10.1 build 907-b844672",
+        en: "",
+        nl: "",
       }
     }
   ],

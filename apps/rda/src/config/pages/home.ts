@@ -9,8 +9,8 @@ const page: Page = {
   inMenu: true,
   menuTitle: "Home",
   content: {
-    en: "<p>Welcome to the RDA deposit tool. Log in and deposit your research data using our form.</p>",
-    nl: '<p>Welkom bij de RDA deposit tool. Log in en stuur je onderzoeksdata op via ons formulier.</p>',
+    en: "<p>You need to log in to deposit materials to RDA collections in Zenodo. You can do so using a Google account or an ORCID.</p>",
+    nl: "<p>U moet inloggen om materialen te deponeren in RDA-collecties in Zenodo. U kunt dit doen met een Google-account of een ORCID.</p>",
   },
   action: {
     link: "deposit",

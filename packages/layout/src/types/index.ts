@@ -9,6 +9,10 @@ export interface FooterContent {
   header?: string | LanguageStrings;
   links?: Link[];
   freetext?: string | LanguageStrings;
+  image?: {
+    src: string;
+    alt: string;
+  }
 }
 
 interface Link {
