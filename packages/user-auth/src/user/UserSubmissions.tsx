@@ -4,54 +4,31 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useTranslation } from 'react-i18next';
 import List from '@mui/material/List';
+import Link from '@mui/material/Link';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
+import Paper from '@mui/material/Paper';
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ErrorIcon from '@mui/icons-material/Error';
 import Divider from '@mui/material/Divider';
 import moment from 'moment';
-import ListSubheader from '@mui/material/ListSubheader';
 import { useSiteTitle, setSiteTitle } from '@dans-framework/utils';
-
-const fakeDrafts = [
-  {
-    id: '1',
-    date: moment().subtract(1, 'hours').format('MMMM Do YYYY, h:mm:ss'),
-    draft: true,
-  },
-  {
-    id: '2',
-    date: moment().subtract(1, 'days').format('MMMM Do YYYY, h:mm:ss'),
-    draft: true,
-  }
-];
-
-const fakeSubmissions = [
-  {
-    id: '1',
-    date: moment().subtract(2, 'days').format('MMMM Do YYYY, h:mm:ss'),
-    error: true,
-  },
-  {
-    id: '2',
-    date: moment().subtract(5, 'days').format('MMMM Do YYYY, h:mm:ss'),
-    error: false,
-  },
-  {
-    id: '3',
-    date: moment().subtract(10, 'days').format('MMMM Do YYYY, h:mm:ss'),
-    error: false,
-  }
-]
+import { useFetchUserSubmissionsQuery } from './userApi';
+import { useAuth } from 'react-oidc-context';
+import type { SubmissionResponse } from '../types';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export const UserSubmissions = () => {
   const { t } = useTranslation('user');
   const siteTitle = useSiteTitle();
+  const auth = useAuth();
+  console.log(auth)
+
+  const { data, isLoading } = useFetchUserSubmissionsQuery(auth.user?.profile.sub);
+
+  console.log(data)
 
   useEffect( () => { 
     setSiteTitle(siteTitle, t('userSubmissions'));
@@ -62,48 +39,73 @@ export const UserSubmissions = () => {
       <Grid container>
         <Grid xs={12} mdOffset={2.5} md={7}>
           <Typography variant="h1">{t('userSubmissions')}</Typography>
-          <SubmissionList list={fakeDrafts} header={t('userSubmissionsDrafts')} />
-          <SubmissionList list={fakeSubmissions} header={t('userSubmissionsCompleted')} />
+          <SubmissionList data={[]} isLoading={false} header={t('userSubmissionsDrafts')} />
+          <SubmissionList data={data || []} isLoading={isLoading} header={t('userSubmissionsCompleted')} />
         </Grid>
       </Grid>
     </Container>
   )
 }
 
-const SubmissionList = ({ list, header }: { list: { id: string, date: string, error?: boolean; draft?: boolean }[], header: string; }) => {
+const columns: GridColDef[] = [
+  { 
+    field: 'viewLink', 
+    headerName: '', 
+    width: 60,
+    renderCell: (params) => <Link href={params.value} target="_blank"><IconButton><VisibilityIcon /></IconButton></Link>,
+    sortable: false,
+    filterable: false,
+    hideable: false,
+  },
+  { 
+    field: 'created', 
+    headerName: 'Created on', 
+    width: 250,
+    type: 'dateTime',
+    valueGetter: (params) => new Date(params.value),
+    renderCell: (params) => moment(params.value).calendar(),
+  },
+  { 
+    field: 'target', 
+    headerName: 'Submitted to',
+    width: 300,
+  },
+];
+
+const SubmissionList = ({ data, isLoading, header }: { data: SubmissionResponse[], isLoading: boolean; header: string; }) => {
   const { t } = useTranslation('user');
+
+  const rows = data && data.map( d => ({
+    id: d['metadata-id'],
+    viewLink: d['target-url'],
+    created: d['created-date'],
+    target: d['target-repo-name'],
+  }));
+
   return (
-    <List 
-      sx={{ width: '100%', bgcolor: 'background.paper', mb: 2 }} 
-      subheader={<ListSubheader>{header}</ListSubheader>}
-    >
-      {list.map((item, index) => 
-        <ListItem
-          key={item.id}
-          secondaryAction={item.error ? <Tooltip title={t('errorSubmission')}><ErrorIcon color="error" /></Tooltip> : undefined }
-          disablePadding
-        >
-          <ListItemButton>
-            <ListItemIcon>
-              {
-                item.error || item.draft ? 
-                <Tooltip title={t('editSubmission')}><EditIcon /></Tooltip> : 
-                <Tooltip title={t('viewSubmission')}><VisibilityIcon /></Tooltip>
-              }
-            </ListItemIcon>
-            <ListItemText
-              primary={item.date}
-              secondary={
-                item.error ?
-                t('retrySubmission') :
-                item.draft ?
-                t('continueSubmission', {percent: 15}) :
-                t('viewSubmissionExtended', {location: 'Dataverse'})
-              }
-            />
-          </ListItemButton>
-        </ListItem>
-      )}
-    </List>
+    <>
+      <Typography sx={{ mt: 4, mb: 2 }} variant="h5">
+        {header}
+      </Typography>
+      {
+        isLoading ?
+        <CircularProgress /> :
+        rows.length === 0 ?
+        <Typography>{t('noData')}</Typography> :
+
+        <Paper>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 25 },
+            },
+          }}
+          pageSizeOptions={[25, 50, 100]}
+        />
+        </Paper>
+      }
+    </>
   )
 }

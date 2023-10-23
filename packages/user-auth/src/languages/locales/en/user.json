@@ -22,5 +22,6 @@
 	"viewSubmission": "View this submission",
 	"retrySubmission": "There was an error processing this submission, please edit and try again",
 	"continueSubmission": "Continue filling out this form. Currently {{percent}}% complete.",
-	"viewSubmissionExtended": "View this submission on {{location}}"
+	"viewSubmissionExtended": "View this submission on {{location}}",
+	"noData": "No data found"
 }

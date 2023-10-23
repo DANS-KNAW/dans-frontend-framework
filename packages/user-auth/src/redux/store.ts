@@ -1,14 +1,16 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import { userApi } from '../user/userApi';
+import { userApi, userSubmissionsApi } from '../user/userApi';
 import { errorLogger } from '@dans-framework/utils';
 
 export const store = configureStore({
   reducer: {
     [userApi.reducerPath]: userApi.reducer,
+    [userSubmissionsApi.reducerPath]: userSubmissionsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
     .concat(userApi.middleware)
+    .concat(userSubmissionsApi.middleware)
     .concat(errorLogger)
 });
 

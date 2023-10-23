@@ -22,5 +22,6 @@
 	"viewSubmission": "Bekijk de metadata",
 	"retrySubmission": "Fout bij het verwerken van dit formulier; pas het aan en probeer opnieuw.",
 	"continueSubmission": "Ga verder met invullen. Momenteel {{percent}}% compleet.",
-	"viewSubmissionExtended": "Bekijk deze metadata op {{location}}"
+	"viewSubmissionExtended": "Bekijk deze metadata op {{location}}",
+	"noData": "Geen data gevonden"
 }

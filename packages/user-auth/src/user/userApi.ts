@@ -47,7 +47,28 @@ export const userApi = createApi({
   }),
 });
 
+export const userSubmissionsApi = createApi({
+  reducerPath: 'submissions',
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://packaging.labs.dans.knaw.nl/' }),
+  endpoints: (build) => ({
+    fetchUserSubmissions: build.query({
+      query: (userId) => {
+        return ({
+          url: `progress-state/${userId}`,
+          headers: {
+            Accept: 'application/json',
+          },
+        });
+      },
+    })
+  }),
+});
+
 export const {
   useFetchUserProfileQuery,
   useSaveUserDataMutation,
 } = userApi;
+
+export const {
+  useFetchUserSubmissionsQuery,
+} = userSubmissionsApi;
