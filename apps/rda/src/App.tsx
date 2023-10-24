@@ -12,9 +12,6 @@ import logo from './config/images/logo.png';
 import { RdaSearch } from './pages/search';
 import { RdaRecord } from './pages/record';
 
-// import { AuthWrapper, AuthRoute, SignInCallback } from '@dans-framework/auth';
-// import { UserSettings, UserSubmissions } from '@dans-framework/user';
-
 // Load config variables
 import theme from './config/theme';
 import footer from './config/footer';

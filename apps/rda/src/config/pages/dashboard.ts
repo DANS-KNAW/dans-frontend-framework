@@ -3,7 +3,7 @@ import type { Page } from "@dans-framework/pages";
 const page: Page = {
   id: "dashboard",
   name: "Dashboard",
-  slug: "dashboard",
+  slug: "",
   template: "dashboard",
   inMenu: true,
   menuTitle: {

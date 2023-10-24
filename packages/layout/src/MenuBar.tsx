@@ -81,7 +81,7 @@ const MenuBar = ({pages, logo = dansLogoWhite, userSettings = true, userSubmissi
               </MenuItem>
             ))}
             </Menu>
-            <Link component={RouterLink} to="/" sx={{ ml: 2, width: 100, display: { xs: 'flex', md: 'none' } }}>
+            <Link component={RouterLink} to="/" sx={{ ml: 2, pt: 1, pb: 1, width: 100, display: { xs: 'flex', md: 'none' } }}>
               <img src={logo} />
             </Link>
           </Box>

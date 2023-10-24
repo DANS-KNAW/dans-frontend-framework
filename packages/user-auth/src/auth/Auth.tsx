@@ -12,6 +12,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import i18nProvider from '../languages/i18n';
 import type { AuthProviderConfig } from '../types';
 import { store } from '../redux/store';
+import { LoginPage } from './Login';
 
 export const AuthWrapper = ({ authProvider, children }: {authProvider: AuthProviderConfig, children: ReactNode}) => {
   return (
@@ -36,7 +37,7 @@ export const AuthRoute = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <Navigate to="/" />
+    <LoginPage />
   );
 }
 
