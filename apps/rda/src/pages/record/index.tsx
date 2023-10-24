@@ -34,9 +34,9 @@ export function RdaRecord() {
     const [record, setRecord] = React.useState<any>(null)
 
     React.useEffect(() => {
-        fetch(`/api/search/dans-rda2/_source/${id}`)
-            .then(res => res.json())
-            .then(setRecord)
+        fetch(`${import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT}/dans-rda2/_source/${id}`)
+        .then(res => res.json())
+        .then(setRecord)
     }, [id])
 
     if (record == null) return
