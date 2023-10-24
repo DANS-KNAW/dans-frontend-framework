@@ -12,6 +12,8 @@ import { Provider as ReduxProvider } from 'react-redux';
 import i18nProvider from '../languages/i18n';
 import type { AuthProviderConfig } from '../types';
 import { store } from '../redux/store';
+import { LoginPage } from './Login';
+import type { User } from 'oidc-client-ts';
 
 export const AuthWrapper = ({ authProvider, children }: {authProvider: AuthProviderConfig, children: ReactNode}) => {
   return (
@@ -36,7 +38,7 @@ export const AuthRoute = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <Navigate to="/" />
+    <LoginPage />
   );
 }
 
@@ -76,8 +78,10 @@ export const SignInCallback = () => {
     );
   }
 
+  // When there's a user object, we nagivate back to the 'state' key,
+  // aka the previous page that we've set in the Login Button component
   return (
-    <Navigate to="/" />
+    <Navigate to={ auth.user?.state || '/' } />
   );
 
 }
