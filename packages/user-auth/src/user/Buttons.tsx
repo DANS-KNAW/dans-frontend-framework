@@ -4,10 +4,12 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import { enqueueSnackbar } from 'notistack';
+import { useLocation } from 'react-router-dom';
 
 export const LoginButton = ({variant}: {variant?: 'contained'}) => {
   const { t } = useTranslation('user');
   const auth = useAuth();
+  const location  = useLocation();
 
   return (
     <Button
@@ -21,7 +23,8 @@ export const LoginButton = ({variant}: {variant?: 'contained'}) => {
         },
       } : {}}
       onClick={
-        () => void auth.signinRedirect()
+        // set the signin redirect with the current location in state
+        () => void auth.signinRedirect({ state: location.pathname })
           .catch(e => enqueueSnackbar('Error redirecting to sign-in server!', {variant: 'error'}))
       }
     >
