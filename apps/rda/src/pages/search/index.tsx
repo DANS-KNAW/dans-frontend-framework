@@ -28,7 +28,7 @@ export function RdaSearch({ dashboard }: { dashboard?: RDTSearchUIProps['dashboa
 				fullTextHighlight={config.fullTextHighlight}
 				onClickResult={(result: Result) => navigate(`/record/${result.id}`)}
 				ResultBodyComponent={Rda2Result}
-				url={`/api/search/dans-rda2/_search`}
+				url={`${import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT}/dans-rda2/_search`}
 				style={config.style}
 			>
 				<DateChartFacet
