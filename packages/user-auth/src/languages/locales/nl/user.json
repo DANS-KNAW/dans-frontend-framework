@@ -23,5 +23,9 @@
 	"retrySubmission": "Fout bij het verwerken van dit formulier; pas het aan en probeer opnieuw.",
 	"continueSubmission": "Ga verder met invullen. Momenteel {{percent}}% compleet.",
 	"viewSubmissionExtended": "Bekijk deze metadata op {{location}}",
-	"noData": "Geen data gevonden"
+	"noData": "Geen data gevonden",
+	"noTitle": "(geen titel)",
+	"title": "Titel",
+	"createdOn": "Aangemaakt op",
+	"submittedTo": "Gesubmit naar"
 }
