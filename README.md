@@ -96,4 +96,8 @@ Alternatively, you can create the appropriate folder structure and package.json 
 Open up the appropriate package/app folder and edit the **package.json**, **tsconfig.json**,  **tsconfig.node.json** and **vite.config.ts** where neccessary.
 
 ## Deployment
-Deployment is done using Docker containers. TBD.
+Deployment is done using Docker containers and a Github Action that listens for changes to folders inside the apps folder. Current pipeline:
+ 1. Make changes to an app.
+ 2. Create pull request for main branch and merge into main.
+ 3. A fresh Docker image should be created on the [DANS Dockerhub](https://hub.docker.com/u/dansknaw). If not, check Github Actions for errors.
+ 4. See the [Deployment repo](https://github.com/DANS-KNAW/ohsmart-deploy) for further steps.

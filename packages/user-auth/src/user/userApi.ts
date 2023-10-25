@@ -47,7 +47,31 @@ export const userApi = createApi({
   }),
 });
 
+export const userSubmissionsApi = createApi({
+  reducerPath: 'submissions',
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://packaging.labs.dans.knaw.nl/' }),
+  // Since we can't control cache based on a submit action, as that lives in another store,
+  // We make sure data isn't stale and contains freshly submitted forms: refetch after 5s.
+  refetchOnMountOrArgChange: 5,
+  endpoints: (build) => ({
+    fetchUserSubmissions: build.query({
+      query: (userId) => {
+        return ({
+          url: `progress-state/${userId}`,
+          headers: {
+            Accept: 'application/json',
+          },
+        });
+      },
+    })
+  }),
+});
+
 export const {
   useFetchUserProfileQuery,
   useSaveUserDataMutation,
 } = userApi;
+
+export const {
+  useFetchUserSubmissionsQuery,
+} = userSubmissionsApi;
