@@ -3,7 +3,6 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useTranslation } from 'react-i18next';
-import i18n from '../languages/i18n';
 import Link from '@mui/material/Link';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
@@ -52,48 +51,51 @@ export const UserSubmissions = () => {
   )
 }
 
-const columns: GridColDef[] = [
-  { 
-    field: 'viewLink', 
-    headerName: '', 
-    width: 100,
-    getActions: (params) => [
-      <GridActionsCellItem
-        icon={<VisibilityIcon />}
-        label={i18n.t('viewItem', {ns: 'user'})}
-        onClick={() => window.open(params.row.viewLink, '_blank')}
-      />,
-      <GridActionsCellItem
-        icon={<EditIcon />}
-        label={i18n.t('viewItem', {ns: 'user'})}
-        onClick={() => null}
-      />
-    ],
-    type: 'actions',
-  },
-  { 
-    field: 'title', 
-    headerName: i18n.t('title', {ns: 'user'}), 
-    width: 250,
-    renderCell: (params) => params.value ? params.value : i18n.t('noTitle', {ns: 'user'}),
-  },
-  { 
-    field: 'created', 
-    headerName: i18n.t('createdOn', {ns: 'user'}), 
-    width: 250,
-    type: 'dateTime',
-    valueGetter: (params) => new Date(params.value),
-    renderCell: (params) => moment(params.value).format('D-M-Y - HH:mm'),
-  },
-  { 
-    field: 'target', 
-    headerName: i18n.t('submittedTo', {ns: 'user'}),
-    width: 300,
-  },
-];
-
 const SubmissionList = ({ data, isLoading, header }: { data: SubmissionResponse[], isLoading: boolean; header: string; }) => {
   const { t } = useTranslation('user');
+
+  // useMemo to make sure columns don't change
+  const columns = useMemo<GridColDef[]>(
+    () => [
+      { 
+        field: 'viewLink', 
+        headerName: '', 
+        width: 100,
+        getActions: (params) => [
+          <GridActionsCellItem
+            icon={<VisibilityIcon />}
+            label={t('viewItem')}
+            onClick={() => window.open(params.row.viewLink, '_blank')}
+          />,
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            label={t('viewItem')}
+            onClick={() => null}
+          />
+        ],
+        type: 'actions',
+      },
+      { 
+        field: 'title', 
+        headerName: t('title'), 
+        width: 250,
+        renderCell: (params) => params.value ? params.value : t('noTitle'),
+      },
+      { 
+        field: 'created', 
+        headerName: t('createdOn'), 
+        width: 250,
+        type: 'dateTime',
+        valueGetter: (params) => new Date(params.value),
+        renderCell: (params) => moment(params.value).format('D-M-Y - HH:mm'),
+      },
+      { 
+        field: 'target', 
+        headerName: t('submittedTo'),
+        width: 300,
+      },
+    ], 
+  []);
 
   const rows = data && data.map( d => ({
     // Todo: API needs work and standardisation, also see types.
