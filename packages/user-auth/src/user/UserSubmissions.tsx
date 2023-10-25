@@ -1,18 +1,24 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useTranslation } from 'react-i18next';
-import List from '@mui/material/List';
+import i18n from '../languages/i18n';
 import Link from '@mui/material/Link';
-import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { 
+  DataGrid, 
+  GridColDef, 
+  GridActionsColDef, 
+  GridValueGetterParams, 
+  GridColumnMenuProps, 
+  GridColumnMenu,
+  GridActionsCellItem
+} from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import ErrorIcon from '@mui/icons-material/Error';
-import Divider from '@mui/material/Divider';
+import Box from '@mui/material/Box';
 import moment from 'moment';
 import { useSiteTitle, setSiteTitle } from '@dans-framework/utils';
 import { useFetchUserSubmissionsQuery } from './userApi';
@@ -27,7 +33,6 @@ export const UserSubmissions = () => {
   console.log(auth)
 
   const { data, isLoading } = useFetchUserSubmissionsQuery(auth.user?.profile.sub);
-
   console.log(data)
 
   useEffect( () => { 
@@ -37,9 +42,9 @@ export const UserSubmissions = () => {
   return (
     <Container>
       <Grid container>
-        <Grid xs={12} mdOffset={2.5} md={7}>
+        <Grid xs={12} mdOffset={1} md={10}>
           <Typography variant="h1">{t('userSubmissions')}</Typography>
-          <SubmissionList data={[]} isLoading={false} header={t('userSubmissionsDrafts')} />
+          {/* Todo: <SubmissionList data={[]} isLoading={false} header={t('userSubmissionsDrafts')} />*/}
           <SubmissionList data={data || []} isLoading={isLoading} header={t('userSubmissionsCompleted')} />
         </Grid>
       </Grid>
@@ -51,23 +56,38 @@ const columns: GridColDef[] = [
   { 
     field: 'viewLink', 
     headerName: '', 
-    width: 60,
-    renderCell: (params) => <Link href={params.value} target="_blank"><IconButton><VisibilityIcon /></IconButton></Link>,
-    sortable: false,
-    filterable: false,
-    hideable: false,
+    width: 100,
+    getActions: (params) => [
+      <GridActionsCellItem
+        icon={<VisibilityIcon />}
+        label={i18n.t('viewItem', {ns: 'user'})}
+        onClick={() => window.open(params.row.viewLink, '_blank')}
+      />,
+      <GridActionsCellItem
+        icon={<EditIcon />}
+        label={i18n.t('viewItem', {ns: 'user'})}
+        onClick={() => null}
+      />
+    ],
+    type: 'actions',
+  },
+  { 
+    field: 'title', 
+    headerName: i18n.t('title', {ns: 'user'}), 
+    width: 250,
+    renderCell: (params) => params.value ? params.value : i18n.t('noTitle', {ns: 'user'}),
   },
   { 
     field: 'created', 
-    headerName: 'Created on', 
+    headerName: i18n.t('createdOn', {ns: 'user'}), 
     width: 250,
     type: 'dateTime',
     valueGetter: (params) => new Date(params.value),
-    renderCell: (params) => moment(params.value).calendar(),
+    renderCell: (params) => moment(params.value).format('D-M-Y - HH:mm'),
   },
   { 
     field: 'target', 
-    headerName: 'Submitted to',
+    headerName: i18n.t('submittedTo', {ns: 'user'}),
     width: 300,
   },
 ];
@@ -76,9 +96,11 @@ const SubmissionList = ({ data, isLoading, header }: { data: SubmissionResponse[
   const { t } = useTranslation('user');
 
   const rows = data && data.map( d => ({
+    // Todo: API needs work and standardisation, also see types.
     id: d['metadata-id'],
     viewLink: d['target-url'],
     created: d['created-date'],
+    title: d['target-output'].hasOwnProperty('title') ? d['target-output'].title : '',
     target: d['target-repo-name'],
   }));
 
@@ -89,23 +111,44 @@ const SubmissionList = ({ data, isLoading, header }: { data: SubmissionResponse[
       </Typography>
       {
         isLoading ?
-        <CircularProgress /> :
+        <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
+          <CircularProgress /> 
+        </Box> :
         rows.length === 0 ?
         <Typography>{t('noData')}</Typography> :
-
         <Paper>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 25 },
-            },
-          }}
-          pageSizeOptions={[25, 50, 100]}
-        />
+          <DataGrid
+            slots={{ columnMenu: CustomColumnMenu }}
+            rows={rows}
+            columns={columns}
+            disableRowSelectionOnClick
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 25 },
+              },
+            }}
+            pageSizeOptions={[25, 50, 100]}
+            sx={{
+              // disable cell outlines
+              ".MuiDataGrid-columnHeader:focus-within, .MuiDataGrid-cell:focus-within": {
+                 outline: "none !important",
+              },
+           }}
+          />
         </Paper>
       }
     </>
   )
+}
+
+const CustomColumnMenu = (props: GridColumnMenuProps) => {
+  return (
+    <GridColumnMenu
+      {...props}
+      slots={{
+        // Hide `columnMenuColumnsItem` - the manage columns function
+        columnMenuColumnsItem: null,
+      }}
+    />
+  );
 }
