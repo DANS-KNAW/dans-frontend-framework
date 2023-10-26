@@ -112,23 +112,34 @@ const FilesUpload = () => {
     <Card>
       <CardHeader title={t('addLocal') as string} />
       <CardContent>
-        <Box 
-          sx={{
-            border: '1px dashed',
-            borderColor: 'neutral.main',
-            backgroundColor: isDragActive ? 'primary.light' : 'transparent',
-          }}
-          p={3}
-          {...getRootProps({className: 'dropzone'})}
-        >
-          {data ?
-            <>
-              {!metadataSubmitStatus && <input {...getInputProps()} />}
-              <Typography color="neutral.contrastText" sx={{textAlign: 'center', cursor: 'pointer'}}>{isDragActive ? t('dropNow') : t('drop')}</Typography>
-            </> :
-            <Typography color="neutral.contrastText" sx={{textAlign: 'center', cursor: 'pointer'}}>{t('dropLoading')}</Typography>
-          }
-        </Box>
+        {!metadataSubmitStatus ?
+          <Box 
+            sx={{
+              border: '1px dashed',
+              borderColor: 'neutral.main',
+              backgroundColor: isDragActive ? 'primary.light' : 'transparent',
+            }}
+            p={3}
+            {...getRootProps({className: 'dropzone'})}
+          >
+            {data ?
+              <>
+                <input {...getInputProps()} />
+                <Typography color="neutral.contrastText" sx={{textAlign: 'center', cursor: 'pointer'}}>{isDragActive ? t('dropNow') : t('drop')}</Typography>
+              </> :
+              <Typography color="neutral.contrastText" sx={{textAlign: 'center', cursor: 'pointer'}}>{t('dropLoading')}</Typography>
+            }
+          </Box> :
+          <Box sx={{
+              border: '1px dashed',
+              borderColor: 'neutral.main',
+              backgroundColor: isDragActive ? 'primary.light' : 'transparent',
+            }}
+            p={3}
+          >
+            <Typography color="neutral.contrastText" sx={{textAlign: 'center'}}>{t('dropDisabled')}</Typography>
+          </Box>
+        }
         {fileRejections.length > 0 && <RejectedFiles fileRejections={fileRejections} />}
       </CardContent>
     </Card>

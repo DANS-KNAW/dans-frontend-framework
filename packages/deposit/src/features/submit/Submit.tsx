@@ -12,7 +12,7 @@ import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { getMetadataStatus, getMetadata, resetMetadata, setSectionStatus, getSessionId } from '../metadata/metadataSlice';
 import { getFiles, resetFiles } from '../files/filesSlice';
 import { useSubmitDataMutation, useSubmitFilesMutation } from './submitApi';
-import { setMetadataSubmitStatus, getMetadataSubmitStatus, getFilesSubmitStatus, resetFilesSubmitStatus } from './submitSlice';
+import { setMetadataSubmitStatus, getMetadataSubmitStatus, getFilesSubmitStatus, resetFilesSubmitStatus, resetMetadataSubmitStatus } from './submitSlice';
 import { formatFormData, formatFileData } from './submitHelpers';
 import { useTranslation } from 'react-i18next';
 import { getData } from '../../deposit/depositSlice';
@@ -30,14 +30,13 @@ const Submit = () => {
   const sessionId = useAppSelector(getSessionId);
   // get form config
   const formConfig = useAppSelector(getData);
+
   // File status exists in an array, so we need to do some processing and filtering. 
   const filesSubmitStatus = useAppSelector(getFilesSubmitStatus).filter(f => f.id !== '');
-  // Get the users API keys
-  const { data: userData } = fetchUserProfile({provider: auth.settings.authority, id: auth.settings.client_id});
-  // Map API keys to an object
-  const targetKeys = userData && Object.assign({}, ...formConfig.targetCredentials.map( t => userData.attributes[t.authKey] && {[t.authKey]: userData.attributes[t.authKey][0]}));
+  
   // Calculate total upload progress
   const totalFileProgress = filesSubmitStatus.reduce( (n, {progress}) => n + (progress || 0), 0) / filesSubmitStatus.length || undefined;
+  
   // If any file has an error, the form should indicate that.
   const fileStatusArray = [...new Set(filesSubmitStatus.map(f => f.status))];
   const fileStatus = 
@@ -61,15 +60,15 @@ const Submit = () => {
     reset: resetSubmittedFiles, 
   }] = useSubmitFilesMutation();
 
-  // for fringe cases, where the access token might just be expiring,
-  // we get the required submit header data as a callback to signinSilent, which refreshes the current users token
+  // Access token might just be expiring, or user settings just changed
+  // we get the required submit header data as a callback to signinSilent, which refreshes the current user
   const getHeaderData = () => auth.signinSilent().then(() => ({
     // we use the Keycloak access token if no auth key is set manually in the form config
     submitKey: formConfig.submitKey || auth.user?.access_token,
     userId: auth.user?.profile.sub,
     targetCredentials: formConfig.targetCredentials,
     target: formConfig.target,
-    targetKeys: targetKeys,
+    targetKeys: Object.assign({}, ...formConfig.targetCredentials.map( t => ({[t.authKey]: auth.user?.profile[t.authKey]}))),
   }));
 
   const handleButtonClick = () => {
@@ -107,7 +106,7 @@ const Submit = () => {
     // reset metadata in metadata slice
     dispatch(resetMetadata());
     // reset status in submit slice
-    dispatch(setMetadataSubmitStatus(''));
+    dispatch(resetMetadataSubmitStatus());
     dispatch(resetFilesSubmitStatus());
     // finally reset all section statusses
     dispatch(setSectionStatus(null));
@@ -121,22 +120,22 @@ const Submit = () => {
     <Stack direction="column" alignItems="flex-end">
       <Stack direction="row" alignItems="center">
         <Typography mr={2}>
-          { isUninitializedMeta && (
+          { !metadataSubmitStatus && ( 
             // metadata has not yet been submitted, so let's just indicate metadata completeness
             metadataStatus === 'error' ?
             t('metadataError') :
             metadataStatus === 'warning' || selectedFiles.length === 0  ?
             t('metadataWarning') :
             t('metadataSuccess')
-          ) }
+          )}
           { // submit process has started, let's check for responses
             (metadataSubmitStatus === 'submitting' || fileStatus === 'submitting' || isLoadingFiles) &&
             t('submitting')
           }
-          { (isSuccessMeta && (fileStatus === 'success' || selectedFiles.length === 0)) &&
+          { (metadataSubmitStatus === 'success' && (fileStatus === 'success' || selectedFiles.length === 0)) &&
             t('submitSuccess')
           }
-          { isErrorMeta &&
+          { metadataSubmitStatus === 'error' &&
             t('submitErrorMetadata')
           }
           { fileStatus === 'error' &&
@@ -148,7 +147,7 @@ const Submit = () => {
             p: 1.2,
             borderRadius: '50%',
             backgroundColor: `${
-              isSuccessMeta && (fileStatus === 'success' || selectedFiles.length === 0) ?
+              metadataSubmitStatus === 'success' && (fileStatus === 'success' || selectedFiles.length === 0) ?
               'success' :
               metadataStatus === 'error' || fileStatus === 'error' || isErrorMeta ?
               'error' :
@@ -159,7 +158,7 @@ const Submit = () => {
             opacity: (metadataSubmitStatus === 'submitting' || fileStatus === 'submitting' || isLoadingFiles) ? 0.5 : 1,
           }}>
             {
-              isSuccessMeta && (fileStatus === 'success' || selectedFiles.length === 0) ?
+              metadataSubmitStatus === 'success' && (fileStatus === 'success' || selectedFiles.length === 0) ?
               <CheckIcon sx={iconSx} /> :
               (metadataStatus === 'error' || fileStatus === 'error' || isErrorMeta) && !(metadataSubmitStatus === 'submitting' || fileStatus === 'submitting' || isLoadingFiles) ?
               <ErrorOutlineOutlinedIcon sx={iconSx} /> :
@@ -179,7 +178,7 @@ const Submit = () => {
             />
           )}
         </Box>
-        {isSuccessMeta && (fileStatus === 'success' || selectedFiles.length === 0) && 
+        {metadataSubmitStatus === 'success' && (fileStatus === 'success' || selectedFiles.length === 0) && 
           <Button
             variant="contained"
             onClick={resetForm}
@@ -191,7 +190,7 @@ const Submit = () => {
         }
         <Button
           variant="contained"
-          disabled={isSuccessMeta || isLoadingMeta || (metadataStatus === 'error' && !formConfig.skipValidation)}
+          disabled={metadataSubmitStatus === 'success' || metadataSubmitStatus === 'submitting' || (metadataStatus === 'error' && !formConfig.skipValidation)}
           onClick={handleButtonClick}
           size="large"
         >

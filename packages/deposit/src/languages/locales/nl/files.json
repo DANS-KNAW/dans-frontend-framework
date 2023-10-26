@@ -9,6 +9,7 @@
   "drop": "Click of drag & drop om te uploaden",
   "dropNow": "Drop hem hier!",
   "dropLoading": "Laadt lijst toegestane bestaden...",
+  "dropDisabled": "Reset the form to upload new files",
   "addURL": "Voeg bestand toe vanuit URL",
   "enterURL": "Voer URL in",
   "errorURL": "Foutief URL",

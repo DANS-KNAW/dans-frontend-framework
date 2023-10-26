@@ -3,6 +3,7 @@ import metadataReducer from '../features/metadata/metadataSlice';
 import filesReducer from '../features/files/filesSlice';
 import submitReducer from '../features/submit/submitSlice';
 import depositReducer from '../deposit/depositSlice';
+import { depositApi } from '../deposit/depositApi';
 import { orcidApi } from '../features/metadata/api/orcid';
 import { rorApi } from '../features/metadata/api/ror';
 import { gettyApi } from '../features/metadata/api/getty';
@@ -39,6 +40,7 @@ export const store = configureStore({
     [rdaPathwaysApi.reducerPath]: rdaPathwaysApi.reducer,
     [rdaDomainsApi.reducerPath]: rdaDomainsApi.reducer,
     [rdaInterestGroupsApi.reducerPath]: rdaInterestGroupsApi.reducer,
+    [depositApi.reducerPath]: depositApi.reducer,
     submit: submitReducer,
     deposit: depositReducer,
   },
@@ -59,6 +61,7 @@ export const store = configureStore({
       .concat(rdaPathwaysApi.middleware)
       .concat(rdaDomainsApi.middleware)
       .concat(rdaInterestGroupsApi.middleware)
+      .concat(depositApi.middleware)
       .concat(errorLogger)
 });
 

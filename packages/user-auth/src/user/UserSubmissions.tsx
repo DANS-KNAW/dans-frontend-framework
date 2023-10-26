@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react';
+import { useNavigate } from "react-router-dom";
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -25,7 +26,7 @@ import { useAuth } from 'react-oidc-context';
 import type { SubmissionResponse } from '../types';
 import CircularProgress from '@mui/material/CircularProgress';
 
-export const UserSubmissions = () => {
+export const UserSubmissions = ({depositSlug}: {depositSlug: string;}) => {
   const { t } = useTranslation('user');
   const siteTitle = useSiteTitle();
   const auth = useAuth();
@@ -44,15 +45,26 @@ export const UserSubmissions = () => {
         <Grid xs={12} mdOffset={1} md={10}>
           <Typography variant="h1">{t('userSubmissions')}</Typography>
           {/* Todo: <SubmissionList data={[]} isLoading={false} header={t('userSubmissionsDrafts')} />*/}
-          <SubmissionList data={data || []} isLoading={isLoading} header={t('userSubmissionsCompleted')} />
+          <SubmissionList data={data || []} isLoading={isLoading} header={t('userSubmissionsCompleted')} depositSlug={depositSlug} />
         </Grid>
       </Grid>
     </Container>
   )
 }
 
-const SubmissionList = ({ data, isLoading, header }: { data: SubmissionResponse[], isLoading: boolean; header: string; }) => {
+const SubmissionList = ({ 
+  data, 
+  isLoading, 
+  header, 
+  depositSlug = 'deposit'
+}: { 
+  data: SubmissionResponse[];
+  isLoading: boolean; 
+  header: string;
+  depositSlug: string;
+}) => {
   const { t } = useTranslation('user');
+  const navigate = useNavigate();
 
   // useMemo to make sure columns don't change
   const columns = useMemo<GridColDef[]>(
@@ -69,8 +81,8 @@ const SubmissionList = ({ data, isLoading, header }: { data: SubmissionResponse[
           />,
           <GridActionsCellItem
             icon={<EditIcon />}
-            label={t('viewItem')}
-            onClick={() => null}
+            label={t('editItem')}
+            onClick={() => navigate(`/${depositSlug}?id=${params.row.id}`)}
           />
         ],
         type: 'actions',
@@ -102,7 +114,7 @@ const SubmissionList = ({ data, isLoading, header }: { data: SubmissionResponse[
     id: d['metadata-id'],
     viewLink: d['target-url'],
     created: d['created-date'],
-    title: d['target-output'].hasOwnProperty('title') ? d['target-output'].title : '',
+    title: '',
     target: d['target-repo-name'],
   }));
 

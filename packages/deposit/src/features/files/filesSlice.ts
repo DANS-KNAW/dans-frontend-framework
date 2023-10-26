@@ -23,6 +23,10 @@ export const filesSlice = createSlice({
       }
     },
     resetFiles: state => state = initialState,
+    setSubmittedFiles: (state) => {
+      // TODO: set a list of files retrieved from saved metadata. Files can be removed from this list, but nothing else.
+      // On submit, form should submit an updated file-metadata, with this list, as well as possibly additional local files.
+    },
   }
 });
 

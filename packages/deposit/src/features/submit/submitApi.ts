@@ -95,7 +95,7 @@ const formatHeaderData = (headerData: HeaderData) => ({
 
 export const submitApi = createApi({
   reducerPath: 'submitApi',
-  baseQuery: axiosBaseQuery({ baseUrl: import.meta.env.VITE_PACKAGING_TARGET }),
+  baseQuery: axiosBaseQuery({ baseUrl: `${import.meta.env.VITE_PACKAGING_TARGET}/inbox/` }),
   endpoints: (build) => ({
     submitData: build.mutation({
       // Custom query for chaining Post functions

@@ -39,10 +39,13 @@ export const submitSlice = createSlice({
     resetFilesSubmitStatus: (state) => {
       state['submittedFiles'] = initialState.submittedFiles;
     },
+    resetMetadataSubmitStatus: (state) => {
+      state['metadataStatus'] = initialState.metadataStatus;
+    }
   }
 });
 
-export const { setMetadataSubmitStatus, setFilesSubmitStatus, resetFilesSubmitStatus } = submitSlice.actions;
+export const { setMetadataSubmitStatus, setFilesSubmitStatus, resetFilesSubmitStatus, resetMetadataSubmitStatus } = submitSlice.actions;
 
 // Select values from state
 export const getMetadataSubmitStatus = (state: RootState) => state.submit.metadataStatus;
