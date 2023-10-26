@@ -76,7 +76,7 @@ Displays a current users settings, like API keys. Needs to be a child of `<AuthR
       </AuthRoute>
     } />
 
-Note: docs on setting keys in Keycloak, todo. In short: select realm -> client -> client scopes -> dedicated scope -> add mapper -> set user attribute and token claim name to be the same as the authKey.
+Note: docs on setting keys in Keycloak, todo. In short: select realm -> client -> client scopes -> dedicated scope -> add mapper -> set user attribute and token claim name to be the same as the authKey -> enable add to user info.
 
 ### fetchUserProfile
 Helper function to get the current users profile information. Exposes the Auth library's Redux store.
