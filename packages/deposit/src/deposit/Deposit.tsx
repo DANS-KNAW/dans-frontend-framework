@@ -18,7 +18,7 @@ import {
   resetMetadata
 } from '../features/metadata/metadataSlice';
 import { resetFilesSubmitStatus, resetMetadataSubmitStatus } from '../features/submit/submitSlice';
-import { getFiles, resetFiles } from '../features/files/filesSlice';
+import { getFiles, resetFiles, addFiles } from '../features/files/filesSlice';
 import { StatusIcon } from '../features/generic/Icons';
 import Submit from '../features/submit/Submit';
 import { useTranslation, Trans } from 'react-i18next';
@@ -63,7 +63,9 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
       dispatch(resetFilesSubmitStatus());
       dispatch(resetFiles());
       // then we load new/empty data
-      dispatch(initForm(savedFormData?.hasOwnProperty('metadata') ? savedFormData : config.form));
+      dispatch(initForm(savedFormData || config.form));
+      // and load the files if there are any
+      savedFormData && savedFormData.files && savedFormData.files.length > 0 && dispatch(addFiles(savedFormData!.files!));
     }
   }, [dispatch, sessionId, config.form, savedFormData, isSuccess]);
 

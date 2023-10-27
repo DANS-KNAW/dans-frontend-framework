@@ -28,6 +28,7 @@ export interface SelectedFile {
   submitProgress?: number;
   submitSuccess?: boolean;
   submitError?: boolean;
+  submittedFile?: boolean;
 }
 
 interface FileError {

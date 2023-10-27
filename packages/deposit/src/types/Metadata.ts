@@ -1,6 +1,7 @@
 import type { Language, LanguageStrings, RecursiveOmit } from '@dans-framework/utils';
 import type { Field, InputField, GroupedFieldType } from './MetadataFields';
 import type { Target } from '@dans-framework/user-auth';
+import type { SelectedFile } from './Files';
 
 // Accordion sections
 export interface InitialSectionType {
@@ -26,7 +27,8 @@ export interface InitialStateType {
 export interface InitialFormType {
   metadata: SectionType[];
   id?: string;
-  'file-metadata'?: any;
+  'file-metadata'?: SelectedFile[];
+  files?: SelectedFile[];
 }
 
 export interface FormConfig {

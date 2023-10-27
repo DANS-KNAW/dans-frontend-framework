@@ -26,14 +26,11 @@ import { useAuth } from 'react-oidc-context';
 import type { SubmissionResponse } from '../types';
 import CircularProgress from '@mui/material/CircularProgress';
 
-export const UserSubmissions = ({depositSlug}: {depositSlug: string;}) => {
+export const UserSubmissions = ({depositSlug}: {depositSlug?: string;}) => {
   const { t } = useTranslation('user');
   const siteTitle = useSiteTitle();
   const auth = useAuth();
-  console.log(auth)
-
   const { data, isLoading } = useFetchUserSubmissionsQuery(auth.user?.profile.sub);
-  console.log(data)
 
   useEffect( () => { 
     setSiteTitle(siteTitle, t('userSubmissions'));
@@ -61,7 +58,7 @@ const SubmissionList = ({
   data: SubmissionResponse[];
   isLoading: boolean; 
   header: string;
-  depositSlug: string;
+  depositSlug?: string;
 }) => {
   const { t } = useTranslation('user');
   const navigate = useNavigate();
@@ -114,7 +111,7 @@ const SubmissionList = ({
     id: d['metadata-id'],
     viewLink: d['target-url'],
     created: d['created-date'],
-    title: '',
+    title: d.title,
     target: d['target-repo-name'],
   }));
 

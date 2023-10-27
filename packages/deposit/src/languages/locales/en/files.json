@@ -32,5 +32,6 @@
   "fileSubmitSuccess": "Submitted successfully",
   "uploadFailed": "Failed",
   "fileSubmitError": "Try uploading again",
-  "fileTypeCheckError": "Something went wrong checking the file type. Please try again."
+  "fileTypeCheckError": "Something went wrong checking the file type. Please try again.",
+  "submittedFile": "File has already been uploaded previously"
 }

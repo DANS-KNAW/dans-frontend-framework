@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -5,6 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Checkbox from '@mui/material/Checkbox';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -31,7 +33,8 @@ import Stack from '@mui/material/Stack';
 import { getMetadataSubmitStatus, getSingleFileSubmitStatus } from '../submit/submitSlice';
 import { useSubmitFilesMutation } from '../submit/submitApi';
 import { formatFileData } from '../submit/submitHelpers';
-
+import { motion, AnimatePresence } from 'framer-motion';
+ 
 const FilesTable = () => {
   const { t } = useTranslation('files');
   const selectedFiles = useAppSelector<SelectedFile[]>(getFiles);
@@ -82,8 +85,9 @@ const FileActionOptions = ({file, type}: FileActionOptionsProps) => {
       }
       renderInput={(params) => <TextField {...params} label={t(type === 'process' ? 'selectOptions' : 'selectOption')} />}
       options={type === 'process' ? fileProcessing : fileRoles}
-      value={file[type]}
+      value={file[type] || (type === 'process' ? [] : null)}
       disabled={metadataSubmitStatus !== ''}
+      isOptionEqualToValue={(option, value) => option.value === value.value}
     />
   )
 }
@@ -99,6 +103,8 @@ const FileConversion = ({file}: FileItemProps) => {
       <>
         <Typography sx={{ fontSize: 14, p: 2 }}>
           {
+            file.submittedFile ?
+            t('submittedFile') :
             file.valid === false ?
             t('invalid', {type: file.type}) :
             data.preferred ? 
@@ -106,25 +112,29 @@ const FileConversion = ({file}: FileItemProps) => {
             t('conversion', {type: data['required-convert-to']}) 
           }
         </Typography>
-        <Typography sx={{ 
-          fontSize: 12, 
-          pl: 2, 
-          pr: 2, 
-          pb: 1, 
-          pt: 1, 
-          backgroundColor: `${file.valid === false ? 'error' : data.preferred ? 'success' : 'warning'}.main` 
-        }}>
-          {
-            file.valid === false ?
-            t('invalidHead') :
-            data.preferred ? 
-            t('noConversionHead') : 
-            t('conversionHead', {type: file.type}) 
-          }
-        </Typography>
+        {!file.submittedFile && 
+          <Typography sx={{ 
+            fontSize: 12, 
+            pl: 2, 
+            pr: 2, 
+            pb: 1, 
+            pt: 1, 
+            backgroundColor: `${file.valid === false ? 'error' : data.preferred ? 'success' : 'warning'}.main` 
+          }}>
+            {
+              file.valid === false ?
+              t('invalidHead') :
+              data.preferred ? 
+              t('noConversionHead') : 
+              t('conversionHead', {type: file.type}) 
+            }
+          </Typography> 
+        }
       </>
     }>
       {
+        file.submittedFile ?
+        <InfoRoundedIcon color="primary" /> :
         file.valid === false ?
         <ErrorRoundedIcon color="error" /> :
         data.preferred ? 
@@ -149,21 +159,67 @@ const FileConversion = ({file}: FileItemProps) => {
 
 const FileTableRow = ({file}: FileItemProps) => {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation('files');
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
+  const [ toDelete, setToDelete ] = useState<boolean>(false);
 
   return (
     <>
-      <TableRow sx={{backgroundColor: file.valid === false ? 'warning.light' : ''}}>
+      <TableRow sx={{
+        backgroundColor: file.valid === false ? 'warning.light' : toDelete ? 'neutral.light' : '',
+        transition: 'background 0.2s ease',
+      }}>
         <TableCell sx={{p: 0, pl: 1, borderBottom: 0}}>
-          <IconButton color="primary" size="small" onClick={() => !metadataSubmitStatus && dispatch(removeFile(file))} disabled={metadataSubmitStatus !== ''}>
+          <IconButton 
+            color="primary" 
+            size="small" 
+            onClick={() => !metadataSubmitStatus && ( !file.submittedFile ? dispatch(removeFile(file)) : setToDelete(!toDelete) )} 
+            disabled={metadataSubmitStatus !== ''}
+          >
             <DeleteIcon fontSize="small" />
           </IconButton>
         </TableCell>
-        <TableCell sx={{ p: 1, minWidth: 150, maxWidth: 200, wordBreak: 'break-all', borderBottom: 0}}>
-          {file.name}
+        <TableCell sx={{ 
+          p: 1, 
+          minWidth: 150,
+          maxWidth: 200,
+          borderBottom: 0,
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <AnimatePresence>
+              {
+                toDelete &&
+                <motion.div
+                  layout
+                  key="delete"
+                  initial={{ x: '-100%' }}
+                  animate={{ x: 0 }}
+                  exit={{ x: '-100%' }}
+                >
+                  <Button 
+                    size="small" 
+                    variant="contained"
+                    sx={{ 
+                      fontSize: 11,
+                      mr: 1,
+                    }}
+                    onClick={() => dispatch(removeFile(file))}
+                  >
+                    {t(`Confirm deletion`)}
+                  </Button>
+                </motion.div>
+              }
+              <motion.div layout key="name">
+                {file.name}
+              </motion.div>
+            </AnimatePresence>
+          </Box>
         </TableCell>
         <TableCell sx={{p: 1, borderBottom: 0}}>
-          {(file.size/1048576).toFixed(2)} MB
+          {file.size ? `${(file.size/1048576).toFixed(2)} MB` : '-'}
         </TableCell>
         <TableCell sx={{p: 1, borderBottom: 0}}>
           <FileConversion file={file} />

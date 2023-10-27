@@ -11,6 +11,12 @@ export const depositApi = createApi({
         url: id,
         headers: {Accept: "application/json"},
       }),
+      transformResponse: (response: InitialFormType) => {
+        const modifiedResponse = response['file-metadata']!.length > 0 ?
+          {...response, files: response['file-metadata']!.map(f => ({...f, submittedFile: true}))} :
+          response;
+        return modifiedResponse;
+      }
     }),
   }),
 });

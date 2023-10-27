@@ -32,5 +32,6 @@
   "fileSubmitSuccess": "Successvol verstuurd",
   "uploadFailed": "Gefaald",
   "fileSubmitError": "Probeer opnieuw te uploaden",
-  "fileTypeCheckError": "Er ging iets mis met het controleren van het bestandstype. Probeer het nog eens."
+  "fileTypeCheckError": "Er ging iets mis met het controleren van het bestandstype. Probeer het nog eens.",
+  "submittedFile": "Bestand is al eerder geupload"
 }
