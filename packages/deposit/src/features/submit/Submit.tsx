@@ -178,6 +178,16 @@ const Submit = () => {
             />
           )}
         </Box>
+        {/*todo, save functionality'*/}
+        <Button
+          variant="contained"
+          disabled={metadataSubmitStatus === 'success' || metadataSubmitStatus === 'submitting' || (metadataStatus === 'error' && !formConfig.skipValidation)}
+          onClick={handleButtonClick}
+          size="large"
+          sx={{mr: 1}}
+        >
+          {t('save')}
+        </Button>
         {metadataSubmitStatus === 'success' && (fileStatus === 'success' || selectedFiles.length === 0) && 
           <Button
             variant="contained"

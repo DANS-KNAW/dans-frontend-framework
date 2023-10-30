@@ -8,5 +8,6 @@
   "submitErrorFiles": "Oh no! Something has gone with uploading your files",
   "reset": "Reset form",
   "submit": "Submit data",
-  "errorRetry": "Please try again or contact an administrator"
+  "errorRetry": "Please try again or contact an administrator",
+  "save": "Save"
 }
