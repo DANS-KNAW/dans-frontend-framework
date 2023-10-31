@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { User } from 'oidc-client-ts';
-import type { SubmissionResponse } from '../types';
+import type { SubmissionResponse, ReleaseVersion } from '../types';
 
 function getUser(provider: string, id: string) {
     const oidcStorage = sessionStorage.getItem(`oidc.user:${provider}:${id}`)
@@ -49,6 +49,8 @@ export const userApi = createApi({
   }),
 });
 
+const tmp: ReleaseVersion[] = ['DRAFT', 'PUBLISH'];
+
 export const userSubmissionsApi = createApi({
   reducerPath: 'submissions',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://packaging.labs.dans.knaw.nl/' }),
@@ -67,7 +69,11 @@ export const userSubmissionsApi = createApi({
       },
       transformResponse: (response: SubmissionResponse[]) => {
         // temporary response modifier until API is fixed
-        const responseWithTitle = response.map( r => ({...r, title: r['target-output']?.title}))
+        const responseWithTitle = response.map( r => ({
+          ...r, 
+          title: r['target-output']?.title, 
+          'release-version': tmp[Math.round(Math.random())],
+        }));
         return responseWithTitle
       },
     })

@@ -65,7 +65,7 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
       // then we load new/empty data
       dispatch(initForm(savedFormData || config.form));
       // and load the files if there are any
-      savedFormData && savedFormData.files && savedFormData.files.length > 0 && dispatch(addFiles(savedFormData!.files!));
+      savedFormData && savedFormData['file-metadata'] && dispatch(addFiles(savedFormData['file-metadata']));
     }
   }, [dispatch, sessionId, config.form, savedFormData, isSuccess]);
 

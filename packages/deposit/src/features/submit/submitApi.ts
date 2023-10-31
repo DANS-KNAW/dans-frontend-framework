@@ -100,7 +100,7 @@ export const submitApi = createApi({
     submitData: build.mutation({
       // Custom query for chaining Post functions
       // submitKey is the current users Keycloak token
-      async queryFn({data, headerData}, queryApi, extraOptions, fetchWithBQ) {
+      async queryFn({data, headerData, type}, queryApi, extraOptions, fetchWithBQ) {
         console.log('submitting metadata...')
         console.log(data)
         // Format the headers
@@ -110,7 +110,7 @@ export const submitApi = createApi({
 
         // First post the metadata
         const metadataResult = await fetchWithBQ({
-          url: `metadata`,
+          url: `metadata/${type === 'save' ? 'DRAFT' : 'PUBLISH'}`,
           method: 'POST',
           data: data,
           headers: headers,

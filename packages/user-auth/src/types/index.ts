@@ -17,6 +17,8 @@ export interface Target {
   keyUrl: string;
 }
 
+export type ReleaseVersion = 'DRAFT' | 'PUBLISH';
+
 export interface SubmissionResponse {
   'created-date': string;
   'metadata-id': string;
@@ -25,6 +27,7 @@ export interface SubmissionResponse {
   // For now, can be anything, depends on target. API is todo.
   'target-output': any;
   title?: string;
+  'release-version': ReleaseVersion;
 }
 
 // Some values that the system can pull and fill in from the User Auth object

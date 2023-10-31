@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, forwardRef, ReactNode } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
+import TableCell, { TableCellProps } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import TableRow, { TableRowProps } from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -33,7 +33,7 @@ import Stack from '@mui/material/Stack';
 import { getMetadataSubmitStatus, getSingleFileSubmitStatus } from '../submit/submitSlice';
 import { useSubmitFilesMutation } from '../submit/submitApi';
 import { formatFileData } from '../submit/submitHelpers';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, HTMLMotionProps } from 'framer-motion';
  
 const FilesTable = () => {
   const { t } = useTranslation('files');
@@ -55,7 +55,9 @@ const FilesTable = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {selectedFiles.map( (file) => <FileTableRow key={file.name} file={file} /> )}
+          <AnimatePresence initial={false}>
+            {selectedFiles.map( (file) => <FileTableRow key={file.name} file={file} /> )}
+          </AnimatePresence>
         </TableBody>
       </Table>
     </TableContainer>
@@ -134,7 +136,7 @@ const FileConversion = ({file}: FileItemProps) => {
     }>
       {
         file.submittedFile ?
-        <InfoRoundedIcon color="primary" /> :
+        <InfoRoundedIcon color="neutral" /> :
         file.valid === false ?
         <ErrorRoundedIcon color="error" /> :
         data.preferred ? 
@@ -157,97 +159,120 @@ const FileConversion = ({file}: FileItemProps) => {
   )
 }
 
+const ForwardRow = forwardRef<HTMLTableRowElement, TableRowProps & HTMLMotionProps<'tr'>>((props, ref) => <TableRow ref={ref} {...props} />);
+const MotionRow = motion(ForwardRow);
+
 const FileTableRow = ({file}: FileItemProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation('files');
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const [ toDelete, setToDelete ] = useState<boolean>(false);
+  const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
 
   return (
     <>
-      <TableRow sx={{
-        backgroundColor: file.valid === false ? 'warning.light' : toDelete ? 'neutral.light' : '',
-        transition: 'background 0.2s ease',
-      }}>
-        <TableCell sx={{p: 0, pl: 1, borderBottom: 0}}>
-          <IconButton 
-            color="primary" 
-            size="small" 
-            onClick={() => !metadataSubmitStatus && ( !file.submittedFile ? dispatch(removeFile(file)) : setToDelete(!toDelete) )} 
-            disabled={metadataSubmitStatus !== ''}
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-        </TableCell>
-        <TableCell sx={{ 
-          p: 1, 
-          minWidth: 150,
-          maxWidth: 200,
-          borderBottom: 0,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-        }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <AnimatePresence>
-              {
-                toDelete &&
-                <motion.div
-                  layout
-                  key="delete"
-                  initial={{ x: '-100%' }}
-                  animate={{ x: 0 }}
-                  exit={{ x: '-100%' }}
-                >
-                  <Button 
-                    size="small" 
-                    variant="contained"
-                    sx={{ 
-                      fontSize: 11,
-                      mr: 1,
-                    }}
-                    onClick={() => dispatch(removeFile(file))}
+      <MotionRow
+        layout
+        initial={{ x: '-100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '-100%' }}
+        sx={{
+          backgroundColor: file.valid === false ? 'warning.light' : toDelete ? 'neutral.light' : '',
+          transition: 'background 0.2s ease',
+        }}
+      >
+          <TableCell sx={{p: 0, pl: 1, borderWidth: fileStatus ? 0 : 1}}>
+            <IconButton 
+              color="primary" 
+              size="small" 
+              onClick={() => !metadataSubmitStatus && ( !file.submittedFile ? dispatch(removeFile(file)) : setToDelete(!toDelete) )} 
+              disabled={metadataSubmitStatus !== ''}
+            >
+              <DeleteIcon fontSize="small" color="error" />
+            </IconButton>
+          </TableCell>
+          <TableCell sx={{ 
+            p: 1, 
+            minWidth: 150,
+            maxWidth: 200,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            borderWidth: fileStatus ? 0 : 1,
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <AnimatePresence>
+                {
+                  toDelete &&
+                  <motion.div
+                    layout
+                    key="delete"
+                    initial={{ x: '-100%' }}
+                    animate={{ x: 0 }}
+                    exit={{ x: '-100%' }}
                   >
-                    {t(`Confirm deletion`)}
-                  </Button>
+                    <Button 
+                      size="small" 
+                      variant="contained"
+                      sx={{ 
+                        fontSize: 11,
+                        mr: 1,
+                      }}
+                      color="error"
+                      onClick={() => dispatch(removeFile(file))}
+                    >
+                      {t(`confirmDelete`)}
+                    </Button>
+                  </motion.div>
+                }
+                <motion.div layout key="name">
+                  {file.name}
                 </motion.div>
-              }
-              <motion.div layout key="name">
-                {file.name}
-              </motion.div>
-            </AnimatePresence>
-          </Box>
-        </TableCell>
-        <TableCell sx={{p: 1, borderBottom: 0}}>
-          {file.size ? `${(file.size/1048576).toFixed(2)} MB` : '-'}
-        </TableCell>
-        <TableCell sx={{p: 1, borderBottom: 0}}>
-          <FileConversion file={file} />
-        </TableCell>
-        <TableCell sx={{p: 0, borderBottom: 0}}>
-          <Checkbox 
-            checked={file.private}
-            onChange={e => dispatch(setFileMeta({id: file.id, type: 'private', value: e.target.checked}))}
-            disabled={file.valid === false || metadataSubmitStatus !== ''}
-          />
-        </TableCell>
-        <TableCell sx={{p: 1, borderBottom: 0, minWidth: 150}}><FileActionOptions type="role" file={file} /></TableCell>
-        {/* TODO: remove or spec this */}
-        <TableCell sx={{p: 1, borderBottom: 0, minWidth: 150}}><FileActionOptions type="process" file={file}  /></TableCell>
-      </TableRow>
-      <UploadProgress file={file} />
+              </AnimatePresence>
+            </Box>
+          </TableCell>
+          <TableCell sx={{p: 1, borderWidth: fileStatus ? 0 : 1}}>
+            {file.size ? `${(file.size/1048576).toFixed(2)} MB` : '-'}
+          </TableCell>
+          <TableCell sx={{p: 1, borderWidth: fileStatus ? 0 : 1}}>
+            <FileConversion file={file} />
+          </TableCell>
+          <TableCell sx={{p: 0, borderWidth: fileStatus ? 0 : 1}}>
+            <Checkbox 
+              checked={file.private}
+              onChange={e => dispatch(setFileMeta({id: file.id, type: 'private', value: e.target.checked}))}
+              disabled={file.valid === false || metadataSubmitStatus !== ''}
+            />
+          </TableCell>
+          <TableCell sx={{p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1}}><FileActionOptions type="role" file={file} /></TableCell>
+          {/* TODO: remove or spec this */}
+          <TableCell sx={{p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1}}><FileActionOptions type="process" file={file}  /></TableCell>
+      </MotionRow>
+      <MotionRow
+        layout
+        initial={{ x: '-100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '-100%' }}
+      >
+        <AnimatePresence>
+          <UploadProgress file={file} key={`progress-${file.name}`} />
+        </AnimatePresence>
+      </MotionRow>
     </>
   )
 }
+
+const ForwardCell = forwardRef<HTMLTableCellElement, TableCellProps & HTMLMotionProps<'td'>>((props, ref) => <TableCell ref={ref} {...props} />);
+const MotionCell = motion(ForwardCell);
 
 const UploadProgress = ({file}: FileItemProps) => {
   // We handle progress and retrying/restarting of file uploads here
   // If metadata submission is successful, and file fails right away, there needs to be an option to manually start file upload.
   // So we check if the submit button has been touched.
   const sessionId = useAppSelector(getSessionId);
-  const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id))
+  const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const { t } = useTranslation('files');
-  const [submitFiles/*, { isUninitialized, isLoading, isSuccess, isError, data, reset }*/] = useSubmitFilesMutation();
+  const [ submitFiles ] = useSubmitFilesMutation();
 
   const handleSingleFileUpload = () => {
     formatFileData(sessionId, [file])
@@ -257,42 +282,49 @@ const UploadProgress = ({file}: FileItemProps) => {
   }
 
   return (
-    <TableRow>
-      <TableCell colSpan={7} sx={{pt: 0, pb: fileStatus && fileStatus.progress ? 1 : 0}}>
-        {fileStatus &&
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ width: '100%', mr: 1 }}>
-              <LinearProgress 
-                variant="determinate" 
-                value={fileStatus.progress || 0} 
-                color={fileStatus.status === 'success' ? 'success' : fileStatus.status === 'error'  ? 'error' : 'primary'}
-                sx={{borderRadius: 2}}
-              />
-            </Box>
-            <Box sx={{ minWidth: 35, textAlign: 'right' }}>
-              {fileStatus.status === 'submitting' &&
-                <Typography variant="body2" color="text.secondary">{`${fileStatus.progress || 0}%`}</Typography>
-              }
-              {fileStatus.status === 'success' && 
-                <Tooltip title={t('fileSubmitSuccess')}>
-                  <CheckCircleIcon color="success" />
+    fileStatus &&
+    <MotionCell
+      layout
+      initial={{ x: '-100%' }}
+      animate={{ x: 0 }}
+      exit={{ x: '-100%' }}
+      sx={{
+        paddingBottom: 0,
+        paddingTop: 0,
+      }}
+      colSpan={7} 
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ width: '100%', mr: 1 }}>
+          <LinearProgress 
+            variant="determinate" 
+            value={fileStatus.progress || 0} 
+            color={fileStatus.status === 'success' ? 'success' : fileStatus.status === 'error'  ? 'error' : 'primary'}
+            sx={{borderRadius: 2}}
+          />
+        </Box>
+        <Box sx={{ minWidth: 35, textAlign: 'right' }}>
+          {fileStatus.status === 'submitting' &&
+            <Typography variant="body2" color="text.secondary">{`${fileStatus.progress || 0}%`}</Typography>
+          }
+          {fileStatus.status === 'success' && 
+            <Tooltip title={t('fileSubmitSuccess')}>
+              <CheckCircleIcon color="success" />
+            </Tooltip>
+          }
+          {fileStatus.status === 'error' && 
+            <Stack direction="row" alignItems="center">
+              <Typography variant="body2" color="text.secondary">{t('uploadFailed')}</Typography>
+              <IconButton onClick={() => handleSingleFileUpload()}>
+                <Tooltip title={t('fileSubmitError')}>
+                  <ReplayCircleFilledIcon color="error" />
                 </Tooltip>
-              }
-              {fileStatus.status === 'error' && 
-                <Stack direction="row" alignItems="center">
-                  <Typography variant="body2" color="text.secondary">{t('uploadFailed')}</Typography>
-                  <IconButton onClick={() => handleSingleFileUpload()}>
-                    <Tooltip title={t('fileSubmitError')}>
-                      <ReplayCircleFilledIcon color="error" />
-                    </Tooltip>
-                  </IconButton>
-                </Stack>
-              }
-            </Box>
-          </Box>
-        }
-      </TableCell>
-    </TableRow>
+              </IconButton>
+            </Stack>
+          }
+        </Box>
+      </Box>
+    </MotionCell>
   )
 }
 

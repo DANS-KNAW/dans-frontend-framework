@@ -71,13 +71,14 @@ const Submit = () => {
     targetKeys: Object.assign({}, ...formConfig.targetCredentials.map( t => ({[t.authKey]: auth.user?.profile[t.authKey]}))),
   }));
 
-  const handleButtonClick = () => {
+  const handleButtonClick = (type: 'submit' | 'save') => {
     const formattedMetadata = formatFormData(sessionId, metadata, selectedFiles);
     dispatch(setMetadataSubmitStatus('submitting'));
     getHeaderData().then( headerData =>
       submitData({
         data: formattedMetadata,
         headerData: headerData,
+        type: type,
       })
     );
   };
@@ -182,7 +183,7 @@ const Submit = () => {
         <Button
           variant="contained"
           disabled={metadataSubmitStatus === 'success' || metadataSubmitStatus === 'submitting' || (metadataStatus === 'error' && !formConfig.skipValidation)}
-          onClick={handleButtonClick}
+          onClick={() => handleButtonClick('save')}
           size="large"
           sx={{mr: 1}}
         >
@@ -201,7 +202,7 @@ const Submit = () => {
         <Button
           variant="contained"
           disabled={metadataSubmitStatus === 'success' || metadataSubmitStatus === 'submitting' || (metadataStatus === 'error' && !formConfig.skipValidation)}
-          onClick={handleButtonClick}
+          onClick={() => handleButtonClick('submit')}
           size="large"
         >
           {t('submit')}

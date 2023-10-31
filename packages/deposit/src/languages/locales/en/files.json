@@ -33,5 +33,6 @@
   "uploadFailed": "Failed",
   "fileSubmitError": "Try uploading again",
   "fileTypeCheckError": "Something went wrong checking the file type. Please try again.",
-  "submittedFile": "File has already been uploaded previously"
+  "submittedFile": "File has been uploaded previously",
+  "confirmDelete": "Confirm deletion"
 }

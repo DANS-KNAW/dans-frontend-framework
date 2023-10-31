@@ -17,6 +17,8 @@
 	"apiKeyLabel": "Je persoonlijke {{type}} API sleutel",
 	"userSubmissionsDrafts": "Opgeslagen formulieren",
 	"userSubmissionsCompleted": "Verstuurde formulieren",
+	"userSubmissionsDraftsDescription": "Ga verder met het invullen van eerder opgeslagen formulieren",
+	"userSubmissionsCompletedDescription": "Bekijk de data die je al hebt opgestuurd",
 	"editSubmission": "Edit dit formulier en stuur het op",
 	"errorSubmission": "Er is iets misgegaan bij het verwerken van dit formulier",
 	"viewSubmission": "Bekijk de metadata",
@@ -27,5 +29,6 @@
 	"noTitle": "(geen titel)",
 	"title": "Titel",
 	"createdOn": "Aangemaakt op",
-	"submittedTo": "Gesubmit naar"
+	"submittedTo": "Gesubmit naar",
+	"submissionStatus": "Status"
 }
