@@ -2,10 +2,11 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import type { BaseQueryFn, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import axios from 'axios';
 import type { AxiosHeaders, AxiosRequestConfig, AxiosError, AxiosProgressEvent } from 'axios';
-import { setMetadataSubmitStatus, setFilesSubmitStatus } from './submitSlice';
+import { setMetadataSubmitStatus, setFilesSubmitStatus, setLatestSave } from './submitSlice';
 import { store } from '../../redux/store';
 import type { Target } from '@dans-framework/user-auth';
 import type { HeaderData, SubmitHeaders } from '../../types/Submit';
+import moment from 'moment';
 
 // We use Axios to enable file upload progress monitoring
 const axiosBaseQuery =
@@ -18,11 +19,12 @@ const axiosBaseQuery =
       data?: AxiosRequestConfig['data']
       params?: AxiosRequestConfig['params']
       headers?: AxiosRequestConfig['headers']
+      actionType?: string;
     },
     unknown,
     unknown
   > =>
-  async ({ url, method, data, params, headers }) => {
+  async ({ url, method, data, params, headers, actionType }) => {
     // Perform actions based on server response here, so we can truly separate metadata and file handling
     // Files are always a FormData object, metadata is JSON
     const isFile = data instanceof FormData;
@@ -55,7 +57,8 @@ const axiosBaseQuery =
       }
       // Metadata has been successfully submitted, so let's store that right away
       else if (result.data) {
-        store.dispatch(setMetadataSubmitStatus('success'));
+        store.dispatch(setMetadataSubmitStatus(actionType === 'submit' ? 'submitted' : 'saved'));
+        actionType === 'save' && store.dispatch(setLatestSave(moment().format('D-M-YYYY @ HH:mm')));
       }
       return { data: result.data }
     } catch (axiosError) {
@@ -100,7 +103,7 @@ export const submitApi = createApi({
     submitData: build.mutation({
       // Custom query for chaining Post functions
       // submitKey is the current users Keycloak token
-      async queryFn({data, headerData, type}, queryApi, extraOptions, fetchWithBQ) {
+      async queryFn({data, headerData, actionType}, queryApi, extraOptions, fetchWithBQ) {
         console.log('submitting metadata...')
         console.log(data)
         // Format the headers
@@ -110,10 +113,11 @@ export const submitApi = createApi({
 
         // First post the metadata
         const metadataResult = await fetchWithBQ({
-          url: `metadata/${type === 'save' ? 'DRAFT' : 'PUBLISH'}`,
+          url: `metadata/${actionType === 'save' ? 'DRAFT' : 'PUBLISH'}`,
           method: 'POST',
           data: data,
           headers: headers,
+          actionType: actionType,
         });
 
         console.log(metadataResult)

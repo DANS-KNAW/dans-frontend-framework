@@ -41,7 +41,7 @@ const FilesTable = () => {
 
   return (
     selectedFiles.length !== 0 ?
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper}  sx={{overflow: 'hidden'}}>
       <Table size="small">
         <TableHead>
           <TableRow>
@@ -62,7 +62,7 @@ const FilesTable = () => {
       </Table>
     </TableContainer>
     : 
-    <div/>
+    null
   )
 }
 

@@ -48,7 +48,7 @@ const DateTimeField = ({field, sectionIndex, groupedFieldId, currentField = 0, t
               }))
             }}
             value={field.format}
-            disabled={metadataSubmitStatus !== ''}
+            disabled={metadataSubmitStatus !== '' && metadataSubmitStatus !== 'saved'}
           >
             {field.formatOptions.map( option =>
               <MenuItem key={option} value={option}>{t(option)}</MenuItem>
@@ -64,7 +64,7 @@ const DateTimeField = ({field, sectionIndex, groupedFieldId, currentField = 0, t
         label={lookupLanguageString(field.label, i18n.language)}
         required={field.required}
         value={(field.value && moment(field.value, field.format)) || null}
-        disabled={field.disabled || metadataSubmitStatus !== ''}
+        disabled={field.disabled || (metadataSubmitStatus !== '' && metadataSubmitStatus !== 'saved')}
         minDate={field.minDate ? moment(field.minDate, field.format) : moment().subtract(273790, 'year')}
         maxDate={field.maxDate ? moment(field.maxDate, field.format) : moment().add(100, 'year')}
         onChange={(value: Moment | null, context) => {

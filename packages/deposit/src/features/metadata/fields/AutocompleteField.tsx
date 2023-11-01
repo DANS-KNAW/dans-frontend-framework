@@ -59,7 +59,7 @@ const AutocompleteField = ({field, sectionIndex, isLoading}: AutocompleteFieldPr
           value: newValue
         }))}
         loading={isLoading === true}
-        disabled={metadataSubmitStatus !== ''}
+        disabled={metadataSubmitStatus !== '' && metadataSubmitStatus !== 'saved'}
         isOptionEqualToValue={(option, value) => option.value === value.value}
       />
       <StatusIcon 
@@ -110,7 +110,7 @@ export const InfoChip = ({option, apiValue, getTagProps, index}: InfoChipProps) 
         /> :
         undefined
       }
-      disabled={option.mandatory || metadataSubmitStatus !== ''}
+      disabled={option.mandatory || (metadataSubmitStatus !== '' && metadataSubmitStatus !== 'saved')}
     />
   )
 }

@@ -49,8 +49,6 @@ export const userApi = createApi({
   }),
 });
 
-const tmp: ReleaseVersion[] = ['DRAFT', 'PUBLISH'];
-
 export const userSubmissionsApi = createApi({
   reducerPath: 'submissions',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://packaging.labs.dans.knaw.nl/' }),
@@ -72,7 +70,6 @@ export const userSubmissionsApi = createApi({
         const responseWithTitle = response.map( r => ({
           ...r, 
           title: r['target-output']?.title, 
-          'release-version': tmp[Math.round(Math.random())],
         }));
         return responseWithTitle
       },

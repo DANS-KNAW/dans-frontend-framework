@@ -12,12 +12,13 @@ import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { getMetadataStatus, getMetadata, resetMetadata, setSectionStatus, getSessionId } from '../metadata/metadataSlice';
 import { getFiles, resetFiles } from '../files/filesSlice';
 import { useSubmitDataMutation, useSubmitFilesMutation } from './submitApi';
-import { setMetadataSubmitStatus, getMetadataSubmitStatus, getFilesSubmitStatus, resetFilesSubmitStatus, resetMetadataSubmitStatus } from './submitSlice';
+import { setMetadataSubmitStatus, getMetadataSubmitStatus, getFilesSubmitStatus, resetFilesSubmitStatus, resetMetadataSubmitStatus, getLatestSave } from './submitSlice';
 import { formatFormData, formatFileData } from './submitHelpers';
 import { useTranslation } from 'react-i18next';
 import { getData } from '../../deposit/depositSlice';
 import { fetchUserProfile } from '@dans-framework/user-auth';
 import { useAuth } from 'react-oidc-context';
+import moment from 'moment';
 
 const Submit = () => {
   const dispatch = useAppDispatch();
@@ -30,6 +31,9 @@ const Submit = () => {
   const sessionId = useAppSelector(getSessionId);
   // get form config
   const formConfig = useAppSelector(getData);
+
+  // get latest save time of the form
+  const latestSave = useAppSelector(getLatestSave);
 
   // File status exists in an array, so we need to do some processing and filtering. 
   const filesSubmitStatus = useAppSelector(getFilesSubmitStatus).filter(f => f.id !== '');
@@ -48,7 +52,7 @@ const Submit = () => {
     'success' :
     '';
 
-  const [submitData, { 
+  const [submitData, {
     isUninitialized: isUninitializedMeta, 
     isLoading: isLoadingMeta, 
     isSuccess: isSuccessMeta, 
@@ -71,14 +75,14 @@ const Submit = () => {
     targetKeys: Object.assign({}, ...formConfig.targetCredentials.map( t => ({[t.authKey]: auth.user?.profile[t.authKey]}))),
   }));
 
-  const handleButtonClick = (type: 'submit' | 'save') => {
+  const handleButtonClick = (actionType: 'submit' | 'save') => {
     const formattedMetadata = formatFormData(sessionId, metadata, selectedFiles);
     dispatch(setMetadataSubmitStatus('submitting'));
     getHeaderData().then( headerData =>
       submitData({
         data: formattedMetadata,
         headerData: headerData,
-        type: type,
+        actionType: actionType,
       })
     );
   };
@@ -133,8 +137,11 @@ const Submit = () => {
             (metadataSubmitStatus === 'submitting' || fileStatus === 'submitting' || isLoadingFiles) &&
             t('submitting')
           }
-          { (metadataSubmitStatus === 'success' && (fileStatus === 'success' || selectedFiles.length === 0)) &&
+          { (metadataSubmitStatus === 'submitted' && (fileStatus === 'success' || selectedFiles.length === 0)) &&
             t('submitSuccess')
+          }
+          { (metadataSubmitStatus === 'saved' && (fileStatus === 'success' || selectedFiles.length === 0)) &&
+            t('saveSuccess', {dateTime: latestSave ? latestSave : 'n/a'})
           }
           { metadataSubmitStatus === 'error' &&
             t('submitErrorMetadata')
@@ -148,7 +155,7 @@ const Submit = () => {
             p: 1.2,
             borderRadius: '50%',
             backgroundColor: `${
-              metadataSubmitStatus === 'success' && (fileStatus === 'success' || selectedFiles.length === 0) ?
+              metadataSubmitStatus === 'submitted' && (fileStatus === 'success' || selectedFiles.length === 0) ?
               'success' :
               metadataStatus === 'error' || fileStatus === 'error' || isErrorMeta ?
               'error' :
@@ -159,7 +166,7 @@ const Submit = () => {
             opacity: (metadataSubmitStatus === 'submitting' || fileStatus === 'submitting' || isLoadingFiles) ? 0.5 : 1,
           }}>
             {
-              metadataSubmitStatus === 'success' && (fileStatus === 'success' || selectedFiles.length === 0) ?
+              (metadataSubmitStatus === 'submitted' || metadataSubmitStatus === 'saved') && (fileStatus === 'success' || selectedFiles.length === 0) ?
               <CheckIcon sx={iconSx} /> :
               (metadataStatus === 'error' || fileStatus === 'error' || isErrorMeta) && !(metadataSubmitStatus === 'submitting' || fileStatus === 'submitting' || isLoadingFiles) ?
               <ErrorOutlineOutlinedIcon sx={iconSx} /> :
@@ -179,17 +186,16 @@ const Submit = () => {
             />
           )}
         </Box>
-        {/*todo, save functionality'*/}
         <Button
           variant="contained"
-          disabled={metadataSubmitStatus === 'success' || metadataSubmitStatus === 'submitting' || (metadataStatus === 'error' && !formConfig.skipValidation)}
+          disabled={metadataSubmitStatus === 'submitting'}
           onClick={() => handleButtonClick('save')}
           size="large"
           sx={{mr: 1}}
         >
           {t('save')}
         </Button>
-        {metadataSubmitStatus === 'success' && (fileStatus === 'success' || selectedFiles.length === 0) && 
+        {metadataSubmitStatus === 'submitted' && (fileStatus === 'success' || selectedFiles.length === 0) && 
           <Button
             variant="contained"
             onClick={resetForm}
@@ -201,7 +207,7 @@ const Submit = () => {
         }
         <Button
           variant="contained"
-          disabled={metadataSubmitStatus === 'success' || metadataSubmitStatus === 'submitting' || (metadataStatus === 'error' && !formConfig.skipValidation)}
+          disabled={metadataSubmitStatus === 'submitted' || metadataSubmitStatus === 'submitting' || (metadataStatus === 'error' && !formConfig.skipValidation)}
           onClick={() => handleButtonClick('submit')}
           size="large"
         >

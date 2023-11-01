@@ -13,7 +13,7 @@ export interface SubmittedFile {
   error?: boolean;
 }
 
-export type SubmitStatus = '' | 'submitting' | 'success' | 'error';
+export type SubmitStatus = '' | 'submitting' | 'submitted' | 'error' | 'saved' | 'success';
 
 export interface ReduxFileSubmitActions {
   id: string;
@@ -24,6 +24,7 @@ export interface ReduxFileSubmitActions {
 export interface InitialStateType {
   metadataStatus: string;
   submittedFiles: ReduxFileSubmitActions[];
+  latestSave: string;
 }
 
 export interface HeaderData {

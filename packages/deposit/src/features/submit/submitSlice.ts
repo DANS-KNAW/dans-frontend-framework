@@ -6,10 +6,12 @@ import type {
   SubmitStatus, 
   InitialStateType 
 } from '../../types/Submit';
+import type { Moment } from 'moment';
 
 const initialState: InitialStateType = {
   metadataStatus: '',
   submittedFiles: [],
+  latestSave: '',
 }
 
 export const submitSlice = createSlice({
@@ -18,6 +20,9 @@ export const submitSlice = createSlice({
   reducers: {
     setMetadataSubmitStatus: (state, action: PayloadAction<SubmitStatus>) => {
       state.metadataStatus = action.payload;
+    },
+    setLatestSave: (state, action: PayloadAction<string>) => {
+      state.latestSave = action.payload;
     },
     setFilesSubmitStatus: (state, action: PayloadAction<ReduxFileSubmitActions>) => {
       const { id, progress, status } = action.payload;
@@ -45,10 +50,11 @@ export const submitSlice = createSlice({
   }
 });
 
-export const { setMetadataSubmitStatus, setFilesSubmitStatus, resetFilesSubmitStatus, resetMetadataSubmitStatus } = submitSlice.actions;
+export const { setMetadataSubmitStatus, setFilesSubmitStatus, resetFilesSubmitStatus, resetMetadataSubmitStatus, setLatestSave } = submitSlice.actions;
 
 // Select values from state
 export const getMetadataSubmitStatus = (state: RootState) => state.submit.metadataStatus;
+export const getLatestSave = (state: RootState) => state.submit.latestSave;
 export const getFilesSubmitStatus = (state: RootState) => state.submit.submittedFiles;
 export const getSingleFileSubmitStatus = (id: string) => (state: RootState) => state.submit.submittedFiles.find((file: SubmittedFile) => file.id === id);
 

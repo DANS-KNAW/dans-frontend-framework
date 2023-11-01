@@ -44,7 +44,7 @@ export const RadioField = ({field, sectionIndex}: RadioFieldProps) => {
             value={option.value} 
             control={<Radio sx={{mr: 0.15}}/>} 
             label={lookupLanguageString(option.label, i18n.language)} 
-            disabled={metadataSubmitStatus !== ''}
+            disabled={metadataSubmitStatus !== '' && metadataSubmitStatus !== 'saved'}
           />
         )}
       </RadioGroup>
@@ -83,7 +83,7 @@ export const CheckField = ({field, sectionIndex}: CheckFieldProps) => {
                   value: e.target.checked ? [...field.value || '', e.target.name] : field.value!.filter( item => item !== e.target.name),
                 }))} 
                 name={option.value}
-                disabled={metadataSubmitStatus !== ''}
+                disabled={metadataSubmitStatus !== '' && metadataSubmitStatus !== 'saved'}
               />
             }
             label={lookupLanguageString(option.label, i18n.language)}

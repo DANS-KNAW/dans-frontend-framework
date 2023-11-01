@@ -326,7 +326,7 @@ export const MultiApiField = ({field, sectionIndex}: AutocompleteFieldProps) => 
             }))
           }}
           value={field.multiApiValue}
-          disabled={metadataSubmitStatus !== ''}
+          disabled={metadataSubmitStatus !== '' && metadataSubmitStatus !== 'saved'}
         >
           {Array.isArray(field.options) && (field.options as TypeaheadAPI[]).map( option => 
             <MenuItem key={option} value={option}>{t(`multi-${option}`)}</MenuItem>
@@ -500,7 +500,7 @@ const AutocompleteAPIField = ({
          * For autoSelect, we could remove most of the filterOptions logic and the extra check in onChange.
          */
         clearOnBlur
-        disabled={metadataSubmitStatus !== ''}
+        disabled={metadataSubmitStatus !== '' && metadataSubmitStatus !== 'saved'}
       />
       <StatusIcon 
         margin="lt"
