@@ -9,6 +9,7 @@
   "drop": "Click me or drag and drop a file to upload!",
   "dropNow": "Drop it here!",
   "dropLoading": "Loading list of allowed files...",
+  "dropDisabled": "Reset the form to upload new files",
   "addURL": "Add file from URL",
   "enterURL": "Enter file URL",
   "errorURL": "Invalid URL",
@@ -31,5 +32,7 @@
   "fileSubmitSuccess": "Submitted successfully",
   "uploadFailed": "Failed",
   "fileSubmitError": "Try uploading again",
-  "fileTypeCheckError": "Something went wrong checking the file type. Please try again."
+  "fileTypeCheckError": "Something went wrong checking the file type. Please try again.",
+  "submittedFile": "File has been uploaded previously",
+  "confirmDelete": "Confirm deletion"
 }

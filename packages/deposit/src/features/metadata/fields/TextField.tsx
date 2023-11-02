@@ -11,19 +11,17 @@ import { setField } from '../metadataSlice';
 import { getFieldStatus } from '../metadataHelpers';
 import type { TextFieldProps } from '../../../types/MetadataProps';
 import { lookupLanguageString } from '@dans-framework/utils';
-import { getMetadataSubmitStatus } from '../../submit/submitSlice';
+import { getFormDisabled } from '../../../deposit/depositSlice';
 
 const SingleTextField = ({field, sectionIndex, groupedFieldId, currentField = 0, totalFields = 1}: TextFieldProps) => {
   const dispatch = useAppDispatch();
   const auth = useAuth();
   const status = getFieldStatus(field);
   const { t, i18n } = useTranslation('metadata');
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
+  const formDisabled = useAppSelector(getFormDisabled);
 
   useEffect(() => {
     // if requested, auto fill user data from oidc
-    // atm, this gets data from the possibly stale auth.user.profile object
-    // change to fetchUserProfile (from @dans-framework/user-auth) function if we need up-to-date data in the future
     if (field.autofill && auth.user) {
       dispatch(setField({
         sectionIndex: sectionIndex,
@@ -46,7 +44,7 @@ const SingleTextField = ({field, sectionIndex, groupedFieldId, currentField = 0,
         multiline={field.multiline}
         rows={field.multiline ? 4 : ''}
         value={field.value || ''}
-        disabled={(field.disabled && !(field.autofill && !auth.user?.profile[field.autofill])) || metadataSubmitStatus !== ''}
+        disabled={(field.disabled && !(field.autofill && !auth.user?.profile[field.autofill])) || formDisabled}
         onChange={(e) => dispatch(setField({
           sectionIndex: sectionIndex,
           id: field.id,
@@ -67,7 +65,7 @@ const SingleTextField = ({field, sectionIndex, groupedFieldId, currentField = 0,
           ,
         }}
       />
-      {groupedFieldId && !metadataSubmitStatus && [
+      {groupedFieldId && !formDisabled && [
         totalFields > 1 && 
         <DeleteButton key="delete" sectionIndex={sectionIndex} groupedFieldId={groupedFieldId} deleteFieldIndex={currentField} mt={currentField === 0 ? 1.75 : 2.75} />,
         currentField + 1 === totalFields && 

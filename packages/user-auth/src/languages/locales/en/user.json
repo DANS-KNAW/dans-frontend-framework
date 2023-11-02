@@ -17,6 +17,8 @@
 	"apiKeyLabel": "Your personal {{type}} API key",
 	"userSubmissionsDrafts": "Saved forms",
 	"userSubmissionsCompleted": "Submitted forms",
+	"userSubmissionsDraftsDescription": "Continue filling in your previously saved data deposit forms",
+	"userSubmissionsCompletedDescription": "View your submitted data deposits",
 	"editSubmission": "Edit this submission",
 	"errorSubmission": "Something went wrong processing this submission",
 	"viewSubmission": "View this submission",
@@ -27,5 +29,6 @@
 	"noTitle": "(no title)",
 	"title": "Title",
 	"createdOn": "Created on",
-	"submittedTo": "Submitted to"
+	"submittedTo": "Submitted to",
+	"submissionStatus": "Status"
 }

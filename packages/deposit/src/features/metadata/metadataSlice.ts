@@ -39,9 +39,9 @@ export const metadataSlice = createSlice({
         state.form = formatInitialState(action.payload as InitialSectionType[]);
         // open up the first panel by default
         state.panel = (action.payload as InitialSectionType[])[0].id;
+        // and set initial validation status
+        metadataSlice.caseReducers.setSectionStatus(state, {payload: null, type: ''});
       }
-      // and set initial validation status
-      metadataSlice.caseReducers.setSectionStatus(state, {payload: null, type: ''});
     },
     // keep track of form state
     setField: (state, action: PayloadAction<SetFieldPayload>) => {
@@ -125,7 +125,8 @@ export const metadataSlice = createSlice({
       }
 
       function set(sectionIndex: number) {
-        const status = getSectionStatus(state.form[sectionIndex].fields.flatMap(field => {
+        const status = getSectionStatus(
+          state.form[sectionIndex].fields.flatMap(field => {
             if (field.type !== 'group' && field.fields) {
               // this is a single repeatable field
               return field.fields.flatMap( f => getFieldStatus(f));

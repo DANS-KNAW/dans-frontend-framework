@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { User } from 'oidc-client-ts';
+import type { SubmissionResponse, ReleaseVersion } from '../types';
 
 function getUser(provider: string, id: string) {
     const oidcStorage = sessionStorage.getItem(`oidc.user:${provider}:${id}`)
@@ -15,6 +16,7 @@ export const userApi = createApi({
   tagTypes: ['User'],
   endpoints: (build) => ({
     fetchUserProfile: build.query({
+      // Note: may not be needed, could possibly user auth.user, would be great. TODO!
       query: ({provider, id}) => {
         const user = getUser(provider, id);
         const token = user?.access_token;
@@ -62,6 +64,14 @@ export const userSubmissionsApi = createApi({
             Accept: 'application/json',
           },
         });
+      },
+      transformResponse: (response: SubmissionResponse[]) => {
+        // temporary response modifier until API is fixed
+        const responseWithTitle = response.map( r => ({
+          ...r, 
+          title: r['target-output']?.title, 
+        }));
+        return responseWithTitle
       },
     })
   }),
