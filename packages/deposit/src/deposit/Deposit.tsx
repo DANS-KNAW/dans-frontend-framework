@@ -7,15 +7,22 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Metadata from '../features/metadata/Metadata';
 import Files from '../features/files/Files';
 import type { TabPanelProps, TabHeaderProps } from '../types/Deposit';
-import type { FormConfig } from '../types/Metadata';
+import type { FormConfig, InitialFormType } from '../types/Metadata';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
-import { getMetadataStatus, getSessionId, getOpenTab, setOpenTab } from '../features/metadata/metadataSlice';
-import { getFiles } from '../features/files/filesSlice';
+import { 
+  getMetadataStatus, 
+  getSessionId, 
+  getOpenTab, 
+  setOpenTab,
+  initForm,
+  resetMetadata
+} from '../features/metadata/metadataSlice';
+import { resetFilesSubmitStatus, resetMetadataSubmitStatus } from '../features/submit/submitSlice';
+import { getFiles, resetFiles, addFiles } from '../features/files/filesSlice';
 import { StatusIcon } from '../features/generic/Icons';
 import Submit from '../features/submit/Submit';
 import { useTranslation, Trans } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { initForm } from '../features/metadata/metadataSlice';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Link from '@mui/material/Link';
@@ -23,10 +30,11 @@ import { Link as RouterLink } from 'react-router-dom';
 import { setData } from './depositSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { fetchUserProfile } from '@dans-framework/user-auth';
 import { useSiteTitle, setSiteTitle, lookupLanguageString } from '@dans-framework/utils';
 import type { Page } from '@dans-framework/pages';
 import { useAuth } from 'react-oidc-context';
+import { useSearchParams } from 'react-router-dom';
+import { useFetchSavedMetadataQuery } from './depositApi';
 
 const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
   const dispatch = useAppDispatch();
@@ -35,26 +43,40 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
   const openTab = useAppSelector(getOpenTab);
   const { t, i18n } = useTranslation('generic');
   const siteTitle = useSiteTitle();
+  const [ searchParams ] = useSearchParams();
+
+  // Can load a saved form based on metadata id, passed along from e.g. UserSubmissions
+  const savedFormId = searchParams.get('id');
+  const { data: savedFormData, isLoading, isUninitialized, isSuccess } = useFetchSavedMetadataQuery(savedFormId, {skip: !savedFormId});
 
   // set page title
   useEffect( () => { 
     setSiteTitle(siteTitle, lookupLanguageString(page.name, i18n.language));
   }, [siteTitle, page.name]);
 
-  // We import this function from the Auth library. Don't have to add it to the Deposit store this way.
-  const { data: userData } = fetchUserProfile({provider: auth.settings.authority, id: auth.settings.client_id});
-
-  // Initialize form on initial render when there's no sessionId yet
-  // or when form gets reset
+  // Initialize form on initial render when there's no sessionId yet or when form gets reset
+  // Or initialize saved data (overwrites the previously set sessionId)
   useEffect(() => {
-    if (!sessionId) {
-      dispatch(initForm(config.form));  
+    if (!sessionId || (sessionId && savedFormData?.id && sessionId !== savedFormData.id)) {
+      // we need to reset the form status first, in case data had been previously entered
+      dispatch(resetMetadataSubmitStatus());
+      dispatch(resetFilesSubmitStatus());
+      dispatch(resetFiles());
+      // then we load new/empty data
+      dispatch(initForm(savedFormData || config.form));
+      // and load the files if there are any
+      savedFormData && savedFormData['file-metadata'] && dispatch(addFiles(savedFormData['file-metadata']));
     }
-  }, [dispatch, sessionId, config.form]);
+  }, [dispatch, sessionId, config.form, savedFormData, isSuccess]);
 
-  // Set init form props in redux
+  // Set init form props in redux, all props without the form metadata config itself
   useEffect(() => {
     dispatch(setData(config));
+  }, [config]);
+
+  // update user on initial render, makes sure all keys are up-to-date
+  useEffect(() => {
+    auth.signinSilent();
   }, []);
 
   return (
@@ -62,11 +84,7 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
       <Container>
         <Grid container>
           <Grid xs={12} mt={4}>
-            {userData && config.targetCredentials.filter(t => 
-              (userData.attributes[t.authKey] && !userData.attributes[t.authKey][0]) ||
-              !userData.attributes[t.authKey] &&
-              t.authKey
-            ).length > 0 &&
+            { config.targetCredentials.filter(t => !auth.user?.profile[t.authKey] && t.authKey).length > 0 &&
               // show a message if keys are missing
               <Alert severity="warning">
                 <AlertTitle>{t('missingInfoHeader')}</AlertTitle>

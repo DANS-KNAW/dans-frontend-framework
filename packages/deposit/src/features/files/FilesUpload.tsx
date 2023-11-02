@@ -23,6 +23,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useFetchSimpleListQuery } from './api/dansFormats';
 import { getMetadataSubmitStatus } from '../submit/submitSlice';
 import { enqueueSnackbar } from 'notistack';
+import { getFormDisabled } from '../../deposit/depositSlice';
 
 const FilesUpload = () => {
   const dispatch = useAppDispatch();
@@ -108,27 +109,40 @@ const FilesUpload = () => {
     validator: fileValidator
   });
 
+  const formDisabled = useAppSelector(getFormDisabled);
+
   return (
     <Card>
       <CardHeader title={t('addLocal') as string} />
       <CardContent>
-        <Box 
-          sx={{
-            border: '1px dashed',
-            borderColor: 'neutral.main',
-            backgroundColor: isDragActive ? 'primary.light' : 'transparent',
-          }}
-          p={3}
-          {...getRootProps({className: 'dropzone'})}
-        >
-          {data ?
-            <>
-              {!metadataSubmitStatus && <input {...getInputProps()} />}
-              <Typography color="neutral.contrastText" sx={{textAlign: 'center', cursor: 'pointer'}}>{isDragActive ? t('dropNow') : t('drop')}</Typography>
-            </> :
-            <Typography color="neutral.contrastText" sx={{textAlign: 'center', cursor: 'pointer'}}>{t('dropLoading')}</Typography>
-          }
-        </Box>
+        {!formDisabled ?
+          <Box 
+            sx={{
+              border: '1px dashed',
+              borderColor: 'neutral.main',
+              backgroundColor: isDragActive ? 'primary.light' : 'transparent',
+            }}
+            p={3}
+            {...getRootProps({className: 'dropzone'})}
+          >
+            {data ?
+              <>
+                <input {...getInputProps()} />
+                <Typography color="neutral.contrastText" sx={{textAlign: 'center', cursor: 'pointer'}}>{isDragActive ? t('dropNow') : t('drop')}</Typography>
+              </> :
+              <Typography color="neutral.contrastText" sx={{textAlign: 'center', cursor: 'pointer'}}>{t('dropLoading')}</Typography>
+            }
+          </Box> :
+          <Box sx={{
+              border: '1px dashed',
+              borderColor: 'neutral.main',
+              backgroundColor: isDragActive ? 'primary.light' : 'transparent',
+            }}
+            p={3}
+          >
+            <Typography color="neutral.contrastText" sx={{textAlign: 'center'}}>{t('dropDisabled')}</Typography>
+          </Box>
+        }
         {fileRejections.length > 0 && <RejectedFiles fileRejections={fileRejections} />}
       </CardContent>
     </Card>

@@ -8,5 +8,6 @@
   "submitErrorFiles": "Oh nee! Er is iets misgegaan bij het uploaden van je bestaden",
   "reset": "Reset formulier",
   "submit": "Verstuur data",
-  "errorRetry": "Probeer het nog eens of neem contact met ons op"
+  "errorRetry": "Probeer het nog eens of neem contact met ons op",
+  "save": "Opslaan"
 }

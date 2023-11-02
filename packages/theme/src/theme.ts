@@ -37,3 +37,16 @@ declare module '@mui/material/styles' {
     footerBottom?: Palette['primary'];
   }
 }
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsColorOverrides {
+    neutral: true;
+  }
+}
+
+declare module '@mui/material/SvgIcon' {
+  interface SvgIconPropsColorOverrides {
+    neutral: true;
+  }
+}
+

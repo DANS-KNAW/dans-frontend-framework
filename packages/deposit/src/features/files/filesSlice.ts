@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../redux/store';
 import { SelectedFile, ReduxFileActions } from '../../types/Files';
 
-const initialState: SelectedFile[] = []
+const initialState: SelectedFile[] = [];
 
 export const filesSlice = createSlice({
   name: 'files',

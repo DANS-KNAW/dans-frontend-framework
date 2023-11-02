@@ -11,15 +11,15 @@ import { getFieldStatus } from '../metadataHelpers';
 import { StatusIcon } from '../../generic/Icons';
 import { lookupLanguageString } from '@dans-framework/utils';
 import type { RadioFieldProps, CheckFieldProps } from '../../../types/MetadataProps';
-import { getMetadataSubmitStatus } from '../../submit/submitSlice';
 import { useTranslation } from 'react-i18next';
+import { getFormDisabled } from '../../../deposit/depositSlice';
 
 // List of radio button options. First value of the options is selected by default, so no need for status checking.
 export const RadioField = ({field, sectionIndex}: RadioFieldProps) => {
   const dispatch = useAppDispatch();
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const { i18n } = useTranslation();
   const status = getFieldStatus(field);
+  const formDisabled = useAppSelector(getFormDisabled);
 
   return (
     <FormControl>
@@ -44,7 +44,7 @@ export const RadioField = ({field, sectionIndex}: RadioFieldProps) => {
             value={option.value} 
             control={<Radio sx={{mr: 0.15}}/>} 
             label={lookupLanguageString(option.label, i18n.language)} 
-            disabled={metadataSubmitStatus !== ''}
+            disabled={formDisabled}
           />
         )}
       </RadioGroup>
@@ -56,8 +56,8 @@ export const RadioField = ({field, sectionIndex}: RadioFieldProps) => {
 export const CheckField = ({field, sectionIndex}: CheckFieldProps) => {
   const dispatch = useAppDispatch();
   const status = getFieldStatus(field);
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const { i18n } = useTranslation();
+  const formDisabled = useAppSelector(getFormDisabled);
 
   return (
     <FormControl
@@ -83,7 +83,7 @@ export const CheckField = ({field, sectionIndex}: CheckFieldProps) => {
                   value: e.target.checked ? [...field.value || '', e.target.name] : field.value!.filter( item => item !== e.target.name),
                 }))} 
                 name={option.value}
-                disabled={metadataSubmitStatus !== ''}
+                disabled={formDisabled}
               />
             }
             label={lookupLanguageString(option.label, i18n.language)}
