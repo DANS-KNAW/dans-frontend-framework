@@ -23,6 +23,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useFetchSimpleListQuery } from './api/dansFormats';
 import { getMetadataSubmitStatus } from '../submit/submitSlice';
 import { enqueueSnackbar } from 'notistack';
+import { getFormDisabled } from '../../deposit/depositSlice';
 
 const FilesUpload = () => {
   const dispatch = useAppDispatch();
@@ -108,11 +109,13 @@ const FilesUpload = () => {
     validator: fileValidator
   });
 
+  const formDisabled = useAppSelector(getFormDisabled);
+
   return (
     <Card>
       <CardHeader title={t('addLocal') as string} />
       <CardContent>
-        {!metadataSubmitStatus ?
+        {!formDisabled ?
           <Box 
             sx={{
               border: '1px dashed',

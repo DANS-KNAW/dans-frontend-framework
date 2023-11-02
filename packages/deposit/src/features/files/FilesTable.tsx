@@ -30,10 +30,11 @@ import { getSessionId } from '../metadata/metadataSlice';
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import { getMetadataSubmitStatus, getSingleFileSubmitStatus } from '../submit/submitSlice';
+import { getSingleFileSubmitStatus } from '../submit/submitSlice';
 import { useSubmitFilesMutation } from '../submit/submitApi';
 import { formatFileData } from '../submit/submitHelpers';
 import { motion, AnimatePresence, HTMLMotionProps } from 'framer-motion';
+import { getFormDisabled } from '../../deposit/depositSlice';
  
 const FilesTable = () => {
   const { t } = useTranslation('files');
@@ -68,8 +69,8 @@ const FilesTable = () => {
 
 const FileActionOptions = ({file, type}: FileActionOptionsProps) => {
   const dispatch = useAppDispatch();
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const { t } = useTranslation('files');
+  const formDisabled = useAppSelector(getFormDisabled);
 
   return (
     <Autocomplete
@@ -88,7 +89,7 @@ const FileActionOptions = ({file, type}: FileActionOptionsProps) => {
       renderInput={(params) => <TextField {...params} label={t(type === 'process' ? 'selectOptions' : 'selectOption')} />}
       options={type === 'process' ? fileProcessing : fileRoles}
       value={file[type] || (type === 'process' ? [] : null)}
-      disabled={metadataSubmitStatus !== ''}
+      disabled={formDisabled}
       isOptionEqualToValue={(option, value) => option.value === value.value}
     />
   )
@@ -165,9 +166,9 @@ const MotionRow = motion(ForwardRow);
 const FileTableRow = ({file}: FileItemProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation('files');
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const [ toDelete, setToDelete ] = useState<boolean>(false);
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
+  const formDisabled = useAppSelector(getFormDisabled);
 
   return (
     <>
@@ -185,8 +186,8 @@ const FileTableRow = ({file}: FileItemProps) => {
             <IconButton 
               color="primary" 
               size="small" 
-              onClick={() => !metadataSubmitStatus && ( !file.submittedFile ? dispatch(removeFile(file)) : setToDelete(!toDelete) )} 
-              disabled={metadataSubmitStatus !== ''}
+              onClick={() => !formDisabled && ( !file.submittedFile ? dispatch(removeFile(file)) : setToDelete(!toDelete) )} 
+              disabled={formDisabled}
             >
               <DeleteIcon fontSize="small" color="error" />
             </IconButton>
@@ -241,7 +242,7 @@ const FileTableRow = ({file}: FileItemProps) => {
             <Checkbox 
               checked={file.private}
               onChange={e => dispatch(setFileMeta({id: file.id, type: 'private', value: e.target.checked}))}
-              disabled={file.valid === false || metadataSubmitStatus !== ''}
+              disabled={file.valid === false || formDisabled}
             />
           </TableCell>
           <TableCell sx={{p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1}}><FileActionOptions type="role" file={file} /></TableCell>
@@ -285,9 +286,9 @@ const UploadProgress = ({file}: FileItemProps) => {
     fileStatus &&
     <MotionCell
       layout
-      initial={{ x: '-100%' }}
-      animate={{ x: 0 }}
-      exit={{ x: '-100%' }}
+      initial={{ y: '100%' }}
+      animate={{ y: 0 }}
+      exit={{ y: '100%' }}
       sx={{
         paddingBottom: 0,
         paddingTop: 0,

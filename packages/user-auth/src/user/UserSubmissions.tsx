@@ -32,6 +32,8 @@ export const UserSubmissions = ({depositSlug}: {depositSlug?: string;}) => {
   const auth = useAuth();
   const { data, isLoading } = useFetchUserSubmissionsQuery(auth.user?.profile.sub);
 
+  console.log(data)
+
   useEffect( () => { 
     setSiteTitle(siteTitle, t('userSubmissions'));
   }, [siteTitle, name]);

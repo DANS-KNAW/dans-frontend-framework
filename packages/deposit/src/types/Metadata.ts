@@ -42,4 +42,5 @@ export interface FormConfig {
   skipValidation?: boolean;
   geonamesApiKey?: string;
   gsheetsApiKey?: string;
+  formDisabled?: boolean;
 }

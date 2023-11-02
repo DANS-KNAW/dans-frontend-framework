@@ -26,8 +26,7 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import MenuItem from '@mui/material/MenuItem';
 import AutocompleteField, { InfoLink, InfoChip } from './AutocompleteField';
-import { getMetadataSubmitStatus } from '../../submit/submitSlice';
-import { getData } from '../../../deposit/depositSlice';
+import { getData, getFormDisabled } from '../../../deposit/depositSlice';
 import { useFetchGorcQuery } from '../api/gorc';
 import { useFetchLicensesQuery } from '../api/licenses';
 import { useFetchRdaWorkingGroupQuery } from '../api/rdaWorkgroup';
@@ -302,7 +301,7 @@ export const SheetsField = ({field, sectionIndex}: AutocompleteFieldProps) => {
 export const MultiApiField = ({field, sectionIndex}: AutocompleteFieldProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation('metadata');
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
+  const formDisabled = useAppSelector(getFormDisabled);
 
   return (
     <Stack direction="row" alignItems="start">
@@ -326,7 +325,7 @@ export const MultiApiField = ({field, sectionIndex}: AutocompleteFieldProps) => 
             }))
           }}
           value={field.multiApiValue}
-          disabled={metadataSubmitStatus !== '' && metadataSubmitStatus !== 'saved'}
+          disabled={formDisabled}
         >
           {Array.isArray(field.options) && (field.options as TypeaheadAPI[]).map( option => 
             <MenuItem key={option} value={option}>{t(`multi-${option}`)}</MenuItem>
@@ -363,7 +362,7 @@ const AutocompleteAPIField = ({
   const status = getFieldStatus(field);
   const { t, i18n } = useTranslation('metadata');
   const apiValue = (Array.isArray(field.options) ? field.multiApiValue : field.options) as TypeaheadAPI;
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
+  const formDisabled = useAppSelector(getFormDisabled);
 
   return (
     <Stack direction="row" alignItems="start" sx={{flex: 1}}>
@@ -500,7 +499,7 @@ const AutocompleteAPIField = ({
          * For autoSelect, we could remove most of the filterOptions logic and the extra check in onChange.
          */
         clearOnBlur
-        disabled={metadataSubmitStatus !== '' && metadataSubmitStatus !== 'saved'}
+        disabled={formDisabled}
       />
       <StatusIcon 
         margin="lt"

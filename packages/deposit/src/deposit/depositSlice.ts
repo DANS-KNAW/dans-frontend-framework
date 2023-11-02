@@ -2,14 +2,21 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../redux/store';
 import type { FormConfig } from '../types/Metadata';
 
-// Save the props we need to redux store, for use in subcomponents
-const initialState: Omit<FormConfig, 'form'> = {
-  targetCredentials: [],
-  target: {},
-  submitKey: '',
-  skipValidation: false,
-  geonamesApiKey: '',
-  gsheetsApiKey: '',
+// Save the props/config we need to redux store, for use in subcomponents
+// Also set a global disabled key, for when form is submitting/saving
+const initialState: {
+  config: Omit<FormConfig, 'form'>,
+  formDisabled: boolean;
+} = {
+  config: {
+    targetCredentials: [],
+    target: {},
+    submitKey: '',
+    skipValidation: false,
+    geonamesApiKey: '',
+    gsheetsApiKey: '',
+  }, 
+  formDisabled: false,
 };
 
 export const depositSlice = createSlice({
@@ -17,14 +24,18 @@ export const depositSlice = createSlice({
   initialState,
   reducers: {
     setData: (state, action: PayloadAction<Omit<FormConfig, 'form'>>) => {
-      return state = action.payload;
+      state.config = action.payload;
     },
+    setFormDisabled: (state, action: PayloadAction<boolean>) => {
+      state.formDisabled = action.payload;
+    }
   },
 })
 
-export const { setData } = depositSlice.actions;
+export const { setData, setFormDisabled } = depositSlice.actions;
 
 // Selectors
-export const getData = (state: RootState) => state.deposit;
+export const getData = (state: RootState) => state.deposit.config;
+export const getFormDisabled = (state: RootState) => state.deposit.formDisabled;
 
 export default depositSlice.reducer;

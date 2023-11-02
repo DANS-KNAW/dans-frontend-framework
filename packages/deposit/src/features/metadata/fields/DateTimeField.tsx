@@ -14,17 +14,16 @@ import { setField, setDateTypeField } from '../metadataSlice';
 import { getFieldStatus } from '../metadataHelpers';
 import type { DateFieldProps } from '../../../types/MetadataProps';
 import { lookupLanguageString } from '@dans-framework/utils';
-import { getMetadataSubmitStatus } from '../../submit/submitSlice';
+import { getFormDisabled } from '../../../deposit/depositSlice';
 
 // Date and time selection component
 // Allows a user to select input type (date and time, date, month and year, year) if specified in config
-// TODO: dates BC
 
 const DateTimeField = ({field, sectionIndex, groupedFieldId, currentField = 0, totalFields = 1}: DateFieldProps) => {
   const dispatch = useAppDispatch();
   const status = getFieldStatus(field);
   const { t, i18n } = useTranslation('metadata');
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
+  const formDisabled = useAppSelector(getFormDisabled);
 
   return (
     <Stack direction="row" alignItems="start">
@@ -48,7 +47,7 @@ const DateTimeField = ({field, sectionIndex, groupedFieldId, currentField = 0, t
               }))
             }}
             value={field.format}
-            disabled={metadataSubmitStatus !== '' && metadataSubmitStatus !== 'saved'}
+            disabled={formDisabled}
           >
             {field.formatOptions.map( option =>
               <MenuItem key={option} value={option}>{t(option)}</MenuItem>
@@ -64,7 +63,7 @@ const DateTimeField = ({field, sectionIndex, groupedFieldId, currentField = 0, t
         label={lookupLanguageString(field.label, i18n.language)}
         required={field.required}
         value={(field.value && moment(field.value, field.format)) || null}
-        disabled={field.disabled || (metadataSubmitStatus !== '' && metadataSubmitStatus !== 'saved')}
+        disabled={field.disabled || formDisabled}
         minDate={field.minDate ? moment(field.minDate, field.format) : moment().subtract(273790, 'year')}
         maxDate={field.maxDate ? moment(field.maxDate, field.format) : moment().add(100, 'year')}
         onChange={(value: Moment | null, context) => {
@@ -93,7 +92,7 @@ const DateTimeField = ({field, sectionIndex, groupedFieldId, currentField = 0, t
         }}
         slotProps={{ textField: { error: status === 'error' && field.touched } }}
       />
-      {groupedFieldId && !metadataSubmitStatus && [
+      {groupedFieldId && !formDisabled && [
         totalFields > 1 && 
         <DeleteButton key="delete" sectionIndex={sectionIndex} groupedFieldId={groupedFieldId} deleteFieldIndex={currentField} mt={currentField === 0 ? 1.75 : 2.75} />,
         currentField + 1 === totalFields && 

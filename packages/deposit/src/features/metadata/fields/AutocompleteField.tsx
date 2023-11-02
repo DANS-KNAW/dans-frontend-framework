@@ -9,17 +9,17 @@ import { setField } from '../metadataSlice';
 import type { AutocompleteFieldProps, InfoLinkProps, InfoChipProps } from '../../../types/MetadataProps';
 import type { OptionsType } from '../../../types/MetadataFields';
 import { lookupLanguageString } from '@dans-framework/utils';
-import { getMetadataSubmitStatus } from '../../submit/submitSlice';
 import Tooltip from '@mui/material/Tooltip';
 import LaunchIcon from '@mui/icons-material/Launch';
 import InputAdornment from '@mui/material/InputAdornment';
 import Chip from '@mui/material/Chip';
+import { getFormDisabled } from '../../../deposit/depositSlice';
 
 const AutocompleteField = ({field, sectionIndex, isLoading}: AutocompleteFieldProps) => {
   const dispatch = useAppDispatch();
   const status = getFieldStatus(field);
   const { t, i18n } = useTranslation('metadata');
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
+  const formDisabled = useAppSelector(getFormDisabled);
 
   const options = Array.isArray(field.options) ? field.options as OptionsType[] : [];
   const localizedOptions = options.map( option => ({...option, label: lookupLanguageString(option.label, i18n.language)})) as OptionsType[] || [];
@@ -59,7 +59,7 @@ const AutocompleteField = ({field, sectionIndex, isLoading}: AutocompleteFieldPr
           value: newValue
         }))}
         loading={isLoading === true}
-        disabled={metadataSubmitStatus !== '' && metadataSubmitStatus !== 'saved'}
+        disabled={formDisabled}
         isOptionEqualToValue={(option, value) => option.value === value.value}
       />
       <StatusIcon 
@@ -89,8 +89,8 @@ export const InfoLink = ({link, apiValue, chip, checkValue}: InfoLinkProps) => {
 }
 
 export const InfoChip = ({option, apiValue, getTagProps, index}: InfoChipProps) => {
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const { i18n } = useTranslation('metadata');
+  const formDisabled = useAppSelector(getFormDisabled);
   return (
     <Chip
       {...getTagProps({index})}
@@ -110,7 +110,7 @@ export const InfoChip = ({option, apiValue, getTagProps, index}: InfoChipProps) 
         /> :
         undefined
       }
-      disabled={option.mandatory || (metadataSubmitStatus !== '' && metadataSubmitStatus !== 'saved')}
+      disabled={option.mandatory || formDisabled}
     />
   )
 }

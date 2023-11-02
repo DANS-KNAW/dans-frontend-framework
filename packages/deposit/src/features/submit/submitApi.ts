@@ -3,6 +3,8 @@ import type { BaseQueryFn, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import axios from 'axios';
 import type { AxiosHeaders, AxiosRequestConfig, AxiosError, AxiosProgressEvent } from 'axios';
 import { setMetadataSubmitStatus, setFilesSubmitStatus, setLatestSave } from './submitSlice';
+import { setFileMeta } from '../files/filesSlice';
+import { setFormDisabled } from '../../deposit/depositSlice';
 import { store } from '../../redux/store';
 import type { Target } from '@dans-framework/user-auth';
 import type { HeaderData, SubmitHeaders } from '../../types/Submit';
@@ -50,6 +52,12 @@ const axiosBaseQuery =
       // set upload successful in file object
       if (isFile && result.data) {
         console.log(result)
+        // we need to remove the actual files from the list, as otherwise on anothes save in the same session the files will reupload
+        store.dispatch(setFileMeta({
+          id: data.get('fileId') as string,
+          type: 'submittedFile',
+          value: true,
+        }));
         store.dispatch(setFilesSubmitStatus({
           id: data.get('fileId') as string, 
           status: 'success',
@@ -58,7 +66,6 @@ const axiosBaseQuery =
       // Metadata has been successfully submitted, so let's store that right away
       else if (result.data) {
         store.dispatch(setMetadataSubmitStatus(actionType === 'submit' ? 'submitted' : 'saved'));
-        actionType === 'save' && store.dispatch(setLatestSave(moment().format('D-M-YYYY @ HH:mm')));
       }
       return { data: result.data }
     } catch (axiosError) {
@@ -129,7 +136,7 @@ export const submitApi = createApi({
       },
     }),
     submitFiles: build.mutation({
-      async queryFn({data, headerData}, queryApi, extraOptions, fetchWithBQ) {
+      async queryFn({data, headerData, actionType}, queryApi, extraOptions, fetchWithBQ) {
         console.log('submitting files...')
         console.log(data.map((d: any) => [...d]))
         const headers = formatHeaderData(headerData);
@@ -145,6 +152,12 @@ export const submitApi = createApi({
         const filesErrors = filesResults && filesResults.filter( (res: any) => res.error as FetchBaseQueryError )
         if (Array.isArray(filesErrors) && filesErrors.length > 0)
           return { error: filesErrors }
+
+        if (actionType === 'save') {
+          // enable form again after successful save
+          store.dispatch(setLatestSave(moment().format('D-M-YYYY @ HH:mm')));
+          store.dispatch(setFormDisabled(false));
+        }
 
         return { data: filesResults };
       }
