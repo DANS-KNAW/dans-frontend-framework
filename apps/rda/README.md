@@ -44,3 +44,4 @@ To display error messages from the Redux stores of several components, you need 
 
 ### Elastic API
 The search discovery domain of the framework needs an Elastic Search endpoint. You can define the root domain and port of your Elastic Search server in your .env file under `VITE_ELEASTICSEARCH_API_ENDPOINT`.
+

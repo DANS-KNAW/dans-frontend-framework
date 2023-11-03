@@ -79,12 +79,15 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
     auth.signinSilent();
   }, []);
 
+  // check the user object if target credentials are filled in
+  const hasTargetCredentials = config.targetCredentials.filter(t => !auth.user?.profile[t.authKey] && t.authKey).length === 0;
+
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <Container>
         <Grid container>
           <Grid xs={12} mt={4}>
-            { config.targetCredentials.filter(t => !auth.user?.profile[t.authKey] && t.authKey).length > 0 &&
+            { !hasTargetCredentials &&
               // show a message if keys are missing
               <Alert severity="warning">
                 <AlertTitle>{t('missingInfoHeader')}</AlertTitle>
@@ -107,7 +110,7 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
             </AnimatePresence>
           </Grid>
           <Grid xs={12} mt={4} display="flex" justifyContent="end" alignItems="center">
-            <Submit />
+            <Submit hasTargetCredentials={hasTargetCredentials} />
           </Grid>
         </Grid>
       </Container>

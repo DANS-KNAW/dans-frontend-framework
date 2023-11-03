@@ -33,7 +33,7 @@ import { fetchUserProfile } from '@dans-framework/user-auth';
 import { useAuth } from 'react-oidc-context';
 import moment from 'moment';
 
-const Submit = () => {
+const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation('submit');
   const auth = useAuth();
@@ -230,6 +230,7 @@ const Submit = () => {
         <Button
           variant="contained"
           disabled={
+            !hasTargetCredentials ||
             formDisabled || 
             (metadataStatus === 'error' && !formConfig.skipValidation)
           }
