@@ -14,6 +14,8 @@ import EmailIcon from '@mui/icons-material/Email';
 import parse from 'html-react-parser';
 
 const Footer = ({top, bottom}: FooterType) => {
+  const columnsTop = top.length;
+  const columnsBottom = bottom.length;
   return (
     <>
       <Box
@@ -26,7 +28,7 @@ const Footer = ({top, bottom}: FooterType) => {
         }}
       >
         <Container>
-          <Grid container columns={5} spacing={2}>
+          <Grid container columns={columnsTop} spacing={2}>
             {top.map( (item, i) => 
               <Grid xs={4} sm={2} md={1} key={`footer-${i}`}>
                 <FooterContent {...item} />
@@ -44,7 +46,7 @@ const Footer = ({top, bottom}: FooterType) => {
         }}
       >
         <Container>
-          <Grid container columns={2}>
+          <Grid container columns={columnsBottom}>
             {bottom.map( (item, i) => 
               <Grid xs={2} md={1} key={i}>
                 <FooterContent {...item} />
