@@ -23,7 +23,6 @@ If you've already cloned the repository without the submodules, you can initiali
 git submodule update --init --recursive
 ```
 
-
 ## Installation
 After cloning, run:
 
@@ -101,3 +100,6 @@ Deployment is done using Docker containers and a Github Action that listens for 
  2. Create pull request for main branch and merge into main.
  3. A fresh Docker image should be created on the [DANS Dockerhub](https://hub.docker.com/u/dansknaw). If not, check Github Actions for errors.
  4. See the [Deployment repo](https://github.com/DANS-KNAW/ohsmart-deploy) for further steps.
+
+## Authentication with Keycloak
+This framework is usually setup to make use of Keycloak for authentication and storing user data, like target credentials/. See the [user-auth package](/packages/user-auth/README.md) for more info.
