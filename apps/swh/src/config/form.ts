@@ -4,12 +4,12 @@ import administrative from './formsections/citation';
 // Section data are formatted as js/ts, so we can easily import things like option lists, or set a variable that gets reused
 // For now, see types/Metadata.ts to check the types of input fields you can use
 
-const sections = [
+const sections: InitialSectionType[] = [
   administrative,
 ];
 
 const form: FormConfig = {
-  form: sections as InitialSectionType[],
+  form: sections,
   target: {
     envName: import.meta.env.VITE_ENV_NAME,
     configName: import.meta.env.VITE_CONFIG_NAME,
@@ -22,13 +22,6 @@ const form: FormConfig = {
       auth: 'API_KEY',
       authKey: 'dataverse_api_key',
       keyUrl: import.meta.env.VITE_TARGET_1_KEY_URL,
-    },
-    {
-      name: 'Software Heritage',
-      repo: import.meta.env.VITE_TARGET_2_REPO,
-      auth: 'API_KEY',
-      authKey: 'swh_api_key',
-      keyUrl: import.meta.env.VITE_TARGET_2_KEY_URL,
     },
   ],
   submitKey: import.meta.env.VITE_PACKAGING_KEY, // still needed??
