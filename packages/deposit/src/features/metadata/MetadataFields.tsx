@@ -113,9 +113,9 @@ const GroupedField = ({field, sectionIndex}: GroupedFieldProps) => {
                     key={i} 
                     sx={{
                       borderTop: i > 0 ? '1px solid' : 'none',
-                      borderColor: 'neutralDark.main',
-                      pt: i > 0 ? 1 : 0,
-                      mt: i > 0 ? 1 : 0
+                      borderColor: 'neutral.main',
+                      pt: i > 0 ? 2 : 0,
+                      mt: i > 0 ? 2 : 0,
                     }}
                   >
                     <Grid container sx={{flex: 1}} spacing={2}>

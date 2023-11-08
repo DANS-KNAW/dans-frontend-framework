@@ -32,8 +32,8 @@ const section: InitialSectionType = {
       name: 'date_available',
       required: true,
       description:  {
-        en: 'In case of an embargo, else publication date',
-        nl: 'In het geval van een embargo, anders publicatiedatum',
+        en: 'In case of an embargo, you should provide a future date for this field. If no embargo is in place, this will be the same as the publication date.',
+        nl: 'In het geval van een embargo moet je een toekomstige datum invullen. Als er geen embargo is, wordt dit veld automatisch de publicatiedatum.',
       },
     },
     {

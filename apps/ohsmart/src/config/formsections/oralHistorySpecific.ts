@@ -81,10 +81,6 @@ const section: InitialSectionType = {
         },
         {
           type: 'check',
-          label: {
-            en: 'Consent form',
-            nl: 'Toestemmingsformulier',
-          },
           name: 'interviewee_consent',
           required: true,
           private: true,
@@ -92,8 +88,8 @@ const section: InitialSectionType = {
             {
               value: 'interviewee_consent_signed',
               label: {
-                en: 'Signed',
-                nl: 'Getekend',
+                en: 'Consent given',
+                nl: 'Toestemming gegeven',
               },
             },
           ],
@@ -176,10 +172,6 @@ const section: InitialSectionType = {
         },
         {
           type: 'check',
-          label: {
-            en: 'Consent form',
-            nl: 'Toestemmingsformulier',
-          },
           name: 'interviewer_consent',
           required: true,
           private: true,
@@ -187,8 +179,8 @@ const section: InitialSectionType = {
             {
               value: 'interviewer_consent_signed',
               label: {
-                en: 'Signed',
-                nl: 'Getekend',
+                en: 'Consent given',
+                nl: 'Toestemming gegeven',
               },
             },
           ],
@@ -248,18 +240,14 @@ const section: InitialSectionType = {
         },
         {
           type: 'check',
-          label: {
-            en: 'Consent form',
-            nl: 'Toestemmingsformulier',
-          },
           name: 'interpreter_consent',
           private: true,
           options: [
             {
               value: 'interpreter_consent_signed',
               label: {
-                en: 'Signed',
-                nl: 'Getekend',
+                en: 'Consent given',
+                nl: 'Toestemming gegeven',
               },
             },
           ],
@@ -319,18 +307,14 @@ const section: InitialSectionType = {
         },
         {
           type: 'check',
-          label: {
-            en: 'Consent form',
-            nl: 'Toestemmingsformulier',
-          },
           name: 'others_consent',
           private: true,
           options: [
             {
               value: 'others_consent_signed',
               label: {
-                en: 'Signed',
-                nl: 'Getekend',
+                en: 'Consent given',
+                nl: 'Toestemming gegeven',
               },
             },
           ],
@@ -507,18 +491,14 @@ const section: InitialSectionType = {
         },
         {
           type: 'check',
-          label: {
-            en: 'Consent form',
-            nl: 'Toestemmingsformulier',
-          },
           name: 'transcript_human_consent',
           private: true,
           options: [
             {
               value: 'transcript_human_consent_signed',
               label: {
-                en: 'Signed',
-                nl: 'Getekend',
+                en: 'Consent given',
+                nl: 'Toestemming gegeven',
               },
             },
           ],

@@ -1,4 +1,5 @@
 import Radio from '@mui/material/Radio';
+import Stack from '@mui/material/Stack';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
@@ -23,10 +24,12 @@ export const RadioField = ({field, sectionIndex}: RadioFieldProps) => {
 
   return (
     <FormControl>
-      <FormLabel id={field.id} sx={{display:'flex', mb: 1}}>
-        <StatusIcon status={status} margin="r" title={lookupLanguageString(field.description, i18n.language)} />
-        {lookupLanguageString(field.label, i18n.language)}
-      </FormLabel>
+      {field.label && 
+        <FormLabel id={field.id} sx={{display:'flex', mb: 1}}>
+          <StatusIcon status={status} margin="r" title={lookupLanguageString(field.description, i18n.language)} />
+          {lookupLanguageString(field.label, i18n.language)}
+        </FormLabel>
+      }
       <RadioGroup
         row={field.layout === 'row'}
         aria-labelledby={field.id}
@@ -65,29 +68,36 @@ export const CheckField = ({field, sectionIndex}: CheckFieldProps) => {
       error={field.required && field.value?.length === 0}
       component="fieldset"
     >
-      <FormLabel id={field.id} sx={{display:'flex', mb: 1}}>
-        <StatusIcon status={status} margin="r" title={lookupLanguageString(field.description, i18n.language)} />
-        {lookupLanguageString(field.label, i18n.language)}
-      </FormLabel>
+      {field.label && 
+        <FormLabel id={field.id} sx={{display:'flex', mb: 1}}>
+          <StatusIcon status={status} margin="r" title={lookupLanguageString(field.description, i18n.language)} />
+          {lookupLanguageString(field.label, i18n.language)}
+        </FormLabel>
+      }
       <FormGroup>
         {field.options.map( option =>
-          <FormControlLabel
-            key={option.value}
-            control={
-              <Checkbox
-                sx={{mr: 0.15}}
-                checked={Boolean(field.value && field.value.indexOf(option.value) !== -1)} 
-                onChange={(e) => dispatch(setField({
-                  sectionIndex: sectionIndex,
-                  id: field.id,
-                  value: e.target.checked ? [...field.value || '', e.target.name] : field.value!.filter( item => item !== e.target.name),
-                }))} 
-                name={option.value}
-                disabled={formDisabled}
-              />
+          <Stack direction="row" alignItems="center" key={option.value}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  sx={{mr: 0.15}}
+                  checked={Boolean(field.value && field.value.indexOf(option.value) !== -1)} 
+                  onChange={(e) => dispatch(setField({
+                    sectionIndex: sectionIndex,
+                    id: field.id,
+                    value: e.target.checked ? [...field.value || '', e.target.name] : field.value!.filter( item => item !== e.target.name),
+                  }))} 
+                  name={option.value}
+                  disabled={formDisabled}
+                />
+              }
+              label={lookupLanguageString(option.label, i18n.language)}
+            />
+            {!field.label &&
+              // todo: maybe we should make individual checkboxes required/not required
+              <StatusIcon status={status} title={lookupLanguageString(field.description, i18n.language)} />
             }
-            label={lookupLanguageString(option.label, i18n.language)}
-          />
+          </Stack>
         )}
       </FormGroup>
     </FormControl>

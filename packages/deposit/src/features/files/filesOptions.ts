@@ -29,6 +29,14 @@ export const fileRoles = [
     label: "Video File",
   },
   {
+    value: "audio_file",
+    label: "Audio File",
+  },
+  {
+    value: "image_file",
+    label: "Image File",
+  },
+  {
     value: "data_dictionary_code_book",
     label: "Data Dictionary - Code Book",
   },

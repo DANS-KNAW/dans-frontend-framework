@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import { green } from '@mui/material/colors';
 import CheckIcon from '@mui/icons-material/Check';
@@ -15,6 +15,7 @@ import {
   resetMetadata, 
   setSectionStatus, 
   getSessionId,
+  setOpenTab,
 } from '../metadata/metadataSlice';
 import { getFiles, resetFiles } from '../files/filesSlice';
 import { useSubmitDataMutation, useSubmitFilesMutation } from './submitApi';
@@ -32,6 +33,8 @@ import { getData, setFormDisabled, getFormDisabled } from '../../deposit/deposit
 import { fetchUserProfile } from '@dans-framework/user-auth';
 import { useAuth } from 'react-oidc-context';
 import moment from 'moment';
+import Alert from '@mui/material/Alert';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
   const dispatch = useAppDispatch();
@@ -42,6 +45,8 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
   const metadata = useAppSelector(getMetadata);
   const selectedFiles = useAppSelector(getFiles);
   const sessionId = useAppSelector(getSessionId);
+
+  const [fileWarning, setFileWarning] = useState<boolean>(false);
   
   // get form config
   const formConfig = useAppSelector(getData);
@@ -91,6 +96,18 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
   }));
 
   const handleButtonClick = (actionType: 'submit' | 'save') => {
+    // check to see if any files have been added.
+    // If not, and there is no warning yet, show a warning to confirm actual submission first
+    if (selectedFiles.length === 0 && !fileWarning && actionType === 'submit') {
+      setFileWarning(true);
+      // move to files tab
+      dispatch(setOpenTab(1));
+      // do not submit yet
+      return;
+    }
+
+    // Files are present or a warning has already been shown to the user
+    setFileWarning(false);
     const formattedMetadata = formatFormData(sessionId, metadata, selectedFiles);
     dispatch(setFormDisabled(true));
     dispatch(setMetadataSubmitStatus('submitting'));
@@ -144,101 +161,124 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
 
   return (
     <Stack direction="column" alignItems="flex-end">
-      <Stack direction="row" alignItems="center">
-        <Typography mr={2}>
-          { 
-            (!metadataSubmitStatus || (metadataSubmitStatus === 'saved' && !formDisabled)) ?
-            ( 
-              // metadata has not yet been submitted, so let's just indicate metadata completeness
-              metadataStatus === 'error' ?
-              t('metadataError') :
-              metadataStatus === 'warning' || selectedFiles.length === 0  ?
-              t('metadataWarning') :
-              t('metadataSuccess')
-            ) :
-            // submit process has started, let's check for responses
-            (metadataSubmitStatus === 'submitting' || fileStatus === 'submitting' || isLoadingFiles) ?
-            t('submitting') :
-            (metadataSubmitStatus === 'submitted' && (fileStatus === 'success' || selectedFiles.length === 0)) ?
-            t('submitSuccess') :
-            metadataSubmitStatus === 'error' ?
-            t('submitErrorMetadata') :
-            fileStatus === 'error' ?
-            t('submitErrorFiles') :
-            null
-          }
-        </Typography>
 
-        <Box sx={{ mr: 2, position: 'relative' }} display="flex" justifyContent="center" alignItems="center">
-          <Box display="flex" justifyContent="center" alignItems="center" sx={{
-            p: 1.2,
-            borderRadius: '50%',
-            backgroundColor: `${
-              metadataSubmitStatus === 'submitted' && (fileStatus === 'success' || selectedFiles.length === 0) ?
-              'success' :
-              metadataStatus === 'error' || fileStatus === 'error' || isErrorMeta ?
-              'error' :
-              metadataStatus === 'warning' || selectedFiles.length === 0 ?
-              'warning' :
-              'primary'
-            }.main`,
-            opacity: (metadataSubmitStatus === 'submitting' || fileStatus === 'submitting' || isLoadingFiles) ? 0.5 : 1,
-          }}>
-            {
-              (metadataSubmitStatus === 'submitted' || metadataSubmitStatus === 'saved') && (fileStatus === 'success' || selectedFiles.length === 0) ?
-              <CheckIcon sx={iconSx} /> :
-              (metadataStatus === 'error' || fileStatus === 'error' || isErrorMeta) && !(metadataSubmitStatus === 'submitting' || fileStatus === 'submitting' || isLoadingFiles) ?
-              <ErrorOutlineOutlinedIcon sx={iconSx} /> :
-              <SendIcon sx={iconSx} />
+      <AnimatePresence>
+        {
+          fileWarning &&
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+          >
+            <Alert 
+              severity="warning"
+              sx={{mb: 2}}
+            >
+              {t('fileWarning')}
+            </Alert>
+          </motion.div>
+        }
+      </AnimatePresence>
+
+      <Stack direction={{ xs: 'column', md: 'row' }} alignItems="flex-end">
+        <Stack direction="row" alignItems="center" mb={2}>
+          <Typography mr={2}>
+            { 
+              (!metadataSubmitStatus || (metadataSubmitStatus === 'saved' && !formDisabled)) ?
+              ( 
+                // metadata has not yet been submitted, so let's just indicate metadata completeness
+                metadataStatus === 'error' ?
+                t('metadataError') :
+                metadataStatus === 'warning' || selectedFiles.length === 0  ?
+                t('metadataWarning') :
+                t('metadataSuccess')
+              ) :
+              // submit process has started, let's check for responses
+              (metadataSubmitStatus === 'submitting' || fileStatus === 'submitting' || isLoadingFiles) ?
+              t('submitting') :
+              (metadataSubmitStatus === 'submitted' && (fileStatus === 'success' || selectedFiles.length === 0)) ?
+              t('submitSuccess') :
+              metadataSubmitStatus === 'error' ?
+              t('submitErrorMetadata') :
+              fileStatus === 'error' ?
+              t('submitErrorFiles') :
+              null
             }
+          </Typography>
+
+          <Box sx={{ mr: 2, position: 'relative' }} display="flex" justifyContent="center" alignItems="center">
+            <Box display="flex" justifyContent="center" alignItems="center" sx={{
+              p: 1.2,
+              borderRadius: '50%',
+              backgroundColor: `${
+                metadataSubmitStatus === 'submitted' && (fileStatus === 'success' || selectedFiles.length === 0) ?
+                'success' :
+                metadataStatus === 'error' || fileStatus === 'error' || isErrorMeta ?
+                'error' :
+                metadataStatus === 'warning' || selectedFiles.length === 0 ?
+                'warning' :
+                'primary'
+              }.main`,
+              opacity: (metadataSubmitStatus === 'submitting' || fileStatus === 'submitting' || isLoadingFiles) ? 0.5 : 1,
+            }}>
+              {
+                (metadataSubmitStatus === 'submitted' || metadataSubmitStatus === 'saved') && (fileStatus === 'success' || selectedFiles.length === 0) ?
+                <CheckIcon sx={iconSx} /> :
+                (metadataStatus === 'error' || fileStatus === 'error' || isErrorMeta) && !(metadataSubmitStatus === 'submitting' || fileStatus === 'submitting' || isLoadingFiles) ?
+                <ErrorOutlineOutlinedIcon sx={iconSx} /> :
+                <SendIcon sx={iconSx} />
+              }
+            </Box>
+            {(fileStatus === 'submitting' || isLoadingFiles) && (
+              <CircularProgress
+                size={54}
+                sx={{
+                  color: green[500],
+                  position: 'absolute',
+                  zIndex: 1,
+                }}
+                variant={totalFileProgress ? "determinate" : "indeterminate"}
+                value={totalFileProgress}
+              />
+            )}
           </Box>
-          {(fileStatus === 'submitting' || isLoadingFiles) && (
-            <CircularProgress
-              size={54}
-              sx={{
-                color: green[500],
-                position: 'absolute',
-                zIndex: 1,
-              }}
-              variant={totalFileProgress ? "determinate" : "indeterminate"}
-              value={totalFileProgress}
-            />
-          )}
-        </Box>
+        </Stack>
 
-        <Button
-          variant="contained"
-          disabled={formDisabled}
-          onClick={() => handleButtonClick('save')}
-          size="large"
-          sx={{mr: 1}}
-        >
-          {t('save')}
-        </Button>
-
-        {metadataSubmitStatus === 'submitted' && formDisabled && 
+        <Stack direction="row" alignItems="center" mb={2}>
           <Button
             variant="contained"
-            onClick={resetForm}
+            disabled={formDisabled}
+            onClick={() => handleButtonClick('save')}
             size="large"
-            sx={{mr:1}}
+            sx={{mr: 1}}
           >
-            {t('reset')}
-          </Button> 
-        }
+            {t('save')}
+          </Button>
 
-        <Button
-          variant="contained"
-          disabled={
-            !hasTargetCredentials ||
-            formDisabled || 
-            (metadataStatus === 'error' && !formConfig.skipValidation)
+          {metadataSubmitStatus === 'submitted' && formDisabled && 
+            <Button
+              variant="contained"
+              onClick={resetForm}
+              size="large"
+              sx={{mr:1}}
+            >
+              {t('reset')}
+            </Button> 
           }
-          onClick={() => handleButtonClick('submit')}
-          size="large"
-        >
-          {t('submit')}
-        </Button>
+
+          <Button
+            variant="contained"
+            disabled={
+              !hasTargetCredentials ||
+              formDisabled || 
+              (metadataStatus === 'error' && !formConfig.skipValidation)
+            }
+            onClick={() => handleButtonClick('submit')}
+            size="large"
+          >
+            {fileWarning ? t('submitAnyway') : t('submit')}
+          </Button>
+        </Stack>
       </Stack>
 
       { metadataSubmitStatus === 'saved' && !formDisabled && latestSave &&

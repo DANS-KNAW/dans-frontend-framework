@@ -16,8 +16,8 @@ const section: InitialSectionType = {
       name: 'title',
       required: true,
       description:  {
-        en: 'Title of the interview',
-        nl: 'Titel van het interview',
+        en: 'A descriptive title for the work, to be used in citations',
+        nl: 'Een beschrijvende titel voor deze data, wordt gebruikt in referenties.',
       },
     },
     {
@@ -28,8 +28,8 @@ const section: InitialSectionType = {
       },
       name: 'subtitle',
       description:  {
-        en: 'Optional subtitle for the interview',
-        nl: 'Optionele ondertitel bij het interview',
+        en: 'You can provide a subtitle if you wish',
+        nl: 'Je kunt een optionele ondertitel opgeven als je wilt',
       },
     },
     {

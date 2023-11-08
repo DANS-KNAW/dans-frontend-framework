@@ -32,8 +32,8 @@ const section: InitialSectionType = {
       name: 'audience',
       multiselect: true,
       description: {
-        en: 'Humanities; Arts and Culture; History of Arts and Architecture (for example)',
-        nl: 'Bijvoorbeeld geesteswetenschappen, kunst en cultuur, etc.',
+        en: 'Specifies which research disciplines which may be interested in this dataset. Examples may be Humanities; Arts and Culture; History of Arts and Architecture',
+        nl: 'Geeft aan welke onderzoeksdisciplines mogelijk geïnteresseerd zijn in deze dataset. Voorbeelden kunnen zijn: Geesteswetenschappen; Kunst en Cultuur; Geschiedenis van Kunst en Architectuur.',
       },
       options: 'narcis',
     },
@@ -71,8 +71,8 @@ const section: InitialSectionType = {
           },
           name: 'relation_item',     
           description: {
-            en: 'Title of an external item related to this dataset',
-            nl: 'Titel van een extern item gerelateerd aan deze dataset',
+            en: 'Other interviews, publications, projects, or initiatives can be linked here by providing a description, a URL, and selecting a relation type.',
+            nl: 'Andere interviews, publicaties, projecten of initiatieven kunnen hier worden gelinkt door een beschrijving, een URL en een relatietype te verstrekken.',
           },
         },
         {

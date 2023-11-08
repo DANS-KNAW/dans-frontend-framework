@@ -80,7 +80,9 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
   }, []);
 
   // check the user object if target credentials are filled in
-  const hasTargetCredentials = config.targetCredentials.filter(t => !auth.user?.profile[t.authKey] && t.authKey).length === 0;
+  const hasTargetCredentials = config.targetCredentials.filter(
+    t => !auth.user?.profile[t.authKey] && t.authKey
+  ).length === 0;
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
