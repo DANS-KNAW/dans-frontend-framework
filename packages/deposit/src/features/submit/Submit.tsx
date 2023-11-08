@@ -95,6 +95,10 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
     targetKeys: Object.assign({}, ...formConfig.targetCredentials.map( t => ({[t.authKey]: auth.user?.profile[t.authKey]}))),
   }));
 
+  useEffect(() => { 
+    selectedFiles.length > 0 && fileWarning && setFileWarning(false) 
+  }, [selectedFiles.length])
+
   const handleButtonClick = (actionType: 'submit' | 'save') => {
     // check to see if any files have been added.
     // If not, and there is no warning yet, show a warning to confirm actual submission first
