@@ -95,6 +95,7 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
     targetKeys: Object.assign({}, ...formConfig.targetCredentials.map( t => ({[t.authKey]: auth.user?.profile[t.authKey]}))),
   }));
 
+  // remove warning when files get added
   useEffect(() => { 
     selectedFiles.length > 0 && fileWarning && setFileWarning(false) 
   }, [selectedFiles.length])
