@@ -26,14 +26,18 @@ import { useFetchUserSubmissionsQuery } from './userApi';
 import { useAuth } from 'react-oidc-context';
 import type { SubmissionResponse, TargetOutput } from '../types';
 import CircularProgress from '@mui/material/CircularProgress';
+import PendingIcon from '@mui/icons-material/Pending';
+import ErrorIcon from '@mui/icons-material/Error';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import Tooltip from '@mui/material/Tooltip';
 
 export const UserSubmissions = ({depositSlug}: {depositSlug?: string;}) => {
   const { t } = useTranslation('user');
   const siteTitle = useSiteTitle();
   const auth = useAuth();
 
-  // todo: polling, update status
-  const { data, isLoading } = useFetchUserSubmissionsQuery(auth.user?.profile.sub);
+  // Fetch the users submitted/saved forms, every 10 sec, to update submission status
+  const { data, isLoading } = useFetchUserSubmissionsQuery(auth.user?.profile.sub, { pollingInterval: 10000 });
 
   console.log(data)
 
@@ -121,17 +125,30 @@ const SubmissionList = ({
         valueGetter: (params) => new Date(params.value),
         renderCell: (params) => moment(params.value).format('D-M-Y - HH:mm'),
       },
-      { 
+      ...type === 'published' ? [{ 
         field: 'status', 
         headerName: t('submissionStatus'),
         width: 250,
-        renderCell: (params) => params.value.map( (v: TargetOutput)  => 
-          <Stack direction="row">
-            <Typography variant="body2">{v['target-output']}:</Typography>
-            {v['ingest-status']}
+        renderCell: (params: any) => 
+          <Stack direction="column" pt={0.5} pb={0.5}>
+            {params.value.map( (v: TargetOutput, i: number)  => 
+              <Stack direction="row" alignItems="center" key={i} pt={0.1} pb={0.1}>
+                <Tooltip title={t(v['ingest-status'] ? v['ingest-status'] : 'pending')}>
+                  {
+                    v['ingest-status'] === 'processing' ?
+                    <CircularProgress size={16} /> :
+                    v['ingest-status'] === 'error' ?
+                    <ErrorIcon fontSize="small" color="error" /> :
+                    v['ingest-status'] === 'finish' ?
+                    <CheckCircleIcon fontSize="small" color="success" /> :
+                    <PendingIcon fontSize="small" color="neutral" />
+                  }
+                </Tooltip>
+                <Typography variant="body2" ml={1}>{v['target-repo-name']}</Typography>
+              </Stack>
+            )}
           </Stack>
-        )
-      },
+      }] : [],
     ], 
   [i18n.language]);
 
@@ -141,7 +158,7 @@ const SubmissionList = ({
     viewLink: '',
     created: d['created-date'],
     title: '',
-    status: d['targets'],
+    ...type === 'published' ? {status: d['targets']} : null,
   }));
 
   return (
@@ -171,6 +188,7 @@ const SubmissionList = ({
               },
             }}
             pageSizeOptions={[25, 50, 100]}
+            getRowHeight={() => type === 'published' ? 'auto' : 45}
             sx={{
               // disable cell outlines
               ".MuiDataGrid-columnHeader:focus-within, .MuiDataGrid-cell:focus-within": {
