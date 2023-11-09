@@ -1,8 +1,9 @@
-  import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate } from "react-router-dom";
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
+import Stack from '@mui/material/Stack';
 import { useTranslation } from 'react-i18next';
 import Link from '@mui/material/Link';
 import IconButton from '@mui/material/IconButton';
@@ -23,13 +24,15 @@ import moment from 'moment';
 import { useSiteTitle, setSiteTitle } from '@dans-framework/utils';
 import { useFetchUserSubmissionsQuery } from './userApi';
 import { useAuth } from 'react-oidc-context';
-import type { SubmissionResponse } from '../types';
+import type { SubmissionResponse, TargetOutput } from '../types';
 import CircularProgress from '@mui/material/CircularProgress';
 
 export const UserSubmissions = ({depositSlug}: {depositSlug?: string;}) => {
   const { t } = useTranslation('user');
   const siteTitle = useSiteTitle();
   const auth = useAuth();
+
+  // todo: polling, update status
   const { data, isLoading } = useFetchUserSubmissionsQuery(auth.user?.profile.sub);
 
   console.log(data)
@@ -119,14 +122,15 @@ const SubmissionList = ({
         renderCell: (params) => moment(params.value).format('D-M-Y - HH:mm'),
       },
       { 
-        field: 'target', 
-        headerName: t('submittedTo'),
-        width: 150,
-      },
-      { 
         field: 'status', 
         headerName: t('submissionStatus'),
         width: 250,
+        renderCell: (params) => params.value.map( (v: TargetOutput)  => 
+          <Stack direction="row">
+            <Typography variant="body2">{v['target-output']}:</Typography>
+            {v['ingest-status']}
+          </Stack>
+        )
       },
     ], 
   [i18n.language]);
@@ -134,11 +138,10 @@ const SubmissionList = ({
   const rows = data && data.map( d => ({
     // Todo: API needs work and standardisation, also see types.
     id: d['metadata-id'],
-    viewLink: d['target-url'],
+    viewLink: '',
     created: d['created-date'],
-    title: d.title,
-    target: d['target-repo-name'],
-    status: '',
+    title: '',
+    status: d['targets'],
   }));
 
   return (
