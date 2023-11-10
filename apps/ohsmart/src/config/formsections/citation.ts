@@ -49,26 +49,6 @@ const section: InitialSectionType = {
     {
       type: 'autocomplete',
       label: {
-        en: 'Subject',
-        nl: 'Onderwerp',
-      },
-      name: 'subject',
-      required: true,
-      multiselect: true,
-      description: {
-        en: 'Broad data station end use community or domain',
-        nl: '',
-      },
-      options: 'narcis',
-      value: [{
-        label: 'Humanities',
-        value: 'https://www.narcis.nl/classification/D30000',
-        id: 'D30000',
-      }],
-    },
-    {
-      type: 'autocomplete',
-      label: {
         en: 'Publisher',
         nl: 'Uitgever',
       },

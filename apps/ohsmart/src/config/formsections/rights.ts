@@ -33,7 +33,7 @@ const section: InitialSectionType = {
       required: true,
       description: {
         en: 'One of a number of specific licences',
-        nl: 'Eén of meerdere specifieke licenties',
+        nl: 'Eén van de volgende specifieke licenties',
       },
       options: [
         {
