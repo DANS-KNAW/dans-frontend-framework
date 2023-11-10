@@ -129,8 +129,11 @@ export const submitApi = createApi({
 
         console.log(metadataResult)
 
-        if (metadataResult.error)
+        if (metadataResult.error) {
+          // enable form again if there's an error, so user can try and resubmit
+          store.dispatch(setFormDisabled(false));
           return { error: metadataResult.error as FetchBaseQueryError }
+        }
 
         return { data: metadataResult }
       },
