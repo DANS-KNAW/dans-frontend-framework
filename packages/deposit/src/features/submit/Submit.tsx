@@ -100,6 +100,7 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
     selectedFiles.length > 0 && fileWarning && setFileWarning(false) 
   }, [selectedFiles.length])
 
+  // submit the data
   const handleButtonClick = (actionType: 'submit' | 'save') => {
     // check to see if any files have been added.
     // If not, and there is no warning yet, show a warning to confirm actual submission first
@@ -143,6 +144,7 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
     )
   };
 
+  // clear all data and create a new form
   const resetForm = () => {
     // reset RTK mutations
     resetSubmittedFiles();
