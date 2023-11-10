@@ -19,14 +19,19 @@ export interface Target {
 
 export type ReleaseVersion = 'DRAFT' | 'PUBLISH';
 
+type IngestStatus = 'processing' | 'finish' | 'error';
+
+export interface TargetOutput { 
+  'ingest-status': IngestStatus;
+  'target-output': string;
+  'target-repo-name': string;
+  'target-url': string;
+}
+
 export interface SubmissionResponse {
   'created-date': string;
   'metadata-id': string;
-  'target-repo-name': string;
-  'target-url': string;
-  // For now, can be anything, depends on target. API is todo.
-  'target-output': any;
-  title?: string;
+  'targets': TargetOutput[];
   'release-version': ReleaseVersion;
 }
 

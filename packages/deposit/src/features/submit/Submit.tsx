@@ -165,7 +165,7 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
   }
 
   return (
-    <Stack direction="column" alignItems="flex-end">
+    <Stack direction="column" alignItems="flex-end" sx={{overflow: 'hidden'}}>
 
       <AnimatePresence>
         {

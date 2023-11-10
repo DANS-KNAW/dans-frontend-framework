@@ -18,7 +18,7 @@
 	"userSubmissionsDrafts": "Saved forms",
 	"userSubmissionsCompleted": "Submitted forms",
 	"userSubmissionsDraftsDescription": "Continue filling in your previously saved data deposit forms",
-	"userSubmissionsCompletedDescription": "View your submitted data deposits",
+	"userSubmissionsCompletedDescription": "View your submitted data deposits and their progress",
 	"editSubmission": "Edit this submission",
 	"errorSubmission": "Something went wrong processing this submission",
 	"viewSubmission": "View this submission",
@@ -30,5 +30,9 @@
 	"title": "Title",
 	"createdOn": "Created on",
 	"submittedTo": "Submitted to",
-	"submissionStatus": "Status"
+	"submissionStatus": "Status",
+	"processing": "Processing your submission",
+	"error": "Error with your submission",
+	"finish": "Succesfully submitted",
+	"pending": "Waiting in the processing queue"
 }

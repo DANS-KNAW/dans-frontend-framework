@@ -66,12 +66,7 @@ export const userSubmissionsApi = createApi({
         });
       },
       transformResponse: (response: SubmissionResponse[]) => {
-        // temporary response modifier until API is fixed
-        const responseWithTitle = response.map( r => ({
-          ...r, 
-          title: r['target-output']?.title, 
-        }));
-        return responseWithTitle
+        return response
       },
     })
   }),
