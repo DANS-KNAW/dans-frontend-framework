@@ -1,4 +1,4 @@
-import logo from '../images/logo.png';
+import logo from '../images/logo-black.png';
 import type { Page } from '@dans-framework/pages';
 
 const page: Page = {
