@@ -1,4 +1,4 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import { userApi, userSubmissionsApi } from '../user/userApi';
 import { errorLogger } from '@dans-framework/utils';
 
@@ -13,15 +13,6 @@ export const store = configureStore({
     .concat(userSubmissionsApi.middleware)
     .concat(errorLogger)
 });
-
-export type AppDispatch = typeof store.dispatch;
-export type RootState = ReturnType<typeof store.getState>;
-export type AppThunk<ReturnType = void> = ThunkAction<
-  ReturnType,
-  RootState,
-  unknown,
-  Action<string>
->;
 
 export const initUserProfile = ({provider, id}: {provider: string, id: string}) => 
   store.dispatch(userApi.endpoints.fetchUserProfile.initiate({provider: provider, id: id}));
