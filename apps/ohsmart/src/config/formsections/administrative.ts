@@ -26,14 +26,13 @@ const section: InitialSectionType = {
       type: 'date',
       format: 'DD-MM-YYYY',
       label:  {
-        en: 'Date available',
-        nl: 'Datum beschikbaarheid',
+        en: 'Embargo date',
+        nl: 'Datum embargo',
       },
       name: 'date_available',
-      required: true,
       description:  {
-        en: 'In case of an embargo, else publication date',
-        nl: 'In het geval van een embargo, anders publicatiedatum',
+        en: 'In case of an embargo, you should provide a future date for this field.',
+        nl: 'In het geval van een embargo kun je hier een toekomstige datum invullen.',
       },
     },
     {

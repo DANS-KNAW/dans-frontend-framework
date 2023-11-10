@@ -16,8 +16,8 @@ const section: InitialSectionType = {
       name: 'title',
       required: true,
       description:  {
-        en: 'Title of the interview',
-        nl: 'Titel van het interview',
+        en: 'A descriptive title for the work, to be used in citations',
+        nl: 'Een beschrijvende titel voor deze data, wordt gebruikt in referenties.',
       },
     },
     {
@@ -28,8 +28,8 @@ const section: InitialSectionType = {
       },
       name: 'subtitle',
       description:  {
-        en: 'Optional subtitle for the interview',
-        nl: 'Optionele ondertitel bij het interview',
+        en: 'You can provide a subtitle if you wish',
+        nl: 'Je kunt een optionele ondertitel opgeven als je wilt',
       },
     },
     {
@@ -45,26 +45,6 @@ const section: InitialSectionType = {
         en: 'Some context on the interview. What is the role and relevance of the interviewee in the project? What led to the interview being conducted? Summary of what was discussed in the interview, with time breakdown, and describe important events in the interview. Improves discoverability and reusability of the interview data. Briefly describe the setting and atmosphere of the interview to indicate what does not emerge when only the text is read.',
         nl: 'Wat context bij het interview. Wat is de rol en relevantie van de geinterviewde bij dit project? Waarom is dit interview afgenomen? Samenvatting van wat er besproken is in het interview, met een tijdindicatie. Beschrijf belangrijke gebeurtenissen in hter interview. Verbetert zichtbaarheid en herbruikbaarheid van de data. Beschrijf kort de setting en sfeer van het interview om meer dan alleen de tekst die gelezen wordt duidelijk te maken.'
       },
-    },
-    {
-      type: 'autocomplete',
-      label: {
-        en: 'Subject',
-        nl: 'Onderwerp',
-      },
-      name: 'subject',
-      required: true,
-      multiselect: true,
-      description: {
-        en: 'Broad data station end use community or domain',
-        nl: '',
-      },
-      options: 'narcis',
-      value: [{
-        label: 'Humanities',
-        value: 'https://www.narcis.nl/classification/D30000',
-        id: 'D30000',
-      }],
     },
     {
       type: 'autocomplete',

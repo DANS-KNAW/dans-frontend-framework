@@ -91,10 +91,11 @@ export interface RepeatTextFieldType extends Omit<BasisFieldType, 'value' | 'val
   touched?: never;
 }
 
-export interface RadioFieldType extends Omit<BasisFieldType, 'validation' | 'valid'> {
+export interface RadioFieldType extends Omit<BasisFieldType, 'validation' | 'valid' | 'label'> {
   type: 'radio';
   layout?: 'row'; // if specified, radiobuttons will appear inline
   options: OptionsType[];
+  label?: LanguageStrings;
   valid?: never;
   validation?: never;
   multiApiValue?: never;
@@ -102,10 +103,11 @@ export interface RadioFieldType extends Omit<BasisFieldType, 'validation' | 'val
   format?: never;
 }
 
-export interface CheckFieldType extends Omit<BasisFieldType, 'value' | 'validation' | 'valid'> {
+export interface CheckFieldType extends Omit<BasisFieldType, 'value' | 'validation' | 'valid' | 'label'> {
   type: 'check';
   value?: string[];
   options: OptionsType[];
+  label?: LanguageStrings;
   validation?: never;
   valid?: never;
   multiApiValue?: never;

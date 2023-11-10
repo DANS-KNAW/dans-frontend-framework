@@ -17,8 +17,8 @@ const section: InitialSectionType = {
       name: 'rightsholder',
       required: true,
       description: {
-        en: 'Name of the organisation or individual(s) owning the work',
-        nl: 'Naam van de organisatie of personen die eigenaar zijn van het werk',
+        en: 'State the organisation or individual that is holder of the intellectual property rights. For datasets, these rights are usually vested in the organisation thet employs the data creator(s). Note that the depositor (account used to deposit the data and metadata will be contacted for access requests, and must have the consent of the rights holder to publish the data.',
+        nl: 'Vermeld de organisatie of individu die de intellectuele eigendomsrechten bezit. Voor datasets liggen deze rechten meestal bij de organisatie die de maker(s) van de data in dienst heeft. Let op: de deposant (het account dat wordt gebruikt om de data en metadata te deponeren) wordt gecontacteerd voor toegangsverzoeken en moet de toestemming van de rechthebbende hebben om de data te publiceren.',
       },
       multiApiValue: 'orcid',
       options: ['ror', 'orcid'],
@@ -33,7 +33,7 @@ const section: InitialSectionType = {
       required: true,
       description: {
         en: 'One of a number of specific licences',
-        nl: 'Eén of meerdere specifieke licenties',
+        nl: 'Eén van de volgende specifieke licenties',
       },
       options: [
         {
