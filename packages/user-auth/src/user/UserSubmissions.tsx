@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -26,20 +26,39 @@ import { useFetchUserSubmissionsQuery } from './userApi';
 import { useAuth } from 'react-oidc-context';
 import type { SubmissionResponse, TargetOutput } from '../types';
 import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgress from '@mui/material/LinearProgress';
 import PendingIcon from '@mui/icons-material/Pending';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Tooltip from '@mui/material/Tooltip';
 
 export const UserSubmissions = ({depositSlug}: {depositSlug?: string;}) => {
+  const [ skip, setSkip ] = useState<boolean>(false);
   const { t } = useTranslation('user');
   const siteTitle = useSiteTitle();
   const auth = useAuth();
 
   // Fetch the users submitted/saved forms, every 10 sec, to update submission status
-  const { data, isLoading } = useFetchUserSubmissionsQuery(auth.user?.profile.sub, { pollingInterval: 10000 });
+  const { data, isLoading } = useFetchUserSubmissionsQuery(auth.user?.profile.sub, {
+    pollingInterval: 10000,
+    skip: skip,
+  });
+
+  // are there any targets that have been submitted not complete yet?
+  const allTargetsComplete = data && data.filter( 
+    d => d['release-version'] === 'PUBLISH' 
+  ).every(
+    d => d.targets.every( 
+      t => t['ingest-status'] === 'finish' || t['ingest-status'] === 'error'
+    )
+  );
 
   console.log(data)
+
+  // if all targets are complete, skip further fetching
+  useEffect( () => {
+    allTargetsComplete && setSkip(true);
+  }, [allTargetsComplete]);
 
   useEffect( () => { 
     setSiteTitle(siteTitle, t('userSubmissions'));
@@ -56,14 +75,12 @@ export const UserSubmissions = ({depositSlug}: {depositSlug?: string;}) => {
             isLoading={isLoading} 
             header={t('userSubmissionsDrafts')}
             depositSlug={depositSlug}
-            description={t('userSubmissionsDraftsDescription')}
           />
           <SubmissionList 
             data={data?.filter( d => d['release-version'] === 'PUBLISH' ) || []} 
             type="published"
             isLoading={isLoading} 
             header={t('userSubmissionsCompleted')}
-            description={t('userSubmissionsCompletedDescription')}
           />
         </Grid>
       </Grid>
@@ -76,14 +93,12 @@ const SubmissionList = ({
   isLoading, 
   header, 
   type,
-  description,
   depositSlug = 'deposit'
 }: { 
   data: SubmissionResponse[];
   isLoading: boolean; 
   header: string;
   type: 'draft' | 'published';
-  description: string;
   depositSlug?: string;
 }) => {
   const { t, i18n } = useTranslation('user');
@@ -92,17 +107,12 @@ const SubmissionList = ({
   // useMemo to make sure columns don't change
   const columns = useMemo<GridColDef[]>(
     () => [
-      { 
+      ...type === 'draft' ?
+      [{ 
         field: 'viewLink', 
         headerName: '', 
-        width: 100,
-        getActions: (params) => [
-          type === 'published' ?
-          <GridActionsCellItem
-            icon={<VisibilityIcon />}
-            label={t('viewItem')}
-            onClick={() => window.open(params.row.viewLink, '_blank')}
-          /> :
+        width: 30,
+        getActions: (params: any) => [
           <GridActionsCellItem
             icon={<EditIcon />}
             label={t('editItem')}
@@ -110,7 +120,7 @@ const SubmissionList = ({
           />
         ],
         type: 'actions',
-      },
+      }] : [],
       { 
         field: 'title', 
         headerName: t('title'), 
@@ -155,7 +165,7 @@ const SubmissionList = ({
   const rows = data && data.map( d => ({
     // Todo: API needs work and standardisation, also see types.
     id: d['metadata-id'],
-    viewLink: '',
+    // viewLink: '',
     created: d['created-date'],
     title: '',
     ...type === 'published' ? {status: d['targets']} : null,
@@ -166,38 +176,34 @@ const SubmissionList = ({
       <Typography sx={{ mt: 4, mb: 1 }} variant="h5">
         {header}
       </Typography>
-      <Typography variant="body2" sx={{ mb: 2 }}>
-        {description}
-      </Typography>
-      {
-        isLoading ?
-        <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
-          <CircularProgress /> 
-        </Box> :
-        rows.length === 0 ?
-        <Typography>{t('noData')}</Typography> :
-        <Paper>
-          <DataGrid
-            slots={{ columnMenu: CustomColumnMenu }}
-            rows={rows}
-            columns={columns}
-            disableRowSelectionOnClick
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 25 },
-              },
-            }}
-            pageSizeOptions={[25, 50, 100]}
-            getRowHeight={() => type === 'published' ? 'auto' : 45}
-            sx={{
-              // disable cell outlines
-              ".MuiDataGrid-columnHeader:focus-within, .MuiDataGrid-cell:focus-within": {
-                 outline: "none !important",
-              },
-           }}
-          />
-        </Paper>
-      }
+
+      <Paper sx={{height: data.length === 0 ? 160 : 'auto', width: '100%'}}>
+        <DataGrid
+          loading={isLoading}
+          slots={{ 
+            columnMenu: CustomColumnMenu,
+            loadingOverlay: LinearProgress,
+            noRowsOverlay: () => <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}>{t('noRows')}</Box>
+          }}
+          rows={rows}
+          columns={columns}
+          disableRowSelectionOnClick
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 25 },
+            },
+          }}
+          pageSizeOptions={[25, 50, 100]}
+          getRowHeight={() => type === 'published' ? 'auto' : 45}
+          sx={{
+            // disable cell outlines
+            ".MuiDataGrid-columnHeader:focus-within, .MuiDataGrid-cell:focus-within": {
+               outline: "none !important",
+            },
+         }}
+        />
+      </Paper>
+
     </>
   )
 }

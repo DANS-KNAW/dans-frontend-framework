@@ -81,6 +81,7 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
   }] = useSubmitDataMutation();
   const [submitFiles, { 
     isLoading: isLoadingFiles, 
+    isSuccess: isSuccessFiles, 
     reset: resetSubmittedFiles, 
   }] = useSubmitFilesMutation();
 
@@ -138,13 +139,20 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
               headerData: headerData,
               actionType: actionType,
             });
-          })
+          });
         }
       })
     )
   };
 
-  // clear all data and create a new form
+  // clear all data and create a new form on successful submit
+  // todo fix this!
+  useEffect(() => {
+    if (isSuccessMeta && ((selectedFiles.length > 0 && isSuccessFiles) || selectedFiles.length === 0)) {
+      resetForm();
+    }
+  }, [isSuccessFiles, isSuccessMeta, selectedFiles]);
+
   const resetForm = () => {
     // reset RTK mutations
     resetSubmittedFiles();
@@ -261,17 +269,6 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
           >
             {t('save')}
           </Button>
-
-          {metadataSubmitStatus === 'submitted' && formDisabled && 
-            <Button
-              variant="contained"
-              onClick={resetForm}
-              size="large"
-              sx={{mr:1}}
-            >
-              {t('reset')}
-            </Button> 
-          }
 
           <Button
             variant="contained"

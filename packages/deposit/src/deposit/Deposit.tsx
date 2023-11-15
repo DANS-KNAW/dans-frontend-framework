@@ -27,7 +27,7 @@ import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Link from '@mui/material/Link';
 import { Link as RouterLink } from 'react-router-dom';
-import { setData } from './depositSlice';
+import { setData, setFormDisabled } from './depositSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { useSiteTitle, setSiteTitle, lookupLanguageString } from '@dans-framework/utils';
@@ -48,6 +48,9 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
   // Can load a saved form based on metadata id, passed along from e.g. UserSubmissions
   const savedFormId = searchParams.get('id');
   const { data: savedFormData, isLoading, isUninitialized, isSuccess } = useFetchSavedMetadataQuery(savedFormId, {skip: !savedFormId});
+
+  // TODO: need to reenable form if previous id was submitted without files and a new one loads here
+  
 
   // set page title
   useEffect( () => { 
