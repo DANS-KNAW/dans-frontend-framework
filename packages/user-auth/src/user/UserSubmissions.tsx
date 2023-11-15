@@ -40,7 +40,7 @@ export const UserSubmissions = ({depositSlug}: {depositSlug?: string;}) => {
 
   // Fetch the users submitted/saved forms, every 10 sec, to update submission status
   const { data, isLoading } = useFetchUserSubmissionsQuery(auth.user?.profile.sub, {
-    pollingInterval: 10000,
+    pollingInterval: 1000,
     skip: skip,
   });
 
@@ -48,9 +48,8 @@ export const UserSubmissions = ({depositSlug}: {depositSlug?: string;}) => {
   const allTargetsComplete = data && data.filter( 
     d => d['release-version'] === 'PUBLISH' 
   ).every(
-    d => d.targets.every( 
-      t => t['ingest-status'] === 'finish' || t['ingest-status'] === 'error'
-    )
+    // if all are finished, or one has an error, stop checking
+    d => (d.targets.every(t => t['ingest-status'] === 'finish') || d.targets.some(t => t['ingest-status'] === 'error'))
   );
 
   console.log(data)
@@ -129,7 +128,7 @@ const SubmissionList = ({
       },
       { 
         field: 'created', 
-        headerName: t('createdOn'), 
+        headerName: type === 'draft' ? t('createdOn') : t('submittedOn'), 
         width: 200,
         type: 'dateTime',
         valueGetter: (params) => new Date(params.value),
@@ -143,7 +142,7 @@ const SubmissionList = ({
           <Stack direction="column" pt={0.5} pb={0.5}>
             {params.value.map( (v: TargetOutput, i: number)  => 
               <Stack direction="row" alignItems="center" key={i} pt={0.1} pb={0.1}>
-                <Tooltip title={t(v['ingest-status'] ? v['ingest-status'] : 'pending')}>
+                <Tooltip title={t(v['ingest-status'] ? v['ingest-status'] : 'pending')} placement="left">
                   {
                     v['ingest-status'] === 'processing' ?
                     <CircularProgress size={16} /> :

@@ -28,10 +28,12 @@
 	"noRows": "No data found",
 	"title": "Title",
 	"createdOn": "Created on",
+	"submittedOn": "Submitted on",
 	"submittedTo": "Submitted to",
 	"submissionStatus": "Status",
 	"processing": "Processing your submission",
 	"error": "Error with your submission",
 	"finish": "Succesfully submitted",
-	"pending": "Waiting in the processing queue"
+	"initial": "Preparing submission",
+	"pending": "Not yet started"
 }

@@ -28,10 +28,12 @@
 	"noRows": "Geen data gevonden",
 	"title": "Titel",
 	"createdOn": "Aangemaakt op",
+	"submittedOn": "Gesubmit op",
 	"submittedTo": "Gesubmit naar",
 	"submissionStatus": "Status",
 	"processing": "Bezig met verwerken",
 	"error": "Fout bij het verwerken van je data",
 	"finish": "Succesvol gesubmit",
-	"pending": "In de wachtrij"
+	"initial": "Aan het voorbereiden",
+	"pending": "Nog niet gestart"
 }

@@ -35,6 +35,7 @@ import { useAuth } from 'react-oidc-context';
 import moment from 'moment';
 import Alert from '@mui/material/Alert';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 
 const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
   const dispatch = useAppDispatch();
@@ -45,6 +46,7 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
   const metadata = useAppSelector(getMetadata);
   const selectedFiles = useAppSelector(getFiles);
   const sessionId = useAppSelector(getSessionId);
+  const [ searchParams, setSearchParams ] = useSearchParams();
 
   const [fileWarning, setFileWarning] = useState<boolean>(false);
   
@@ -94,6 +96,7 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
     targetCredentials: formConfig.targetCredentials,
     target: formConfig.target,
     targetKeys: Object.assign({}, ...formConfig.targetCredentials.map( t => ({[t.authKey]: auth.user?.profile[t.authKey]}))),
+    title: eval(`metadata${formConfig.formTitle}`)?.value, // eval...should not pose a risk, as we define the formConfig in the code
   }));
 
   // remove warning when files get added
@@ -145,15 +148,12 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
     )
   };
 
-  // clear all data and create a new form on successful submit
-  // todo fix this!
-  useEffect(() => {
-    if (isSuccessMeta && ((selectedFiles.length > 0 && isSuccessFiles) || selectedFiles.length === 0)) {
-      resetForm();
-    }
-  }, [isSuccessFiles, isSuccessMeta, selectedFiles]);
-
   const resetForm = () => {
+    // clear searchParams/form id
+    if (searchParams.has('id')) {
+      searchParams.delete('id');
+      setSearchParams(searchParams);
+    }
     // reset RTK mutations
     resetSubmittedFiles();
     resetMeta();
@@ -269,6 +269,17 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
           >
             {t('save')}
           </Button>
+
+          {metadataSubmitStatus === 'submitted' && formDisabled && 
+            <Button
+              variant="contained"
+              onClick={resetForm}
+              size="large"
+              sx={{mr:1}}
+            >
+              {t('reset')}
+            </Button> 
+          }
 
           <Button
             variant="contained"

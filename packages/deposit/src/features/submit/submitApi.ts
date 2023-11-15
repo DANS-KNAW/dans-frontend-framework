@@ -100,7 +100,8 @@ const formatHeaderData = (headerData: HeaderData) => ({
       'username': t.auth,
       'password': headerData.targetKeys[t.authKey],
     },
-  })))
+  }))),
+  'title': headerData.title,
 }) as SubmitHeaders;
 
 export const submitApi = createApi({
