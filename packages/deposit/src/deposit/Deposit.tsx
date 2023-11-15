@@ -57,15 +57,16 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
   // Initialize form on initial render when there's no sessionId yet or when form gets reset
   // Or initialize saved data (overwrites the previously set sessionId)
   useEffect(() => {
-    if (!sessionId || (sessionId && savedFormData?.id && sessionId !== savedFormData.id)) {
+    if (!sessionId || (sessionId && savedFormData?.id && sessionId !== savedFormData.id && savedFormId)) {
       // we need to reset the form status first, in case data had been previously entered
+      console.log('init')
       dispatch(resetMetadataSubmitStatus());
       dispatch(resetFilesSubmitStatus());
       dispatch(resetFiles());
       // enable the form
       dispatch(setFormDisabled(false));
       // then we load new/empty data
-      dispatch(initForm(savedFormData || config.form));
+      dispatch(initForm((savedFormId && savedFormData?.id) ? savedFormData : config.form));
       // and load the files if there are any
       savedFormData && savedFormData['file-metadata'] && dispatch(addFiles(savedFormData['file-metadata']));
     }

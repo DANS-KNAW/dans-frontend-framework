@@ -40,7 +40,7 @@ export const UserSubmissions = ({depositSlug}: {depositSlug?: string;}) => {
 
   // Fetch the users submitted/saved forms, every 10 sec, to update submission status
   const { data, isLoading } = useFetchUserSubmissionsQuery(auth.user?.profile.sub, {
-    pollingInterval: 1000,
+    pollingInterval: 10000,
     skip: skip,
   });
 
