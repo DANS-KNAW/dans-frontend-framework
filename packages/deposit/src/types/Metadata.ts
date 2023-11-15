@@ -43,4 +43,5 @@ export interface FormConfig {
   geonamesApiKey?: string;
   gsheetsApiKey?: string;
   formDisabled?: boolean;
+  formTitle?: any;
 }

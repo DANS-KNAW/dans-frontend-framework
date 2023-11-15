@@ -19,7 +19,7 @@ export interface Target {
 
 export type ReleaseVersion = 'DRAFT' | 'PUBLISH';
 
-type IngestStatus = 'processing' | 'finish' | 'error';
+type IngestStatus = 'initial' | 'processing' | 'finish' | 'error' | 'rejected' | 'failed';
 
 export interface TargetOutput { 
   'ingest-status': IngestStatus;

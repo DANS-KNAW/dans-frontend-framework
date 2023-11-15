@@ -35,6 +35,7 @@ import { useAuth } from 'react-oidc-context';
 import moment from 'moment';
 import Alert from '@mui/material/Alert';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 
 const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
   const dispatch = useAppDispatch();
@@ -45,6 +46,7 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
   const metadata = useAppSelector(getMetadata);
   const selectedFiles = useAppSelector(getFiles);
   const sessionId = useAppSelector(getSessionId);
+  const [ searchParams, setSearchParams ] = useSearchParams();
 
   const [fileWarning, setFileWarning] = useState<boolean>(false);
   
@@ -81,6 +83,7 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
   }] = useSubmitDataMutation();
   const [submitFiles, { 
     isLoading: isLoadingFiles, 
+    isSuccess: isSuccessFiles, 
     reset: resetSubmittedFiles, 
   }] = useSubmitFilesMutation();
 
@@ -93,6 +96,7 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
     targetCredentials: formConfig.targetCredentials,
     target: formConfig.target,
     targetKeys: Object.assign({}, ...formConfig.targetCredentials.map( t => ({[t.authKey]: auth.user?.profile[t.authKey]}))),
+    title: eval(`metadata${formConfig.formTitle}`)?.value, // eval...should not pose a risk, as we define the formConfig in the code
   }));
 
   // remove warning when files get added
@@ -138,14 +142,18 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
               headerData: headerData,
               actionType: actionType,
             });
-          })
+          });
         }
       })
     )
   };
 
-  // clear all data and create a new form
   const resetForm = () => {
+    // clear searchParams/form id
+    if (searchParams.has('id')) {
+      searchParams.delete('id');
+      setSearchParams(searchParams);
+    }
     // reset RTK mutations
     resetSubmittedFiles();
     resetMeta();

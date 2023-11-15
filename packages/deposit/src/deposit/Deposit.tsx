@@ -27,7 +27,7 @@ import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Link from '@mui/material/Link';
 import { Link as RouterLink } from 'react-router-dom';
-import { setData } from './depositSlice';
+import { setData, setFormDisabled } from './depositSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { useSiteTitle, setSiteTitle, lookupLanguageString } from '@dans-framework/utils';
@@ -47,7 +47,7 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
 
   // Can load a saved form based on metadata id, passed along from e.g. UserSubmissions
   const savedFormId = searchParams.get('id');
-  const { data: savedFormData, isLoading, isUninitialized, isSuccess } = useFetchSavedMetadataQuery(savedFormId, {skip: !savedFormId});
+  const { data: savedFormData, isLoading, isUninitialized, isSuccess } = useFetchSavedMetadataQuery(savedFormId, {skip: !savedFormId});  
 
   // set page title
   useEffect( () => { 
@@ -62,12 +62,14 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
       dispatch(resetMetadataSubmitStatus());
       dispatch(resetFilesSubmitStatus());
       dispatch(resetFiles());
+      // enable the form
+      dispatch(setFormDisabled(false));
       // then we load new/empty data
       dispatch(initForm(savedFormData || config.form));
       // and load the files if there are any
       savedFormData && savedFormData['file-metadata'] && dispatch(addFiles(savedFormData['file-metadata']));
     }
-  }, [dispatch, sessionId, config.form, savedFormData, isSuccess]);
+  }, [dispatch, sessionId, config.form, savedFormData, savedFormId, isSuccess]);
 
   // Set init form props in redux, all props without the form metadata config itself
   useEffect(() => {
