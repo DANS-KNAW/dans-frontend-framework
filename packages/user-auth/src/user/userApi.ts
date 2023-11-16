@@ -17,11 +17,11 @@ export const userApi = createApi({
   endpoints: (build) => ({
     fetchUserProfile: build.query({
       // Note: may not be needed, could possibly user auth.user, would be great. TODO!
-      query: ({provider, id}) => {
-        const user = getUser(provider, id);
+      query: (id) => {
+        const user = getUser(import.meta.env.VITE_OIDC_AUTHORITY, id);
         const token = user?.access_token;
         return ({
-          url: `${provider}/account`,
+          url: `${import.meta.env.VITE_OIDC_AUTHORITY}/account`,
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${token}`,
@@ -31,11 +31,11 @@ export const userApi = createApi({
       providesTags: ['User'],
     }),
     saveUserData: build.mutation({
-      query: ({provider, id, content}) => {
-        const user = getUser(provider, id);
+      query: ({id, content}) => {
+        const user = getUser(import.meta.env.VITE_OIDC_AUTHORITY, id);
         const token = user?.access_token;
         return ({
-          url: `${provider}/account`,
+          url: `${import.meta.env.VITE_OIDC_AUTHORITY}/account`,
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -51,10 +51,7 @@ export const userApi = createApi({
 
 export const userSubmissionsApi = createApi({
   reducerPath: 'submissions',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://packaging.labs.dans.knaw.nl/' }),
-  // Since we can't control cache based on a submit action, as that lives in another store,
-  // We make sure data isn't stale and contains freshly submitted forms: refetch after 5s.
-  refetchOnMountOrArgChange: 5,
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_PACKAGING_TARGET }),
   endpoints: (build) => ({
     fetchUserSubmissions: build.query({
       query: (userId) => {

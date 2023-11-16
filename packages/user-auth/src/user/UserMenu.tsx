@@ -38,7 +38,7 @@ const SettingsMenu = ({userSettings, userSubmissions}: {userSettings: boolean, u
   };
 
   // Fetch users profile
-  const { data } = useFetchUserProfileQuery({provider: auth.settings.authority, id: auth.settings.client_id});
+  const { data } = useFetchUserProfileQuery(auth.settings.client_id);
 
   return (
     <Box sx={{ flexGrow: 0 }}>
