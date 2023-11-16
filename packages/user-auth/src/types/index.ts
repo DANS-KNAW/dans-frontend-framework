@@ -33,6 +33,8 @@ export interface SubmissionResponse {
   'metadata-id': string;
   'targets': TargetOutput[];
   'release-version': ReleaseVersion;
+  'title': string;
+  'submitted-date': string | null;
 }
 
 // Some values that the system can pull and fill in from the User Auth object

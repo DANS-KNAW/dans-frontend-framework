@@ -137,7 +137,7 @@ export const submitApi = createApi({
         }
 
         return { data: metadataResult }
-      },
+      }
     }),
     submitFiles: build.mutation({
       async queryFn({data, headerData, actionType}, queryApi, extraOptions, fetchWithBQ) {

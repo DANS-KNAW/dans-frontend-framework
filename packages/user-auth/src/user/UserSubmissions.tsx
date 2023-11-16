@@ -165,8 +165,8 @@ const SubmissionList = ({
     // Todo: API needs work and standardisation, also see types.
     id: d['metadata-id'],
     // viewLink: '',
-    created: d['created-date'],
-    title: '',
+    created: type === 'draft' ? d['created-date'] : d['submitted-date'],
+    title: d['title'],
     ...type === 'published' ? {status: d['targets']} : null,
   }));
 

@@ -19,7 +19,7 @@ export const userApi = createApi({
       // Note: may not be needed, could possibly user auth.user, would be great. TODO!
       query: (id) => {
         const user = getUser(import.meta.env.VITE_OIDC_AUTHORITY, id);
-        const token = user?.access_token;
+        const token = user?.access_token; 
         return ({
           url: `${import.meta.env.VITE_OIDC_AUTHORITY}/account`,
           headers: {
@@ -52,6 +52,9 @@ export const userApi = createApi({
 export const userSubmissionsApi = createApi({
   reducerPath: 'submissions',
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_PACKAGING_TARGET }),
+  // Since we can't control cache based on a submit action, as that lives in another store,
+  // We make sure data isn't stale and contains freshly submitted forms
+  refetchOnMountOrArgChange: true,
   endpoints: (build) => ({
     fetchUserSubmissions: build.query({
       query: (userId) => {
