@@ -100,7 +100,8 @@ const formatHeaderData = (headerData: HeaderData) => ({
       'username': t.auth,
       'password': headerData.targetKeys[t.authKey],
     },
-  })))
+  }))),
+  'title': headerData.title,
 }) as SubmitHeaders;
 
 export const submitApi = createApi({
@@ -136,7 +137,7 @@ export const submitApi = createApi({
         }
 
         return { data: metadataResult }
-      },
+      }
     }),
     submitFiles: build.mutation({
       async queryFn({data, headerData, actionType}, queryApi, extraOptions, fetchWithBQ) {

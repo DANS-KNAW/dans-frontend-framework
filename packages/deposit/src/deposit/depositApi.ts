@@ -5,6 +5,7 @@ import type { InitialFormType } from '../types/Metadata';
 export const depositApi = createApi({
   reducerPath: 'savedDeposit',
   baseQuery: fetchBaseQuery({ baseUrl: `${import.meta.env.VITE_PACKAGING_TARGET}/metadata/` }),
+  refetchOnMountOrArgChange: true,
   endpoints: (build) => ({
     fetchSavedMetadata: build.query({
       query: (id) => ({

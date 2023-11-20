@@ -17,8 +17,6 @@
 	"apiKeyLabel": "Your personal {{type}} API key",
 	"userSubmissionsDrafts": "Saved forms",
 	"userSubmissionsCompleted": "Submitted forms",
-	"userSubmissionsDraftsDescription": "Continue filling in your previously saved data deposit forms",
-	"userSubmissionsCompletedDescription": "View your submitted data deposits and their progress",
 	"editSubmission": "Edit this submission",
 	"errorSubmission": "Something went wrong processing this submission",
 	"viewSubmission": "View this submission",
@@ -27,12 +25,15 @@
 	"viewSubmissionExtended": "View this submission on {{location}}",
 	"noData": "No data found",
 	"noTitle": "(no title)",
+	"noRows": "No data found",
 	"title": "Title",
 	"createdOn": "Created on",
+	"submittedOn": "Submitted on",
 	"submittedTo": "Submitted to",
 	"submissionStatus": "Status",
 	"processing": "Processing your submission",
 	"error": "Error with your submission",
 	"finish": "Succesfully submitted",
-	"pending": "Waiting in the processing queue"
+	"initial": "Preparing submission",
+	"pending": "Not yet started"
 }

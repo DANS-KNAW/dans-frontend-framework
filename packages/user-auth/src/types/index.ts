@@ -19,7 +19,7 @@ export interface Target {
 
 export type ReleaseVersion = 'DRAFT' | 'PUBLISH';
 
-type IngestStatus = 'processing' | 'finish' | 'error';
+type IngestStatus = 'initial' | 'processing' | 'finish' | 'error' | 'rejected' | 'failed';
 
 export interface TargetOutput { 
   'ingest-status': IngestStatus;
@@ -33,6 +33,8 @@ export interface SubmissionResponse {
   'metadata-id': string;
   'targets': TargetOutput[];
   'release-version': ReleaseVersion;
+  'title': string;
+  'submitted-date': string | null;
 }
 
 // Some values that the system can pull and fill in from the User Auth object

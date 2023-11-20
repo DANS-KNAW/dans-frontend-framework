@@ -40,7 +40,7 @@ export const UserSettings = ({target}: {target: Target[]}) => {
 const UserSettingsItem = ({target}: {target: Target}) => {
   const auth = useAuth();
   const { t, i18n } = useTranslation('user');
-  const { data } = useFetchUserProfileQuery({provider: auth.settings.authority, id: auth.settings.client_id});
+  const { data } = useFetchUserProfileQuery(auth.settings.client_id);
   const [apiValue, setApiValue] = useState('Loading...');
 
   // set API key value once it's been retrieved
@@ -75,7 +75,6 @@ const UserSettingsItem = ({target}: {target: Target}) => {
         value={apiValue}
         onChange={(e) => setApiValue(e.target.value)}
         onBlur={() => saveData({
-          provider: auth.user?.profile.iss,
           id: auth.user?.profile.aud,
           content: {
             // need to pass along the entire account object to Keycloak
