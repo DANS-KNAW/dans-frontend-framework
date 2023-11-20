@@ -54,7 +54,7 @@ export const userSubmissionsApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_PACKAGING_TARGET }),
   // Since we can't control cache based on a submit action, as that lives in another store,
   // We make sure data isn't stale and contains freshly submitted forms
-  refetchOnMountOrArgChange: true,
+  keepUnusedDataFor: 0.1,
   endpoints: (build) => ({
     fetchUserSubmissions: build.query({
       query: (userId) => {
