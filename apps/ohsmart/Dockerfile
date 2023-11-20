@@ -1,6 +1,6 @@
 # Fetching the latest node image on apline linux
 FROM node:18-alpine AS builder
-RUN apk update && apk add git && yarn global add turbo && yarn global add pnpm
+RUN apk update && apk add git && npm i -g turbo && npm i -g pnpm
 
 # Setting up the work directory
 WORKDIR /app

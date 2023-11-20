@@ -25,9 +25,8 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install git
-        npm install --global yarn
-        yarn global add turbo
-        yarn global add pnpm
+        npm i -g turbo
+        npm i -g pnpm
     - name: Run tests
       run: "echo 'setup complete' "
 
