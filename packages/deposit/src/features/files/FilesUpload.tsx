@@ -52,7 +52,7 @@ const FilesUpload = () => {
       };
     }
     // No files with these file names
-    if (file.name === 'form-metadata.json' || file.name === 'original-metadata.zip') {
+    if (file.name.indexOf('__generated__') !== -1) {
       return {
         code: "file-not-allowed",
         message: t('fileNotAllowed'),
