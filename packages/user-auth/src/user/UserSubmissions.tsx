@@ -153,7 +153,7 @@ const SubmissionList = ({
                     <PendingIcon fontSize="small" color="neutral" />
                   }
                 </Tooltip>
-                <Typography variant="body2" ml={1}>{v['target-repo-name']}</Typography>
+                <Typography variant="body2" ml={1}>{v['target-repo-display-name']}</Typography>
               </Stack>
             )}
           </Stack>

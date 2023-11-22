@@ -7,8 +7,6 @@ export interface FileActions {
 
 export type FileActionType = 'process' | 'role' | 'access' | 'valid' | 'submitProgress' | 'submitSuccess' | 'submitError' | 'submittedFile';
 
-export type FileAccessType = 'open' | 'restricted' | 'closed';
-
 export interface ReduxFileActions {
   id: string;
   type: FileActionType;

@@ -94,6 +94,7 @@ const FilesUpload = () => {
         type: file.name.substring(file.name.lastIndexOf('.') + 1),
         location: 'local' as FileLocation,
         url: URL.createObjectURL(file),
+        access: fileAccess[0],
       });
     });
       

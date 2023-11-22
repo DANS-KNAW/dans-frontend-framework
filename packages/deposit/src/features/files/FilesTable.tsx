@@ -93,7 +93,7 @@ const FileActionOptions = ({file, type}: FileActionOptionsProps) => {
         />
       }
       options={type === 'process' ? fileProcessing : type === 'role' ? fileRoles : fileAccess}
-      value={file[type] || (type === 'process' ? [] : type === 'role' ? null : fileAccess[0])}
+      value={file[type] || (type === 'process' ? [] : null)}
       disabled={formDisabled}
       isOptionEqualToValue={(option, value) => option.value === value.value}
     />
