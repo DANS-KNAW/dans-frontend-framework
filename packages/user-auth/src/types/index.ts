@@ -15,6 +15,7 @@ export interface Target {
   auth: string;
   authKey: string;
   keyUrl: string;
+  keyCheckUrl?: string;
 }
 
 export type ReleaseVersion = 'DRAFT' | 'PUBLISH';
