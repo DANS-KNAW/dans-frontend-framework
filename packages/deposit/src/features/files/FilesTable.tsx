@@ -22,7 +22,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { useTranslation } from 'react-i18next';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { getFiles, removeFile, setFileMeta } from './filesSlice';
-import { fileRoles, fileProcessing } from './filesOptions';
+import { fileRoles, fileProcessing, fileAccess } from './filesOptions';
 import type { SelectedFile, FileActionOptionsProps, FileItemProps } from '../../types/Files';
 import { dansUtilityApi, useCheckTypeQuery } from './api/dansUtility';
 import { LightTooltip } from '../generic/Tooltip';
@@ -50,7 +50,7 @@ const FilesTable = () => {
             <TableCell sx={{p: 1}}>{t('fileName')}</TableCell>
             <TableCell sx={{p: 1}}>{t('fileSize')}</TableCell>
             <TableCell sx={{p: 1}}>{t('fileType')}</TableCell>
-            <TableCell sx={{p: 1, width: 10}}>{t('private')}</TableCell>
+            <TableCell sx={{p: 1, width: 10}}>{t('access')}</TableCell>
             <TableCell sx={{p: 1, width: 230}}>{t('role')}</TableCell>
             <TableCell sx={{p: 1, width: 280}}>{t('processing')}</TableCell>
           </TableRow>
@@ -86,9 +86,14 @@ const FileActionOptions = ({file, type}: FileActionOptionsProps) => {
           })
         )
       }
-      renderInput={(params) => <TextField {...params} label={t(type === 'process' ? 'selectOptions' : 'selectOption')} />}
-      options={type === 'process' ? fileProcessing : fileRoles}
-      value={file[type] || (type === 'process' ? [] : null)}
+      renderInput={(params) => 
+        <TextField 
+          {...params} 
+          label={t(type === 'process' ? 'selectOptions' : type === 'role' ? 'selectOption' : 'selectAccess')} 
+        />
+      }
+      options={type === 'process' ? fileProcessing : type === 'role' ? fileRoles : fileAccess}
+      value={file[type] || (type === 'process' ? [] : type === 'role' ? null : fileAccess[0])}
       disabled={formDisabled}
       isOptionEqualToValue={(option, value) => option.value === value.value}
     />
@@ -238,13 +243,7 @@ const FileTableRow = ({file}: FileItemProps) => {
           <TableCell sx={{p: 1, borderWidth: fileStatus ? 0 : 1}}>
             <FileConversion file={file} />
           </TableCell>
-          <TableCell sx={{p: 0, borderWidth: fileStatus ? 0 : 1}}>
-            <Checkbox 
-              checked={file.private}
-              onChange={e => dispatch(setFileMeta({id: file.id, type: 'private', value: e.target.checked}))}
-              disabled={file.valid === false || formDisabled}
-            />
-          </TableCell>
+          <TableCell sx={{p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1}}><FileActionOptions type="access" file={file} /></TableCell>
           <TableCell sx={{p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1}}><FileActionOptions type="role" file={file} /></TableCell>
           {/* TODO: remove or spec this */}
           <TableCell sx={{p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1}}><FileActionOptions type="process" file={file}  /></TableCell>

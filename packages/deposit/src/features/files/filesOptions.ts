@@ -1,5 +1,20 @@
 // Defines actions a user can select for file processing and roles
 
+export const fileAccess = [
+  {
+    label: "Open",
+    value: "open",
+  },
+  {
+    label: "Restricted with access request",
+    value: "restricted",
+  },
+  {
+    label: "Closed",
+    value: "closed",
+  },
+];
+
 export const fileProcessing = [
   {
     label: "Test 1",

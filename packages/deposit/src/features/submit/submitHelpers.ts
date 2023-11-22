@@ -8,7 +8,7 @@ export const formatFormData = (sessionId: string, metadata: SectionType[], files
     id: f.id,
     name: f.name,
     lastModified: f.lastModified,
-    private: f.private,
+    access: f.access,
     role: f.role,
     process: f.process,
   }));
