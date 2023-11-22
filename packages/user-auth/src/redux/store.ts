@@ -1,16 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { userApi, userSubmissionsApi } from '../user/userApi';
+import { keyCheckApi } from '../user/keyApi';
 import { errorLogger } from '@dans-framework/utils';
 
 export const store = configureStore({
   reducer: {
     [userApi.reducerPath]: userApi.reducer,
+    [keyCheckApi.reducerPath]: keyCheckApi.reducer,
     [userSubmissionsApi.reducerPath]: userSubmissionsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
     .concat(userApi.middleware)
     .concat(userSubmissionsApi.middleware)
+    .concat(keyCheckApi.middleware)
     .concat(errorLogger)
 });
 

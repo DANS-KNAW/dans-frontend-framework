@@ -14,6 +14,7 @@ import { useAuth } from 'react-oidc-context';
 import { useFetchUserProfileQuery, useSaveUserDataMutation } from './userApi';
 import { useSiteTitle, setSiteTitle, lookupLanguageString } from '@dans-framework/utils';
 import type { Target } from '../types';
+import { useCheckKeyQuery } from './keyApi';
 
 export const UserSettings = ({target}: {target: Target[]}) => {
   const { t } = useTranslation('user');
@@ -40,14 +41,39 @@ export const UserSettings = ({target}: {target: Target[]}) => {
 const UserSettingsItem = ({target}: {target: Target}) => {
   const auth = useAuth();
   const { t, i18n } = useTranslation('user');
-  const { data } = useFetchUserProfileQuery(auth.settings.client_id);
+  const { data: profileData } = useFetchUserProfileQuery(auth.settings.client_id);
   const [apiValue, setApiValue] = useState('Loading...');
-
-  // set API key value once it's been retrieved
-  useEffect(() => data && setApiValue((data.attributes[target.authKey] && data.attributes[target.authKey][0]) || ''), [data, target.authKey]);
+  const [check, setCheck] = useState(false);
+  const [apiKey, setApiKey] = useState('');
 
   // call keycloak to save new API key
   const [saveData, {isUninitialized, isLoading, isSuccess, isError}] = useSaveUserDataMutation();
+
+  // check if key is valid
+  const { data: keyData } = useCheckKeyQuery({ key: apiValue, url: target.keyCheckUrl }, { skip: !profileData || !target.keyCheckUrl || !check });
+
+  // set API key value once it's been retrieved
+  useEffect(() => profileData && setApiValue((profileData.attributes[target.authKey] && profileData.attributes[target.authKey][0]) || ''),
+    [profileData, target.authKey]
+  );
+
+  useEffect(() => {
+    if (check && keyData) {
+      // key is valid, lets save it to the user profile
+      saveData({
+        id: auth.user?.profile.aud,
+        content: {
+          // need to pass along the entire account object to Keycloak
+          ...profileData,
+          attributes: {
+            ...profileData.attributes,
+            [target.authKey]: apiValue
+          },
+        }
+      });
+      setCheck(false)
+    }
+  }, [check, keyData]);
 
   return (
     <Stack direction="column" alignItems="flex-start" mb={4}>
@@ -74,19 +100,9 @@ const UserSettingsItem = ({target}: {target: Target}) => {
         sx={{width: '100%', flex: 1}}
         value={apiValue}
         onChange={(e) => setApiValue(e.target.value)}
-        onBlur={() => saveData({
-          id: auth.user?.profile.aud,
-          content: {
-            // need to pass along the entire account object to Keycloak
-            ...data,
-            attributes: {
-              ...data.attributes,
-              [target.authKey]: apiValue
-            },
-          }})
-        }
+        onBlur={() => setCheck(true)}
         InputProps={{
-          endAdornment: data && data.attributes[target.authKey] && data.attributes[target.authKey][0] &&
+          endAdornment: profileData && profileData.attributes[target.authKey] && profileData.attributes[target.authKey][0] &&
             <InputAdornment position="end">
               <CheckIcon />
             </InputAdornment>
