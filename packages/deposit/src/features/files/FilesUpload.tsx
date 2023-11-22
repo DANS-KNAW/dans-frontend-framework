@@ -23,6 +23,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useFetchSimpleListQuery } from './api/dansFormats';
 import { getMetadataSubmitStatus } from '../submit/submitSlice';
 import { enqueueSnackbar } from 'notistack';
+import { fileAccess } from './filesOptions';
 import { getFormDisabled } from '../../deposit/depositSlice';
 
 const FilesUpload = () => {
@@ -51,7 +52,7 @@ const FilesUpload = () => {
       };
     }
     // No files with these file names
-    if (file.name === 'form-metadata.json' || file.name === 'original-metadata.zip') {
+    if (file.name.indexOf('__generated__') !== -1) {
       return {
         code: "file-not-allowed",
         message: t('fileNotAllowed'),
@@ -93,8 +94,8 @@ const FilesUpload = () => {
         type: file.name.substring(file.name.lastIndexOf('.') + 1),
         location: 'local' as FileLocation,
         url: URL.createObjectURL(file),
-        private: false,
-      });    
+        access: fileAccess[0],
+      });
     });
       
     dispatch(addFiles(serializedFiles));

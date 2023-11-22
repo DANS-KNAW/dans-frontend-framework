@@ -25,6 +25,7 @@ export interface TargetOutput {
   'ingest-status': IngestStatus;
   'target-output': string;
   'target-repo-name': string;
+  'target-repo-display-name': string;
   'target-url': string;
 }
 

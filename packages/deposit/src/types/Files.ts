@@ -5,7 +5,7 @@ export interface FileActions {
   value: string;
 }
 
-export type FileActionType = 'process' | 'role' | 'private' | 'valid' | 'submitProgress' | 'submitSuccess' | 'submitError' | 'submittedFile';
+export type FileActionType = 'process' | 'role' | 'access' | 'valid' | 'submitProgress' | 'submitSuccess' | 'submitError' | 'submittedFile';
 
 export interface ReduxFileActions {
   id: string;
@@ -21,7 +21,7 @@ export interface SelectedFile {
   location: FileLocation;
   url: string;
   lastModified: number;
-  private?: boolean;
+  access?: FileActions;
   role?: FileActions;
   process?: FileActions[];
   valid?: boolean;
@@ -87,5 +87,5 @@ export interface FileItemProps {
 
 export interface FileActionOptionsProps {
   file: SelectedFile;
-  type: 'process' | 'role';
+  type: 'process' | 'role' | 'access';
 } 
