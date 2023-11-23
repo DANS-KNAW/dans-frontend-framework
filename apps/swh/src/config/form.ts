@@ -23,6 +23,7 @@ const form: FormConfig = {
       auth: 'API_KEY',
       authKey: 'dataverse_api_key',
       keyUrl: import.meta.env.VITE_TARGET_1_KEY_URL,
+      keyCheckUrl: import.meta.env.VITE_TARGET_1_KEY_CHECK_URL,
     },
   ],
   submitKey: import.meta.env.VITE_PACKAGING_KEY, // still needed??
