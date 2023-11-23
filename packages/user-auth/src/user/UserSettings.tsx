@@ -2,8 +2,10 @@ import { useTranslation, Trans } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import Stack from '@mui/material/Stack';
 import Link from '@mui/material/Link';
+import { NavLink as RouterLink } from 'react-router-dom';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 import CheckIcon from '@mui/icons-material/Check';
 import ErrorIcon from '@mui/icons-material/Error';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -70,6 +72,9 @@ const UserSettingsItem = ({target}: {target: Target}) => {
     skip: !profileData || !target.keyCheckUrl || !check || apiValue === ''
   });
 
+  console.log(keyLoading)
+  console.log(keyFetching)
+
   // set API key value once it's been retrieved
   useEffect(
     () => profileData && setApiValue((profileData.attributes[target.authKey] && profileData.attributes[target.authKey][0]) || ''),
@@ -121,14 +126,14 @@ const UserSettingsItem = ({target}: {target: Target}) => {
         onBlur={() => setCheck(true)}
         onFocus={() => setCheck(false)}
         InputProps={{
-          endAdornment: profileData && profileData.attributes[target.authKey] && profileData.attributes[target.authKey][0] &&
+          endAdornment: 
             <InputAdornment position="end">
               {
-                keyLoading || saveLoading ?
+                (keyLoading || keyFetching || saveLoading) ?
                 <CircularProgress size={20} /> :
                 apiValue && keySuccess ?
                 <CheckIcon color="success" /> :
-                (keyData !== 'OK' || keyError) && apiValue ?
+                (keyData && keyData !== 'OK') || keyError ?
                 <ErrorIcon color="error" /> :
                 null
               }
@@ -136,6 +141,16 @@ const UserSettingsItem = ({target}: {target: Target}) => {
           ,
         }}
       />
+      <Link component={RouterLink} to={(!apiValue && !keySuccess) || (keyData !== 'OK' || keyError !== undefined) ? "" : "/deposit"}>
+        <Button 
+          variant="contained"
+          disabled={(!apiValue && !keySuccess) || (keyData !== 'OK' || keyError !== undefined)}
+          onClick={() => console.log('l')}
+          sx={{mt: 3}}
+        >
+          {t('goToDeposit')}
+        </Button>
+      </Link>
     </Stack>
   )
 }
