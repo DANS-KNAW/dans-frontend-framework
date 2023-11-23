@@ -15,6 +15,8 @@
 	"apiKeyDescription": "<0>Haal je sleutel hier op</0> en plak hem hieronder.",
 	"apiKeyHeader": "{{type}} API sleutel",
 	"apiKeyLabel": "Je persoonlijke {{type}} API sleutel",
+	"keyError": "Deze API sleutel is ongeldig",
+	"keySaved": "Je API sleutel is opgeslagen",
 	"userSubmissionsDrafts": "Opgeslagen formulieren",
 	"userSubmissionsCompleted": "Verstuurde formulieren",
 	"editSubmission": "Edit dit formulier en stuur het op",

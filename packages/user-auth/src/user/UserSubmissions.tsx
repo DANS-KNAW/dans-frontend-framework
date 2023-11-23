@@ -199,6 +199,8 @@ const SubmissionList = ({
             ".MuiDataGrid-columnHeader:focus-within, .MuiDataGrid-cell:focus-within": {
                outline: "none !important",
             },
+            // padding for auto height rows
+            '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': { py: '8px' },
          }}
         />
       </Paper>

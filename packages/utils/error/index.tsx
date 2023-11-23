@@ -14,7 +14,7 @@ export const errorLogger: Middleware = () => (next) => (action) => {
     console.warn('We got a rejected action!')
     console.log(action)
     // Convert the error to a string, probably is one already, but just in case
-    const error = JSON.stringify(action.payload.error || action.payload);
+    const error = JSON.stringify(action.payload.error || action.payload).replaceAll("\"", "");
     enqueueSnackbar(error, { variant: 'customError' });
   }
 

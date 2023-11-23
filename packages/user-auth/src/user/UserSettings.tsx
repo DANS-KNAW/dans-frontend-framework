@@ -5,16 +5,17 @@ import Link from '@mui/material/Link';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import CheckIcon from '@mui/icons-material/Check';
+import ErrorIcon from '@mui/icons-material/Error';
+import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Tooltip from '@mui/material/Tooltip';
 import HelpIcon from '@mui/icons-material/Help';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useAuth } from 'react-oidc-context';
-import { useFetchUserProfileQuery, useSaveUserDataMutation } from './userApi';
+import { useFetchUserProfileQuery, useSaveUserDataMutation, useValidateKeyQuery } from './userApi';
 import { useSiteTitle, setSiteTitle, lookupLanguageString } from '@dans-framework/utils';
 import type { Target } from '../types';
-import { useCheckKeyQuery } from './keyApi';
 
 export const UserSettings = ({target}: {target: Target[]}) => {
   const { t } = useTranslation('user');
@@ -42,24 +43,42 @@ const UserSettingsItem = ({target}: {target: Target}) => {
   const auth = useAuth();
   const { t, i18n } = useTranslation('user');
   const { data: profileData } = useFetchUserProfileQuery(auth.settings.client_id);
-  const [apiValue, setApiValue] = useState('Loading...');
-  const [check, setCheck] = useState(false);
+  const [apiValue, setApiValue] = useState('');
+  // check key on init
+  const [check, setCheck] = useState(true);
   const [apiKey, setApiKey] = useState('');
 
   // call keycloak to save new API key
-  const [saveData, {isUninitialized, isLoading, isSuccess, isError}] = useSaveUserDataMutation();
+  const [saveData, {
+    isUninitialized: saveUninitialized,
+    isLoading: saveLoading, 
+    isSuccess: saveSuccess
+  }] = useSaveUserDataMutation();
 
   // check if key is valid
-  const { data: keyData } = useCheckKeyQuery({ key: apiValue, url: target.keyCheckUrl }, { skip: !profileData || !target.keyCheckUrl || !check });
+  const { 
+    data: keyData, 
+    error: keyError, 
+    isLoading: keyLoading,
+    isFetching: keyFetching,
+    isSuccess: keySuccess,
+  } = useValidateKeyQuery({ 
+    key: apiValue, 
+    url: target.keyCheckUrl,
+    type: target.authKey,
+  }, { 
+    skip: !profileData || !target.keyCheckUrl || !check || apiValue === ''
+  });
 
   // set API key value once it's been retrieved
-  useEffect(() => profileData && setApiValue((profileData.attributes[target.authKey] && profileData.attributes[target.authKey][0]) || ''),
+  useEffect(
+    () => profileData && setApiValue((profileData.attributes[target.authKey] && profileData.attributes[target.authKey][0]) || ''),
     [profileData, target.authKey]
   );
 
   useEffect(() => {
-    if (check && keyData) {
-      // key is valid, lets save it to the user profile
+    if (check && apiValue && profileData.attributes[target.authKey][0] !== apiValue && !keyLoading && !keyFetching && keySuccess) {
+      // clicked outside of input field, lets save key to the user profile
       saveData({
         id: auth.user?.profile.aud,
         content: {
@@ -70,10 +89,9 @@ const UserSettingsItem = ({target}: {target: Target}) => {
             [target.authKey]: apiValue
           },
         }
-      });
-      setCheck(false)
+      });      
     }
-  }, [check, keyData]);
+  }, [check, profileData, apiValue, keyLoading, keyFetching, keySuccess]);
 
   return (
     <Stack direction="column" alignItems="flex-start" mb={4}>
@@ -101,10 +119,19 @@ const UserSettingsItem = ({target}: {target: Target}) => {
         value={apiValue}
         onChange={(e) => setApiValue(e.target.value)}
         onBlur={() => setCheck(true)}
+        onFocus={() => setCheck(false)}
         InputProps={{
           endAdornment: profileData && profileData.attributes[target.authKey] && profileData.attributes[target.authKey][0] &&
             <InputAdornment position="end">
-              <CheckIcon />
+              {
+                keyLoading || saveLoading ?
+                <CircularProgress size={20} /> :
+                apiValue && keySuccess ?
+                <CheckIcon color="success" /> :
+                (keyData !== 'OK' || keyError) && apiValue ?
+                <ErrorIcon color="error" /> :
+                null
+              }
             </InputAdornment>
           ,
         }}

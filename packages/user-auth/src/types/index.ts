@@ -8,6 +8,9 @@ export interface AuthProviderConfig {
   loadUserInfo: boolean;
 }
 
+// Define the types of targets here, so we can use this in the key checking API
+export type AuthKeys = 'dataverse_api_key' | 'zenodo_api_key';
+
 export interface Target {
   name: string;
   helpText?: string | LanguageStrings;
