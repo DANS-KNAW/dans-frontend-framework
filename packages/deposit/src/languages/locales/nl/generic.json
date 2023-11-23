@@ -2,6 +2,6 @@
   "error": "Voer nog wat meer data in",
   "warning": "Overweeg om je data nog wat completer te maken",
   "success": "Helemaal goed!",
-  "missingInfoHeader": "Missende API sleutels",
+  "missingInfoHeader": "Missende of verkeerde API sleutels",
   "missingInfoText": "Je moet je persoonlijke API sleutels invullen om dit formulier op te kunnen sturen. <0>Check je instellingen</0>."
 }

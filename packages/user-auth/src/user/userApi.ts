@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { User } from 'oidc-client-ts';
 import type { SubmissionResponse, ReleaseVersion, AuthKeys } from '../types';
 import i18n from '../languages/i18n';
@@ -78,6 +79,13 @@ export const userSubmissionsApi = createApi({
   }),
 });
 
+const getUrl = (url: string, key: string, type: AuthKeys) =>
+  type === 'dataverse_api_key' ?
+  `${url}?key=${key}` :
+  type === 'zenodo_api_key' ?
+  `${url}?access-token=${key}` :
+  url
+
 // Basic api to check keys. No baseUrl, as this is dynamic, and we don't want a separate API for every possible baseUrl
 export const validateKeyApi = createApi({
   reducerPath: 'apiKeys',
@@ -85,14 +93,8 @@ export const validateKeyApi = createApi({
   endpoints: (build) => ({
     validateKey: build.query({
       query: ({ url, key, type }) => {
-        const checkUrl = 
-          type === 'dataverse_api_key' ?
-          `${url}?key=${key}` :
-          type === 'zenodo_api_key' ?
-          `${url}?access-token=${key}` :
-          url
         return ({
-          url: checkUrl,
+          url: getUrl(url, key, type),
         });
       },
       transformResponse: (response: { status: string | number }) => {
@@ -101,12 +103,25 @@ export const validateKeyApi = createApi({
         return response.status
       },
       transformErrorResponse: (response: { status: string | number }, meta, arg) => i18n.t('keyError', {ns: 'user'}),
-    })
+    }),
+    validateAllKeys: build.query({
+      // this will return all targets that have an invalid API key set
+      async queryFn(arg, _queryApi, _extraOptions, fetchWithBQ) {
+        const promises = arg.map((t: any) => fetchWithBQ(getUrl(t.url, t.key, t.type)));
+        const result = await Promise.all(promises);
+        const error = result.some( r => r.error);
+
+        return error ?
+        { error: result[0].error as FetchBaseQueryError } :
+        { data: 'OK' }  
+      },
+    }),
   }),
 });
 
 export const {
   useValidateKeyQuery,
+  useValidateAllKeysQuery,
 } = validateKeyApi;
 
 export const {

@@ -20,6 +20,7 @@ import { rdaWorkingGroupsApi } from '../features/metadata/api/rdaWorkgroup';
 import { rdaPathwaysApi } from '../features/metadata/api/rdaPathways';
 import { rdaDomainsApi } from '../features/metadata/api/rdaDomains';
 import { rdaInterestGroupsApi } from '../features/metadata/api/rdaInterestGroups';
+import { validateKeyApi } from '@dans-framework/user-auth';
 
 export const store = configureStore({
   reducer: {
@@ -41,6 +42,7 @@ export const store = configureStore({
     [rdaDomainsApi.reducerPath]: rdaDomainsApi.reducer,
     [rdaInterestGroupsApi.reducerPath]: rdaInterestGroupsApi.reducer,
     [depositApi.reducerPath]: depositApi.reducer,
+    [validateKeyApi.reducerPath]: validateKeyApi.reducer,
     submit: submitReducer,
     deposit: depositReducer,
   },
@@ -62,6 +64,7 @@ export const store = configureStore({
       .concat(rdaDomainsApi.middleware)
       .concat(rdaInterestGroupsApi.middleware)
       .concat(depositApi.middleware)
+      .concat(validateKeyApi.middleware)
       .concat(errorLogger)
 });
 
