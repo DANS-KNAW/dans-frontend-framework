@@ -11,7 +11,10 @@
     "dev:rda": "turbo run dev --filter=@dans-framework/rda",
     "dev:swh": "turbo run dev --filter=@dans-framework/swh"
   },
-  "workspaces": ["packages/*", "apps/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",

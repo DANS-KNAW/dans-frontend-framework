@@ -2,26 +2,41 @@ import { useTranslation, Trans } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import Stack from '@mui/material/Stack';
 import Link from '@mui/material/Link';
+import { NavLink as RouterLink } from 'react-router-dom';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 import CheckIcon from '@mui/icons-material/Check';
+import ErrorIcon from '@mui/icons-material/Error';
+import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Tooltip from '@mui/material/Tooltip';
 import HelpIcon from '@mui/icons-material/Help';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useAuth } from 'react-oidc-context';
-import { useFetchUserProfileQuery, useSaveUserDataMutation } from './userApi';
+import { useFetchUserProfileQuery, useSaveUserDataMutation, useValidateKeyQuery, useValidateAllKeysQuery } from './userApi';
 import { useSiteTitle, setSiteTitle, lookupLanguageString } from '@dans-framework/utils';
 import type { Target } from '../types';
 
 export const UserSettings = ({target}: {target: Target[]}) => {
   const { t } = useTranslation('user');
   const siteTitle = useSiteTitle();
+  const auth = useAuth();
 
   useEffect( () => { 
     setSiteTitle(siteTitle, t('userSettings'));
   }, [siteTitle, name]);
+
+  const { data: profileData } = useFetchUserProfileQuery(auth.settings.client_id);
+
+  // Check if they are actually valid
+  const validateTargets = profileData && target.map(t => ({
+    key: profileData.attributes[t.authKey][0],
+    url: t.keyCheckUrl,
+    type: t.authKey,
+  }));
+  const { data: apiKeyData, error: apiKeyError } = useValidateAllKeysQuery(validateTargets, { skip: !target || !profileData });
 
   return (
     <Container>
@@ -31,6 +46,16 @@ export const UserSettings = ({target}: {target: Target[]}) => {
           {target.map( tg => tg.authKey &&
             <UserSettingsItem key={tg.authKey} target={tg} />
           )}
+
+           <Link component={RouterLink} to={apiKeyError !== undefined ? "" : "/deposit"}>
+            <Button 
+              variant="contained"
+              disabled={apiKeyError !== undefined}
+            >
+              {t('goToDeposit')}
+            </Button>
+          </Link>
+
         </Grid>
       </Grid>
     </Container>
@@ -40,14 +65,56 @@ export const UserSettings = ({target}: {target: Target[]}) => {
 const UserSettingsItem = ({target}: {target: Target}) => {
   const auth = useAuth();
   const { t, i18n } = useTranslation('user');
-  const { data } = useFetchUserProfileQuery(auth.settings.client_id);
-  const [apiValue, setApiValue] = useState('Loading...');
-
-  // set API key value once it's been retrieved
-  useEffect(() => data && setApiValue((data.attributes[target.authKey] && data.attributes[target.authKey][0]) || ''), [data, target.authKey]);
+  const { data: profileData } = useFetchUserProfileQuery(auth.settings.client_id);
+  const [apiValue, setApiValue] = useState('');
+  // check key on init
+  const [check, setCheck] = useState(true);
+  const [apiKey, setApiKey] = useState('');
 
   // call keycloak to save new API key
-  const [saveData, {isUninitialized, isLoading, isSuccess, isError}] = useSaveUserDataMutation();
+  const [saveData, {
+    isUninitialized: saveUninitialized,
+    isLoading: saveLoading, 
+    isSuccess: saveSuccess
+  }] = useSaveUserDataMutation();
+
+  // check if key is valid
+  const { 
+    data: keyData, 
+    error: keyError, 
+    isLoading: keyLoading,
+    isFetching: keyFetching,
+    isSuccess: keySuccess,
+  } = useValidateKeyQuery({ 
+    key: apiValue, 
+    url: target.keyCheckUrl,
+    type: target.authKey,
+  }, { 
+    skip: !profileData || !target.keyCheckUrl || !check || apiValue === ''
+  });
+
+  // set API key value once it's been retrieved
+  useEffect(
+    () => profileData && setApiValue((profileData.attributes[target.authKey] && profileData.attributes[target.authKey][0]) || ''),
+    [profileData, target.authKey]
+  );
+
+  useEffect(() => {
+    if (check && apiValue && profileData.attributes[target.authKey][0] !== apiValue && !keyLoading && !keyFetching && keySuccess) {
+      // clicked outside of input field, lets save key to the user profile
+      saveData({
+        id: auth.user?.profile.aud,
+        content: {
+          // need to pass along the entire account object to Keycloak
+          ...profileData,
+          attributes: {
+            ...profileData.attributes,
+            [target.authKey]: apiValue
+          },
+        }
+      });      
+    }
+  }, [check, profileData, apiValue, keyLoading, keyFetching, keySuccess]);
 
   return (
     <Stack direction="column" alignItems="flex-start" mb={4}>
@@ -74,21 +141,22 @@ const UserSettingsItem = ({target}: {target: Target}) => {
         sx={{width: '100%', flex: 1}}
         value={apiValue}
         onChange={(e) => setApiValue(e.target.value)}
-        onBlur={() => saveData({
-          id: auth.user?.profile.aud,
-          content: {
-            // need to pass along the entire account object to Keycloak
-            ...data,
-            attributes: {
-              ...data.attributes,
-              [target.authKey]: apiValue
-            },
-          }})
-        }
+        onBlur={() => setCheck(true)}
+        onFocus={() => setCheck(false)}
         InputProps={{
-          endAdornment: data && data.attributes[target.authKey] && data.attributes[target.authKey][0] &&
+          endAdornment: 
             <InputAdornment position="end">
-              <CheckIcon />
+              {
+                (keyLoading || keyFetching || saveLoading) ?
+                <CircularProgress size={20} /> :
+                apiValue && keySuccess ?
+                <CheckIcon color="success" /> :
+                (keyData && keyData !== 'OK') || keyError ?
+                <Tooltip title={t('keyError')}>
+                  <ErrorIcon color="error" />
+                </Tooltip> :
+                null
+              }
             </InputAdornment>
           ,
         }}
