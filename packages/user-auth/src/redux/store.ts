@@ -13,7 +13,6 @@ export const store = configureStore({
     .concat(userApi.middleware)
     .concat(userSubmissionsApi.middleware)
     .concat(validateKeyApi.middleware)
-    .concat(errorLogger)
 });
 
 export const initUserProfile = ({provider, id}: {provider: string, id: string}) => 

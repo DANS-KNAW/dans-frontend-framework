@@ -22,10 +22,21 @@ import type { Target } from '../types';
 export const UserSettings = ({target}: {target: Target[]}) => {
   const { t } = useTranslation('user');
   const siteTitle = useSiteTitle();
+  const auth = useAuth();
 
   useEffect( () => { 
     setSiteTitle(siteTitle, t('userSettings'));
   }, [siteTitle, name]);
+
+  const { data: profileData } = useFetchUserProfileQuery(auth.settings.client_id);
+
+  // Check if they are actually valid
+  const validateTargets = profileData && target.map(t => ({
+    key: profileData.attributes[t.authKey][0],
+    url: t.keyCheckUrl,
+    type: t.authKey,
+  }));
+  const { data: apiKeyData, error: apiKeyError } = useValidateAllKeysQuery(validateTargets, { skip: !target || !profileData });
 
   return (
     <Container>
@@ -35,6 +46,16 @@ export const UserSettings = ({target}: {target: Target[]}) => {
           {target.map( tg => tg.authKey &&
             <UserSettingsItem key={tg.authKey} target={tg} />
           )}
+
+           <Link component={RouterLink} to={apiKeyError !== undefined ? "" : "/deposit"}>
+            <Button 
+              variant="contained"
+              disabled={apiKeyError !== undefined}
+            >
+              {t('goToDeposit')}
+            </Button>
+          </Link>
+
         </Grid>
       </Grid>
     </Container>
@@ -71,9 +92,6 @@ const UserSettingsItem = ({target}: {target: Target}) => {
   }, { 
     skip: !profileData || !target.keyCheckUrl || !check || apiValue === ''
   });
-
-  console.log(keyLoading)
-  console.log(keyFetching)
 
   // set API key value once it's been retrieved
   useEffect(
@@ -134,23 +152,15 @@ const UserSettingsItem = ({target}: {target: Target}) => {
                 apiValue && keySuccess ?
                 <CheckIcon color="success" /> :
                 (keyData && keyData !== 'OK') || keyError ?
-                <ErrorIcon color="error" /> :
+                <Tooltip title={t('keyError')}>
+                  <ErrorIcon color="error" />
+                </Tooltip> :
                 null
               }
             </InputAdornment>
           ,
         }}
       />
-      <Link component={RouterLink} to={(!apiValue && !keySuccess) || (keyData !== 'OK' || keyError !== undefined) ? "" : "/deposit"}>
-        <Button 
-          variant="contained"
-          disabled={(!apiValue && !keySuccess) || (keyData !== 'OK' || keyError !== undefined)}
-          onClick={() => console.log('l')}
-          sx={{mt: 3}}
-        >
-          {t('goToDeposit')}
-        </Button>
-      </Link>
     </Stack>
   )
 }

@@ -90,11 +90,12 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
   ).length === 0;
 
   // Check if they are actually valid
-  const { data: apiKeyData, error: apiKeyError } = useValidateAllKeysQuery(config.targetCredentials.map(t => ({
+  const validateTargets = config.targetCredentials.map(t => ({
     key: auth.user?.profile[t.authKey],
     url: t.keyCheckUrl,
     type: t.authKey,
-  })), { skip: !targetCredentials });
+  }));
+  const { data: apiKeyData, error: apiKeyError } = useValidateAllKeysQuery(validateTargets, { skip: !targetCredentials });
 
   const hasTargetCredentials = targetCredentials && !apiKeyError;
 

@@ -17,7 +17,7 @@
 	"apiKeyLabel": "Your personal {{type}} API key",
 	"keyError": "This API key is invalid",
 	"keySaved": "Your API key has been saved",
-	"goToDeposit": "Go deposit some data",
+	"goToDeposit": "Deposit your data",
 	"userSubmissionsDrafts": "Saved forms",
 	"userSubmissionsCompleted": "Submitted forms",
 	"editSubmission": "Edit this submission",

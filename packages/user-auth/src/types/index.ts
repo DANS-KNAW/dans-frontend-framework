@@ -21,6 +21,12 @@ export interface Target {
   keyCheckUrl?: string;
 }
 
+export interface ValidateTarget {
+  url: string;
+  key: string;
+  type: AuthKeys;
+}
+
 export type ReleaseVersion = 'DRAFT' | 'PUBLISH';
 
 type IngestStatus = 'initial' | 'processing' | 'finish' | 'error' | 'rejected' | 'failed';
