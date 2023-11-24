@@ -6,7 +6,6 @@ const page: Page = {
   slug: "deposit",
   template: "deposit",
   inMenu: true,
-  restricted: true,
   menuTitle: {
     en: "Deposit",
     nl: "Indienen",

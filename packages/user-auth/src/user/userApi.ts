@@ -1,6 +1,11 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { useEffect } from 'react';
+import { createApi, fetchBaseQuery, skipToken } from '@reduxjs/toolkit/query/react';
+import type { FetchBaseQueryError, SkipToken } from '@reduxjs/toolkit/query'
 import { User } from 'oidc-client-ts';
-import type { SubmissionResponse, ReleaseVersion } from '../types';
+import type { SubmissionResponse, ReleaseVersion, AuthKeys, ValidateTarget } from '../types';
+import i18n from '../languages/i18n';
+import { enqueueSnackbar } from 'notistack';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 
 function getUser(provider: string, id: string) {
     const oidcStorage = sessionStorage.getItem(`oidc.user:${provider}:${id}`)
@@ -12,16 +17,17 @@ function getUser(provider: string, id: string) {
 
 export const userApi = createApi({
   reducerPath: 'auth',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_OIDC_AUTHORITY}),
   tagTypes: ['User'],
+  refetchOnMountOrArgChange: true,
   endpoints: (build) => ({
     fetchUserProfile: build.query({
-      // Note: may not be needed, could possibly user auth.user, would be great. TODO!
+      // Note: may not be needed, could possibly user auth.user. TODO?
       query: (id) => {
         const user = getUser(import.meta.env.VITE_OIDC_AUTHORITY, id);
         const token = user?.access_token; 
         return ({
-          url: `${import.meta.env.VITE_OIDC_AUTHORITY}/account`,
+          url: 'account',
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${token}`,
@@ -35,7 +41,7 @@ export const userApi = createApi({
         const user = getUser(import.meta.env.VITE_OIDC_AUTHORITY, id);
         const token = user?.access_token;
         return ({
-          url: `${import.meta.env.VITE_OIDC_AUTHORITY}/account`,
+          url: 'account',
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -45,6 +51,11 @@ export const userApi = createApi({
         })
       },
       invalidatesTags: ['User'],
+      async onQueryStarted( arg, { dispatch, queryFulfilled } ) {
+        await queryFulfilled;
+        // on successful save, lets show a Toast
+        enqueueSnackbar(i18n.t('keySaved', {ns: 'user'}), { variant: 'success' });
+      },
     }),
   }),
 });
@@ -52,8 +63,7 @@ export const userApi = createApi({
 export const userSubmissionsApi = createApi({
   reducerPath: 'submissions',
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_PACKAGING_TARGET }),
-  // Since we can't control cache based on a submit action, as that lives in another store,
-  // We make sure data isn't stale and contains freshly submitted forms
+  // Make sure data isn't stale and always contains freshly submitted forms
   keepUnusedDataFor: 0.1,
   endpoints: (build) => ({
     fetchUserSubmissions: build.query({
@@ -71,6 +81,48 @@ export const userSubmissionsApi = createApi({
     })
   }),
 });
+
+const getUrl = (url: string, key: string, type: AuthKeys) =>
+  type === 'dataverse_api_key' ?
+  `${url}?key=${key}` :
+  type === 'zenodo_api_key' ?
+  `${url}?access-token=${key}` :
+  url
+
+// Basic api to check keys. No baseUrl, as this is dynamic, and we don't want a separate API for every possible baseUrl
+export const validateKeyApi = createApi({
+  reducerPath: 'apiKeys',
+  baseQuery: fetchBaseQuery(),
+  endpoints: (build) => ({
+    validateKey: build.query({
+      query: ({ url, key, type }) => {
+        return ({
+          url: getUrl(url, key, type),
+        });
+      },
+      transformResponse: (response: { status: string | number }) => response.status,
+      // response for setting the error snackbar, but we might not use this..
+      transformErrorResponse: (response: { status: string | number }, meta, arg) => i18n.t('keyError', {ns: 'user'}),
+    }),
+    validateAllKeys: build.query({
+      // this will return all targets that have an invalid API key set
+      async queryFn(arg, _queryApi, _extraOptions, fetchWithBQ) {
+        const promises = arg.map((t: any) => fetchWithBQ(getUrl(t.url, t.key, t.type)));
+        const result = await Promise.all(promises);
+        const error = result.some( r => r.error);
+
+        return error ?
+          { error: result[0].error as FetchBaseQueryError } :
+          { data: 'OK' }  
+      },
+    }),
+  }),
+});
+
+export const {
+  useValidateKeyQuery,
+  useValidateAllKeysQuery,
+} = validateKeyApi;
 
 export const {
   useFetchUserProfileQuery,

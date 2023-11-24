@@ -35,6 +35,7 @@ import type { Page } from '@dans-framework/pages';
 import { useAuth } from 'react-oidc-context';
 import { useSearchParams } from 'react-router-dom';
 import { useFetchSavedMetadataQuery } from './depositApi';
+import { useValidateAllKeysQuery, Target } from '@dans-framework/user-auth';
 
 const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
   const dispatch = useAppDispatch();
@@ -78,22 +79,32 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
     dispatch(setData(config));
   }, [config]);
 
-  // update user on initial render, makes sure all keys are up-to-date
+  // Update user on initial render, makes sure all keys are up-to-date
   useEffect(() => {
     auth.signinSilent();
   }, []);
 
-  // check the user object if target credentials are filled in
-  const hasTargetCredentials = config.targetCredentials.filter(
+  // Check the user object if target credentials are filled in
+  const targetCredentials = config.targetCredentials.filter(
     t => !auth.user?.profile[t.authKey] && t.authKey
   ).length === 0;
+
+  // Check if they are actually valid
+  const validateTargets = config.targetCredentials.map(t => ({
+    key: auth.user?.profile[t.authKey],
+    url: t.keyCheckUrl,
+    type: t.authKey,
+  }));
+  const { data: apiKeyData, error: apiKeyError } = useValidateAllKeysQuery(validateTargets, { skip: !targetCredentials });
+
+  const hasTargetCredentials = targetCredentials && !apiKeyError;
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <Container>
         <Grid container>
           <Grid xs={12} mt={4}>
-            { !hasTargetCredentials &&
+            { !hasTargetCredentials && 
               // show a message if keys are missing
               <Alert severity="warning">
                 <AlertTitle>{t('missingInfoHeader')}</AlertTitle>
