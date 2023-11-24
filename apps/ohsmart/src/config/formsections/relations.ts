@@ -31,6 +31,7 @@ const section: InitialSectionType = {
       },
       name: 'audience',
       multiselect: true,
+      required: true,
       description: {
         en: 'Specifies which research disciplines which may be interested in this dataset. Examples may be Humanities; Arts and Culture; History of Arts and Architecture',
         nl: 'Geeft aan welke onderzoeksdisciplines mogelijk geïnteresseerd zijn in deze dataset. Voorbeelden kunnen zijn: Geesteswetenschappen; Kunst en Cultuur; Geschiedenis van Kunst en Architectuur.',
