@@ -86,7 +86,7 @@ const getUrl = (url: string, key: string, type: AuthKeys) =>
   type === 'dataverse_api_key' ?
   `${url}?key=${key}` :
   type === 'zenodo_api_key' ?
-  `${url}?access-token=${key}` :
+  `${url}?access_token=${key}` :
   url
 
 // Basic api to check keys. No baseUrl, as this is dynamic, and we don't want a separate API for every possible baseUrl
@@ -96,6 +96,7 @@ export const validateKeyApi = createApi({
   endpoints: (build) => ({
     validateKey: build.query({
       query: ({ url, key, type }) => {
+        console.log('get')
         return ({
           url: getUrl(url, key, type),
         });
