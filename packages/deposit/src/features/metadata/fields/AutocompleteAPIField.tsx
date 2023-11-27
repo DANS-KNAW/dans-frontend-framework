@@ -29,6 +29,7 @@ import AutocompleteField, { InfoLink, InfoChip } from './AutocompleteField';
 import { getData, getFormDisabled } from '../../../deposit/depositSlice';
 import { useFetchGorcQuery } from '../api/gorc';
 import { useFetchLicensesQuery } from '../api/licenses';
+import { useFetchSshLicencesQuery } from '../api/sshLicences';
 import { useFetchRdaWorkingGroupQuery } from '../api/rdaWorkgroup';
 import { useFetchRdaPathwayQuery } from '../api/rdaPathways';
 import { useFetchRdaDomainQuery } from '../api/rdaDomains';
@@ -193,6 +194,20 @@ export const DatastationsField = ({field, sectionIndex}: AutocompleteFieldProps)
 export const DansFormatsField = ({field, sectionIndex}: AutocompleteFieldProps) => {
   // Fetch data right away
   const {data, isFetching, isLoading} = useFetchDansFormatsQuery<QueryReturnType>(null);
+  const newField = {...field, options: data && data.response ? data.response : []};
+
+  return (
+    <AutocompleteField 
+      field={newField} 
+      sectionIndex={sectionIndex} 
+      isLoading={isLoading || isFetching} 
+    />
+  )
+}
+
+export const SshLicencesField = ({field, sectionIndex}: AutocompleteFieldProps) => {
+  // Fetch data right away
+  const {data, isFetching, isLoading} = useFetchSshLicencesQuery<QueryReturnType>(null);
   const newField = {...field, options: data && data.response ? data.response : []};
 
   return (

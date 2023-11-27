@@ -120,7 +120,8 @@ export type DateTimeFormat = 'DD-MM-YYYY HH:mm' | 'DD-MM-YYYY' | 'MM-YYYY' | 'YY
 
 // API's that can be used by Autocomplete fields
 export type Datastations = 'elsst' | 'narcis';
-export type TypeaheadAPI = 'orcid' | 'ror' | 'gorc' | 'licenses' | 'geonames' | 'getty' | 'sheets' | 'dansFormats' | 'rdaworkinggroups' | 'pathways' | 'domains' | 'interest groups' | Datastations;
+export type TypeaheadAPI = 'orcid' | 'ror' | 'gorc' | 'licenses' | 'geonames' | 'getty' | 'sheets' | 'dansFormats' | 
+    'rdaworkinggroups' | 'pathways' | 'domains' | 'interest groups' | Datastations | 'sshLicences';
 
 // Options that should be specified if Google Sheet API is used in Autocomplete
 interface SheetOptions {

@@ -9,7 +9,23 @@ import { memo } from 'react';
 import type { Field, TextFieldType, DateFieldType, InputField } from '../../types/MetadataFields';
 import type { SingleFieldProps, GroupedFieldProps } from '../../types/MetadataProps';
 import { DeleteButton, AddButtonText } from './MetadataButtons';
-import { OrcidField, RorField, MultiApiField, GeonamesField, GettyField, SheetsField, DatastationsField, DansFormatsField, GorcField, LicensesField, RdaWorkingGroupsField, RdaPathwaysField, RdaDomainsField, RdaInterestGroupsField } from './fields/AutocompleteAPIField';
+import { 
+  OrcidField, 
+  RorField, 
+  MultiApiField, 
+  GeonamesField, 
+  GettyField, 
+  SheetsField, 
+  DatastationsField, 
+  DansFormatsField, 
+  GorcField, 
+  LicensesField, 
+  RdaWorkingGroupsField, 
+  RdaPathwaysField, 
+  RdaDomainsField, 
+  RdaInterestGroupsField,
+  SshLicencesField
+} from './fields/AutocompleteAPIField';
 import AutocompleteField from './fields/AutocompleteField';
 import TextField from './fields/TextField';
 import DateTimeField from './fields/DateTimeField';
@@ -57,6 +73,8 @@ const SingleField = memo(({field, sectionIndex}: SingleFieldProps) => {
         <GorcField field={field} sectionIndex={sectionIndex} /> :
         field.options === 'licenses' ?
         <LicensesField field={field} sectionIndex={sectionIndex} /> :
+        field.options === 'sshLicences' ?
+        <SshLicencesField field={field} sectionIndex={sectionIndex} /> :
         field.options === 'geonames' ?
         <GeonamesField field={field} sectionIndex={sectionIndex} /> :
         field.options === 'getty' ?
