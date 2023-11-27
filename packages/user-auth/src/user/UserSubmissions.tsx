@@ -32,6 +32,12 @@ import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Tooltip from '@mui/material/Tooltip';
 
+const depositStatus = {
+  processing: ['initial', 'processing', 'submitted', 'finalizing'],
+  error: ['rejected', 'failed', 'error'],
+  success: ['finish', 'accepted', 'success'],
+};
+
 export const UserSubmissions = ({depositSlug}: {depositSlug?: string;}) => {
   const [ skip, setSkip ] = useState<boolean>(false);
   const { t } = useTranslation('user');
@@ -49,7 +55,10 @@ export const UserSubmissions = ({depositSlug}: {depositSlug?: string;}) => {
     d => d['release-version'] === 'PUBLISH' 
   ).every(
     // if all are finished, or one has an error, stop checking
-    d => (d.targets.every(t => t['ingest-status'] === 'finish') || d.targets.some(t => t['ingest-status'] === 'error'))
+    d => (
+      d.targets.every(t => depositStatus.success.indexOf(t['ingest-status']) !== -1) || 
+      d.targets.some(t => depositStatus.error.indexOf(t['ingest-status']) !== -1)
+    )
   );
 
   console.log(data)
@@ -142,13 +151,22 @@ const SubmissionList = ({
           <Stack direction="column" pt={0.5} pb={0.5}>
             {params.value.map( (v: TargetOutput, i: number)  => 
               <Stack direction="row" alignItems="center" key={i} pt={0.1} pb={0.1}>
-                <Tooltip title={t(v['ingest-status'] ? v['ingest-status'] : 'pending')} placement="left">
+                <Tooltip 
+                  title={
+                    depositStatus.processing.indexOf(v['ingest-status']) !== -1 ?
+                    t('processing') :
+                    depositStatus.error.indexOf(v['ingest-status']) !== -1 ?
+                    t('error') :
+                    t('success')
+                  } 
+                  placement="left"
+                >
                   {
-                    v['ingest-status'] === 'processing' ?
+                    depositStatus.processing.indexOf(v['ingest-status']) !== -1 ?
                     <CircularProgress size={16} /> :
-                    v['ingest-status'] === 'error' ?
+                    depositStatus.error.indexOf(v['ingest-status']) !== -1 ?
                     <ErrorIcon fontSize="small" color="error" /> :
-                    v['ingest-status'] === 'finish' ?
+                    depositStatus.success.indexOf(v['ingest-status']) !== -1 ?
                     <CheckCircleIcon fontSize="small" color="success" /> :
                     <PendingIcon fontSize="small" color="neutral" />
                   }

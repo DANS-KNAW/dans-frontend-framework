@@ -36,7 +36,5 @@
 	"submissionStatus": "Status",
 	"processing": "Processing your submission",
 	"error": "Error with your submission",
-	"finish": "Succesfully submitted",
-	"initial": "Preparing submission",
-	"pending": "Not yet started"
+	"success": "Succesfully submitted"
 }
