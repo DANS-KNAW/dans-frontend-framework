@@ -76,6 +76,22 @@ export interface LicenceResponse {
   items: License[];
 }
 
+interface SshLicense {
+  id: string;
+  name: string;
+  shortDescription: string;
+  uri: string;
+  iconUrl: string;
+  active: boolean;
+  isDefault: boolean;
+  sortOrder: number;
+}
+
+export interface SshLicenceResponse {
+  status: string;
+  data: SshLicense[];
+}
+
 interface RorCountry {
   country_name: string;
   country_code: string;

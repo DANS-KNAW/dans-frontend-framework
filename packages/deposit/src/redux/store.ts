@@ -16,6 +16,7 @@ import { dansUtilityApi } from '../features/files/api/dansUtility';
 import { errorLogger } from '@dans-framework/utils/error';
 import { gorcApi } from '../features/metadata/api/gorc';
 import { licenceApi } from '../features/metadata/api/licenses';
+import { sshLicenceApi } from '../features/metadata/api/sshLicences';
 import { rdaWorkingGroupsApi } from '../features/metadata/api/rdaWorkgroup';
 import { rdaPathwaysApi } from '../features/metadata/api/rdaPathways';
 import { rdaDomainsApi } from '../features/metadata/api/rdaDomains';
@@ -30,6 +31,7 @@ export const store = configureStore({
     [rorApi.reducerPath]: rorApi.reducer,
     [gorcApi.reducerPath]: gorcApi.reducer,
     [licenceApi.reducerPath]: licenceApi.reducer,
+    [sshLicenceApi.reducerPath]: sshLicenceApi.reducer,
     [gettyApi.reducerPath]: gettyApi.reducer,
     [geonamesApi.reducerPath]: geonamesApi.reducer,
     [sheetsApi.reducerPath]: sheetsApi.reducer,
@@ -52,6 +54,7 @@ export const store = configureStore({
       .concat(rorApi.middleware)
       .concat(gorcApi.middleware)
       .concat(licenceApi.middleware)
+      .concat(sshLicenceApi.middleware)
       .concat(gettyApi.middleware)
       .concat(geonamesApi.middleware)
       .concat(sheetsApi.middleware)
