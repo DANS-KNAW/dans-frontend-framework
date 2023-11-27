@@ -36,7 +36,5 @@
 	"submissionStatus": "Status",
 	"processing": "Bezig met verwerken",
 	"error": "Fout bij het verwerken van je data",
-	"finish": "Succesvol gesubmit",
-	"initial": "Aan het voorbereiden",
-	"pending": "Nog niet gestart"
+	"success": "Succesvol gesubmit",
 }

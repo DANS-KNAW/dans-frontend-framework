@@ -96,7 +96,6 @@ export const validateKeyApi = createApi({
   endpoints: (build) => ({
     validateKey: build.query({
       query: ({ url, key, type }) => {
-        console.log('get')
         return ({
           url: getUrl(url, key, type),
         });
