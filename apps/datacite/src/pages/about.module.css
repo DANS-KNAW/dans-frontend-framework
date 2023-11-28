@@ -1,0 +1,28 @@
+.about {
+	margin: auto;
+	max-width: 800px;
+}
+
+.about h2 {
+	margin: 3rem 0 2rem 0;
+}
+
+.about ul li {
+	margin-bottom: 1rem;
+}
+
+.logos {
+	align-items: center;
+	background: white;
+	border: 1px solid #DDD;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	justify-items: center;
+	padding: 1rem 0;
+	margin: 2rem 0;
+}
+
+.logos img {
+	margin-bottom: -.5rem;
+	max-width: 240px;
+}

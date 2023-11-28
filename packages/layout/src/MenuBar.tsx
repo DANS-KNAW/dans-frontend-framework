@@ -16,13 +16,23 @@ import { lookupLanguageString } from '@dans-framework/utils';
 import { useTranslation } from 'react-i18next';
 import { UserMenu } from '@dans-framework/user-auth';
 import { useAuth } from 'react-oidc-context';
+import { SxProps } from '@mui/material';
 
-const MenuBar = ({pages, logo = dansLogoWhite, userSettings = true, userSubmissions = true}: {
+interface Props {
   pages: Page[];
   logo?: any;
+  logoSx?: SxProps
   userSettings?: boolean;
   userSubmissions?: boolean;
-} ) => {
+}
+
+const MenuBar = ({
+	pages,
+	logo = dansLogoWhite,
+	logoSx = {},
+	userSettings = true,
+	userSubmissions = true
+}: Props) => {
   const { i18n } = useTranslation();
   const auth = useAuth();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
@@ -86,8 +96,12 @@ const MenuBar = ({pages, logo = dansLogoWhite, userSettings = true, userSubmissi
             </Link>
           </Box>
 
-          {/* desktop menu */}
-          <Link component={RouterLink} to="/" sx={{ mr: 2, width: 100, display: { xs: 'none', md: 'flex' } }}>
+          {/* desktop menu  */}
+          <Link
+            component={RouterLink}
+            to="/"
+            sx={{ mr: 2, width: 100, display: { xs: 'none', md: 'flex' }, ...logoSx }}
+          >
             <img src={logo} />
           </Link>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>

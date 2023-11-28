@@ -6,7 +6,7 @@ interface PageAction {
   restricted?: boolean; // display when logged in, otherwise show a login button
 }
 
-export type Template = 'generic' | 'deposit' | 'search' | 'record' | 'dashboard';
+export type Template = 'generic' | 'deposit' | 'search' | 'record' | 'dashboard' | 'about' | 'home';
 
 export interface Page {
   id: string;
