@@ -3,26 +3,33 @@ import react from '@vitejs/plugin-react'
 import checker from 'vite-plugin-checker';
 
 // https://vitejs.dev/config/
-export default ({mode}) => {
-  process.env = {...process.env, ...loadEnv(mode, process.cwd())};
+export default ({ mode }) => {
+	process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
-  return defineConfig({
-   server: {
-      proxy: {
-      '/api/search': {
-         target: 'http://localhost:9200',
-         changeOrigin: true,
-         rewrite: path => {
-            return path.replace(/^\/api\/search/, '')
-         }
-      }
-      },
-   },
-    plugins: [
-      react(),
-      checker({
-        typescript: true,
-      }),
-    ]
-  })
+	console.log(process.env)
+
+	return defineConfig({
+		server: {
+			proxy: {
+				'/api/search': {
+					target: process.env.VITE_ELASTICSEARCH_API_ENDPOINT,
+					changeOrigin: true,
+					rewrite: path => {
+						return path.replace(/^\/api\/search/, '')
+					},
+					configure: (_proxy, options) => {
+						const user = process.env.VITE_ELASTICSEARCH_API_USER;
+						const pass = process.env.VITE_ELASTICSEARCH_API_PASS;
+						options.auth = `${user}:${pass}`;
+					},
+				}
+			},
+		},
+		plugins: [
+			react(),
+			checker({
+				typescript: true,
+			}),
+		]
+	})
 }
