@@ -7,7 +7,7 @@ Make sure required dependencies are installed in your **package.json**.
 Create the appropriate **.env** files. Use **.env** as a template for your **.env.development** and **.env.production** files.
 
 #### Form
-The form should be an array of section objects. A section can be configured as indicated in the [@dans-framework/deposit](/packages/deposit/README.md) package. To be used in `<Deposit />`.
+The form should be an array of section objects. A section can be configured as indicated in the [@dans-framework/deposit](/packages/deposit/README.md) package. To be used in `<Deposit />`. 
 
 #### Pages
 The pages should be an array of page objects. A page can be configured as indicated in the [@dans-framework/pages](/packages/pages/README.md) package.
