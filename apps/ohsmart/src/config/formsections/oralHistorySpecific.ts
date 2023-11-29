@@ -257,7 +257,7 @@ const section: InitialSectionType = {
     {
       type: 'group',
       label: {
-        en: 'Others preset',
+        en: 'Others present',
         nl: 'Andere aanwezigen',
       },
       name: 'others',

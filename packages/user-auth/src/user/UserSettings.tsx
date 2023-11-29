@@ -18,8 +18,9 @@ import { useAuth } from 'react-oidc-context';
 import { useFetchUserProfileQuery, useSaveUserDataMutation, useValidateKeyQuery, useValidateAllKeysQuery } from './userApi';
 import { useSiteTitle, setSiteTitle, lookupLanguageString } from '@dans-framework/utils';
 import type { Target } from '../types';
+import { useDebouncedCallback } from 'use-debounce';
 
-export const UserSettings = ({target}: {target: Target[]}) => {
+export const UserSettings = ({target, depositSlug}: {target: Target[], depositSlug?: string;}) => {
   const { t } = useTranslation('user');
   const siteTitle = useSiteTitle();
   const auth = useAuth();
@@ -30,7 +31,7 @@ export const UserSettings = ({target}: {target: Target[]}) => {
 
   const { data: profileData } = useFetchUserProfileQuery(auth.settings.client_id);
 
-  // Check if they are actually valid
+  // Check if all API keys are valid, to enable/disable button
   const validateTargets = profileData && target.map(t => ({
     key: profileData.attributes[t.authKey][0],
     url: t.keyCheckUrl,
@@ -47,7 +48,7 @@ export const UserSettings = ({target}: {target: Target[]}) => {
             <UserSettingsItem key={tg.authKey} target={tg} />
           )}
 
-           <Link component={RouterLink} to={apiKeyError !== undefined ? "" : "/deposit"}>
+           <Link component={RouterLink} to={apiKeyError !== undefined ? "" : `/${depositSlug || `deposit`}`}>
             <Button 
               variant="contained"
               disabled={apiKeyError !== undefined}
@@ -65,20 +66,21 @@ export const UserSettings = ({target}: {target: Target[]}) => {
 const UserSettingsItem = ({target}: {target: Target}) => {
   const auth = useAuth();
   const { t, i18n } = useTranslation('user');
+  // user profile that contains the API key
   const { data: profileData } = useFetchUserProfileQuery(auth.settings.client_id);
+  // the API key that we try to set
   const [apiValue, setApiValue] = useState('');
-  // check key on init
-  const [check, setCheck] = useState(true);
-  const [apiKey, setApiKey] = useState('');
+  // the value of the API key field, which we set separately from the API key itself
+  const [fieldValue, setFieldValue] = useState('');
 
-  // call keycloak to save new API key
+  // function to save new API key in Keycloak
   const [saveData, {
     isUninitialized: saveUninitialized,
     isLoading: saveLoading, 
     isSuccess: saveSuccess
   }] = useSaveUserDataMutation();
 
-  // check if key is valid
+  // Check to see if key is valid
   const { 
     data: keyData, 
     error: keyError, 
@@ -90,17 +92,25 @@ const UserSettingsItem = ({target}: {target: Target}) => {
     url: target.keyCheckUrl,
     type: target.authKey,
   }, { 
-    skip: !profileData || !target.keyCheckUrl || !check || apiValue === ''
+    // only check this if apiValue has an actual value, which is the same as fieldValue (so after debouncing)
+    skip: (!profileData || !target.keyCheckUrl || apiValue === '') && apiValue === fieldValue
   });
 
-  // set API key value once it's been retrieved
+  // set API key value and field value from the server, once the user profile has been loaded
   useEffect(
-    () => profileData && setApiValue((profileData.attributes[target.authKey] && profileData.attributes[target.authKey][0]) || ''),
+    () => {
+      if (profileData) {
+        const value = (profileData.attributes[target.authKey] && profileData.attributes[target.authKey][0]) || '';
+        setApiValue(value);
+        setFieldValue(value);
+      }
+    },
     [profileData, target.authKey]
   );
 
+  // save the API key value to the server if it's a valid key
   useEffect(() => {
-    if (check && apiValue && profileData.attributes[target.authKey][0] !== apiValue && !keyLoading && !keyFetching && keySuccess) {
+    if (apiValue && profileData.attributes[target.authKey][0] !== apiValue && !keyLoading && !keyFetching && keySuccess) {
       // clicked outside of input field, lets save key to the user profile
       saveData({
         id: auth.user?.profile.aud,
@@ -114,7 +124,15 @@ const UserSettingsItem = ({target}: {target: Target}) => {
         }
       });      
     }
-  }, [check, profileData, apiValue, keyLoading, keyFetching, keySuccess]);
+  }, [profileData, apiValue, keyLoading, keyFetching, keySuccess]);
+
+  const changeValue = (value: string) => {
+    setFieldValue(value);
+    debounced(value);
+  }
+
+  // debounce the input for checking API key valid state
+  const debounced = useDebouncedCallback(value => setApiValue(value), 500);
 
   return (
     <Stack direction="column" alignItems="flex-start" mb={4}>
@@ -139,10 +157,8 @@ const UserSettingsItem = ({target}: {target: Target}) => {
         label={t('apiKeyLabel', {type: target.name})} 
         variant="outlined" 
         sx={{width: '100%', flex: 1}}
-        value={apiValue}
-        onChange={(e) => setApiValue(e.target.value)}
-        onBlur={() => setCheck(true)}
-        onFocus={() => setCheck(false)}
+        value={fieldValue}
+        onChange={(e) => changeValue(e.target.value)}
         InputProps={{
           endAdornment: 
             <InputAdornment position="end">

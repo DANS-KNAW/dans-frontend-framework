@@ -21,8 +21,8 @@ const SingleTextField = ({field, sectionIndex, groupedFieldId, currentField = 0,
   const formDisabled = useAppSelector(getFormDisabled);
 
   useEffect(() => {
-    // if requested, auto fill user data from oidc
-    if (field.autofill && auth.user) {
+    // if requested, auto fill user data from oidc, if field has no (manually) set value
+    if (field.autofill && auth.user && !field.value) {
       dispatch(setField({
         sectionIndex: sectionIndex,
         id: field.id,
