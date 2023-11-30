@@ -6,8 +6,6 @@ import checker from 'vite-plugin-checker';
 export default ({ mode }) => {
 	process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
-	console.log(process.env)
-
 	return defineConfig({
 		server: {
 			proxy: {

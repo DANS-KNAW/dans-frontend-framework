@@ -8,14 +8,14 @@ WORKDIR /app
 COPY . .
 RUN git submodule update --init --recursive
 
-## RUN turbo prune --scope=@dans-framework/rda --docker
-RUN pnpm i && pnpm build --filter=@dans-framework/rda
+## RUN turbo prune --scope=@dans-framework/datacite --docker
+RUN pnpm i && pnpm build --filter=@dans-framework/datacite
 
 # Fetching the latest nginx image
 FROM nginx
 
 # Copying built assets from builder
-COPY --from=builder /app/apps/rda/dist /usr/share/nginx/html
+COPY --from=builder /app/apps/datacite/dist /usr/share/nginx/html
 
 # Copying our nginx.conf
-COPY apps/rda/nginx.conf /etc/nginx/conf.d/default.conf
+COPY apps/datacite/nginx.conf /etc/nginx/conf.d/default.conf
