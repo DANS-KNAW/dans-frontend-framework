@@ -11,6 +11,8 @@ export const validateData = (type: ValidationType, value: string): boolean => {
       return /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value.toLowerCase());
     case 'uri':
       return /^(https?|ftp):\/\/[^\s/$.?#]*\.[^\s]*$/.test(value.toLowerCase());
+    case 'github-uri':
+      return /^https:\/\/github\.com\/.*$/.test(value.toLowerCase());
     default:
       return true;
   }
