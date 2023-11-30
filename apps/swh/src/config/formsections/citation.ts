@@ -205,10 +205,12 @@ const section: InitialSectionType = {
       type: 'text',
       name: 'repository_url',
       label: 'Repository URL',
+      validation: "github-uri",
       description: {
-        en: 'The Repository URL of the software to be archived',
-        nl: 'De Repository URL van de software die gearchiveerd moet worden',
+        en: 'The Repository URL of the software to be archived (Note: currently only Github is supported)',
+        nl: 'De Repository URL van de software die gearchiveerd moet worden (Opmerking: momenteel wordt alleen Github ondersteund)',
       },
+      placeholder: 'https://github.com/...'
     },
     {
       type: 'text',

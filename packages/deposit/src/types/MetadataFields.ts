@@ -149,7 +149,7 @@ export interface OptionsType {
 };
 
 // Validation for text fields
-export type ValidationType = 'email' | 'uri' | 'number';
+export type ValidationType = 'email' | 'uri' | 'number' | 'github-uri';
 
 // Format to return API response in, used by RTK's transformResponse
 export interface AutocompleteAPIFieldData {
