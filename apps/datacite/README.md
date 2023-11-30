@@ -2,7 +2,7 @@
 This is a wrapper application for the components of the DANS framework. Add and configure the components you need.
 
 ## Configuration and usage
-Make sure required dependencies are installed in your **package.json**.
+Make sure required dependencies are installed in your **package.json**. 
 
 Create the appropriate **.env** files. Use **.env** as a template for your **.env.development** and **.env.production** files.
 
