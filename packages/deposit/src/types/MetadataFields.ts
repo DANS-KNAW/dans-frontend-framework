@@ -22,6 +22,7 @@ interface BasisFieldType {
   description?: string | LanguageStrings; // appears in tooltip in UI
   required?: boolean; // Form won't submit if this field has not been filled in
   private?: boolean; // gets sent to a separate non-public metadata file
+  noIndicator?: boolean; // gives a non-required field a neutral status indicator
 }
 
 export interface TextFieldType extends BasisFieldType {

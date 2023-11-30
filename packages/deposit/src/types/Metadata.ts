@@ -10,7 +10,7 @@ export interface InitialSectionType {
   fields: RecursiveOmit<Field, 'id'>[];
 }
 
-export type SectionStatus = 'error' | 'warning' | 'success' | undefined;
+export type SectionStatus = 'error' | 'warning' | 'success' | 'neutral' | undefined;
 
 export interface SectionType extends Omit<InitialSectionType, 'fields'> {
   fields: Field[];

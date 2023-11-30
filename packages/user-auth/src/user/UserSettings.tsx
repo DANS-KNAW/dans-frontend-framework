@@ -30,14 +30,16 @@ export const UserSettings = ({target, depositSlug}: {target: Target[], depositSl
   }, [siteTitle, name]);
 
   const { data: profileData } = useFetchUserProfileQuery(auth.settings.client_id);
+  console.log(profileData)
 
-  // Check if all API keys are valid, to enable/disable button
-  const validateTargets = profileData && target.map(t => ({
-    key: profileData.attributes[t.authKey][0],
+  // Check if all API keys are valid, to enable/disable button, but make sure they're in the users profile first
+  const validateTargets = target.map(t => ({
+    key: profileData && profileData.attributes[t.authKey] && profileData.attributes[t.authKey][0],
     url: t.keyCheckUrl,
     type: t.authKey,
   }));
-  const { data: apiKeyData, error: apiKeyError } = useValidateAllKeysQuery(validateTargets, { skip: !target || !profileData });
+  const skipValidate = validateTargets.some( t => !t.key);
+  const { data: apiKeyData, error: apiKeyError } = useValidateAllKeysQuery(validateTargets, { skip: !target || !profileData || skipValidate });
 
   return (
     <Container>
@@ -51,7 +53,7 @@ export const UserSettings = ({target, depositSlug}: {target: Target[], depositSl
            <Link component={RouterLink} to={apiKeyError !== undefined ? "" : `/${depositSlug || `deposit`}`}>
             <Button 
               variant="contained"
-              disabled={apiKeyError !== undefined}
+              disabled={apiKeyError !== undefined || skipValidate}
             >
               {t('goToDeposit')}
             </Button>
@@ -80,7 +82,7 @@ const UserSettingsItem = ({target}: {target: Target}) => {
     isSuccess: saveSuccess
   }] = useSaveUserDataMutation();
 
-  // Check to see if key is valid
+  // Check if key is valid
   const { 
     data: keyData, 
     error: keyError, 
@@ -92,8 +94,8 @@ const UserSettingsItem = ({target}: {target: Target}) => {
     url: target.keyCheckUrl,
     type: target.authKey,
   }, { 
-    // only check this if apiValue has an actual value, which is the same as fieldValue (so after debouncing)
-    skip: (!profileData || !target.keyCheckUrl || apiValue === '') && apiValue === fieldValue
+    // only check if apiValue has an actual value, when profile has loaded, and if there's a url to check against
+    skip: !profileData || !target.keyCheckUrl || !apiValue
   });
 
   // set API key value and field value from the server, once the user profile has been loaded
@@ -110,8 +112,12 @@ const UserSettingsItem = ({target}: {target: Target}) => {
 
   // save the API key value to the server if it's a valid key
   useEffect(() => {
-    if (apiValue && profileData.attributes[target.authKey][0] !== apiValue && !keyLoading && !keyFetching && keySuccess) {
-      // clicked outside of input field, lets save key to the user profile
+    if (
+      // if there's a value filled in, and the key is valid
+      apiValue && !keyLoading && !keyFetching && keySuccess &&
+      // and if there's no profile data with a key, or there is, but the key is different
+      (!profileData.attributes[target.authKey] || (profileData.attributes[target.authKey] && profileData.attributes[target.authKey][0] !== apiValue))
+    ) {
       saveData({
         id: auth.user?.profile.aud,
         content: {

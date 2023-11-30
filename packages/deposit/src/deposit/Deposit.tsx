@@ -61,7 +61,6 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
   useEffect(() => {
     if (!sessionId || (sessionId && savedFormData?.id && savedFormId)) {
       // we need to reset the form status first, in case data had been previously entered
-      console.log('init')
       dispatch(resetMetadataSubmitStatus());
       dispatch(resetFilesSubmitStatus());
       dispatch(resetFiles());

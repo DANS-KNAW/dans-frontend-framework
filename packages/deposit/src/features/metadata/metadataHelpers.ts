@@ -37,10 +37,13 @@ export const findById = (id: string, fields: Field[]): Field | undefined => {
 // Get the status of a single field
 export const getFieldStatus = (field: InputField): SectionStatus => {
   const fieldEmpty = !field.value || ( Array.isArray(field.value) && field.value.length === 0 );
-  if (!field.required && fieldEmpty) {
+  if ( field.noIndicator && !field.required && fieldEmpty ) {
+    return 'neutral';
+  }
+  else if ( !field.required && fieldEmpty ) {
     return 'warning';
   }
-  if ( (field.required && fieldEmpty) || (!fieldEmpty && field.validation && !field.valid) ) {
+  else if ( (field.required && fieldEmpty) || (!fieldEmpty && field.validation && !field.valid) ) {
     return 'error';
   }
   else {

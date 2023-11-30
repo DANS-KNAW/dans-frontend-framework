@@ -42,6 +42,7 @@ export const StatusIcon = ({status, title, subtitle, margin}: StatusIconProps) =
               {subtitle}
             </Typography>
           }
+          {status !== 'neutral' &&
             <Typography
               sx={{
                 fontSize: 12, 
@@ -54,12 +55,13 @@ export const StatusIcon = ({status, title, subtitle, margin}: StatusIconProps) =
             >
               {t(status as string)}
             </Typography>
+          }
         </>
       }>
       {
         status === 'error' ?
         <ErrorIcon sx={iconSx} color={status} /> :
-        status === 'warning' ?
+        status === 'warning' || status === 'neutral' ?
         <InfoIcon sx={iconSx} color={status}/> :
         <CheckCircleIcon sx={iconSx} color={status}/>
       }
