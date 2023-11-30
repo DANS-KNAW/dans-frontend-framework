@@ -29,13 +29,11 @@ export const LoginButton = ({ variant }: { variant?: "contained" }) => {
       onClick={
         // set the signin redirect with the current location in state
         () =>
-          void auth
-            .signinRedirect({ state: location.pathname })
-            .catch(() =>
-              enqueueSnackbar("Error redirecting to sign-in server!", {
-                variant: "error",
-              }),
-            )
+          void auth.signinRedirect({ state: location.pathname }).catch(() =>
+            enqueueSnackbar("Error redirecting to sign-in server!", {
+              variant: "error",
+            }),
+          )
       }
     >
       {t("login")}

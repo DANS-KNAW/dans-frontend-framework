@@ -62,6 +62,7 @@ const section: InitialSectionType = {
             en: "The type of relation to this external item",
             nl: "Type relatie met dit externe item",
           },
+          noIndicator: true,
           options: relationships.map((r: string) => ({ label: r, value: r })),
         },
         {
@@ -71,6 +72,7 @@ const section: InitialSectionType = {
             nl: "Gerelateerd item",
           },
           name: "relation_item",
+          noIndicator: true,
           description: {
             en: "Other interviews, publications, projects, or initiatives can be linked here by providing a description, a URL, and selecting a relation type.",
             nl: "Andere interviews, publicaties, projecten of initiatieven kunnen hier worden gelinkt door een beschrijving, een URL en een relatietype te verstrekken.",
@@ -83,6 +85,7 @@ const section: InitialSectionType = {
             nl: "Item referentie",
           },
           name: "relation_reference",
+          noIndicator: true,
           placeholder: "https://...",
           validation: "uri",
           description: {

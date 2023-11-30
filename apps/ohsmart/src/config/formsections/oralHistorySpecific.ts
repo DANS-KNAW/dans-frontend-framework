@@ -46,6 +46,7 @@ const section: InitialSectionType = {
             nl: "Voorkeursnaam",
           },
           name: "interviewee_preferred_name",
+          noIndicator: true,
           private: true,
           repeatable: true,
         },
@@ -57,6 +58,7 @@ const section: InitialSectionType = {
             nl: "Geboortedatum",
           },
           name: "interviewee_dob",
+          noIndicator: true,
           private: true,
         },
         {
@@ -82,6 +84,10 @@ const section: InitialSectionType = {
         {
           type: "check",
           name: "interviewee_consent",
+          description: {
+            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse, for instance through an informed consent form)",
+            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik, bijvoorbeeld via een toestemmingsformulier)",
+          },
           required: true,
           private: true,
           options: [
@@ -136,7 +142,7 @@ const section: InitialSectionType = {
             nl: "Voorkeursnaam",
           },
           name: "interviewer_preferred_name",
-
+          noIndicator: true,
           private: true,
           repeatable: true,
         },
@@ -173,6 +179,10 @@ const section: InitialSectionType = {
         {
           type: "check",
           name: "interviewer_consent",
+          description: {
+            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse, for instance through an informed consent form)",
+            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik, bijvoorbeeld via een toestemmingsformulier)",
+          },
           required: true,
           private: true,
           options: [
@@ -208,6 +218,7 @@ const section: InitialSectionType = {
           },
           name: "interpreter_first_name",
           private: true,
+          noIndicator: true,
         },
         {
           type: "text",
@@ -217,6 +228,7 @@ const section: InitialSectionType = {
           },
           name: "interpreter_last_name",
           private: true,
+          noIndicator: true,
         },
         {
           type: "text",
@@ -226,6 +238,7 @@ const section: InitialSectionType = {
           },
           name: "interpreter_function",
           private: true,
+          noIndicator: true,
           repeatable: true,
         },
         {
@@ -237,11 +250,17 @@ const section: InitialSectionType = {
           name: "interpreter_affiliation",
           private: true,
           repeatable: true,
+          noIndicator: true,
         },
         {
           type: "check",
           name: "interpreter_consent",
+          description: {
+            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse, for instance through an informed consent form)",
+            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik, bijvoorbeeld via een toestemmingsformulier)",
+          },
           private: true,
+          noIndicator: true,
           options: [
             {
               value: "interpreter_consent_signed",
@@ -275,6 +294,7 @@ const section: InitialSectionType = {
           },
           name: "others_first_name",
           private: true,
+          noIndicator: true,
         },
         {
           type: "text",
@@ -284,6 +304,7 @@ const section: InitialSectionType = {
           },
           name: "others_last_name",
           private: true,
+          noIndicator: true,
         },
         {
           type: "text",
@@ -294,6 +315,7 @@ const section: InitialSectionType = {
           name: "others_function",
           private: true,
           repeatable: true,
+          noIndicator: true,
         },
         {
           type: "text",
@@ -304,11 +326,17 @@ const section: InitialSectionType = {
           name: "others_affiliation",
           private: true,
           repeatable: true,
+          noIndicator: true,
         },
         {
           type: "check",
           name: "others_consent",
+          description: {
+            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse, for instance through an informed consent form)",
+            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik, bijvoorbeeld via een toestemmingsformulier)",
+          },
           private: true,
+          noIndicator: true,
           options: [
             {
               value: "others_consent_signed",
@@ -393,7 +421,7 @@ const section: InitialSectionType = {
             nl: "Voornaam",
           },
           name: "recorded_by_first_name",
-          required: false,
+          noIndicator: true,
         },
         {
           type: "text",
@@ -402,7 +430,7 @@ const section: InitialSectionType = {
             nl: "Achternaam",
           },
           name: "recorded_by_last_name",
-          required: false,
+          noIndicator: true,
         },
         {
           type: "text",
@@ -411,7 +439,7 @@ const section: InitialSectionType = {
             nl: "Affiliatie",
           },
           name: "recorded_by_affiliation",
-          required: false,
+          noIndicator: true,
         },
       ],
     },
@@ -492,6 +520,10 @@ const section: InitialSectionType = {
         {
           type: "check",
           name: "transcript_human_consent",
+          description: {
+            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse, for instance through an informed consent form)",
+            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik, bijvoorbeeld via een toestemmingsformulier)",
+          },
           private: true,
           options: [
             {

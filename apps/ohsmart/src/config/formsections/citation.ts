@@ -28,6 +28,7 @@ const section: InitialSectionType = {
       },
       name: "subtitle",
       repeatable: true,
+      noIndicator: true,
       description: {
         en: "You can provide a subtitle if you wish",
         nl: "Je kunt een optionele ondertitel opgeven als je wilt",
@@ -135,6 +136,7 @@ const section: InitialSectionType = {
             nl: "Subsidieverstrekker",
           },
           name: "grant_agency",
+          noIndicator: true,
         },
         {
           type: "text",
@@ -143,6 +145,7 @@ const section: InitialSectionType = {
             nl: "Dossiernummer van de verstrekte subsidie",
           },
           name: "grant_number",
+          noIndicator: true,
         },
       ],
     },
