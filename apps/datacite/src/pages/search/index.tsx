@@ -38,7 +38,7 @@ export function RdaSearch({ dashboard }: { dashboard?: RDTSearchUIProps['dashboa
 				fullTextFields={config.fullTextFields}
 				onClickResult={(result: any) => navigate(`/record/${encodeURIComponent(result.id)}`)}
 				ResultBodyComponent={Result}
-				url={`/api/search/dans-datacite/_search`}
+				url="/api/search"
 				style={config.style}
 			>
 				<MapFacet
