@@ -7,7 +7,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Metadata from '../features/metadata/Metadata';
 import Files from '../features/files/Files';
 import type { TabPanelProps, TabHeaderProps } from '../types/Deposit';
-import type { FormConfig, InitialFormType } from '../types/Metadata';
+import type { FormConfig } from '../types/Metadata';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import { 
   getMetadataStatus, 
@@ -15,7 +15,6 @@ import {
   getOpenTab, 
   setOpenTab,
   initForm,
-  resetMetadata
 } from '../features/metadata/metadataSlice';
 import { resetFilesSubmitStatus, resetMetadataSubmitStatus } from '../features/submit/submitSlice';
 import { getFiles, resetFiles, addFiles } from '../features/files/filesSlice';
@@ -35,7 +34,7 @@ import type { Page } from '@dans-framework/pages';
 import { useAuth } from 'react-oidc-context';
 import { useSearchParams } from 'react-router-dom';
 import { useFetchSavedMetadataQuery } from './depositApi';
-import { useValidateAllKeysQuery, Target } from '@dans-framework/user-auth';
+import { useValidateAllKeysQuery } from '@dans-framework/user-auth';
 
 const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
   const dispatch = useAppDispatch();
@@ -48,7 +47,7 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
 
   // Can load a saved form based on metadata id, passed along from e.g. UserSubmissions
   const savedFormId = searchParams.get('id');
-  const { data: savedFormData, isLoading, isUninitialized, isSuccess } = useFetchSavedMetadataQuery(savedFormId, {skip: !savedFormId});  
+  const { data: savedFormData, isSuccess } = useFetchSavedMetadataQuery(savedFormId, {skip: !savedFormId});  
 
   // set page title
   useEffect( () => { 
@@ -94,7 +93,7 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
     url: t.keyCheckUrl,
     type: t.authKey,
   }));
-  const { data: apiKeyData, error: apiKeyError } = useValidateAllKeysQuery(validateTargets, { skip: !targetCredentials });
+  const { error: apiKeyError } = useValidateAllKeysQuery(validateTargets, { skip: !targetCredentials });
 
   const hasTargetCredentials = targetCredentials && !apiKeyError;
 
@@ -114,7 +113,7 @@ const Deposit = ({ config, page }: {config: FormConfig, page: Page}) => {
               </Alert>
             }
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <TabHeader value={openTab} handleChange={(e, val) => dispatch(setOpenTab(val))} />
+              <TabHeader value={openTab} handleChange={(_e, val) => dispatch(setOpenTab(val))} />
             </Box>
             <AnimatePresence initial={false}>
               <TabPanel value={openTab} index={0} key="tab1">

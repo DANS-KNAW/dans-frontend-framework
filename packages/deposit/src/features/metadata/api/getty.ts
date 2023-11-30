@@ -13,7 +13,7 @@ export const gettyApi = createApi({
           url: `proxy?url=${encodeURIComponent(`http://vocabsservices.getty.edu/AATService.asmx/AATGetTermMatch?term=${search}&logop=and&notes=`)}`,
           headers: {Accept: "application/json"},
       })},
-      transformResponse: (response: ProxyResponse, meta, arg) => {
+      transformResponse: (response: ProxyResponse, _meta, arg) => {
         // convert xml text string to JSON
         const parser = new XMLParser();
         const json: GettyResponse = parser.parse(response.text);

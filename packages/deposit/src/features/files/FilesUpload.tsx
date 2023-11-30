@@ -21,14 +21,12 @@ import { getFiles, addFiles } from './filesSlice';
 import type { SelectedFile, FileLocation, RejectedFilesProps, DansSimpleListQueryResponse } from '../../types/Files';
 import { v4 as uuidv4 } from 'uuid';
 import { useFetchSimpleListQuery } from './api/dansFormats';
-import { getMetadataSubmitStatus } from '../submit/submitSlice';
 import { enqueueSnackbar } from 'notistack';
 import { getFormDisabled } from '../../deposit/depositSlice';
 
 const FilesUpload = () => {
   const dispatch = useAppDispatch();
   const currentFiles = useAppSelector(getFiles);
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const { t } = useTranslation('files');  
   const { data } = useFetchSimpleListQuery<DansSimpleListQueryResponse>(null);
 

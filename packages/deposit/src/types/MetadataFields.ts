@@ -1,4 +1,4 @@
-import type { Language, LanguageStrings } from '@dans-framework/utils';
+import type { LanguageStrings } from '@dans-framework/utils';
 import type { AuthProperty } from '@dans-framework/user-auth';
 
 // All user input field types

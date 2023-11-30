@@ -308,7 +308,7 @@ export const rdaDomainsApi = createApi({
   endpoints: (build) => ({
     fetchRdaDomain: build.query({
       query: (content) => ({ content }),
-      transformResponse: (response: RdaDomainsResponse, meta, arg) => {
+      transformResponse: (response: RdaDomainsResponse, _meta, arg) => {
         return response.number_of_results > 0
           ? {
               arg: arg,

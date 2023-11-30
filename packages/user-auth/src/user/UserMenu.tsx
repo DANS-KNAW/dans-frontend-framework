@@ -1,4 +1,4 @@
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
@@ -10,7 +10,6 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import Divider from '@mui/material/Divider';
 import { NavLink as RouterLink } from 'react-router-dom';
-import { useFetchUserProfileQuery } from './userApi';
 import { LoginButton, LogoutButton } from './Buttons';
 
 export const UserMenu = ({userSettings, userSubmissions}: {userSettings: boolean, userSubmissions: boolean}) => {
@@ -36,9 +35,6 @@ const SettingsMenu = ({userSettings, userSubmissions}: {userSettings: boolean, u
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-
-  // Fetch users profile
-  const { data } = useFetchUserProfileQuery(auth.settings.client_id);
 
   return (
     <Box sx={{ flexGrow: 0 }}>

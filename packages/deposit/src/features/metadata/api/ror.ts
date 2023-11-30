@@ -10,7 +10,7 @@ export const rorApi = createApi({
         url: `organizations?query.advanced=name:${content}*`,
         headers: {Accept: "application/json"},
       }),
-      transformResponse: (response: RorResponse, meta, arg) => {
+      transformResponse: (response: RorResponse, _meta, arg) => {
         // Return an empty array when no results, which is what the Autocomplete field expects
         return response.number_of_results > 0 ? 
           ({

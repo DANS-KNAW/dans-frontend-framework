@@ -6,7 +6,6 @@ import type {
   SubmitStatus, 
   InitialStateType 
 } from '../../types/Submit';
-import type { Moment } from 'moment';
 
 const initialState: InitialStateType = {
   metadataStatus: '',

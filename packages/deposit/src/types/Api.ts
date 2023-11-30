@@ -1,4 +1,4 @@
-import type { AutocompleteAPIFieldData, Datastations } from './MetadataFields';
+import type { AutocompleteAPIFieldData } from './MetadataFields';
 
 interface GorcItem {
   id: string;

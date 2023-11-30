@@ -21,7 +21,7 @@ const Form = () => {
 
   // handles accordion open/close actions, sends to redux store
   const handleChange =
-    (panel: string) => (e: SyntheticEvent, isExpanded: boolean) => {
+    (panel: string) => (_e: SyntheticEvent, isExpanded: boolean) => {
       dispatch(setOpenPanel(isExpanded ? panel : ''));
     };
 

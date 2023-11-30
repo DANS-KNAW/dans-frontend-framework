@@ -1,4 +1,3 @@
-import languageList from '../data/languageList.json';
 import type { InitialSectionType } from '@dans-framework/deposit';
 
 const section: InitialSectionType = {

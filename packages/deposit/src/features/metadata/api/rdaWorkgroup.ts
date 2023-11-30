@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/dist/query/react";
-import type { GorcResponse, RdaWorkGroupResponse } from "../../../types/Api";
+import type { RdaWorkGroupResponse } from "../../../types/Api";
 
 const rdaWorkingGroups = [
   {
@@ -445,7 +445,7 @@ export const rdaWorkingGroupsApi = createApi({
   endpoints: (build) => ({
     fetchRdaWorkingGroup: build.query({
       query: (content) => ({ content }),
-      transformResponse: (response: RdaWorkGroupResponse, meta, arg) => {
+      transformResponse: (response: RdaWorkGroupResponse, _meta, arg) => {
         return response.number_of_results > 0
           ? {
               arg: arg,

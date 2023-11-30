@@ -1,11 +1,9 @@
-import { useEffect } from 'react';
-import { createApi, fetchBaseQuery, skipToken } from '@reduxjs/toolkit/query/react';
-import type { FetchBaseQueryError, SkipToken } from '@reduxjs/toolkit/query'
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { User } from 'oidc-client-ts';
-import type { SubmissionResponse, ReleaseVersion, AuthKeys, ValidateTarget } from '../types';
+import type { SubmissionResponse, AuthKeys } from '../types';
 import i18n from '../languages/i18n';
 import { enqueueSnackbar } from 'notistack';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
 
 function getUser(provider: string, id: string) {
     const oidcStorage = sessionStorage.getItem(`oidc.user:${provider}:${id}`)
@@ -51,7 +49,7 @@ export const userApi = createApi({
         })
       },
       invalidatesTags: ['User'],
-      async onQueryStarted( arg, { dispatch, queryFulfilled } ) {
+      async onQueryStarted( _arg, { queryFulfilled } ) {
         await queryFulfilled;
         // on successful save, lets show a Toast
         enqueueSnackbar(i18n.t('keySaved', {ns: 'user'}), { variant: 'success' });
@@ -102,7 +100,7 @@ export const validateKeyApi = createApi({
       },
       transformResponse: (response: { status: string | number }) => response.status,
       // response for setting the error snackbar, but we might not use this..
-      transformErrorResponse: (response: { status: string | number }, meta, arg) => i18n.t('keyError', {ns: 'user'}),
+      transformErrorResponse: () => i18n.t('keyError', {ns: 'user'}),
     }),
     validateAllKeys: build.query({
       // this will return all targets that have an invalid API key set

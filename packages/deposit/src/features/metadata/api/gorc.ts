@@ -2051,7 +2051,7 @@ export const gorcApi = createApi({
   endpoints: (build) => ({
     fetchGorc: build.query({
       query: (content) => ({ content }),
-      transformResponse: (response: GorcResponse, meta, arg) => {
+      transformResponse: (response: GorcResponse, _meta, arg) => {
         // Return an empty array when no results, which is what the Autocomplete field expects
         return response.number_of_results > 0
           ? {

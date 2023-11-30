@@ -414,7 +414,7 @@ const AutocompleteAPIField = ({
             <InfoChip key={index} option={option} apiValue={apiValue} getTagProps={getTagProps} index={index} />
           )
         }
-        onChange={(e, newValue, reason) => {
+        onChange={(_e, newValue, reason) => {
           // Gets set when user selects a value from the list
           // Make sure a mandatory value cannot get erased from a multiselect
           const saveValues = (reason === 'clear' || reason === 'removeOption') && Array.isArray(field.value) && Array.isArray(newValue) && 

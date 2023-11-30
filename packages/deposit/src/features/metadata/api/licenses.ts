@@ -7,7 +7,7 @@ export const licenceApi = createApi({
   endpoints: (build) => ({
     fetchLicenses: build.query({
       query: () => '',
-      transformResponse: (response: LicenceResponse, meta, arg) => {
+      transformResponse: (response: LicenceResponse, _meta, arg) => {
         if (!response) return [];
 
         const licenseArray = Object.values(response);

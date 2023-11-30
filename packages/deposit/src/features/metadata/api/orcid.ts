@@ -14,7 +14,7 @@ export const orcidApi = createApi({
           headers: {Accept: "application/vnd.orcid+json"},
         })
       },
-      transformResponse: (response: OrcidResponse, meta, arg) => {
+      transformResponse: (response: OrcidResponse, _meta, arg) => {
         // Return an empty array when no results, which is what the Autocomplete field expects
         return response['num-found'] > 0 ? 
           ({

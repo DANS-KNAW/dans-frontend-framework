@@ -5,7 +5,6 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
-import styles from './Footer.module.css';
 import type { Footer as FooterType, FooterContent } from './types';
 import { lookupLanguageString } from '@dans-framework/utils';
 import TwitterIcon from '@mui/icons-material/Twitter';

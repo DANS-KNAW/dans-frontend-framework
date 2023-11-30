@@ -17,7 +17,7 @@ export const datastationsApi = createApi({
         url: `${vocabMap[content.vocabulary as Datastations]}/search?query=${content.query}*&unique=true&lang=${content.lang}`,
         headers: {Accept: "application/json"},
       }),
-      transformResponse: (response: DatastationsResponse, meta, arg) => {
+      transformResponse: (response: DatastationsResponse, _meta, arg) => {
         // Return an empty array when no results, which is what the Autocomplete field expects
         return response.results.length > 0 ? 
           ({

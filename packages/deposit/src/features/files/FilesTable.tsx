@@ -1,4 +1,4 @@
-import { useState, forwardRef, ReactNode } from 'react';
+import { useState, forwardRef } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { TableCellProps } from '@mui/material/TableCell';
@@ -78,7 +78,7 @@ const FileActionOptions = ({file, type}: FileActionOptionsProps) => {
       size="small"
       multiple={type === 'process'}
       onChange={
-        (e, newValue) => 
+        (_e, newValue) => 
           dispatch(setFileMeta({
             id: file.id, 
             type: type, 

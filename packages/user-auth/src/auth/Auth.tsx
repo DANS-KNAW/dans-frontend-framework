@@ -13,7 +13,6 @@ import i18nProvider from '../languages/i18n';
 import type { AuthProviderConfig } from '../types';
 import { store } from '../redux/store';
 import { LoginPage } from './Login';
-import type { User } from 'oidc-client-ts';
 
 export const AuthWrapper = ({ authProvider, children }: {authProvider: AuthProviderConfig, children: ReactNode}) => {
   return (

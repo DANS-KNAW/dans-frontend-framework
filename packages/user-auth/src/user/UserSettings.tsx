@@ -25,6 +25,8 @@ export const UserSettings = ({target, depositSlug}: {target: Target[], depositSl
   const siteTitle = useSiteTitle();
   const auth = useAuth();
 
+  console.log(auth);
+
   useEffect( () => { 
     setSiteTitle(siteTitle, t('userSettings'));
   }, [siteTitle, name]);
@@ -39,7 +41,7 @@ export const UserSettings = ({target, depositSlug}: {target: Target[], depositSl
     type: t.authKey,
   }));
   const skipValidate = validateTargets.some( t => !t.key);
-  const { data: apiKeyData, error: apiKeyError } = useValidateAllKeysQuery(validateTargets, { skip: !target || !profileData || skipValidate });
+  const { error: apiKeyError } = useValidateAllKeysQuery(validateTargets, { skip: !target || !profileData || skipValidate });
 
   return (
     <Container>
@@ -77,9 +79,7 @@ const UserSettingsItem = ({target}: {target: Target}) => {
 
   // function to save new API key in Keycloak
   const [saveData, {
-    isUninitialized: saveUninitialized,
     isLoading: saveLoading, 
-    isSuccess: saveSuccess
   }] = useSaveUserDataMutation();
 
   // Check if key is valid

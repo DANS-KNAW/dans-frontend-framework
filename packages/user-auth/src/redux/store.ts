@@ -1,6 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { userApi, userSubmissionsApi, validateKeyApi } from '../user/userApi';
-import { errorLogger } from '@dans-framework/utils';
 
 export const store = configureStore({
   reducer: {

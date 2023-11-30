@@ -377,7 +377,7 @@ export const rdaInterestGroupsApi = createApi({
   endpoints: (build) => ({
     fetchRdaInterestGroup: build.query({
       query: (content) => ({ content }),
-      transformResponse: (response: RdaInterestGroupsResponse, meta, arg) => {
+      transformResponse: (response: RdaInterestGroupsResponse, _meta, arg) => {
         return response.number_of_results > 0
           ? {
               arg: arg,

@@ -1,21 +1,5 @@
 import type { InitialSectionType } from '@dans-framework/deposit';
 
-const relationships = [
-  "Conforms to",
-  "Has Format",
-  "Has part",
-  "References",
-  "Replaces",
-  "Requires",
-  "Has version",
-  "Is format of",
-  "Is part of",
-  "Is referenced by",
-  "Is replaced by",
-  "Is required by",
-  "Is version of",
-];
-
 const section: InitialSectionType = {
   id: 'relations',
   title: {

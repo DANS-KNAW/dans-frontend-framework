@@ -10,7 +10,7 @@ export const geonamesApi = createApi({
         url: `searchJSON?q=${value}&username=${apiKey}`,
         headers: {Accept: "application/json"},
       }),
-      transformResponse: (response: GeonamesResponse, meta, arg) => {
+      transformResponse: (response: GeonamesResponse, _meta, arg) => {
         // Return an empty array when no results, which is what the Autocomplete field expects
         return response.totalResultsCount > 0 ? 
           ({

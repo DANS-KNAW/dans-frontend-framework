@@ -9,7 +9,7 @@ import i18nProvider from './languages/i18n';
 import { I18nextProvider } from 'react-i18next';
 import type { Language } from '@dans-framework/utils';
 
-const LanguageBar = ({ languages = [], changeLanguage = (x) => null }: {languages?: Language[], changeLanguage?: (lang: Language) => void}) => {
+const LanguageBar = ({ languages = [], changeLanguage = () => null }: {languages?: Language[], changeLanguage?: (lang: Language) => void}) => {
   const { t, i18n } = useTranslation('languagebar');
 
   return (

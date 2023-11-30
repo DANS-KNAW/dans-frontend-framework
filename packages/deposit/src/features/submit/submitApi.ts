@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import type { BaseQueryFn, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import axios from 'axios';
-import type { AxiosHeaders, AxiosRequestConfig, AxiosError, AxiosProgressEvent } from 'axios';
+import type { AxiosRequestConfig, AxiosError, AxiosProgressEvent } from 'axios';
 import { setMetadataSubmitStatus, setFilesSubmitStatus, setLatestSave } from './submitSlice';
 import { setFileMeta } from '../files/filesSlice';
 import { setFormDisabled } from '../../deposit/depositSlice';
@@ -111,7 +111,7 @@ export const submitApi = createApi({
     submitData: build.mutation({
       // Custom query for chaining Post functions
       // submitKey is the current users Keycloak token
-      async queryFn({data, headerData, actionType}, queryApi, extraOptions, fetchWithBQ) {
+      async queryFn({data, headerData, actionType}, _queryApi, _extraOptions, fetchWithBQ) {
         console.log('submitting metadata...')
         console.log(data)
         // Format the headers
@@ -140,7 +140,7 @@ export const submitApi = createApi({
       }
     }),
     submitFiles: build.mutation({
-      async queryFn({data, headerData, actionType}, queryApi, extraOptions, fetchWithBQ) {
+      async queryFn({data, headerData, actionType}, _queryApi, _extraOptions, fetchWithBQ) {
         console.log('submitting files...')
         console.log(data.map((d: any) => [...d]))
         const headers = formatHeaderData(headerData);

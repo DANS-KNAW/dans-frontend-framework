@@ -10,7 +10,7 @@ export const sheetsApi = createApi({
         url: `${options.sheetId}/values/${options.page}?key=${apiKey}`,
         headers: {Accept: "application/json"},
       }),
-      transformResponse: (response: SheetsResponse, meta, arg) => {
+      transformResponse: (response: SheetsResponse, _meta, arg) => {
         // cut off everything above the starting row
         return response.values.length > arg.options.startAtRow ?
           ({

@@ -53,7 +53,7 @@ const AutocompleteField = ({field, sectionIndex, isLoading}: AutocompleteFieldPr
             <InfoChip option={option} key={index} getTagProps={getTagProps} index={index} />
           )
         }
-        onChange={(e, newValue) => dispatch(setField({
+        onChange={(_e, newValue) => dispatch(setField({
           sectionIndex: sectionIndex,
           id: field.id,
           value: newValue

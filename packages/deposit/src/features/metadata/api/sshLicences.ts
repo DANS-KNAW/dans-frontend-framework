@@ -7,7 +7,7 @@ export const sshLicenceApi = createApi({
   endpoints: (build) => ({
     fetchSshLicences: build.query({
       query: () => 'licenses',
-      transformResponse: (response: SshLicenceResponse, meta, arg) => {
+      transformResponse: (response: SshLicenceResponse) => {
         // Return an empty array when no results, which is what the Autocomplete field expects
         return response.data?.length > 0 ? 
         ({

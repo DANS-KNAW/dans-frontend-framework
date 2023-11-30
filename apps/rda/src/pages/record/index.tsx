@@ -31,7 +31,7 @@ interface RdaRecord {
 
 export function RdaRecord() {
     const { id } = useParams()
-    const [record, setRecord] = React.useState<any>(null)
+    const [record, setRecord] = React.useState<RdaRecord | null>(null)
 
     React.useEffect(() => {
         fetch(`${import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT}/dans-rda2/_source/${id}`)

@@ -6,7 +6,7 @@ import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
 import { memo } from 'react';
-import type { Field, TextFieldType, DateFieldType, InputField } from '../../types/MetadataFields';
+import type { TextFieldType, DateFieldType, InputField } from '../../types/MetadataFields';
 import type { SingleFieldProps, GroupedFieldProps } from '../../types/MetadataProps';
 import { DeleteButton, AddButtonText } from './MetadataButtons';
 import { 

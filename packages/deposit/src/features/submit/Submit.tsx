@@ -30,9 +30,7 @@ import {
 import { formatFormData, formatFileData } from './submitHelpers';
 import { useTranslation } from 'react-i18next';
 import { getData, setFormDisabled, getFormDisabled } from '../../deposit/depositSlice';
-import { fetchUserProfile } from '@dans-framework/user-auth';
 import { useAuth } from 'react-oidc-context';
-import moment from 'moment';
 import Alert from '@mui/material/Alert';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
@@ -75,15 +73,11 @@ const Submit = ({hasTargetCredentials}: {hasTargetCredentials: boolean}) => {
     '';
 
   const [submitData, {
-    isUninitialized: isUninitializedMeta, 
-    isLoading: isLoadingMeta, 
-    isSuccess: isSuccessMeta, 
     isError: isErrorMeta, 
     reset: resetMeta,
   }] = useSubmitDataMutation();
   const [submitFiles, { 
     isLoading: isLoadingFiles, 
-    isSuccess: isSuccessFiles, 
     reset: resetSubmittedFiles, 
   }] = useSubmitFilesMutation();
 

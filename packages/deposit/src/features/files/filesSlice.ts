@@ -22,7 +22,7 @@ export const filesSlice = createSlice({
         file[action.payload.type] = action.payload.value;
       }
     },
-    resetFiles: state => state = initialState,
+    resetFiles: () => initialState,
   }
 });
 
