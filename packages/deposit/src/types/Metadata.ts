@@ -1,18 +1,23 @@
-import type { LanguageStrings, RecursiveOmit } from '@dans-framework/utils';
-import type { Field } from './MetadataFields';
-import type { Target } from '@dans-framework/user-auth';
-import type { SelectedFile } from './Files';
+import type { LanguageStrings, RecursiveOmit } from "@dans-framework/utils";
+import type { Field } from "./MetadataFields";
+import type { Target } from "@dans-framework/user-auth";
+import type { SelectedFile } from "./Files";
 
 // Accordion sections
 export interface InitialSectionType {
   id: string;
   title: string | LanguageStrings;
-  fields: RecursiveOmit<Field, 'id'>[];
+  fields: RecursiveOmit<Field, "id">[];
 }
 
-export type SectionStatus = 'error' | 'warning' | 'success' | 'neutral' | undefined;
+export type SectionStatus =
+  | "error"
+  | "warning"
+  | "success"
+  | "neutral"
+  | undefined;
 
-export interface SectionType extends Omit<InitialSectionType, 'fields'> {
+export interface SectionType extends Omit<InitialSectionType, "fields"> {
   fields: Field[];
   status: SectionStatus;
 }
@@ -27,7 +32,7 @@ export interface InitialStateType {
 export interface InitialFormType {
   metadata: SectionType[];
   id?: string;
-  'file-metadata'?: SelectedFile[];
+  "file-metadata"?: SelectedFile[];
   files?: SelectedFile[];
 }
 

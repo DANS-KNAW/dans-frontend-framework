@@ -1,3 +1,3 @@
-const siteTitle = 'RDA';
+const siteTitle = "RDA";
 
-export default siteTitle
+export default siteTitle;

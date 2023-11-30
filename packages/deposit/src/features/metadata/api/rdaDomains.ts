@@ -295,7 +295,7 @@ export const rdaDomainsApi = createApi({
     const { content } = args;
 
     const filteredItems = rdaDomains.filter((item) =>
-      item.title.toLowerCase().startsWith(content.toLowerCase())
+      item.title.toLowerCase().startsWith(content.toLowerCase()),
     );
 
     return {

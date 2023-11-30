@@ -1,276 +1,276 @@
-import type { InitialSectionType } from '@dans-framework/deposit';
+import type { InitialSectionType } from "@dans-framework/deposit";
 
 const section: InitialSectionType = {
-  id: 'citation',
+  id: "citation",
   title: {
-    en: 'Citation',
-    nl: 'Citaten',
+    en: "Citation",
+    nl: "Citaten",
   },
   fields: [
     {
-      type: 'text',
-      name: 'title',
+      type: "text",
+      name: "title",
       label: {
-        en: 'Title',
-        nl: 'Titel',
+        en: "Title",
+        nl: "Titel",
       },
       required: true,
       description: {
-        en: 'Title of the deposit',
-        nl: 'Titel van het deposit',
+        en: "Title of the deposit",
+        nl: "Titel van het deposit",
       },
     },
     {
-      type: 'text',
-      name: 'subtitle',
+      type: "text",
+      name: "subtitle",
       label: {
-        en: 'Subtitle',
-        nl: 'Ondertitel',
+        en: "Subtitle",
+        nl: "Ondertitel",
       },
       description: {
-        en: 'Optional subtitle for the deposit',
-        nl: 'Optionele ondertitel bij het deposit',
+        en: "Optional subtitle for the deposit",
+        nl: "Optionele ondertitel bij het deposit",
       },
       repeatable: true,
     },
     {
-      type: 'autocomplete',
-      name: 'publisher',
+      type: "autocomplete",
+      name: "publisher",
       label: {
-        en: 'Publisher',
-        nl: 'Uitgever',
+        en: "Publisher",
+        nl: "Uitgever",
       },
       required: true,
       description: {
-        en: 'Institution - often the rights holder',
-        nl: 'Instituut - vaak de rechthebbende',
+        en: "Institution - often the rights holder",
+        nl: "Instituut - vaak de rechthebbende",
       },
-      options: 'ror',
+      options: "ror",
     },
     {
-      type: 'date',
-      name: 'publicationDate',
+      type: "date",
+      name: "publicationDate",
       label: {
-        en: 'Publication date',
-        nl: 'Publicatiedatum',
+        en: "Publication date",
+        nl: "Publicatiedatum",
       },
       required: true,
       description: {
-        en: 'Date of publication',
-        nl: 'Datum van publicatie',
+        en: "Date of publication",
+        nl: "Datum van publicatie",
       },
-      format: 'DD-MM-YYYY HH:mm',
+      format: "DD-MM-YYYY HH:mm",
     },
     {
-      type: 'text',
-      name: 'description',
+      type: "text",
+      name: "description",
       label: {
-        en: 'Description',
-        nl: 'Beschrijving',
+        en: "Description",
+        nl: "Beschrijving",
       },
       multiline: true,
       required: true,
       description: {
-        en: 'Some context on the deposit.',
-        nl: 'Wat context bij het deposit.',
+        en: "Some context on the deposit.",
+        nl: "Wat context bij het deposit.",
       },
     },
     {
-      type: 'group',
-      name: 'contributors',
+      type: "group",
+      name: "contributors",
       label: {
-        en: 'Contributors',
-        nl: 'Bijdragers',
+        en: "Contributors",
+        nl: "Bijdragers",
       },
       description: {
-        en: 'Add one or more contributors.',
-        nl: 'Voeg een of meerdere bijdragers toe',
+        en: "Add one or more contributors.",
+        nl: "Voeg een of meerdere bijdragers toe",
       },
       repeatable: true,
       fields: [
         {
-          type: 'autocomplete',
-          name: 'contributor',
+          type: "autocomplete",
+          name: "contributor",
           label: {
-            en: 'Contributor',
-            nl: 'Bijdrager',
+            en: "Contributor",
+            nl: "Bijdrager",
           },
           description: {
-            en: 'Orcid of the contributor',
-            nl: 'Orcid van de bijdrager',
+            en: "Orcid of the contributor",
+            nl: "Orcid van de bijdrager",
           },
-          options: 'orcid',
+          options: "orcid",
           allowFreeText: true,
         },
         {
-          type: 'autocomplete',
-          name: 'contributorType',
+          type: "autocomplete",
+          name: "contributorType",
           label: {
-            en: 'Contributor type',
-            nl: 'Type bijdrager',
+            en: "Contributor type",
+            nl: "Type bijdrager",
           },
           description: {
-            en: 'Type of contribution',
-            nl: 'Type bijdrage',
+            en: "Type of contribution",
+            nl: "Type bijdrage",
           },
           options: [
             {
               label: {
-                en: 'Author',
-                nl: 'Auteur',
+                en: "Author",
+                nl: "Auteur",
               },
-              value: 'Author',
+              value: "Author",
             },
             {
               label: {
-                en: 'Contact Person',
-                nl: 'Contactpersoon',
+                en: "Contact Person",
+                nl: "Contactpersoon",
               },
-              value: 'ContactPerson',
+              value: "ContactPerson",
             },
             {
               label: {
-                en: 'Data Collector',
-                nl: 'Data Verzamelaar',
+                en: "Data Collector",
+                nl: "Data Verzamelaar",
               },
-              value: 'DataCollector',
+              value: "DataCollector",
             },
             {
               label: {
-                en: 'Data Curator',
-                nl: 'Data Curator',
+                en: "Data Curator",
+                nl: "Data Curator",
               },
-              value: 'DataCurator',
+              value: "DataCurator",
             },
             {
               label: {
-                en: 'Data Manager',
-                nl: 'Data Beheerder',
+                en: "Data Manager",
+                nl: "Data Beheerder",
               },
-              value: 'DataManager',
+              value: "DataManager",
             },
             {
               label: {
-                en: 'Distributor',
-                nl: 'Distributeur',
+                en: "Distributor",
+                nl: "Distributeur",
               },
-              value: 'Distributor',
+              value: "Distributor",
             },
             {
               label: {
-                en: 'Editor',
-                nl: 'Redacteur',
+                en: "Editor",
+                nl: "Redacteur",
               },
-              value: 'Editor',
+              value: "Editor",
             },
             {
               label: {
-                en: 'Hosting Institution',
-                nl: 'Hostende Instelling',
+                en: "Hosting Institution",
+                nl: "Hostende Instelling",
               },
-              value: 'HostingInstitution',
+              value: "HostingInstitution",
             },
             {
               label: {
-                en: 'Other',
-                nl: 'Overige',
+                en: "Other",
+                nl: "Overige",
               },
-              value: 'Other',
+              value: "Other",
             },
             {
               label: {
-                en: 'Producer',
-                nl: 'Producent',
+                en: "Producer",
+                nl: "Producent",
               },
-              value: 'Producer',
+              value: "Producer",
             },
             {
               label: {
-                en: 'Project Leader',
-                nl: 'Projectleider',
+                en: "Project Leader",
+                nl: "Projectleider",
               },
-              value: 'ProjectLeader',
+              value: "ProjectLeader",
             },
             {
               label: {
-                en: 'Project Manager',
-                nl: 'Projectmanager',
+                en: "Project Manager",
+                nl: "Projectmanager",
               },
-              value: 'ProjectManager',
+              value: "ProjectManager",
             },
             {
               label: {
-                en: 'Project Member',
-                nl: 'Projectlid',
+                en: "Project Member",
+                nl: "Projectlid",
               },
-              value: 'ProjectMember',
+              value: "ProjectMember",
             },
             {
               label: {
-                en: 'Registration Agency',
-                nl: 'Registratieagentschap',
+                en: "Registration Agency",
+                nl: "Registratieagentschap",
               },
-              value: 'RegistrationAgency',
+              value: "RegistrationAgency",
             },
             {
               label: {
-                en: 'Registration Authority',
-                nl: 'Registratieautoriteit',
+                en: "Registration Authority",
+                nl: "Registratieautoriteit",
               },
-              value: 'RegistrationAuthority',
+              value: "RegistrationAuthority",
             },
             {
               label: {
-                en: 'Related Person',
-                nl: 'Gerelateerde Persoon',
+                en: "Related Person",
+                nl: "Gerelateerde Persoon",
               },
-              value: 'RelatedPerson',
+              value: "RelatedPerson",
             },
             {
               label: {
-                en: 'Researcher',
-                nl: 'Onderzoeker',
+                en: "Researcher",
+                nl: "Onderzoeker",
               },
-              value: 'Researcher',
+              value: "Researcher",
             },
             {
               label: {
-                en: 'Research Group',
-                nl: 'Onderzoeksgroep',
+                en: "Research Group",
+                nl: "Onderzoeksgroep",
               },
-              value: 'ResearchGroup',
-            },
-            { 
-              label: {
-                en: 'Rights Holder',
-                nl: 'Rechthebbende',
-              },
-              value: 'RightsHolder',
+              value: "ResearchGroup",
             },
             {
               label: {
-                en: 'Sponsor',
-                nl: 'Sponsor',
+                en: "Rights Holder",
+                nl: "Rechthebbende",
               },
-              value: 'Sponsor',
+              value: "RightsHolder",
             },
             {
               label: {
-                en: 'Supervisor',
-                nl: 'Supervisor',
+                en: "Sponsor",
+                nl: "Sponsor",
               },
-              value: 'Supervisor',
+              value: "Sponsor",
             },
             {
               label: {
-                en: 'Work Package Leader',
-                nl: 'Werkpakketleider',
+                en: "Supervisor",
+                nl: "Supervisor",
               },
-              value: 'WorkPackageLeader',
-            }
-          ]
-        }
-      ]
+              value: "Supervisor",
+            },
+            {
+              label: {
+                en: "Work Package Leader",
+                nl: "Werkpakketleider",
+              },
+              value: "WorkPackageLeader",
+            },
+          ],
+        },
+      ],
     },
   ],
 };

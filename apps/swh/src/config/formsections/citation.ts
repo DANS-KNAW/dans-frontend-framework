@@ -1,222 +1,222 @@
-import type { InitialSectionType } from '@dans-framework/deposit';
+import type { InitialSectionType } from "@dans-framework/deposit";
 
 const section: InitialSectionType = {
-  id: 'citation_metadata',
+  id: "citation_metadata",
   title: {
-    en: 'Citation Metadata',
-    nl: 'Citation Metadata',
+    en: "Citation Metadata",
+    nl: "Citation Metadata",
   },
   fields: [
     {
-      type: 'text',
-      name: 'title',
+      type: "text",
+      name: "title",
       label: {
-        en: 'Title',
-        nl: 'Titel',
+        en: "Title",
+        nl: "Titel",
       },
       required: true,
       description: {
-        en: 'Title of the dataset',
-        nl: 'Titel van het dataset',
+        en: "Title of the dataset",
+        nl: "Titel van het dataset",
       },
     },
     {
-      type: 'autocomplete',
-      name: 'subject',
+      type: "autocomplete",
+      name: "subject",
       label: {
-        en: 'Subject',
-        nl: 'Onderwerp',
+        en: "Subject",
+        nl: "Onderwerp",
       },
       required: true,
       options: [
         {
           label: {
             en: "Agricultural Sciences",
-            nl: 'Agrarische wetenschappen',
+            nl: "Agrarische wetenschappen",
           },
           value: "Agricultural Sciences",
         },
         {
           label: {
             en: "Arts and Humanities",
-            nl: 'Kunst en Geesteswetenschappen',
+            nl: "Kunst en Geesteswetenschappen",
           },
           value: "Arts and Humanities",
         },
         {
           label: {
-            en: 'Astronomy and Astrophysics',
-            nl: 'Astronomie en Astrofysica',
+            en: "Astronomy and Astrophysics",
+            nl: "Astronomie en Astrofysica",
           },
-          value: 'Astronomy and Astrophysics',
+          value: "Astronomy and Astrophysics",
         },
         {
           label: {
-            en: 'Business and Management',
-            nl: 'Bedrijfskunde en Management',
+            en: "Business and Management",
+            nl: "Bedrijfskunde en Management",
           },
-          value: 'Business and Management',
+          value: "Business and Management",
         },
         {
           label: {
-            en: 'Chemistry',
-            nl: 'Chemie',
+            en: "Chemistry",
+            nl: "Chemie",
           },
-          value: 'Chemistry',
+          value: "Chemistry",
         },
         {
           label: {
-            en: 'Computer and Information Science',
-            nl: 'Computer- en Informatiewetenschappen',
+            en: "Computer and Information Science",
+            nl: "Computer- en Informatiewetenschappen",
           },
-          value: 'Computer and Information Science',
+          value: "Computer and Information Science",
         },
         {
           label: {
-            en: 'Earth and Environmental Sciences',
-            nl: 'Aard- en Milieuwetenschappen',
+            en: "Earth and Environmental Sciences",
+            nl: "Aard- en Milieuwetenschappen",
           },
-          value: 'Earth and Environmental Sciences',
+          value: "Earth and Environmental Sciences",
         },
         {
           label: {
-            en: 'Engineering',
-            nl: 'Techniek',
+            en: "Engineering",
+            nl: "Techniek",
           },
-          value: 'Engineering',
+          value: "Engineering",
         },
         {
           label: {
-            en: 'Law',
-            nl: 'Rechten',
+            en: "Law",
+            nl: "Rechten",
           },
-          value: 'Law',
+          value: "Law",
         },
         {
           label: {
-            en: 'Mathematical Sciences',
-            nl: 'Wiskunde',
+            en: "Mathematical Sciences",
+            nl: "Wiskunde",
           },
-          value: 'Mathematical Sciences',
+          value: "Mathematical Sciences",
         },
         {
           label: {
-            en: 'Medicine, Health and Life Sciences',
-            nl: 'Geneeskunde, Gezondheid en Levenswetenschappen',
+            en: "Medicine, Health and Life Sciences",
+            nl: "Geneeskunde, Gezondheid en Levenswetenschappen",
           },
-          value: 'Medicine, Health and Life Sciences',
+          value: "Medicine, Health and Life Sciences",
         },
         {
           label: {
-            en: 'Physics',
-            nl: 'Natuurkunde',
+            en: "Physics",
+            nl: "Natuurkunde",
           },
-          value: 'Physics',
+          value: "Physics",
         },
         {
           label: {
-            en: 'Social Sciences',
-            nl: 'Sociale Wetenschappen',
+            en: "Social Sciences",
+            nl: "Sociale Wetenschappen",
           },
-          value: 'Social Sciences',
+          value: "Social Sciences",
         },
         {
           label: {
-            en: 'Other',
-            nl: 'Anders',
+            en: "Other",
+            nl: "Anders",
           },
-          value: 'Other',
-        }
-      ]
+          value: "Other",
+        },
+      ],
     },
     {
-      type: 'text',
-      name: 'author',
+      type: "text",
+      name: "author",
       label: {
-        en: 'Author',
-        nl: 'Auteur',
+        en: "Author",
+        nl: "Auteur",
       },
-      autofill: 'name',
+      autofill: "name",
       required: true,
       description: {
-        en: 'Author of the dataset',
-        nl: 'Auteur van het dataset',
+        en: "Author of the dataset",
+        nl: "Auteur van het dataset",
       },
     },
     {
-      type: 'text',
+      type: "text",
       label: {
-        en: 'Email',
-        nl: 'Email',
+        en: "Email",
+        nl: "Email",
       },
-      name: 'contact_email',
-      autofill: 'email',
+      name: "contact_email",
+      autofill: "email",
       disabled: true,
     },
     {
-      type: 'group',
+      type: "group",
       label: {
-        en: 'Additional Authors',
-        nl: 'Extra auteurs',
+        en: "Additional Authors",
+        nl: "Extra auteurs",
       },
-      name: 'additional_authors',
+      name: "additional_authors",
       repeatable: true,
       description: {
-        en: 'Additional authors of the dataset and or software',
-        nl: 'Extra auteurs van het dataset en of software',
+        en: "Additional authors of the dataset and or software",
+        nl: "Extra auteurs van het dataset en of software",
       },
       fields: [
         {
-          type: 'text',
-          name: 'additional_author',
+          type: "text",
+          name: "additional_author",
           label: {
-            en: 'Additional Author',
-            nl: 'Extra auteur',
+            en: "Additional Author",
+            nl: "Extra auteur",
           },
         },
         {
-          type: 'autocomplete',
-          name: 'additional_author_type',
+          type: "autocomplete",
+          name: "additional_author_type",
           label: {
-            en: 'Type',
-            nl: 'Type',
+            en: "Type",
+            nl: "Type",
           },
           options: [
             {
               label: {
-                en: 'Dataset author',
-                nl: 'Dataset auteur',
+                en: "Dataset author",
+                nl: "Dataset auteur",
               },
-              value: 'Dataset author',
+              value: "Dataset author",
             },
             {
               label: {
-                en: 'Software author',
-                nl: 'Software auteur',
+                en: "Software author",
+                nl: "Software auteur",
               },
-              value: 'Software author',
+              value: "Software author",
             },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
     {
-      type: 'text',
-      name: 'repository_url',
-      label: 'Repository URL',
+      type: "text",
+      name: "repository_url",
+      label: "Repository URL",
       validation: "github-uri",
       description: {
-        en: 'The Repository URL of the software to be archived (Note: currently only Github is supported)',
-        nl: 'De Repository URL van de software die gearchiveerd moet worden (Opmerking: momenteel wordt alleen Github ondersteund)',
+        en: "The Repository URL of the software to be archived (Note: currently only Github is supported)",
+        nl: "De Repository URL van de software die gearchiveerd moet worden (Opmerking: momenteel wordt alleen Github ondersteund)",
       },
-      placeholder: 'https://github.com/...'
+      placeholder: "https://github.com/...",
     },
     {
-      type: 'text',
-      name: 'description',
+      type: "text",
+      name: "description",
       label: {
-        en: 'Description',
-        nl: 'Beschrijving',
+        en: "Description",
+        nl: "Beschrijving",
       },
       required: true,
       multiline: true,

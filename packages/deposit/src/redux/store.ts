@@ -1,27 +1,27 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import metadataReducer from '../features/metadata/metadataSlice';
-import filesReducer from '../features/files/filesSlice';
-import submitReducer from '../features/submit/submitSlice';
-import depositReducer from '../deposit/depositSlice';
-import { depositApi } from '../deposit/depositApi';
-import { orcidApi } from '../features/metadata/api/orcid';
-import { rorApi } from '../features/metadata/api/ror';
-import { gettyApi } from '../features/metadata/api/getty';
-import { geonamesApi } from '../features/metadata/api/geonames';
-import { sheetsApi } from '../features/metadata/api/sheets';
-import { datastationsApi } from '../features/metadata/api/datastations';
-import { submitApi } from '../features/submit/submitApi';
-import { dansFormatsApi } from '../features/files/api/dansFormats';
-import { dansUtilityApi } from '../features/files/api/dansUtility';
-import { errorLogger } from '@dans-framework/utils/error';
-import { gorcApi } from '../features/metadata/api/gorc';
-import { licenceApi } from '../features/metadata/api/licenses';
-import { sshLicenceApi } from '../features/metadata/api/sshLicences';
-import { rdaWorkingGroupsApi } from '../features/metadata/api/rdaWorkgroup';
-import { rdaPathwaysApi } from '../features/metadata/api/rdaPathways';
-import { rdaDomainsApi } from '../features/metadata/api/rdaDomains';
-import { rdaInterestGroupsApi } from '../features/metadata/api/rdaInterestGroups';
-import { validateKeyApi } from '@dans-framework/user-auth';
+import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import metadataReducer from "../features/metadata/metadataSlice";
+import filesReducer from "../features/files/filesSlice";
+import submitReducer from "../features/submit/submitSlice";
+import depositReducer from "../deposit/depositSlice";
+import { depositApi } from "../deposit/depositApi";
+import { orcidApi } from "../features/metadata/api/orcid";
+import { rorApi } from "../features/metadata/api/ror";
+import { gettyApi } from "../features/metadata/api/getty";
+import { geonamesApi } from "../features/metadata/api/geonames";
+import { sheetsApi } from "../features/metadata/api/sheets";
+import { datastationsApi } from "../features/metadata/api/datastations";
+import { submitApi } from "../features/submit/submitApi";
+import { dansFormatsApi } from "../features/files/api/dansFormats";
+import { dansUtilityApi } from "../features/files/api/dansUtility";
+import { errorLogger } from "@dans-framework/utils/error";
+import { gorcApi } from "../features/metadata/api/gorc";
+import { licenceApi } from "../features/metadata/api/licenses";
+import { sshLicenceApi } from "../features/metadata/api/sshLicences";
+import { rdaWorkingGroupsApi } from "../features/metadata/api/rdaWorkgroup";
+import { rdaPathwaysApi } from "../features/metadata/api/rdaPathways";
+import { rdaDomainsApi } from "../features/metadata/api/rdaDomains";
+import { rdaInterestGroupsApi } from "../features/metadata/api/rdaInterestGroups";
+import { validateKeyApi } from "@dans-framework/user-auth";
 
 export const store = configureStore({
   reducer: {
@@ -68,7 +68,7 @@ export const store = configureStore({
       .concat(rdaInterestGroupsApi.middleware)
       .concat(depositApi.middleware)
       .concat(validateKeyApi.middleware)
-      .concat(errorLogger)
+      .concat(errorLogger),
 });
 
 export type AppDispatch = typeof store.dispatch;

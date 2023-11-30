@@ -390,8 +390,7 @@ const rdaWorkingGroups = [
   {
     id: "59960",
     parent_id: "rda_graph:00059960",
-    title:
-      "Smallholder Agriculture Data Collection and Curation Working Group",
+    title: "Smallholder Agriculture Data Collection and Curation Working Group",
   },
   {
     id: "291",
@@ -432,7 +431,7 @@ export const rdaWorkingGroupsApi = createApi({
     const { content } = args;
 
     const filteredItems = rdaWorkingGroups.filter((item) =>
-      item.title.toLowerCase().startsWith(content.toLowerCase())
+      item.title.toLowerCase().startsWith(content.toLowerCase()),
     );
 
     return {

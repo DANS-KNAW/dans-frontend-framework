@@ -1,5 +1,5 @@
-import type { Target } from '@dans-framework/user-auth';
-import type { AxiosHeaders } from 'axios' 
+import type { Target } from "@dans-framework/user-auth";
+import type { AxiosHeaders } from "axios";
 
 export interface SubmitError {
   status?: string;
@@ -13,7 +13,13 @@ export interface SubmittedFile {
   error?: boolean;
 }
 
-export type SubmitStatus = '' | 'submitting' | 'submitted' | 'error' | 'saved' | 'success';
+export type SubmitStatus =
+  | ""
+  | "submitting"
+  | "submitted"
+  | "error"
+  | "saved"
+  | "success";
 
 export interface ReduxFileSubmitActions {
   id: string;
@@ -43,9 +49,9 @@ export interface HeaderData {
 
 export interface SubmitHeaders extends AxiosHeaders {
   Authorization: string;
-  'user-id': string;
-  'auth-env-name': string;
-  'assistant-config-name': string;
-  'targets-credentials': string;
+  "user-id": string;
+  "auth-env-name": string;
+  "assistant-config-name": string;
+  "targets-credentials": string;
   title?: string;
 }

@@ -1,4 +1,4 @@
-import type { ReactNode, SyntheticEvent } from 'react';
+import type { ReactNode, SyntheticEvent } from "react";
 
 export interface TabPanelProps {
   children?: ReactNode;

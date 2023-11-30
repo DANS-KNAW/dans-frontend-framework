@@ -364,7 +364,7 @@ export const rdaInterestGroupsApi = createApi({
     const { content } = args;
 
     const filteredItems = rdaInterestGroups.filter((item) =>
-      item.title.toLowerCase().startsWith(content.toLowerCase())
+      item.title.toLowerCase().startsWith(content.toLowerCase()),
     );
 
     return {

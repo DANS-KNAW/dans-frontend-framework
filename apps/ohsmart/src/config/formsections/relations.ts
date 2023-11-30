@@ -1,4 +1,4 @@
-import type { InitialSectionType } from '@dans-framework/deposit';
+import type { InitialSectionType } from "@dans-framework/deposit";
 
 const relationships = [
   "Conforms to",
@@ -17,77 +17,77 @@ const relationships = [
 ];
 
 const section: InitialSectionType = {
-  id: 'relations',
+  id: "relations",
   title: {
-    en: 'Relations',
-    nl: 'Relaties',
+    en: "Relations",
+    nl: "Relaties",
   },
   fields: [
     {
-      type: 'autocomplete',
+      type: "autocomplete",
       label: {
-        en: 'Audience',
-        nl: 'Publiek',
+        en: "Audience",
+        nl: "Publiek",
       },
-      name: 'audience',
+      name: "audience",
       multiselect: true,
       required: true,
       description: {
-        en: 'Specifies which research disciplines which may be interested in this dataset. Examples may be Humanities; Arts and Culture; History of Arts and Architecture',
-        nl: 'Geeft aan welke onderzoeksdisciplines mogelijk geïnteresseerd zijn in deze dataset. Voorbeelden kunnen zijn: Geesteswetenschappen; Kunst en Cultuur; Geschiedenis van Kunst en Architectuur.',
+        en: "Specifies which research disciplines which may be interested in this dataset. Examples may be Humanities; Arts and Culture; History of Arts and Architecture",
+        nl: "Geeft aan welke onderzoeksdisciplines mogelijk geïnteresseerd zijn in deze dataset. Voorbeelden kunnen zijn: Geesteswetenschappen; Kunst en Cultuur; Geschiedenis van Kunst en Architectuur.",
       },
-      options: 'narcis',
+      options: "narcis",
     },
     {
-      type: 'group',
+      type: "group",
       label: {
-        en: 'Related to',
-        nl: 'Gerelateerd aan',
+        en: "Related to",
+        nl: "Gerelateerd aan",
       },
-      name: 'relation',
+      name: "relation",
       repeatable: true,
       description: {
-        en: 'Other interviews, publications, projects',
-        nl: 'Andere interviews, publicaties, projecten',
+        en: "Other interviews, publications, projects",
+        nl: "Andere interviews, publicaties, projecten",
       },
       fields: [
         {
-          type: 'autocomplete',
+          type: "autocomplete",
           label: {
-            en: 'Type of relation',
-            nl: 'Type relatie',
+            en: "Type of relation",
+            nl: "Type relatie",
           },
-          name: 'relation_type',     
+          name: "relation_type",
           description: {
-            en: 'The type of relation to this external item',
-            nl: 'Type relatie met dit externe item',
+            en: "The type of relation to this external item",
+            nl: "Type relatie met dit externe item",
           },
-          options: relationships.map((r: string) => ({label: r, value: r})),
+          options: relationships.map((r: string) => ({ label: r, value: r })),
         },
         {
-          type: 'text',
+          type: "text",
           label: {
-            en: 'Related item',
-            nl: 'Gerelateerd item',
+            en: "Related item",
+            nl: "Gerelateerd item",
           },
-          name: 'relation_item',     
+          name: "relation_item",
           description: {
-            en: 'Other interviews, publications, projects, or initiatives can be linked here by providing a description, a URL, and selecting a relation type.',
-            nl: 'Andere interviews, publicaties, projecten of initiatieven kunnen hier worden gelinkt door een beschrijving, een URL en een relatietype te verstrekken.',
+            en: "Other interviews, publications, projects, or initiatives can be linked here by providing a description, a URL, and selecting a relation type.",
+            nl: "Andere interviews, publicaties, projecten of initiatieven kunnen hier worden gelinkt door een beschrijving, een URL en een relatietype te verstrekken.",
           },
         },
         {
-          type: 'text',
+          type: "text",
           label: {
-            en: 'Item reference',
-            nl: 'Item referentie',
+            en: "Item reference",
+            nl: "Item referentie",
           },
-          name: 'relation_reference',
-          placeholder: 'https://...',
-          validation: 'uri',
+          name: "relation_reference",
+          placeholder: "https://...",
+          validation: "uri",
           description: {
-            en: 'A web link or PID reference for this external item',
-            nl: 'Een weblink of PID referentie naar dit externe item',
+            en: "A web link or PID reference for this external item",
+            nl: "Een weblink of PID referentie naar dit externe item",
           },
         },
       ],

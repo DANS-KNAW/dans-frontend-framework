@@ -1,4 +1,4 @@
-import type { Page } from '@dans-framework/pages';
+import type { Page } from "@dans-framework/pages";
 
 const page: Page = {
   id: "about",
@@ -15,7 +15,7 @@ const page: Page = {
   },
   content: {
     en: "<p>About the project...</p>",
-    nl: "<p>Over het project...</p>"
+    nl: "<p>Over het project...</p>",
   },
 };
 

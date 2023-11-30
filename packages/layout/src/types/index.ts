@@ -1,4 +1,4 @@
-import type { LanguageStrings } from '@dans-framework/utils';
+import type { LanguageStrings } from "@dans-framework/utils";
 
 export interface Footer {
   top: FooterContent[];
@@ -12,7 +12,7 @@ export interface FooterContent {
   image?: {
     src: string;
     alt: string;
-  }
+  };
 }
 
 interface Link {

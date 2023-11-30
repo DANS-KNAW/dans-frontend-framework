@@ -70,7 +70,7 @@ export const rdaPathwaysApi = createApi({
     const { content } = args;
 
     const filteredItems = rdaPathways.filter((item) =>
-      item.title.toLowerCase().startsWith(content.toLowerCase())
+      item.title.toLowerCase().startsWith(content.toLowerCase()),
     );
 
     return {

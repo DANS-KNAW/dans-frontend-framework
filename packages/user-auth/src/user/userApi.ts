@@ -1,132 +1,129 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
-import { User } from 'oidc-client-ts';
-import type { SubmissionResponse, AuthKeys } from '../types';
-import i18n from '../languages/i18n';
-import { enqueueSnackbar } from 'notistack';
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { User } from "oidc-client-ts";
+import type { SubmissionResponse, AuthKeys } from "../types";
+import i18n from "../languages/i18n";
+import { enqueueSnackbar } from "notistack";
 
 function getUser(provider: string, id: string) {
-    const oidcStorage = sessionStorage.getItem(`oidc.user:${provider}:${id}`)
-    if (!oidcStorage) {
-        return null;
-    }
-    return User.fromStorageString(oidcStorage);
+  const oidcStorage = sessionStorage.getItem(`oidc.user:${provider}:${id}`);
+  if (!oidcStorage) {
+    return null;
+  }
+  return User.fromStorageString(oidcStorage);
 }
 
 export const userApi = createApi({
-  reducerPath: 'auth',
-  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_OIDC_AUTHORITY}),
-  tagTypes: ['User'],
+  reducerPath: "auth",
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_OIDC_AUTHORITY }),
+  tagTypes: ["User"],
   refetchOnMountOrArgChange: true,
   endpoints: (build) => ({
     fetchUserProfile: build.query({
       // Note: may not be needed, could possibly user auth.user. TODO?
       query: (id) => {
         const user = getUser(import.meta.env.VITE_OIDC_AUTHORITY, id);
-        const token = user?.access_token; 
-        return ({
-          url: 'account',
+        const token = user?.access_token;
+        return {
+          url: "account",
           headers: {
-            Accept: 'application/json',
+            Accept: "application/json",
             Authorization: `Bearer ${token}`,
           },
-        });
+        };
       },
-      providesTags: ['User'],
+      providesTags: ["User"],
     }),
     saveUserData: build.mutation({
-      query: ({id, content}) => {
+      query: ({ id, content }) => {
         const user = getUser(import.meta.env.VITE_OIDC_AUTHORITY, id);
         const token = user?.access_token;
-        return ({
-          url: 'account',
-          method: 'POST',
+        return {
+          url: "account",
+          method: "POST",
           headers: {
-            Accept: 'application/json',
+            Accept: "application/json",
             Authorization: `Bearer ${token}`,
           },
           body: content,
-        })
+        };
       },
-      invalidatesTags: ['User'],
-      async onQueryStarted( _arg, { queryFulfilled } ) {
+      invalidatesTags: ["User"],
+      async onQueryStarted(_arg, { queryFulfilled }) {
         await queryFulfilled;
         // on successful save, lets show a Toast
-        enqueueSnackbar(i18n.t('keySaved', {ns: 'user'}), { variant: 'success' });
+        enqueueSnackbar(i18n.t("keySaved", { ns: "user" }), {
+          variant: "success",
+        });
       },
     }),
   }),
 });
 
 export const userSubmissionsApi = createApi({
-  reducerPath: 'submissions',
+  reducerPath: "submissions",
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_PACKAGING_TARGET }),
   // Make sure data isn't stale and always contains freshly submitted forms
   keepUnusedDataFor: 0.1,
   endpoints: (build) => ({
     fetchUserSubmissions: build.query({
       query: (userId) => {
-        return ({
+        return {
           url: `progress-state/${userId}`,
           headers: {
-            Accept: 'application/json',
+            Accept: "application/json",
           },
-        });
+        };
       },
       transformResponse: (response: SubmissionResponse[]) => {
-        return response
+        return response;
       },
-    })
+    }),
   }),
 });
 
 const getUrl = (url: string, key: string, type: AuthKeys) =>
-  type === 'dataverse_api_key' ?
-  `${url}?key=${key}` :
-  type === 'zenodo_api_key' ?
-  `${url}?access_token=${key}` :
-  url
+  type === "dataverse_api_key"
+    ? `${url}?key=${key}`
+    : type === "zenodo_api_key"
+      ? `${url}?access_token=${key}`
+      : url;
 
 // Basic api to check keys. No baseUrl, as this is dynamic, and we don't want a separate API for every possible baseUrl
 export const validateKeyApi = createApi({
-  reducerPath: 'apiKeys',
+  reducerPath: "apiKeys",
   baseQuery: fetchBaseQuery(),
   endpoints: (build) => ({
     validateKey: build.query({
       query: ({ url, key, type }) => {
-        return ({
+        return {
           url: getUrl(url, key, type),
-        });
+        };
       },
-      transformResponse: (response: { status: string | number }) => response.status,
+      transformResponse: (response: { status: string | number }) =>
+        response.status,
       // response for setting the error snackbar, but we might not use this..
-      transformErrorResponse: () => i18n.t('keyError', {ns: 'user'}),
+      transformErrorResponse: () => i18n.t("keyError", { ns: "user" }),
     }),
     validateAllKeys: build.query({
       // this will return all targets that have an invalid API key set
       async queryFn(arg, _queryApi, _extraOptions, fetchWithBQ) {
-        const promises = arg.map((t: any) => fetchWithBQ(getUrl(t.url, t.key, t.type)));
+        const promises = arg.map((t: any) =>
+          fetchWithBQ(getUrl(t.url, t.key, t.type)),
+        );
         const result = await Promise.all(promises);
-        const error = result.some( r => r.error);
+        const error = result.some((r) => r.error);
 
-        return error ?
-          { error: result[0].error as FetchBaseQueryError } :
-          { data: 'OK' }  
+        return error
+          ? { error: result[0].error as FetchBaseQueryError }
+          : { data: "OK" };
       },
     }),
   }),
 });
 
-export const {
-  useValidateKeyQuery,
-  useValidateAllKeysQuery,
-} = validateKeyApi;
+export const { useValidateKeyQuery, useValidateAllKeysQuery } = validateKeyApi;
 
-export const {
-  useFetchUserProfileQuery,
-  useSaveUserDataMutation,
-} = userApi;
+export const { useFetchUserProfileQuery, useSaveUserDataMutation } = userApi;
 
-export const {
-  useFetchUserSubmissionsQuery,
-} = userSubmissionsApi;
+export const { useFetchUserSubmissionsQuery } = userSubmissionsApi;

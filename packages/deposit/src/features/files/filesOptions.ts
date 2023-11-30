@@ -18,11 +18,11 @@ export const fileProcessing = [
 export const fileRoles = [
   {
     value: "data_file",
-    label: "Data File"
+    label: "Data File",
   },
   {
     value: "type_registry_value",
-    label: "Type Registry Value"
+    label: "Type Registry Value",
   },
   {
     value: "video_file",

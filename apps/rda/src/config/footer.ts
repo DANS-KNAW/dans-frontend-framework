@@ -1,7 +1,7 @@
-import { Footer } from '@dans-framework/layout/src/types';
-import rdaImage from './images/logo_tiger.png';
+import { Footer } from "@dans-framework/layout/src/types";
+import rdaImage from "./images/logo_tiger.png";
 
-const footer: Footer = { 
+const footer: Footer = {
   top: [
     {
       header: {
@@ -23,104 +23,105 @@ const footer: Footer = {
           },
           link: "",
         },
-      ]
+      ],
     },
     {
-      header: { 
+      header: {
         en: "About RDA",
         nl: "Over RDA",
       },
       links: [
         {
-          name: { 
+          name: {
             en: "About us",
             nl: "Over ons",
           },
           link: "",
         },
         {
-          name: { 
+          name: {
             en: "Our team",
             nl: "Ons team",
           },
           link: "",
         },
         {
-          name: { 
+          name: {
             en: "Legal information",
             nl: "Juridische informatie",
           },
           link: "",
         },
         {
-          name: { 
+          name: {
             en: "Press Releases",
             nl: "Pers",
           },
           link: "",
         },
         {
-          name: { 
+          name: {
             en: "Disclaimer",
             nl: "Disclaimer",
           },
           link: "",
         },
         {
-          name: { 
+          name: {
             en: "Data Licenses",
             nl: "Datalicenties",
           },
           link: "",
-        },{
-          name: { 
+        },
+        {
+          name: {
             en: "Privacy",
             nl: "Privacy",
           },
           link: "",
-        }
-      ]
+        },
+      ],
     },
     {
       header: {
         en: "Follow us",
         nl: "Volg ons",
-          },
+      },
       links: [
         {
           name: "Newsletter",
           link: "",
-          icon: "email"
+          icon: "email",
         },
         {
           name: "YouTube",
           link: "",
-          icon: "youtube"
+          icon: "youtube",
         },
         {
           name: "Twitter",
           link: "",
-          icon: "twitter"
-        }
-      ]
+          icon: "twitter",
+        },
+      ],
     },
     {
       header: "RDA Tiger",
       freetext: {
-        en: "The RDA Tiger Project is supporting the use of this application through engagement with RDA Groups and members."
+        en: "The RDA Tiger Project is supporting the use of this application through engagement with RDA Groups and members.",
       },
       links: [
         {
           name: "Contact RDA TIGER",
           link: "",
-        }
-      ]
+        },
+      ],
     },
     {
       image: {
         src: rdaImage,
         alt: "DANS Logo",
-      }
+      },
     },
   ],
   bottom: [
@@ -128,14 +129,14 @@ const footer: Footer = {
       freetext: {
         en: "",
         nl: "",
-      }
+      },
     },
     {
       freetext: {
         en: "",
         nl: "",
-      }
-    }
+      },
+    },
   ],
-}
+};
 export default footer;

@@ -1,4 +1,4 @@
-import type { AutocompleteAPIFieldData } from './MetadataFields';
+import type { AutocompleteAPIFieldData } from "./MetadataFields";
 
 interface GorcItem {
   id: string;
@@ -109,15 +109,15 @@ export interface RorResponse {
 }
 
 interface OrcidItem {
-  'family-names': string;
-  'given-names': string;
-  'orcid-id': string;
-  'institution-name': string[];
+  "family-names": string;
+  "given-names": string;
+  "orcid-id": string;
+  "institution-name": string[];
 }
 
 export interface OrcidResponse {
-  'num-found': number;
-  'expanded-result': OrcidItem[];
+  "num-found": number;
+  "expanded-result": OrcidItem[];
 }
 
 interface GeonamesItem {
