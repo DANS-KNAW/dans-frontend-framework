@@ -1,5 +1,6 @@
 # DANS theme wrapper
-Wraps your apps custom theme with the extra options needed by DANS components: 
+
+Wraps your apps custom theme with the extra options needed by DANS components:
 
 The DANS framework uses the [MUI library](https://mui.com/material-ui/getting-started/) and its [theming customisation](https://mui.com/material-ui/customization/theming/). The theme config passed as props must be a valid MUI theme.
 
@@ -12,7 +13,8 @@ The DANS framework uses the [MUI library](https://mui.com/material-ui/getting-st
 Passing along a siteTitle prop ensures appropriate setting of the HTML document title.
 
 Custom theme config used in the DANS framework, which can be overwritten:
-- palette: 
+
+- palette:
   - neutral
   - footerTop
   - footerBottom

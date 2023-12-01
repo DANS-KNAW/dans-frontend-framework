@@ -1,4 +1,4 @@
-import type { Page } from '@dans-framework/pages';
+import type { Page } from "@dans-framework/pages";
 
 const page: Page = {
   id: "deposit",

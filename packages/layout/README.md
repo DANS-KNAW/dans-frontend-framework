@@ -1,12 +1,14 @@
 # DANS layout components
+
 Package that exports several layout components for use in your form application.
 
 ## Language bar
+
 Display a language bar with country flags.
 
     import { LanguageBar } from @dans-framework/layout
 
-    <LanguageBar 
+    <LanguageBar
       // Languages need to be defined by their 2 letter code, e.g. 'en'. Make sure the appropriate translations are present.
       languages={ ['en', 'nl'] }
       // Function to change the language of the root app, usually i18n.changeLanguage
@@ -14,6 +16,7 @@ Display a language bar with country flags.
     />
 
 ## Menu bar
+
 The navigation menu of your app. Takes an array of Page props. See [@dans-framework/pages](/packages/pages/README.md)
 
     import { MenuBar } from @dans-framework/layout
@@ -21,10 +24,11 @@ The navigation menu of your app. Takes an array of Page props. See [@dans-framew
     <MenuBar pages={pages} />
 
 ## Footer
+
 The footer menu of your app.
 
     import { Footer } from @dans-framework/layout
-  
+
     <Footer
       // Top and bottom contain an array of footer items. Top should ideally be an of with 4 items, bottom of 2.
       top=[{...}]
@@ -50,6 +54,7 @@ A footer item is formatted as follows:
     }
 
 ### i18n
+
 Exposes the Layout components language config. Use this in the main apps language config.
 
     import { i18n as i18nLayout } from '@dans-framework/layout'

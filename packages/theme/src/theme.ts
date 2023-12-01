@@ -1,5 +1,5 @@
-import { createTheme } from '@mui/material/styles';
-import grey from '@mui/material/colors/grey';
+import { createTheme } from "@mui/material/styles";
+import grey from "@mui/material/colors/grey";
 
 export const theme = createTheme({
   palette: {
@@ -24,29 +24,28 @@ export const theme = createTheme({
   },
 });
 
-declare module '@mui/material/styles' {
+declare module "@mui/material/styles" {
   interface Palette {
-    neutral?: Palette['primary'];
-    footerTop?: Palette['primary'];
-    footerBottom?: Palette['primary'];
+    neutral?: Palette["primary"];
+    footerTop?: Palette["primary"];
+    footerBottom?: Palette["primary"];
   }
 
   interface PaletteOptions {
-    neutral?: PaletteOptions['primary'];
-    footerTop?: Palette['primary'];
-    footerBottom?: Palette['primary'];
+    neutral?: PaletteOptions["primary"];
+    footerTop?: Palette["primary"];
+    footerBottom?: Palette["primary"];
   }
 }
 
-declare module '@mui/material/Button' {
+declare module "@mui/material/Button" {
   interface ButtonPropsColorOverrides {
     neutral: true;
   }
 }
 
-declare module '@mui/material/SvgIcon' {
+declare module "@mui/material/SvgIcon" {
   interface SvgIconPropsColorOverrides {
     neutral: true;
   }
 }
-

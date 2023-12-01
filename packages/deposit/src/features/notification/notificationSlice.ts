@@ -1,7 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { v4 as uuidv4 } from 'uuid';
-import { RootState } from '../../redux/store';
-import type { Notification, NotificationState } from '../../types/Notification';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { v4 as uuidv4 } from "uuid";
+import { RootState } from "../../redux/store";
+import type { Notification, NotificationState } from "../../types/Notification";
 
 // Basic snackbar. Set open state and contents separately, to ensure proper transitions
 
@@ -10,26 +10,30 @@ const initialState: NotificationState = {
 };
 
 export const notificationSlice = createSlice({
-  name: 'notification',
+  name: "notification",
   initialState,
   reducers: {
-    setNotification: (state, action: PayloadAction<Omit<Notification, 'id'>>) => {
+    setNotification: (
+      state,
+      action: PayloadAction<Omit<Notification, "id">>,
+    ) => {
       const notification: Notification = {
         id: uuidv4(),
         ...action.payload,
-      }
-      return state = {data: notification, open: true};
+      };
+      return (state = { data: notification, open: true });
     },
     closeNotification: (state) => {
-      return state = {...state, open: false};
+      return (state = { ...state, open: false });
     },
     clearNotification: (state) => {
-      return state = initialState;
-    }
+      return (state = initialState);
+    },
   },
-})
+});
 
-export const { setNotification, closeNotification, clearNotification } = notificationSlice.actions;
+export const { setNotification, closeNotification, clearNotification } =
+  notificationSlice.actions;
 
 // Selectors
 export const getNotification = (state: RootState) => state.notification;

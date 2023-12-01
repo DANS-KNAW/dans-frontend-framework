@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/dist/query/react";
-import type { GorcResponse, RdaWorkGroupResponse } from "../../../types/Api";
+import type { RdaWorkGroupResponse } from "../../../types/Api";
 
 const rdaWorkingGroups = [
   {
@@ -390,8 +390,7 @@ const rdaWorkingGroups = [
   {
     id: "59960",
     parent_id: "rda_graph:00059960",
-    title:
-      "Smallholder Agriculture Data Collection and Curation Working Group",
+    title: "Smallholder Agriculture Data Collection and Curation Working Group",
   },
   {
     id: "291",
@@ -432,7 +431,7 @@ export const rdaWorkingGroupsApi = createApi({
     const { content } = args;
 
     const filteredItems = rdaWorkingGroups.filter((item) =>
-      item.title.toLowerCase().startsWith(content.toLowerCase())
+      item.title.toLowerCase().startsWith(content.toLowerCase()),
     );
 
     return {
@@ -445,7 +444,7 @@ export const rdaWorkingGroupsApi = createApi({
   endpoints: (build) => ({
     fetchRdaWorkingGroup: build.query({
       query: (content) => ({ content }),
-      transformResponse: (response: RdaWorkGroupResponse, meta, arg) => {
+      transformResponse: (response: RdaWorkGroupResponse, _meta, arg) => {
         return response.number_of_results > 0
           ? {
               arg: arg,

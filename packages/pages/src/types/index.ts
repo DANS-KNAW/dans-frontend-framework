@@ -1,4 +1,4 @@
-import type { LanguageStrings } from '@dans-framework/utils';
+import type { LanguageStrings } from "@dans-framework/utils";
 
 interface PageAction {
   link: string;
@@ -6,7 +6,12 @@ interface PageAction {
   restricted?: boolean; // display when logged in, otherwise show a login button
 }
 
-export type Template = 'generic' | 'deposit' | 'search' | 'record' | 'dashboard';
+export type Template =
+  | "generic"
+  | "deposit"
+  | "search"
+  | "record"
+  | "dashboard";
 
 export interface Page {
   id: string;

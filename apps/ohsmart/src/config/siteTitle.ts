@@ -1,3 +1,3 @@
-const siteTitle = 'OH-SMArt';
+const siteTitle = "OH-SMArt";
 
-export default siteTitle
+export default siteTitle;

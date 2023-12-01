@@ -70,7 +70,7 @@ export const rdaPathwaysApi = createApi({
     const { content } = args;
 
     const filteredItems = rdaPathways.filter((item) =>
-      item.title.toLowerCase().startsWith(content.toLowerCase())
+      item.title.toLowerCase().startsWith(content.toLowerCase()),
     );
 
     return {
@@ -83,7 +83,7 @@ export const rdaPathwaysApi = createApi({
   endpoints: (build) => ({
     fetchRdaPathway: build.query({
       query: (content) => ({ content }),
-      transformResponse: (response: RdaPathwaysResponse, meta, arg) => {
+      transformResponse: (response: RdaPathwaysResponse, _meta, arg) => {
         return response.number_of_results > 0
           ? {
               arg: arg,

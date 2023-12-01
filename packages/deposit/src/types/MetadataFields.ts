@@ -1,8 +1,14 @@
-import type { Language, LanguageStrings } from '@dans-framework/utils';
-import type { AuthProperty } from '@dans-framework/user-auth';
+import type { LanguageStrings } from "@dans-framework/utils";
+import type { AuthProperty } from "@dans-framework/user-auth";
 
 // All user input field types
-export type InputField = TextFieldType | DateFieldType | AutocompleteFieldType | RadioFieldType | CheckFieldType | RepeatTextFieldType;
+export type InputField =
+  | TextFieldType
+  | DateFieldType
+  | AutocompleteFieldType
+  | RadioFieldType
+  | CheckFieldType
+  | RepeatTextFieldType;
 
 // General field, can be input or group
 export type Field = InputField | GroupedFieldType | RepeatGroupedFieldType;
@@ -17,15 +23,16 @@ interface BasisFieldType {
   validation?: ValidationType; // optional field validation
   value?: string; // field value, can be pre-filled in config
   repeatable?: boolean; // creates a repeatable single field
-  valid?: boolean | ''; // keeps track of field validation state
+  valid?: boolean | ""; // keeps track of field validation state
   disabled?: boolean; // read only field
   description?: string | LanguageStrings; // appears in tooltip in UI
   required?: boolean; // Form won't submit if this field has not been filled in
   private?: boolean; // gets sent to a separate non-public metadata file
+  noIndicator?: boolean; // gives a non-required field a neutral status indicator
 }
 
 export interface TextFieldType extends BasisFieldType {
-  type: 'text' | 'number';
+  type: "text" | "number";
   maxValue?: number; // for numbers only
   minValue?: number; // for numbers only
   multiline?: boolean; // creates a textarea
@@ -37,7 +44,7 @@ export interface TextFieldType extends BasisFieldType {
 }
 
 export interface DateFieldType extends BasisFieldType {
-  type: 'date';
+  type: "date";
   format: DateTimeFormat;
   formatOptions?: DateTimeFormat[];
   minDate?: string;
@@ -48,8 +55,9 @@ export interface DateFieldType extends BasisFieldType {
   options?: never;
 }
 
-export interface AutocompleteFieldType extends Omit<BasisFieldType, 'value' | 'repeatable'> {
-  type: 'autocomplete';
+export interface AutocompleteFieldType
+  extends Omit<BasisFieldType, "value" | "repeatable"> {
+  type: "autocomplete";
   multiselect?: boolean; // enables multiple selections in UI
   value?: OptionsType | OptionsType[] | null;
   options: OptionsType[] | TypeaheadAPI[] | TypeaheadAPI; // either a list of (json) options or an API
@@ -61,8 +69,9 @@ export interface AutocompleteFieldType extends Omit<BasisFieldType, 'value' | 'r
   format?: never;
 }
 
-export interface GroupedFieldType extends Omit<BasisFieldType, 'value' | 'touched'> {
-  type: 'group'; // This type groups multiple single fields
+export interface GroupedFieldType
+  extends Omit<BasisFieldType, "value" | "touched"> {
+  type: "group"; // This type groups multiple single fields
   fields: InputField[];
   value?: never;
   validation?: never;
@@ -73,12 +82,17 @@ export interface GroupedFieldType extends Omit<BasisFieldType, 'value' | 'touche
   touched?: never;
 }
 
-export interface RepeatGroupedFieldType extends Omit<GroupedFieldType, 'fields'> {
+export interface RepeatGroupedFieldType
+  extends Omit<GroupedFieldType, "fields"> {
   fields: InputField[][]; // only for code, not for config, a group of grouped fields
 }
 
-export interface RepeatTextFieldType extends Omit<BasisFieldType, 'value' | 'validation' | 'valid' | 'repeatable' | 'touched'> {
-  type: 'repeatSingleField'; // group type for repeatable text fields, only used in code, not in config
+export interface RepeatTextFieldType
+  extends Omit<
+    BasisFieldType,
+    "value" | "validation" | "valid" | "repeatable" | "touched"
+  > {
+  type: "repeatSingleField"; // group type for repeatable text fields, only used in code, not in config
   fields: TextFieldType[];
   value?: never;
   validation?: never;
@@ -91,9 +105,10 @@ export interface RepeatTextFieldType extends Omit<BasisFieldType, 'value' | 'val
   touched?: never;
 }
 
-export interface RadioFieldType extends Omit<BasisFieldType, 'validation' | 'valid' | 'label'> {
-  type: 'radio';
-  layout?: 'row'; // if specified, radiobuttons will appear inline
+export interface RadioFieldType
+  extends Omit<BasisFieldType, "validation" | "valid" | "label"> {
+  type: "radio";
+  layout?: "row"; // if specified, radiobuttons will appear inline
   options: OptionsType[];
   label?: LanguageStrings;
   valid?: never;
@@ -103,8 +118,9 @@ export interface RadioFieldType extends Omit<BasisFieldType, 'validation' | 'val
   format?: never;
 }
 
-export interface CheckFieldType extends Omit<BasisFieldType, 'value' | 'validation' | 'valid' | 'label'> {
-  type: 'check';
+export interface CheckFieldType
+  extends Omit<BasisFieldType, "value" | "validation" | "valid" | "label"> {
+  type: "check";
   value?: string[];
   options: OptionsType[];
   label?: LanguageStrings;
@@ -116,12 +132,29 @@ export interface CheckFieldType extends Omit<BasisFieldType, 'value' | 'validati
 }
 
 // Date and time formats to be used in a Date field
-export type DateTimeFormat = 'DD-MM-YYYY HH:mm' | 'DD-MM-YYYY' | 'MM-YYYY' | 'YYYY';
+export type DateTimeFormat =
+  | "DD-MM-YYYY HH:mm"
+  | "DD-MM-YYYY"
+  | "MM-YYYY"
+  | "YYYY";
 
 // API's that can be used by Autocomplete fields
-export type Datastations = 'elsst' | 'narcis';
-export type TypeaheadAPI = 'orcid' | 'ror' | 'gorc' | 'licenses' | 'geonames' | 'getty' | 'sheets' | 'dansFormats' | 
-    'rdaworkinggroups' | 'pathways' | 'domains' | 'interest groups' | Datastations | 'sshLicences';
+export type Datastations = "elsst" | "narcis";
+export type TypeaheadAPI =
+  | "orcid"
+  | "ror"
+  | "gorc"
+  | "licenses"
+  | "geonames"
+  | "getty"
+  | "sheets"
+  | "dansFormats"
+  | "rdaworkinggroups"
+  | "pathways"
+  | "domains"
+  | "interest groups"
+  | Datastations
+  | "sshLicences";
 
 // Options that should be specified if Google Sheet API is used in Autocomplete
 interface SheetOptions {
@@ -146,10 +179,10 @@ export interface OptionsType {
   freetext?: boolean; // indicates if a value is manually entered by user
   categoryLabel?: string; // used for nested options
   categoryContent?: string; // used for nested options
-};
+}
 
 // Validation for text fields
-export type ValidationType = 'email' | 'uri' | 'number';
+export type ValidationType = "email" | "uri" | "number" | "github-uri";
 
 // Format to return API response in, used by RTK's transformResponse
 export interface AutocompleteAPIFieldData {

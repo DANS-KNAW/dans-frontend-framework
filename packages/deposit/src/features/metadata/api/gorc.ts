@@ -2002,7 +2002,7 @@ export const gorcApi = createApi({
     const { content } = args;
 
     const filteredItems = gorcDataElements.filter((item) =>
-      item.title.toLowerCase().startsWith(content.toLowerCase())
+      item.title.toLowerCase().startsWith(content.toLowerCase()),
     );
 
     /**
@@ -2017,7 +2017,7 @@ export const gorcApi = createApi({
       let hierarchy: string[] = [];
 
       let parent = gorcDataElements.find(
-        (parent) => parent.id === item.parent_id
+        (parent) => parent.id === item.parent_id,
       );
 
       if (!parent) {
@@ -2028,7 +2028,7 @@ export const gorcApi = createApi({
 
       while (parent && parent.parent_id) {
         parent = gorcDataElements.find(
-          (element) => element.id === parent!.parent_id
+          (element) => element.id === parent!.parent_id,
         );
 
         if (!parent) {
@@ -2051,7 +2051,7 @@ export const gorcApi = createApi({
   endpoints: (build) => ({
     fetchGorc: build.query({
       query: (content) => ({ content }),
-      transformResponse: (response: GorcResponse, meta, arg) => {
+      transformResponse: (response: GorcResponse, _meta, arg) => {
         // Return an empty array when no results, which is what the Autocomplete field expects
         return response.number_of_results > 0
           ? {

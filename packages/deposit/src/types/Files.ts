@@ -1,11 +1,19 @@
-import type { LanguageStrings } from '@dans-framework/utils';
+import type { LanguageStrings } from "@dans-framework/utils";
 
 export interface FileActions {
   label: string | LanguageStrings;
   value: string;
 }
 
-export type FileActionType = 'process' | 'role' | 'private' | 'valid' | 'submitProgress' | 'submitSuccess' | 'submitError' | 'submittedFile';
+export type FileActionType =
+  | "process"
+  | "role"
+  | "private"
+  | "valid"
+  | "submitProgress"
+  | "submitSuccess"
+  | "submitError"
+  | "submittedFile";
 
 export interface ReduxFileActions {
   id: string;
@@ -45,7 +53,7 @@ export interface RejectedFilesProps {
   fileRejections: RejectedFiles[];
 }
 
-export type FileLocation = 'local' | 'online';
+export type FileLocation = "local" | "online";
 
 export interface DansSimpleList {
   list: string[];
@@ -58,10 +66,10 @@ export interface DansSimpleListQueryResponse {
 }
 
 interface DansFilesFormat {
-  'file-extension': string;
-  'mime-type': string[];
+  "file-extension": string;
+  "mime-type": string[];
   preferred: boolean;
-  'required-convert-to': string;
+  "required-convert-to": string;
 }
 
 interface DansFilesDescription {
@@ -83,9 +91,9 @@ export interface DansFilesQueryResponse {
 
 export interface FileItemProps {
   file: SelectedFile;
-} 
+}
 
 export interface FileActionOptionsProps {
   file: SelectedFile;
-  type: 'process' | 'role';
-} 
+  type: "process" | "role";
+}
