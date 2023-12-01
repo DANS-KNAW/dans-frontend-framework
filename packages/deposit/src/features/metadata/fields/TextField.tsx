@@ -66,9 +66,6 @@ const SingleTextField = ({
             }),
           )
         }
-        InputLabelProps={{
-          shrink: field.disabled,
-        }}
         sx={{
           mt: groupedFieldId && currentField !== 0 ? 1 : 0,
         }}

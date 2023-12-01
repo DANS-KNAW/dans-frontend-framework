@@ -3,14 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "dev": "turbo dev",
     "build": "turbo build",
     "test": "turbo test",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\" --jsx-single-quote=true",
-    "dev": "turbo dev",
     "dev:ohsmart": "turbo dev --filter=@dans-framework/ohsmart",
+    "build:ohsmart": "turbo build --filter=@dans-framework/ohsmart",
     "dev:rda": "turbo dev --filter=@dans-framework/rda",
-    "dev:swh": "turbo dev --filter=@dans-framework/swh"
+    "build:rda": "turbo build --filter=@dans-framework/rda",
+    "dev:swh": "turbo dev --filter=@dans-framework/swh",
+    "build:swh": "turbo build --filter=@dans-framework/swh"
   },
   "keywords": [],
   "author": "",
