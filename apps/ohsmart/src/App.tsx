@@ -45,20 +45,20 @@ const App = () => {
             }
           >
             <Routes>
-              <Route path='signin-callback' element={<SignInCallback />} />
+              <Route path="signin-callback" element={<SignInCallback />} />
               <Route
-                path='user-settings'
+                path="user-settings"
                 element={
                   <AuthRoute>
                     <UserSettings
                       target={form.targetCredentials}
-                      depositSlug='deposit'
+                      depositSlug="deposit"
                     />
                   </AuthRoute>
                 }
               />
               <Route
-                path='user-submissions'
+                path="user-submissions"
                 element={
                   <AuthRoute>
                     <UserSubmissions />

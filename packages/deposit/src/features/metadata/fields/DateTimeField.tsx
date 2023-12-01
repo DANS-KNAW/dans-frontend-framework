@@ -32,10 +32,10 @@ const DateTimeField = ({
   const formDisabled = useAppSelector(getFormDisabled);
 
   return (
-    <Stack direction='row' alignItems='start'>
+    <Stack direction="row" alignItems="start">
       {field.formatOptions && (
         <FormControl sx={{ minWidth: 110, mr: 1 }}>
-          <InputLabel id='select-api'>{t("selectDateType")}</InputLabel>
+          <InputLabel id="select-api">{t("selectDateType")}</InputLabel>
           <Select
             label={t("selectDateType")}
             onChange={(e) => {
@@ -99,15 +99,12 @@ const DateTimeField = ({
             }),
           );
         }}
-        InputLabelProps={{
-          shrink: field.disabled,
-        }}
         sx={{
           mt: groupedFieldId && currentField !== 0 ? 1 : 0,
         }}
         InputProps={{
           endAdornment: (
-            <InputAdornment position='end'>
+            <InputAdornment position="end">
               <StatusIcon
                 status={status}
                 title={
@@ -126,7 +123,7 @@ const DateTimeField = ({
         !formDisabled && [
           totalFields > 1 && (
             <DeleteButton
-              key='delete'
+              key="delete"
               sectionIndex={sectionIndex}
               groupedFieldId={groupedFieldId}
               deleteFieldIndex={currentField}
@@ -135,10 +132,10 @@ const DateTimeField = ({
           ),
           currentField + 1 === totalFields && (
             <AddButton
-              key='add'
+              key="add"
               sectionIndex={sectionIndex}
               groupedFieldId={groupedFieldId}
-              type='single'
+              type="single"
               mt={currentField === 0 ? 1.75 : 2.75}
             />
           ),

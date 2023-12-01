@@ -155,8 +155,8 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
               {fieldArray.map((groupedField, i) => (
                 <Collapse key={groupedField[0].id}>
                   <Stack
-                    direction='row'
-                    alignItems='center'
+                    direction="row"
+                    alignItems="center"
                     key={i}
                     sx={{
                       borderTop: i > 0 ? "1px solid" : "none",
@@ -181,7 +181,7 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
                           sectionIndex={sectionIndex}
                           groupedFieldId={field.id}
                           deleteFieldIndex={i}
-                          size='medium'
+                          size="medium"
                         />
                       )}
                   </Stack>
@@ -192,11 +192,11 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
         )}
         {field.repeatable && !metadataSubmitStatus && (
           <CardActions sx={{ pl: 3, pr: 3, justifyContent: "right" }}>
-            <Stack direction='row' alignItems='center' justifyContent='end'>
+            <Stack direction="row" alignItems="center" justifyContent="end">
               <AddButtonText
                 sectionIndex={sectionIndex}
                 groupedFieldId={field.id}
-                type='group'
+                type="group"
               />
             </Stack>
           </CardActions>

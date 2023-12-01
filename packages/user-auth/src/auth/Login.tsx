@@ -11,7 +11,7 @@ export const LoginPage = () => {
     <Container>
       <Grid container>
         <Grid mdOffset={2.5} md={7} xs={12}>
-          <Typography variant='h1' sx={{ textAlign: "center" }}>
+          <Typography variant="h1" sx={{ textAlign: "center" }}>
             {t("login", { ns: "user" })}
           </Typography>
         </Grid>
@@ -20,8 +20,8 @@ export const LoginPage = () => {
           <Typography sx={{ textAlign: "center" }}>
             {t("loginMessage", { ns: "auth" })}
           </Typography>
-          <Box mt={4} display='flex' justifyContent='center'>
-            <LoginButton variant='contained' />
+          <Box mt={4} display="flex" justifyContent="center">
+            <LoginButton variant="contained" />
           </Box>
         </Grid>
       </Grid>

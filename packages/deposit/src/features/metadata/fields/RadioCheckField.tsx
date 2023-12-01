@@ -31,7 +31,7 @@ export const RadioField = ({ field, sectionIndex }: RadioFieldProps) => {
         <FormLabel id={field.id} sx={{ display: "flex", mb: 1 }}>
           <StatusIcon
             status={status}
-            margin='r'
+            margin="r"
             title={lookupLanguageString(field.description, i18n.language)}
           />
           {lookupLanguageString(field.label, i18n.language)}
@@ -77,13 +77,13 @@ export const CheckField = ({ field, sectionIndex }: CheckFieldProps) => {
     <FormControl
       required={field.required}
       error={field.required && field.value?.length === 0}
-      component='fieldset'
+      component="fieldset"
     >
       {field.label && (
         <FormLabel id={field.id} sx={{ display: "flex", mb: 1 }}>
           <StatusIcon
             status={status}
-            margin='r'
+            margin="r"
             title={lookupLanguageString(field.description, i18n.language)}
           />
           {lookupLanguageString(field.label, i18n.language)}
@@ -91,7 +91,7 @@ export const CheckField = ({ field, sectionIndex }: CheckFieldProps) => {
       )}
       <FormGroup>
         {field.options.map((option) => (
-          <Stack direction='row' alignItems='center' key={option.value}>
+          <Stack direction="row" alignItems="center" key={option.value}>
             <FormControlLabel
               control={
                 <Checkbox

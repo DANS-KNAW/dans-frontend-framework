@@ -186,7 +186,7 @@ const Submit = ({
   };
 
   return (
-    <Stack direction='column' alignItems='flex-end' sx={{ overflow: "hidden" }}>
+    <Stack direction="column" alignItems="flex-end" sx={{ overflow: "hidden" }}>
       <AnimatePresence>
         {fileWarning && (
           <motion.div
@@ -194,15 +194,15 @@ const Submit = ({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
           >
-            <Alert severity='warning' sx={{ mb: 2 }}>
+            <Alert severity="warning" sx={{ mb: 2 }}>
               {t("fileWarning")}
             </Alert>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <Stack direction={{ xs: "column", md: "row" }} alignItems='flex-end'>
-        <Stack direction='row' alignItems='center' mb={2}>
+      <Stack direction={{ xs: "column", md: "row" }} alignItems="flex-end">
+        <Stack direction="row" alignItems="center" mb={2}>
           <Typography mr={2}>
             {!metadataSubmitStatus ||
             (metadataSubmitStatus === "saved" && !formDisabled)
@@ -229,14 +229,14 @@ const Submit = ({
 
           <Box
             sx={{ mr: 2, position: "relative" }}
-            display='flex'
-            justifyContent='center'
-            alignItems='center'
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
           >
             <Box
-              display='flex'
-              justifyContent='center'
-              alignItems='center'
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
               sx={{
                 p: 1.2,
                 borderRadius: "50%",
@@ -293,12 +293,12 @@ const Submit = ({
           </Box>
         </Stack>
 
-        <Stack direction='row' alignItems='center' mb={2}>
+        <Stack direction="row" alignItems="center" mb={2}>
           <Button
-            variant='contained'
+            variant="contained"
             disabled={formDisabled}
             onClick={() => handleButtonClick("save")}
-            size='large'
+            size="large"
             sx={{ mr: 1 }}
           >
             {t("save")}
@@ -306,9 +306,9 @@ const Submit = ({
 
           {metadataSubmitStatus === "submitted" && formDisabled && (
             <Button
-              variant='contained'
+              variant="contained"
               onClick={resetForm}
-              size='large'
+              size="large"
               sx={{ mr: 1 }}
             >
               {t("reset")}
@@ -316,14 +316,14 @@ const Submit = ({
           )}
 
           <Button
-            variant='contained'
+            variant="contained"
             disabled={
               !hasTargetCredentials ||
               formDisabled ||
               (metadataStatus === "error" && !formConfig.skipValidation)
             }
             onClick={() => handleButtonClick("submit")}
-            size='large'
+            size="large"
           >
             {fileWarning ? t("submitAnyway") : t("submit")}
           </Button>
@@ -331,7 +331,7 @@ const Submit = ({
       </Stack>
 
       {metadataSubmitStatus === "saved" && !formDisabled && latestSave && (
-        <Typography variant='body2' mt={2}>
+        <Typography variant="body2" mt={2}>
           {t("saveSuccess", { dateTime: latestSave })}
         </Typography>
       )}

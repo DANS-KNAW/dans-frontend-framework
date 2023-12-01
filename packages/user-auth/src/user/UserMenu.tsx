@@ -63,7 +63,7 @@ const SettingsMenu = ({
       </IconButton>
       <Menu
         sx={{ mt: "45px" }}
-        id='menu-appbar'
+        id="menu-appbar"
         anchorEl={anchorElUser}
         anchorOrigin={{
           vertical: "top",
@@ -90,9 +90,9 @@ const SettingsMenu = ({
         {userSettings && (
           <Link
             component={RouterLink}
-            to='/user-settings'
-            underline='none'
-            color='inherit'
+            to="/user-settings"
+            underline="none"
+            color="inherit"
             onClick={handleCloseUserMenu}
           >
             <MenuItem>{t("userMenuSettings")}</MenuItem>
@@ -101,9 +101,9 @@ const SettingsMenu = ({
         {userSubmissions && (
           <Link
             component={RouterLink}
-            to='/user-submissions'
-            underline='none'
-            color='inherit'
+            to="/user-submissions"
+            underline="none"
+            color="inherit"
             onClick={handleCloseUserMenu}
           >
             <MenuItem divider={true}>{t("userMenuSubmissions")}</MenuItem>

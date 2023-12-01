@@ -7,7 +7,7 @@
     "build": "turbo build",
     "test": "turbo test",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\" --jsx-single-quote=true",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "dev:ohsmart": "turbo dev --filter=@dans-framework/ohsmart",
     "build:ohsmart": "turbo build --filter=@dans-framework/ohsmart",
     "dev:rda": "turbo dev --filter=@dans-framework/rda",

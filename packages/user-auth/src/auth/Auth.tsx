@@ -72,7 +72,7 @@ export const SignInCallback = () => {
       <Container>
         <Grid container>
           <Grid xs={12} mdOffset={2.5} md={7}>
-            <Typography variant='h1'>{t("signinError")}</Typography>
+            <Typography variant="h1">{t("signinError")}</Typography>
             <Typography>{auth.error.message}</Typography>
           </Grid>
         </Grid>

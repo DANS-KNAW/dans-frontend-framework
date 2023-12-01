@@ -40,12 +40,12 @@ const SingleTextField = ({
   }, [dispatch, field.autofill, field.id, sectionIndex, auth.user]);
 
   return (
-    <Stack direction='row' alignItems='start'>
+    <Stack direction="row" alignItems="start">
       <TextField
         fullWidth
         error={status === "error" && field.touched}
         helperText={status === "error" && field.touched && t("incorrect")}
-        variant='outlined'
+        variant="outlined"
         type={field.type}
         label={lookupLanguageString(field.label, i18n.language)}
         required={field.required}
@@ -72,7 +72,7 @@ const SingleTextField = ({
         placeholder={field.placeholder}
         InputProps={{
           endAdornment: (
-            <InputAdornment position='end'>
+            <InputAdornment position="end">
               <StatusIcon
                 status={status}
                 title={
@@ -88,7 +88,7 @@ const SingleTextField = ({
         !formDisabled && [
           totalFields > 1 && (
             <DeleteButton
-              key='delete'
+              key="delete"
               sectionIndex={sectionIndex}
               groupedFieldId={groupedFieldId}
               deleteFieldIndex={currentField}
@@ -97,10 +97,10 @@ const SingleTextField = ({
           ),
           currentField + 1 === totalFields && (
             <AddButton
-              key='add'
+              key="add"
               sectionIndex={sectionIndex}
               groupedFieldId={groupedFieldId}
-              type='single'
+              type="single"
               mt={currentField === 0 ? 1.75 : 2.75}
             />
           ),

@@ -54,17 +54,17 @@ export function RdaRecord() {
         <div style={{ margin: "2rem 0" }}>
           {record.page_url && (
             <a href={record.page_url} style={{ marginRight: "1rem" }}>
-              <Chip label='RDA' />
+              <Chip label="RDA" />
             </a>
           )}
           {record.uri && (
             <a href={record.uri} style={{ marginRight: "1rem" }}>
-              <Chip label='Zenodo' />
+              <Chip label="Zenodo" />
             </a>
           )}
           {record.pid_lod && (
             <a href={record.pid_lod}>
-              <Chip label='DOI' />
+              <Chip label="DOI" />
             </a>
           )}
         </div>
@@ -95,12 +95,12 @@ function Metadata({ name, value }: { name: string; value: string | string[] }) {
 export function MetadataList({ record }: { record: RdaRecord | Result }) {
   return (
     <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-      <Metadata name='Language' value={record.dc_language} />
-      <Metadata name='Individuals' value={record.individuals} />
-      <Metadata name='Rights' value={record.resource_rights_types} />
-      <Metadata name='Relations' value={record.relation_types} />
-      <Metadata name='Workflows' value={record.workflows} />
-      <Metadata name='Pathways' value={record.pathways} />
+      <Metadata name="Language" value={record.dc_language} />
+      <Metadata name="Individuals" value={record.individuals} />
+      <Metadata name="Rights" value={record.resource_rights_types} />
+      <Metadata name="Relations" value={record.relation_types} />
+      <Metadata name="Workflows" value={record.workflows} />
+      <Metadata name="Pathways" value={record.pathways} />
     </ul>
   );
 }

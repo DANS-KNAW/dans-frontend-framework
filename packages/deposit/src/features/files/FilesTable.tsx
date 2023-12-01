@@ -46,7 +46,7 @@ const FilesTable = () => {
 
   return selectedFiles.length !== 0 ? (
     <TableContainer component={Paper} sx={{ overflow: "hidden" }}>
-      <Table size='small'>
+      <Table size="small">
         <TableHead>
           <TableRow>
             <TableCell sx={{ p: 1, width: 10 }} />
@@ -78,7 +78,7 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
   return (
     <Autocomplete
       id={`${file.name}_${type}`}
-      size='small'
+      size="small"
       multiple={type === "process"}
       onChange={(_e, newValue) =>
         dispatch(
@@ -149,13 +149,13 @@ const FileConversion = ({ file }: FileItemProps) => {
       }
     >
       {file.submittedFile ? (
-        <InfoRoundedIcon color='neutral' />
+        <InfoRoundedIcon color="neutral" />
       ) : file.valid === false ? (
-        <ErrorRoundedIcon color='error' />
+        <ErrorRoundedIcon color="error" />
       ) : data.preferred ? (
-        <CheckCircleIcon color='success' />
+        <CheckCircleIcon color="success" />
       ) : (
-        <InfoRoundedIcon color='warning' />
+        <InfoRoundedIcon color="warning" />
       )}
     </LightTooltip>
   ) : isError ? (
@@ -170,7 +170,7 @@ const FileConversion = ({ file }: FileItemProps) => {
       sx={{ marginLeft: "-8px" }}
     >
       <Tooltip title={t("fileTypeCheckError")}>
-        <ReplayCircleFilledIcon color='error' />
+        <ReplayCircleFilledIcon color="error" />
       </Tooltip>
     </IconButton>
   ) : (
@@ -210,8 +210,8 @@ const FileTableRow = ({ file }: FileItemProps) => {
       >
         <TableCell sx={{ p: 0, pl: 1, borderWidth: fileStatus ? 0 : 1 }}>
           <IconButton
-            color='primary'
-            size='small'
+            color="primary"
+            size="small"
             onClick={() =>
               !formDisabled &&
               (!file.submittedFile
@@ -220,7 +220,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
             }
             disabled={formDisabled}
           >
-            <DeleteIcon fontSize='small' color='error' />
+            <DeleteIcon fontSize="small" color="error" />
           </IconButton>
         </TableCell>
         <TableCell
@@ -239,26 +239,26 @@ const FileTableRow = ({ file }: FileItemProps) => {
               {toDelete && (
                 <motion.div
                   layout
-                  key='delete'
+                  key="delete"
                   initial={{ x: "-100%" }}
                   animate={{ x: 0 }}
                   exit={{ x: "-100%" }}
                 >
                   <Button
-                    size='small'
-                    variant='contained'
+                    size="small"
+                    variant="contained"
                     sx={{
                       fontSize: 11,
                       mr: 1,
                     }}
-                    color='error'
+                    color="error"
                     onClick={() => dispatch(removeFile(file))}
                   >
                     {t(`confirmDelete`)}
                   </Button>
                 </motion.div>
               )}
-              <motion.div layout key='name'>
+              <motion.div layout key="name">
                 {file.name}
               </motion.div>
             </AnimatePresence>
@@ -288,13 +288,13 @@ const FileTableRow = ({ file }: FileItemProps) => {
         <TableCell
           sx={{ p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1 }}
         >
-          <FileActionOptions type='role' file={file} />
+          <FileActionOptions type="role" file={file} />
         </TableCell>
         {/* TODO: remove or spec this */}
         <TableCell
           sx={{ p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1 }}
         >
-          <FileActionOptions type='process' file={file} />
+          <FileActionOptions type="process" file={file} />
         </TableCell>
       </MotionRow>
       <MotionRow
@@ -348,7 +348,7 @@ const UploadProgress = ({ file }: FileItemProps) => {
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Box sx={{ width: "100%", mr: 1 }}>
             <LinearProgress
-              variant='determinate'
+              variant="determinate"
               value={fileStatus.progress || 0}
               color={
                 fileStatus.status === "success"
@@ -362,23 +362,23 @@ const UploadProgress = ({ file }: FileItemProps) => {
           </Box>
           <Box sx={{ minWidth: 35, textAlign: "right" }}>
             {fileStatus.status === "submitting" && (
-              <Typography variant='body2' color='text.secondary'>{`${
+              <Typography variant="body2" color="text.secondary">{`${
                 fileStatus.progress || 0
               }%`}</Typography>
             )}
             {fileStatus.status === "success" && (
               <Tooltip title={t("fileSubmitSuccess")}>
-                <CheckCircleIcon color='success' />
+                <CheckCircleIcon color="success" />
               </Tooltip>
             )}
             {fileStatus.status === "error" && (
-              <Stack direction='row' alignItems='center'>
-                <Typography variant='body2' color='text.secondary'>
+              <Stack direction="row" alignItems="center">
+                <Typography variant="body2" color="text.secondary">
                   {t("uploadFailed")}
                 </Typography>
                 <IconButton onClick={() => handleSingleFileUpload()}>
                   <Tooltip title={t("fileSubmitError")}>
-                    <ReplayCircleFilledIcon color='error' />
+                    <ReplayCircleFilledIcon color="error" />
                   </Tooltip>
                 </IconButton>
               </Stack>

@@ -28,11 +28,11 @@ const LanguageBar = ({
       }}
     >
       <Container>
-        <Stack direction='row' justifyContent='end' pt={0.5} pb={0.5}>
+        <Stack direction="row" justifyContent="end" pt={0.5} pb={0.5}>
           {languages.map((lang: Language, i: number) => (
             <Button
               key={lang}
-              size='small'
+              size="small"
               startIcon={
                 lang === "en" ? (
                   <GB className={styles.flag} />

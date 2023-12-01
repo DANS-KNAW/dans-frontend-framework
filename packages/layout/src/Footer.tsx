@@ -61,9 +61,9 @@ const Footer = ({ top, bottom }: FooterType) => {
 const FooterContent = ({ header, links, freetext, image }: FooterContent) => {
   const { i18n } = useTranslation();
   return (
-    <Stack direction='column' alignItems='start'>
+    <Stack direction="column" alignItems="start">
       {header && (
-        <Typography variant='h6'>
+        <Typography variant="h6">
           {lookupLanguageString(header, i18n.language)}
         </Typography>
       )}
@@ -77,19 +77,19 @@ const FooterContent = ({ header, links, freetext, image }: FooterContent) => {
         links.map((link, j) => (
           <Link
             href={link.link}
-            underline='none'
-            target='_blank'
+            underline="none"
+            target="_blank"
             key={`link-${j}`}
             sx={{ display: "flex", alignItems: "center" }}
           >
             {link.icon && link.icon === "twitter" && (
-              <TwitterIcon sx={{ mr: 1 }} fontSize='small' />
+              <TwitterIcon sx={{ mr: 1 }} fontSize="small" />
             )}
             {link.icon && link.icon === "youtube" && (
-              <YouTubeIcon sx={{ mr: 1 }} fontSize='small' />
+              <YouTubeIcon sx={{ mr: 1 }} fontSize="small" />
             )}
             {link.icon && link.icon === "email" && (
-              <EmailIcon sx={{ mr: 1 }} fontSize='small' />
+              <EmailIcon sx={{ mr: 1 }} fontSize="small" />
             )}
             {lookupLanguageString(link.name, i18n.language)}
           </Link>

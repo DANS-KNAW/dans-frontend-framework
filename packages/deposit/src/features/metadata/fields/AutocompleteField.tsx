@@ -39,7 +39,7 @@ const AutocompleteField = ({
     })) as OptionsType[]) || [];
 
   return (
-    <Stack direction='row' alignItems='start'>
+    <Stack direction="row" alignItems="start">
       <Autocomplete
         multiple={field.multiselect}
         fullWidth
@@ -104,7 +104,7 @@ const AutocompleteField = ({
         isOptionEqualToValue={(option, value) => option.value === value.value}
       />
       <StatusIcon
-        margin='lt'
+        margin="lt"
         status={status}
         title={
           field.description &&
@@ -124,7 +124,7 @@ export const InfoLink = ({
   const { t } = useTranslation("metadata");
   return (
     <InputAdornment
-      position='start'
+      position="start"
       sx={{ ml: chip ? 1.5 : 0.5, mr: chip ? -0.75 : 0.25, zIndex: 1 }}
     >
       <Tooltip
@@ -136,12 +136,12 @@ export const InfoLink = ({
       >
         <a
           href={link}
-          target='_blank'
+          target="_blank"
           style={{ lineHeight: 0 }}
-          rel='noreferrer'
+          rel="noreferrer"
         >
           <LaunchIcon
-            color='primary'
+            color="primary"
             sx={{ fontSize: 16, "&:hover": { color: "primary.dark" } }}
           />
         </a>
@@ -166,7 +166,7 @@ export const InfoChip = ({
           ? option.value
           : lookupLanguageString(option.label, i18n.language)
       }
-      size='medium'
+      size="medium"
       icon={
         option.value && option.value.startsWith("http") ? (
           <InfoLink
