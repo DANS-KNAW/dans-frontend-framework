@@ -141,7 +141,7 @@ const FilesUpload = () => {
               <>
                 <input {...getInputProps()} />
                 <Typography
-                  color='neutral.contrastText'
+                  color="neutral.contrastText"
                   sx={{ textAlign: "center", cursor: "pointer" }}
                 >
                   {isDragActive ? t("dropNow") : t("drop")}
@@ -149,7 +149,7 @@ const FilesUpload = () => {
               </>
             ) : (
               <Typography
-                color='neutral.contrastText'
+                color="neutral.contrastText"
                 sx={{ textAlign: "center", cursor: "pointer" }}
               >
                 {t("dropLoading")}
@@ -166,7 +166,7 @@ const FilesUpload = () => {
             p={3}
           >
             <Typography
-              color='neutral.contrastText'
+              color="neutral.contrastText"
               sx={{ textAlign: "center" }}
             >
               {t("dropDisabled")}
@@ -188,18 +188,18 @@ const RejectedFiles = ({ fileRejections }: RejectedFilesProps) => {
   return (
     <Collapse in={open}>
       <Alert
-        severity='error'
+        severity="error"
         sx={{ mt: 2 }}
         action={
           <IconButton
-            aria-label='close'
-            color='inherit'
-            size='small'
+            aria-label="close"
+            color="inherit"
+            size="small"
             onClick={() => {
               setOpen(false);
             }}
           >
-            <CloseIcon fontSize='inherit' />
+            <CloseIcon fontSize="inherit" />
           </IconButton>
         }
       >

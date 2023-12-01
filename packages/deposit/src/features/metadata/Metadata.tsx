@@ -39,7 +39,7 @@ const Form = () => {
             aria-controls={`${section.id}-content`}
             id={`${section.id}-header`}
           >
-            <StatusIcon status={section.status} margin='r' />
+            <StatusIcon status={section.status} margin="r" />
             <Typography>
               {lookupLanguageString(section.title, i18n.language)}
             </Typography>

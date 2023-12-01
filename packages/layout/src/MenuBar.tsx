@@ -39,23 +39,23 @@ const MenuBar = ({
   };
 
   return (
-    <AppBar position='static'>
+    <AppBar position="static">
       <Container>
         <Toolbar disableGutters>
           {/* mobile menu */}
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
-              size='large'
-              aria-label='account of current user'
-              aria-controls='menu-appbar'
-              aria-haspopup='true'
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
               onClick={handleOpenNavMenu}
-              color='inherit'
+              color="inherit"
             >
               <MenuIcon />
             </IconButton>
             <Menu
-              id='menu-appbar'
+              id="menu-appbar"
               anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: "bottom",
@@ -81,8 +81,8 @@ const MenuBar = ({
                       !page.restricted) && (
                       <MenuItem key={i} onClick={handleCloseNavMenu}>
                         <Link
-                          underline='none'
-                          color='inherit'
+                          underline="none"
+                          color="inherit"
                           component={RouterLink}
                           to={page.slug}
                         >
@@ -94,7 +94,7 @@ const MenuBar = ({
             </Menu>
             <Link
               component={RouterLink}
-              to='/'
+              to="/"
               sx={{
                 ml: 2,
                 pt: 1,
@@ -110,7 +110,7 @@ const MenuBar = ({
           {/* desktop menu */}
           <Link
             component={RouterLink}
-            to='/'
+            to="/"
             sx={{ mr: 2, width: 100, display: { xs: "none", md: "flex" } }}
           >
             <img src={logo} />

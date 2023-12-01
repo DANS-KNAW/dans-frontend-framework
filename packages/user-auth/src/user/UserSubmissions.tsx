@@ -79,17 +79,17 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
     <Container>
       <Grid container>
         <Grid xs={12} mdOffset={1} md={10}>
-          <Typography variant='h1'>{t("userSubmissions")}</Typography>
+          <Typography variant="h1">{t("userSubmissions")}</Typography>
           <SubmissionList
             data={data?.filter((d) => d["release-version"] === "DRAFT") || []}
-            type='draft'
+            type="draft"
             isLoading={isLoading}
             header={t("userSubmissionsDrafts")}
             depositSlug={depositSlug}
           />
           <SubmissionList
             data={data?.filter((d) => d["release-version"] === "PUBLISH") || []}
-            type='published'
+            type="published"
             isLoading={isLoading}
             header={t("userSubmissionsCompleted")}
           />
@@ -158,11 +158,11 @@ const SubmissionList = ({
               headerName: t("submissionStatus"),
               width: 250,
               renderCell: (params: any) => (
-                <Stack direction='column' pt={0.5} pb={0.5}>
+                <Stack direction="column" pt={0.5} pb={0.5}>
                   {params.value.map((v: TargetOutput, i: number) => (
                     <Stack
-                      direction='row'
-                      alignItems='center'
+                      direction="row"
+                      alignItems="center"
                       key={i}
                       pt={0.1}
                       pb={0.1}
@@ -179,7 +179,7 @@ const SubmissionList = ({
                               ? t("error")
                               : t("success")
                         }
-                        placement='left'
+                        placement="left"
                       >
                         {depositStatus.processing.indexOf(
                           v["ingest-status"],
@@ -187,16 +187,16 @@ const SubmissionList = ({
                           <CircularProgress size={16} />
                         ) : depositStatus.error.indexOf(v["ingest-status"]) !==
                           -1 ? (
-                          <ErrorIcon fontSize='small' color='error' />
+                          <ErrorIcon fontSize="small" color="error" />
                         ) : depositStatus.success.indexOf(
                             v["ingest-status"],
                           ) !== -1 ? (
-                          <CheckCircleIcon fontSize='small' color='success' />
+                          <CheckCircleIcon fontSize="small" color="success" />
                         ) : (
-                          <PendingIcon fontSize='small' color='neutral' />
+                          <PendingIcon fontSize="small" color="neutral" />
                         )}
                       </Tooltip>
-                      <Typography variant='body2' ml={1}>
+                      <Typography variant="body2" ml={1}>
                         {v["target-repo-display-name"]}
                       </Typography>
                     </Stack>
@@ -223,7 +223,7 @@ const SubmissionList = ({
 
   return (
     <>
-      <Typography sx={{ mt: 4, mb: 1 }} variant='h5'>
+      <Typography sx={{ mt: 4, mb: 1 }} variant="h5">
         {header}
       </Typography>
 

@@ -69,7 +69,7 @@ export const UserSettings = ({
     <Container>
       <Grid container>
         <Grid xs={12} mdOffset={2.5} md={7}>
-          <Typography variant='h1'>{t("userSettings")}</Typography>
+          <Typography variant="h1">{t("userSettings")}</Typography>
           {target.map(
             (tg) =>
               tg.authKey && <UserSettingsItem key={tg.authKey} target={tg} />,
@@ -80,7 +80,7 @@ export const UserSettings = ({
             to={apiKeyError !== undefined ? "" : `/${depositSlug || `deposit`}`}
           >
             <Button
-              variant='contained'
+              variant="contained"
               disabled={apiKeyError !== undefined || skipValidate}
             >
               {t("goToDeposit")}
@@ -174,15 +174,15 @@ const UserSettingsItem = ({ target }: { target: Target }) => {
   const debounced = useDebouncedCallback((value) => setApiValue(value), 500);
 
   return (
-    <Stack direction='column' alignItems='flex-start' mb={4}>
-      <Typography variant='h6'>
+    <Stack direction="column" alignItems="flex-start" mb={4}>
+      <Typography variant="h6">
         {t("apiKeyHeader", { type: target.name })}
       </Typography>
       <Typography mb={3} sx={{ display: "flex", alignItems: "center" }}>
         <span>
           <Trans
-            i18nKey='user:apiKeyDescription'
-            components={[<Link href={target.keyUrl} target='_blank' />]}
+            i18nKey="user:apiKeyDescription"
+            components={[<Link href={target.keyUrl} target="_blank" />]}
           />
         </span>
         {target.helpText && (
@@ -190,27 +190,27 @@ const UserSettingsItem = ({ target }: { target: Target }) => {
             sx={{ marginLeft: 0.5 }}
             title={lookupLanguageString(target.helpText, i18n.language)}
           >
-            <HelpIcon color='action' />
+            <HelpIcon color="action" />
           </Tooltip>
         )}
       </Typography>
       <TextField
         id={target.authKey}
         label={t("apiKeyLabel", { type: target.name })}
-        variant='outlined'
+        variant="outlined"
         sx={{ width: "100%", flex: 1 }}
         value={fieldValue}
         onChange={(e) => changeValue(e.target.value)}
         InputProps={{
           endAdornment: (
-            <InputAdornment position='end'>
+            <InputAdornment position="end">
               {keyLoading || keyFetching || saveLoading ? (
                 <CircularProgress size={20} />
               ) : apiValue && keySuccess ? (
-                <CheckIcon color='success' />
+                <CheckIcon color="success" />
               ) : (keyData && keyData !== "OK") || keyError ? (
                 <Tooltip title={t("keyError")}>
-                  <ErrorIcon color='error' />
+                  <ErrorIcon color="error" />
                 </Tooltip>
               ) : null}
             </InputAdornment>

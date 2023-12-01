@@ -52,16 +52,16 @@ const FilesOnline = () => {
       <CardHeader title={t("addURL") as string} />
       <CardContent>
         <Stack
-          direction='row'
-          justifyContent='flex-start'
-          alignItems='center'
+          direction="row"
+          justifyContent="flex-start"
+          alignItems="center"
           spacing={1}
         >
           <TextField
             fullWidth
-            size='small'
+            size="small"
             label={t("enterURL") as string}
-            variant='outlined'
+            variant="outlined"
             onChange={(e) => checkOnlineFile(e.target.value)}
             onKeyUp={(e) =>
               e.keyCode === 13 &&
@@ -76,7 +76,7 @@ const FilesOnline = () => {
           <Button
             disabled={onlineFileError || onlineFile === ""}
             onClick={() => addOnlineFile()}
-            variant='text'
+            variant="text"
           >
             {t("add")}
           </Button>

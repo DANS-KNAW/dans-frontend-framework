@@ -123,12 +123,12 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
           <Grid xs={12} mt={4}>
             {!hasTargetCredentials && (
               // show a message if keys are missing
-              <Alert severity='warning'>
+              <Alert severity="warning">
                 <AlertTitle>{t("missingInfoHeader")}</AlertTitle>
                 <Trans
-                  i18nKey='generic:missingInfoText'
+                  i18nKey="generic:missingInfoText"
                   components={[
-                    <Link component={RouterLink} to='/user-settings' />,
+                    <Link component={RouterLink} to="/user-settings" />,
                   ]}
                 />
               </Alert>
@@ -140,10 +140,10 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
               />
             </Box>
             <AnimatePresence initial={false}>
-              <TabPanel value={openTab} index={0} key='tab1'>
+              <TabPanel value={openTab} index={0} key="tab1">
                 <Metadata />
               </TabPanel>
-              <TabPanel value={openTab} index={1} key='tab2'>
+              <TabPanel value={openTab} index={1} key="tab2">
                 <Files />
               </TabPanel>
             </AnimatePresence>
@@ -151,9 +151,9 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
           <Grid
             xs={12}
             mt={4}
-            display='flex'
-            justifyContent='end'
-            alignItems='center'
+            display="flex"
+            justifyContent="end"
+            alignItems="center"
           >
             <Submit hasTargetCredentials={hasTargetCredentials} />
           </Grid>
@@ -173,18 +173,18 @@ const TabHeader = ({ value, handleChange }: TabHeaderProps) => {
     <Tabs value={value} onChange={handleChange}>
       <Tab
         label={t("heading", { ns: "metadata" })}
-        icon={<StatusIcon status={metadataStatus} margin='r' />}
-        iconPosition='start'
+        icon={<StatusIcon status={metadataStatus} margin="r" />}
+        iconPosition="start"
       />
       <Tab
         label={t("heading", { ns: "files" })}
         icon={
           <StatusIcon
             status={selectedFiles.length > 0 ? "success" : "warning"}
-            margin='r'
+            margin="r"
           />
         }
-        iconPosition='start'
+        iconPosition="start"
       />
     </Tabs>
   );

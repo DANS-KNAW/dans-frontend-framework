@@ -23,7 +23,7 @@ export const DeleteButton = ({
   return (
     <Tooltip title={t("delete") as string}>
       <IconButton
-        color='error'
+        color="error"
         aria-label={t("delete") as string}
         size={size}
         sx={{ mt: mt }}
@@ -55,7 +55,7 @@ export const AddButton = ({
   return (
     <Tooltip title={t("add") as string}>
       <IconButton
-        color='primary'
+        color="primary"
         aria-label={t("add") as string}
         size={size}
         sx={{ mt: mt }}

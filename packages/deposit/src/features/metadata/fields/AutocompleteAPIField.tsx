@@ -404,11 +404,11 @@ export const MultiApiField = ({
   const formDisabled = useAppSelector(getFormDisabled);
 
   return (
-    <Stack direction='row' alignItems='start'>
+    <Stack direction="row" alignItems="start">
       <FormControl sx={{ minWidth: 110, mr: 1 }}>
-        <InputLabel id='select-api'>{t("multiApiSelectLabel")}</InputLabel>
+        <InputLabel id="select-api">{t("multiApiSelectLabel")}</InputLabel>
         <Select
-          labelId='select-api'
+          labelId="select-api"
           label={t("multiApiSelectLabel")}
           onChange={(e) => {
             // set the type of API used
@@ -491,6 +491,10 @@ const AutocompleteAPIField = ({
   isLoading,
   isFetching,
 }: AutocompleteAPIFieldProps) => {
+  console.log(data);
+  console.log(inputValue);
+  console.log(debouncedInputValue);
+  console.log(isFetching);
   const dispatch = useAppDispatch();
   const status = getFieldStatus(field);
   const { t, i18n } = useTranslation("metadata");
@@ -500,7 +504,7 @@ const AutocompleteAPIField = ({
   const formDisabled = useAppSelector(getFormDisabled);
 
   return (
-    <Stack direction='row' alignItems='start' sx={{ flex: 1 }}>
+    <Stack direction="row" alignItems="start" sx={{ flex: 1 }}>
       <Autocomplete
         multiple={field.multiselect}
         fullWidth
@@ -631,9 +635,9 @@ const AutocompleteAPIField = ({
           ) : (
             // otherwise the loading indicator
             <Stack
-              direction='row'
-              justifyContent='space-between'
-              alignItems='end'
+              direction="row"
+              justifyContent="space-between"
+              alignItems="end"
             >
               {t("loading")} <CircularProgress size={18} />
             </Stack>
@@ -643,12 +647,12 @@ const AutocompleteAPIField = ({
           <li {...props} key={option.value} style={{ flexWrap: "wrap" }}>
             {option.categoryLabel && option.categoryContent && (
               <Typography
-                component='div'
+                component="div"
                 sx={{ width: "100%", fontSize: "0.8rem" }}
-                color='neutral.contrastText'
+                color="neutral.contrastText"
               >
                 <Typography
-                  component='span'
+                  component="span"
                   sx={{ fontWeight: "600", fontSize: "inherit" }}
                 >
                   {t(option.categoryLabel)}
@@ -659,12 +663,12 @@ const AutocompleteAPIField = ({
             {lookupLanguageString(option.label, i18n.language)}
             {option.extraContent && option.extraLabel && (
               <Typography
-                component='div'
+                component="div"
                 sx={{ width: "100%", fontSize: "0.8rem" }}
-                color='neutral.contrastText'
+                color="neutral.contrastText"
               >
                 <Typography
-                  component='span'
+                  component="span"
                   sx={{ fontWeight: "600", fontSize: "inherit" }}
                 >
                   {t(option.extraLabel)}
@@ -674,12 +678,12 @@ const AutocompleteAPIField = ({
             )}
             {option.id && option.idLabel && (
               <Typography
-                component='div'
+                component="div"
                 sx={{ width: "100%", fontSize: "0.8rem" }}
-                color='neutral.contrastText'
+                color="neutral.contrastText"
               >
                 <Typography
-                  component='span'
+                  component="span"
                   sx={{ fontWeight: "600", fontSize: "inherit" }}
                 >
                   {t(option.idLabel)}
@@ -695,7 +699,8 @@ const AutocompleteAPIField = ({
           // only for freesolo, add input directly as option
           if (
             field.allowFreeText &&
-            !isLoading &&
+            !isLoading && 
+            !isFetching &&
             debouncedInputValue === inputValue
           ) {
             const filter = createFilterOptions<OptionsType>();
@@ -732,7 +737,7 @@ const AutocompleteAPIField = ({
         disabled={formDisabled}
       />
       <StatusIcon
-        margin='lt'
+        margin="lt"
         status={status}
         title={lookupLanguageString(field.description, i18n.language)}
         subtitle={t("apiValue", { api: t(apiValue) }) as string}
