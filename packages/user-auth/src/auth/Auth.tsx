@@ -1,5 +1,5 @@
 import { useAuth } from "react-oidc-context";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
@@ -10,7 +10,12 @@ import { AuthProvider } from "react-oidc-context";
 import { I18nextProvider } from "react-i18next";
 import { Provider as ReduxProvider } from "react-redux";
 import i18nProvider from "../languages/i18n";
-import type { AuthProviderConfig } from "../types";
+import type {
+  AuthProviderConfig,
+  Permissions,
+  Roles,
+  UserRoles,
+} from "../types";
 import { store } from "../redux/store";
 import { LoginPage } from "./Login";
 
@@ -30,13 +35,66 @@ export const AuthWrapper = ({
   );
 };
 
-export const AuthRoute = ({ children }: { children: ReactNode }) => {
+export const AuthRoute = ({
+  children,
+  permissions,
+}: {
+  children: ReactNode;
+  permissions?: Permissions[];
+}) => {
   const auth = useAuth();
-  if (auth.isAuthenticated) {
+  const { t } = useTranslation("auth");
+
+  if (!auth.isAuthenticated) {
+    return <LoginPage />;
+  }
+
+  if (!permissions) {
     return <>{children}</>;
   }
 
-  return <LoginPage />;
+  const renderAccessDenied = () => (
+    <Container>
+      <Grid container>
+        <Grid xs={12} mdOffset={2.5} md={7}>
+          <Typography variant="h1">{t("accessDenied")}</Typography>
+          <Typography>{t("missingPermission")}</Typography>
+          <Link to="/">{t("backToHome")}</Link>
+        </Grid>
+      </Grid>
+    </Container>
+  );
+
+  const profile = auth.user?.profile;
+  if (!profile) {
+    return renderAccessDenied();
+  }
+
+  const resource_access = profile.resource_access as UserRoles;
+  const roles = resource_access.account.roles;
+
+  const rolesPermissions: Record<Roles, Permissions[]> = {
+    "identified-user": [],
+    "validated-user": ["canDeposit"],
+    admin: ["canDeposit"],
+  };
+
+  const userRoles = roles.filter((role) =>
+    Object.keys(rolesPermissions).includes(role as Roles)
+  ) as Roles[];
+
+  const userPermissions = userRoles.reduce(
+    (acc, role) => [...acc, ...rolesPermissions[role]],
+    [] as Permissions[]
+  );
+
+  if (
+    !permissions.every((permission) => userPermissions.includes(permission))
+  ) {
+    return renderAccessDenied();
+  }
+
+  return <>{children}</>;
 };
 
 export const SignInCallback = () => {

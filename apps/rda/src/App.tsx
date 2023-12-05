@@ -50,7 +50,7 @@ const App = () => {
         return <RdaRecord />;
       case "deposit":
         return (
-          <AuthRoute>
+          <AuthRoute permissions={["canDeposit"]}>
             <Deposit config={form} page={page} />
           </AuthRoute>
         );

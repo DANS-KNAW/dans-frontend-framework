@@ -61,3 +61,16 @@ export type AuthProperty =
   | "voperson_external_affiliation"
   | "family_name"
   | "given_name";
+
+// Permissions that can be set on a route.
+export type Permissions = "canDeposit";
+
+// User Roles that can be present on a user.
+export type Roles = "identified-user" | "validated-user" | "admin"; 
+
+// Extends the auth.user.profile.resource_access type with the user roles.
+export type UserRoles = {
+  account: {
+    roles: string[];
+  };
+};
