@@ -35,6 +35,10 @@
 	"submittedTo": "Gesubmit naar",
 	"submissionStatus": "Status",
 	"processing": "Bezig met verwerken",
-	"error": "Fout bij het verwerken van je data",
-	"success": "Succesvol gesubmit"
+	"error": "Fout bij het verwerken van je data, click om details te zien",
+	"success": "Succesvol gesubmit",
+	"moreInfo": "Fout",
+	"errorExplanation": "Dit is de foutmelding die we van de server terugkregen",
+	"retryItem": "Verbeter de foutmelding en probeer opnieuw",
+	"copyItem": "Kopiëer deze dataset voor een nieuwe submissie"
 }

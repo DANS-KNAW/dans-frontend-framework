@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, MouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -19,15 +19,19 @@ import moment from "moment";
 import { useSiteTitle, setSiteTitle } from "@dans-framework/utils";
 import { useFetchUserSubmissionsQuery } from "./userApi";
 import { useAuth } from "react-oidc-context";
-import type { SubmissionResponse, TargetOutput } from "../types";
+import type { SubmissionResponse, TargetOutput, DepositStatus } from "../types";
 import CircularProgress from "@mui/material/CircularProgress";
 import LinearProgress from "@mui/material/LinearProgress";
 import PendingIcon from "@mui/icons-material/Pending";
 import ErrorIcon from "@mui/icons-material/Error";
+import ReplayIcon from '@mui/icons-material/Replay';
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import Tooltip from "@mui/material/Tooltip";
+import Popover from '@mui/material/Popover';
+import Button from '@mui/material/Button';
 
-const depositStatus = {
+const depositStatus: DepositStatus = {
   processing: ["initial", "processing", "submitted", "finalizing"],
   error: ["rejected", "failed", "error"],
   success: ["finish", "accepted", "success"],
@@ -117,26 +121,38 @@ const SubmissionList = ({
 
   // useMemo to make sure columns don't change
   const columns = useMemo<GridColDef[]>(
-    () => [
-      ...(type === "draft"
-        ? [
-            {
-              field: "viewLink",
-              headerName: "",
-              width: 30,
-              getActions: (params: any) => [
-                <GridActionsCellItem
-                  icon={<EditIcon />}
-                  label={t("editItem")}
-                  onClick={() =>
-                    navigate(`/${depositSlug}?id=${params.row.id}`)
-                  }
-                />,
-              ],
-              type: "actions",
-            },
+    () => [{
+        field: "viewLink",
+        headerName: "",
+        width: 30,
+        getActions: (params: any) => {
+          console.log(params)
+          return type === "draft" ? [
+            <GridActionsCellItem
+              icon={<EditIcon />}
+              label={t("editItem")}
+              onClick={() =>
+                navigate(`/${depositSlug}?id=${params.row.id}`)
+              }
+            />,
           ]
-        : []),
+          // for submitted forms, either edit in case of error, or load with existing data for new submission
+          // params.value is true for an error, false for success
+          : [
+            <Tooltip title={t(params.row.error ? "retryItem" : "copyItem")} placement="bottom">
+              <GridActionsCellItem
+                icon={params.row.error ? <ReplayIcon /> : <ContentCopyIcon />}
+                label={t(params.row.error ? "retryItem" : "copyItem")}
+                onClick={() =>
+                  // todo: need to work on this, how are we going to reload submitted form data for resubmission
+                  navigate(`/${depositSlug}?${params.row.error ? 'id' : 'id'}=${params.row.id}`)
+                }
+              />
+            </Tooltip>
+          ]
+        },
+        type: "actions",
+      },        
       {
         field: "title",
         headerName: t("title"),
@@ -160,46 +176,7 @@ const SubmissionList = ({
               renderCell: (params: any) => (
                 <Stack direction="column" pt={0.5} pb={0.5}>
                   {params.value.map((v: TargetOutput, i: number) => (
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      key={i}
-                      pt={0.1}
-                      pb={0.1}
-                    >
-                      <Tooltip
-                        title={
-                          depositStatus.processing.indexOf(
-                            v["ingest-status"],
-                          ) !== -1
-                            ? t("processing")
-                            : depositStatus.error.indexOf(
-                                  v["ingest-status"],
-                                ) !== -1
-                              ? t("error")
-                              : t("success")
-                        }
-                        placement="left"
-                      >
-                        {depositStatus.processing.indexOf(
-                          v["ingest-status"],
-                        ) !== -1 ? (
-                          <CircularProgress size={16} />
-                        ) : depositStatus.error.indexOf(v["ingest-status"]) !==
-                          -1 ? (
-                          <ErrorIcon fontSize="small" color="error" />
-                        ) : depositStatus.success.indexOf(
-                            v["ingest-status"],
-                          ) !== -1 ? (
-                          <CheckCircleIcon fontSize="small" color="success" />
-                        ) : (
-                          <PendingIcon fontSize="small" color="neutral" />
-                        )}
-                      </Tooltip>
-                      <Typography variant="body2" ml={1}>
-                        {v["target-repo-display-name"]}
-                      </Typography>
-                    </Stack>
+                    <SingleTargetStatus target={v} depositStatus={depositStatus} key={i} />
                   ))}
                 </Stack>
               ),
@@ -214,6 +191,9 @@ const SubmissionList = ({
     data &&
     data.map((d) => ({
       // Todo: API needs work and standardisation, also see types.
+      error: d["targets"].some(
+        (t) => depositStatus.error.indexOf(t["ingest-status"]) !== -1,
+      ),
       id: d["metadata-id"],
       // viewLink: '',
       created: type === "draft" ? d["created-date"] : d["submitted-date"],
@@ -272,6 +252,100 @@ const SubmissionList = ({
     </>
   );
 };
+
+// A separate component for a target, needs to have it's own state to display popover
+const SingleTargetStatus = ({depositStatus, target}: {depositStatus: DepositStatus, target: TargetOutput}) => {
+  const { t } = useTranslation("user");
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const open = Boolean(anchorEl);
+  const id = open ? 'popover' : undefined;
+
+  return (
+    <>
+      <Stack
+        direction="row"
+        alignItems="center"
+        pt={0.1}
+        pb={0.1}
+      >
+        <Tooltip
+          title={
+            depositStatus.processing.indexOf(
+              target["ingest-status"],
+            ) !== -1
+              ? t("processing")
+              : depositStatus.error.indexOf(
+                    target["ingest-status"],
+                  ) !== -1
+                ? t("error")
+                : t("success")
+          }
+          placement="left"
+        >
+          {depositStatus.processing.indexOf(
+            target["ingest-status"],
+          ) !== -1 ? (
+            <CircularProgress size={16} />
+          ) : depositStatus.error.indexOf(target["ingest-status"]) !==
+            -1 ? (
+            <Button 
+              variant="contained" 
+              color="error" 
+              startIcon={<ErrorIcon />}
+              size="small"
+              onClick={handleClick}
+              sx={{ fontSize: 10 }}
+            >
+              {t("moreInfo")}
+            </Button>
+          ) : depositStatus.success.indexOf(
+              target["ingest-status"],
+            ) !== -1 ? (
+            <CheckCircleIcon fontSize="small" color="success" />
+          ) : (
+            <PendingIcon fontSize="small" color="neutral" />
+          )}
+        </Tooltip>
+        <Typography variant="body2" ml={1}>
+          {target["target-repo-display-name"]}
+        </Typography>
+      </Stack>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        sx={{ maxWidth: "50rem"}}
+      >
+        <Box sx={{p: 2}}>
+          <Typography variant="h6">{t("errorExplanation")}</Typography>
+          <pre 
+            style={{
+              whiteSpace: "pre-wrap",
+              background: "rgba(0,0,0,0.1)",
+              maxHeight: "20rem",
+              overflow: "auto",
+              padding: "1rem",
+              fontSize: "0.8rem",
+            }}
+          >
+            {JSON.stringify(target["target-output"], null, 2)}
+          </pre>
+        </Box>
+      </Popover>
+    </>
+  )
+}
 
 const CustomColumnMenu = (props: GridColumnMenuProps) => {
   return (

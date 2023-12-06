@@ -29,17 +29,16 @@ export interface ValidateTarget {
 
 export type ReleaseVersion = "DRAFT" | "PUBLISH";
 
-type IngestStatus =
-  | "initial"
-  | "processing"
-  | "finish"
-  | "error"
-  | "rejected"
-  | "failed";
+type ActiveStatus = "initial" | "processing" | "submitted" | "finalizing";
+type ErrorStatus = "rejected" | "failed" | "error";
+type SuccessStatus = "finish" | "accepted" | "success";
+export type IngestStatus = ActiveStatus | ErrorStatus | SuccessStatus;
+type IngestStatusKeys = "processing" | "error" | "success";
+export type DepositStatus = { [key in IngestStatusKeys]: IngestStatus[] }
 
 export interface TargetOutput {
   "ingest-status": IngestStatus;
-  "target-output": string;
+  "target-output": any;
   "target-repo-name": string;
   "target-repo-display-name": string;
   "target-url": string;

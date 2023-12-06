@@ -35,6 +35,10 @@
 	"submittedTo": "Submitted to",
 	"submissionStatus": "Status",
 	"processing": "Processing your submission",
-	"error": "Error with your submission",
-	"success": "Succesfully submitted"
+	"error": "Error with your submission, click to see details",
+	"success": "Succesfully submitted",
+	"moreInfo": "Error",
+	"errorExplanation": "This is the error we got back from the server",
+	"retryItem": "Correct the error and try again",
+	"copyItem": "Copy this dataset for a new submission"
 }
