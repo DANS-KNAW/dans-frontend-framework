@@ -126,8 +126,8 @@ const SubmissionList = ({
         headerName: "",
         width: 30,
         getActions: (params: any) => {
-          console.log(params)
-          return type === "draft" ? [
+          return type === "draft" 
+          ? [
             <GridActionsCellItem
               icon={<EditIcon />}
               label={t("editItem")}
@@ -138,7 +138,8 @@ const SubmissionList = ({
           ]
           // for submitted forms, either edit in case of error, or load with existing data for new submission
           // params.value is true for an error, false for success
-          : [
+          : !params.row.processing 
+          ? [
             <Tooltip title={t(params.row.error ? "retryItem" : "copyItem")} placement="bottom">
               <GridActionsCellItem
                 icon={params.row.error ? <ReplayIcon /> : <ContentCopyIcon />}
@@ -150,6 +151,7 @@ const SubmissionList = ({
               />
             </Tooltip>
           ]
+          : []
         },
         type: "actions",
       },        
@@ -193,6 +195,9 @@ const SubmissionList = ({
       // Todo: API needs work and standardisation, also see types.
       error: d["targets"].some(
         (t) => depositStatus.error.indexOf(t["ingest-status"]) !== -1,
+      ),
+      processing: d["targets"].some(
+        (t) => depositStatus.processing.indexOf(t["ingest-status"]) !== -1,
       ),
       id: d["metadata-id"],
       // viewLink: '',

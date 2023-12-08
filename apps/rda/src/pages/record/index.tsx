@@ -2,8 +2,8 @@ import { Chip, Container } from "@mui/material";
 import type { Result } from "@dans-framework/rdt-search-ui";
 import React from "react";
 import { useParams } from "react-router-dom";
-
-import styles from "../search/index.module.css";
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
 interface RdaRecord {
   card_url: string;
@@ -48,9 +48,11 @@ export function RdaRecord() {
   return (
     <Container>
       <div style={{ margin: "3rem 0" }}>
-        <h2>{record.title || <i>empty</i>}</h2>
-        <p>{record.dc_description || ""}</p>
+        <Typography variant="h3">{record.title || <i>empty</i>}</Typography>
+        <Typography gutterBottom>{record.dc_description || ""}</Typography>
+
         <MetadataList record={record} />
+
         <div style={{ margin: "2rem 0" }}>
           {record.page_url && (
             <a href={record.page_url} style={{ marginRight: "1rem" }}>
@@ -76,7 +78,7 @@ export function RdaRecord() {
 
 const style = {
   display: "grid",
-  gridTemplateColumns: "200px 1fr",
+  gridTemplateColumns: "25% 1fr",
 };
 
 function Metadata({ name, value }: { name: string; value: string | string[] }) {
@@ -94,7 +96,7 @@ function Metadata({ name, value }: { name: string; value: string | string[] }) {
 
 export function MetadataList({ record }: { record: RdaRecord | Result }) {
   return (
-    <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+    <ul style={{ listStyle: "none", margin: "1rem 0", padding: 0 }}>
       <Metadata name="Language" value={record.dc_language} />
       <Metadata name="Individuals" value={record.individuals} />
       <Metadata name="Rights" value={record.resource_rights_types} />
@@ -109,11 +111,21 @@ function ShowJSON({ record }: { record: RdaRecord }) {
   const [active, setActive] = React.useState(false);
 
   return (
-    <div className={styles.showjson}>
-      <button onClick={() => setActive(!active)}>
+    <>
+      <Button onClick={() => setActive(!active)} variant="contained">
         {active ? "Hide" : "Show"} JSON
-      </button>
-      {active && <pre>{JSON.stringify(record, undefined, 3)}</pre>}
-    </div>
+      </Button>
+      {active && 
+        <pre
+          style={{
+            background: "rgba(0,0,0,0.1)",
+            padding: "1rem",
+            overflow: "auto"
+          }}
+        >
+          {JSON.stringify(record, undefined, 3)}
+        </pre>
+      }
+    </>
   );
 }
