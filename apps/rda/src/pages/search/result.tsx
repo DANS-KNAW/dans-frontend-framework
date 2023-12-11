@@ -31,23 +31,10 @@ export function Rda2Result(props: ResultBodyProps) {
 function ReadMore({ item }: { item: ResultBodyProps["result"] }) {
   const [active, setActive] = useState(false);
 
-  const hasHighlight = item.highlight?.dc_description?.[0] != null;
-
   // No description, return nothing
-  if (item.dc_description == null) return null;
+  if (item.dc_description === null) return null;
 
-  // Highlighted description, return it
-  if (hasHighlight) {
-    return (
-      <Typography variant="body2">
-        {parse(item.highlight?.dc_description?.[0] as string)}
-      </Typography>
-    );
-  }
-
-  const [visibleText, hiddenText] = [item.dc_description.substring(0, 180), item.dc_description.substring(180)]
-
-  //item.dc_description.split(/\. (.*)/);
+  const [visibleText, hiddenText] = [item.dc_description.substring(0, 180), item.dc_description.substring(180)];
 
   // There is only one sentence, return it
   if (hiddenText == null || hiddenText.trim().length === 0) {
@@ -56,20 +43,20 @@ function ReadMore({ item }: { item: ResultBodyProps["result"] }) {
 
   return (
     <>
-      <Typography gutterBottom>
+      <Typography mb={2}>
         {`${visibleText}${visibleText.length < item.dc_description.length && !active ? "..." : hiddenText}`}
+        <Button
+          size="small"
+          onClick={(ev) => {
+            ev.stopPropagation();
+            setActive(!active);
+          }}
+          sx={{fontSize: 10, pt: 0.1, pb: 0.1}}
+          endIcon={active ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+        >
+          {active ? "Read less" : "Read more"}
+        </Button>
       </Typography>
-      <Button
-        size="small"
-        onClick={(ev) => {
-          ev.stopPropagation();
-          setActive(!active);
-        }}
-        sx={{marginBottom: 2}}
-        endIcon={active ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-      >
-        {active ? "Read less" : "Read more"}
-      </Button>
     </>
   );
 }

@@ -4,6 +4,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Unstable_Grid2';
 
 interface RdaRecord {
   card_url: string;
@@ -47,8 +48,9 @@ export function RdaRecord() {
 
   return (
     <Container>
-      <div style={{ margin: "3rem 0" }}>
-        <Typography variant="h3">{record.title || <i>empty</i>}</Typography>
+      <Grid container>
+        <Grid sm={10} md={8} lg={7} smOffset={1} mdOffset={2} lgOffset={2.5} pt={4}>
+        <Typography variant="h3">{record.title || <i>Untitled</i>}</Typography>
         <Typography gutterBottom>{record.dc_description || ""}</Typography>
 
         <MetadataList record={record} />
@@ -71,14 +73,16 @@ export function RdaRecord() {
           )}
         </div>
         <ShowJSON record={record} />
-      </div>
+      </Grid>
+      </Grid>
     </Container>
   );
 }
 
 const style = {
   display: "grid",
-  gridTemplateColumns: "25% 1fr",
+  gridTemplateColumns: "1fr 4fr",
+  marginBottom: "0.25rem",
 };
 
 function Metadata({ name, value }: { name: string; value: string | string[] }) {
@@ -87,23 +91,32 @@ function Metadata({ name, value }: { name: string; value: string | string[] }) {
   const _value = Array.isArray(value) ? value.join(" / ") : value;
 
   return (
-    <li style={style}>
-      <div style={{ color: "gray" }}>{name}</div>
-      <div>{_value}</div>
-    </li>
+    <div style={style}>
+      <Typography variant="body2" color="neutral.dark" pr={1}>{name}</Typography>
+      <Typography 
+        variant="body2"
+        sx={{  
+          overflow: "hidden",
+          whiteSpace: "nowrap",
+          textOverflow: "ellipsis"
+        }}
+      >
+        {_value}
+      </Typography>
+    </div>
   );
 }
 
 export function MetadataList({ record }: { record: RdaRecord | Result }) {
   return (
-    <ul style={{ listStyle: "none", margin: "1rem 0", padding: 0 }}>
-      <Metadata name="Language" value={record.dc_language} />
+    <div>
+      {record.dc_language && <Metadata name="Language" value={record.dc_language} />}
       <Metadata name="Individuals" value={record.individuals} />
       <Metadata name="Rights" value={record.resource_rights_types} />
       <Metadata name="Relations" value={record.relation_types} />
       <Metadata name="Workflows" value={record.workflows} />
       <Metadata name="Pathways" value={record.pathways} />
-    </ul>
+    </div>
   );
 }
 
