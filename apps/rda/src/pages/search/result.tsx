@@ -2,10 +2,10 @@ import type { ResultBodyProps } from "@dans-framework/rdt-search-ui";
 import { useState } from "react";
 import { MetadataList } from "../record";
 import parse from "html-react-parser";
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 export function Rda2Result(props: ResultBodyProps) {
   const { result: item } = props;
@@ -14,14 +14,12 @@ export function Rda2Result(props: ResultBodyProps) {
 
   return (
     <>
-      <Typography variant="h5">
-        {parse(title)}
-      </Typography>
-      {item.dc_date && 
+      <Typography variant="h5">{parse(title)}</Typography>
+      {item.dc_date && (
         <Typography variant="body2" gutterBottom>
           {new Date(item.dc_date).toDateString()}
         </Typography>
-      }
+      )}
       <ReadMore item={item} />
       <MetadataList record={item} />
     </>
@@ -34,7 +32,10 @@ function ReadMore({ item }: { item: ResultBodyProps["result"] }) {
   // No description, return nothing
   if (item.dc_description === null) return null;
 
-  const [visibleText, hiddenText] = [item.dc_description.substring(0, 180), item.dc_description.substring(180)];
+  const [visibleText, hiddenText] = [
+    item.dc_description.substring(0, 180),
+    item.dc_description.substring(180),
+  ];
 
   // There is only one sentence, return it
   if (hiddenText == null || hiddenText.trim().length === 0) {
@@ -44,14 +45,18 @@ function ReadMore({ item }: { item: ResultBodyProps["result"] }) {
   return (
     <>
       <Typography mb={2}>
-        {`${visibleText}${visibleText.length < item.dc_description.length && !active ? "..." : hiddenText}`}
+        {`${visibleText}${
+          visibleText.length < item.dc_description.length && !active
+            ? "..."
+            : hiddenText
+        }`}
         <Button
           size="small"
           onClick={(ev) => {
             ev.stopPropagation();
             setActive(!active);
           }}
-          sx={{fontSize: 10, pt: 0.1, pb: 0.1}}
+          sx={{ fontSize: 10, pt: 0.1, pb: 0.1 }}
           endIcon={active ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
         >
           {active ? "Read less" : "Read more"}

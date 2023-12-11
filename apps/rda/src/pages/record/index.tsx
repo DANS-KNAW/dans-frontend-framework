@@ -2,9 +2,9 @@ import { Chip, Container } from "@mui/material";
 import type { Result } from "@dans-framework/rdt-search-ui";
 import React from "react";
 import { useParams } from "react-router-dom";
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Unstable_Grid2';
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Unstable_Grid2";
 
 interface RdaRecord {
   card_url: string;
@@ -49,31 +49,41 @@ export function RdaRecord() {
   return (
     <Container>
       <Grid container>
-        <Grid sm={10} md={8} lg={7} smOffset={1} mdOffset={2} lgOffset={2.5} pt={4}>
-        <Typography variant="h3">{record.title || <i>Untitled</i>}</Typography>
-        <Typography gutterBottom>{record.dc_description || ""}</Typography>
+        <Grid
+          sm={10}
+          md={8}
+          lg={7}
+          smOffset={1}
+          mdOffset={2}
+          lgOffset={2.5}
+          pt={4}
+        >
+          <Typography variant="h3">
+            {record.title || <i>Untitled</i>}
+          </Typography>
+          <Typography gutterBottom>{record.dc_description || ""}</Typography>
 
-        <MetadataList record={record} />
+          <MetadataList record={record} />
 
-        <div style={{ margin: "2rem 0" }}>
-          {record.page_url && (
-            <a href={record.page_url} style={{ marginRight: "1rem" }}>
-              <Chip label="RDA" />
-            </a>
-          )}
-          {record.uri && (
-            <a href={record.uri} style={{ marginRight: "1rem" }}>
-              <Chip label="Zenodo" />
-            </a>
-          )}
-          {record.pid_lod && (
-            <a href={record.pid_lod}>
-              <Chip label="DOI" />
-            </a>
-          )}
-        </div>
-        <ShowJSON record={record} />
-      </Grid>
+          <div style={{ margin: "2rem 0" }}>
+            {record.page_url && (
+              <a href={record.page_url} style={{ marginRight: "1rem" }}>
+                <Chip label="RDA" />
+              </a>
+            )}
+            {record.uri && (
+              <a href={record.uri} style={{ marginRight: "1rem" }}>
+                <Chip label="Zenodo" />
+              </a>
+            )}
+            {record.pid_lod && (
+              <a href={record.pid_lod}>
+                <Chip label="DOI" />
+              </a>
+            )}
+          </div>
+          <ShowJSON record={record} />
+        </Grid>
       </Grid>
     </Container>
   );
@@ -92,13 +102,15 @@ function Metadata({ name, value }: { name: string; value: string | string[] }) {
 
   return (
     <div style={style}>
-      <Typography variant="body2" color="neutral.dark" pr={1}>{name}</Typography>
-      <Typography 
+      <Typography variant="body2" color="neutral.dark" pr={1}>
+        {name}
+      </Typography>
+      <Typography
         variant="body2"
-        sx={{  
+        sx={{
           overflow: "hidden",
           whiteSpace: "nowrap",
-          textOverflow: "ellipsis"
+          textOverflow: "ellipsis",
         }}
       >
         {_value}
@@ -110,7 +122,9 @@ function Metadata({ name, value }: { name: string; value: string | string[] }) {
 export function MetadataList({ record }: { record: RdaRecord | Result }) {
   return (
     <div>
-      {record.dc_language && <Metadata name="Language" value={record.dc_language} />}
+      {record.dc_language && (
+        <Metadata name="Language" value={record.dc_language} />
+      )}
       <Metadata name="Individuals" value={record.individuals} />
       <Metadata name="Rights" value={record.resource_rights_types} />
       <Metadata name="Relations" value={record.relation_types} />
@@ -128,17 +142,17 @@ function ShowJSON({ record }: { record: RdaRecord }) {
       <Button onClick={() => setActive(!active)} variant="contained">
         {active ? "Hide" : "Show"} JSON
       </Button>
-      {active && 
+      {active && (
         <pre
           style={{
             background: "rgba(0,0,0,0.1)",
             padding: "1rem",
-            overflow: "auto"
+            overflow: "auto",
           }}
         >
           {JSON.stringify(record, undefined, 3)}
         </pre>
-      }
+      )}
     </>
   );
 }

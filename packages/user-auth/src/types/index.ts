@@ -34,7 +34,7 @@ type ErrorStatus = "rejected" | "failed" | "error";
 type SuccessStatus = "finish" | "accepted" | "success";
 export type IngestStatus = ActiveStatus | ErrorStatus | SuccessStatus;
 type IngestStatusKeys = "processing" | "error" | "success";
-export type DepositStatus = { [key in IngestStatusKeys]: IngestStatus[] }
+export type DepositStatus = { [key in IngestStatusKeys]: IngestStatus[] };
 
 export interface TargetOutput {
   "ingest-status": IngestStatus;

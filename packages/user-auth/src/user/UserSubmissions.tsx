@@ -24,12 +24,11 @@ import CircularProgress from "@mui/material/CircularProgress";
 import LinearProgress from "@mui/material/LinearProgress";
 import PendingIcon from "@mui/icons-material/Pending";
 import ErrorIcon from "@mui/icons-material/Error";
-import ReplayIcon from '@mui/icons-material/Replay';
+import ReplayIcon from "@mui/icons-material/Replay";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import Tooltip from "@mui/material/Tooltip";
-import Popover from '@mui/material/Popover';
-import Button from '@mui/material/Button';
+import Popover from "@mui/material/Popover";
+import Button from "@mui/material/Button";
 
 const depositStatus: DepositStatus = {
   processing: ["initial", "processing", "submitted", "finalizing"],
@@ -121,40 +120,41 @@ const SubmissionList = ({
 
   // useMemo to make sure columns don't change
   const columns = useMemo<GridColDef[]>(
-    () => [{
+    () => [
+      {
         field: "viewLink",
         headerName: "",
         width: 30,
         getActions: (params: any) => {
-          return type === "draft" 
-          ? [
-            <GridActionsCellItem
-              icon={<EditIcon />}
-              label={t("editItem")}
-              onClick={() =>
-                navigate(`/${depositSlug}?id=${params.row.id}`)
-              }
-            />,
-          ]
-          // for submitted forms, either edit in case of error, or load with existing data for new submission
-          // params.value is true for an error, false for success
-          : !params.row.processing 
-          ? [
-            <Tooltip title={t(params.row.error ? "retryItem" : "copyItem")} placement="bottom">
-              <GridActionsCellItem
-                icon={params.row.error ? <ReplayIcon /> : <ContentCopyIcon />}
-                label={t(params.row.error ? "retryItem" : "copyItem")}
-                onClick={() =>
-                  // todo: need to work on this, how are we going to reload submitted form data for resubmission
-                  navigate(`/${depositSlug}?${params.row.error ? 'id' : 'id'}=${params.row.id}`)
-                }
-              />
-            </Tooltip>
-          ]
-          : []
+          return type === "draft"
+            ? [
+                <GridActionsCellItem
+                  icon={<EditIcon />}
+                  label={t("editItem")}
+                  onClick={() =>
+                    navigate(`/${depositSlug}?id=${params.row.id}`)
+                  }
+                />,
+              ]
+            : // for submitted forms, either edit in case of error, or load with existing data for new submission
+              // params.value is true for an error, false for success
+              !params.row.processing && params.row.error
+              ? [
+                  <Tooltip title={t("retryItem")} placement="bottom">
+                    <GridActionsCellItem
+                      icon={<ReplayIcon />}
+                      label={t("retryItem")}
+                      onClick={() =>
+                        // todo: need to work on this, how are we going to reload submitted form data for resubmission
+                        navigate(`/${depositSlug}?id=${params.row.id}`)
+                      }
+                    />
+                  </Tooltip>,
+                ]
+              : [];
         },
         type: "actions",
-      },        
+      },
       {
         field: "title",
         headerName: t("title"),
@@ -178,7 +178,11 @@ const SubmissionList = ({
               renderCell: (params: any) => (
                 <Stack direction="column" pt={0.5} pb={0.5}>
                   {params.value.map((v: TargetOutput, i: number) => (
-                    <SingleTargetStatus target={v} depositStatus={depositStatus} key={i} />
+                    <SingleTargetStatus
+                      target={v}
+                      depositStatus={depositStatus}
+                      key={i}
+                    />
                   ))}
                 </Stack>
               ),
@@ -259,7 +263,13 @@ const SubmissionList = ({
 };
 
 // A separate component for a target, needs to have it's own state to display popover
-const SingleTargetStatus = ({depositStatus, target}: {depositStatus: DepositStatus, target: TargetOutput}) => {
+const SingleTargetStatus = ({
+  depositStatus,
+  target,
+}: {
+  depositStatus: DepositStatus;
+  target: TargetOutput;
+}) => {
   const { t } = useTranslation("user");
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -269,39 +279,27 @@ const SingleTargetStatus = ({depositStatus, target}: {depositStatus: DepositStat
     setAnchorEl(null);
   };
   const open = Boolean(anchorEl);
-  const id = open ? 'popover' : undefined;
+  const id = open ? "popover" : undefined;
 
   return (
     <>
-      <Stack
-        direction="row"
-        alignItems="center"
-        pt={0.1}
-        pb={0.1}
-      >
+      <Stack direction="row" alignItems="center" pt={0.1} pb={0.1}>
         <Tooltip
           title={
-            depositStatus.processing.indexOf(
-              target["ingest-status"],
-            ) !== -1
+            depositStatus.processing.indexOf(target["ingest-status"]) !== -1
               ? t("processing")
-              : depositStatus.error.indexOf(
-                    target["ingest-status"],
-                  ) !== -1
+              : depositStatus.error.indexOf(target["ingest-status"]) !== -1
                 ? t("error")
                 : t("success")
           }
           placement="left"
         >
-          {depositStatus.processing.indexOf(
-            target["ingest-status"],
-          ) !== -1 ? (
+          {depositStatus.processing.indexOf(target["ingest-status"]) !== -1 ? (
             <CircularProgress size={16} />
-          ) : depositStatus.error.indexOf(target["ingest-status"]) !==
-            -1 ? (
-            <Button 
-              variant="contained" 
-              color="error" 
+          ) : depositStatus.error.indexOf(target["ingest-status"]) !== -1 ? (
+            <Button
+              variant="contained"
+              color="error"
               startIcon={<ErrorIcon />}
               size="small"
               onClick={handleClick}
@@ -309,9 +307,7 @@ const SingleTargetStatus = ({depositStatus, target}: {depositStatus: DepositStat
             >
               {t("moreInfo")}
             </Button>
-          ) : depositStatus.success.indexOf(
-              target["ingest-status"],
-            ) !== -1 ? (
+          ) : depositStatus.success.indexOf(target["ingest-status"]) !== -1 ? (
             <CheckCircleIcon fontSize="small" color="success" />
           ) : (
             <PendingIcon fontSize="small" color="neutral" />
@@ -330,11 +326,11 @@ const SingleTargetStatus = ({depositStatus, target}: {depositStatus: DepositStat
           vertical: "bottom",
           horizontal: "left",
         }}
-        sx={{ maxWidth: "50rem"}}
+        sx={{ maxWidth: "50rem" }}
       >
-        <Box sx={{p: 2}}>
+        <Box sx={{ p: 2 }}>
           <Typography variant="h6">{t("errorExplanation")}</Typography>
-          <pre 
+          <pre
             style={{
               whiteSpace: "pre-wrap",
               background: "rgba(0,0,0,0.1)",
@@ -349,8 +345,8 @@ const SingleTargetStatus = ({depositStatus, target}: {depositStatus: DepositStat
         </Box>
       </Popover>
     </>
-  )
-}
+  );
+};
 
 const CustomColumnMenu = (props: GridColumnMenuProps) => {
   return (
