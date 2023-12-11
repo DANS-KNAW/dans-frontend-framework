@@ -699,7 +699,7 @@ const AutocompleteAPIField = ({
           // only for freesolo, add input directly as option
           if (
             field.allowFreeText &&
-            !isLoading && 
+            !isLoading &&
             !isFetching &&
             debouncedInputValue === inputValue
           ) {

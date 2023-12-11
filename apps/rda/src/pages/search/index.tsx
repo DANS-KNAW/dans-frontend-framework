@@ -12,10 +12,6 @@ import { useNavigate } from "react-router-dom";
 import styles from "./index.module.css";
 
 const config: Partial<RDTSearchUIProps> = {
-  style: {
-    background: "#F6F6F6",
-    buttonBackground: "#ececec",
-  },
   fullTextFields: ["title^2", "dc_description"],
   fullTextHighlight: {
     fields: {
@@ -42,7 +38,6 @@ export function RdaSearch({
         url={`${
           import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT
         }/dans-rda2/_search`}
-        style={config.style}
       >
         <DateChartFacet
           config={{
