@@ -46,7 +46,7 @@ export interface TargetOutput {
 
 export interface SubmissionResponse {
   "created-date": string;
-  "metadata-id": string;
+  "dataset-id": string;
   targets: TargetOutput[];
   "release-version": ReleaseVersion;
   title: string;

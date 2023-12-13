@@ -203,7 +203,7 @@ const SubmissionList = ({
       processing: d["targets"].some(
         (t) => depositStatus.processing.indexOf(t["ingest-status"]) !== -1,
       ),
-      id: d["metadata-id"],
+      id: d["dataset-id"],
       // viewLink: '',
       created: type === "draft" ? d["created-date"] : d["submitted-date"],
       title: d["title"],
