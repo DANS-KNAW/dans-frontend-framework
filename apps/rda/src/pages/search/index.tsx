@@ -8,8 +8,7 @@ import {
 } from "@dans-framework/rdt-search-ui";
 import { Rda2Result } from "./result";
 import { useNavigate } from "react-router-dom";
-
-import styles from "./index.module.css";
+import Container from "@mui/material/Container";
 
 const config: Partial<RDTSearchUIProps> = {
   fullTextFields: ["title^2", "dc_description"],
@@ -28,7 +27,7 @@ export function RdaSearch({
 }) {
   const navigate = useNavigate();
   return (
-    <div className={styles.wrapper}>
+    <Container sx={{ pt: 4 }}>
       <FacetedSearch
         dashboard={dashboard}
         fullTextFields={config.fullTextFields}
@@ -98,6 +97,6 @@ export function RdaSearch({
           }}
         />
       </FacetedSearch>
-    </div>
+    </Container>
   );
 }
