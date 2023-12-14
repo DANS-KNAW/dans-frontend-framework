@@ -297,8 +297,8 @@ const FileTableRow = ({ file }: FileItemProps) => {
           <FileActionOptions type="process" file={file} />
         </TableCell>
       </MotionRow>
-      <MotionRow 
-        layout 
+      <MotionRow
+        layout
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -310,14 +310,6 @@ const FileTableRow = ({ file }: FileItemProps) => {
     </>
   );
 };
-
-/*
-const ForwardCell = forwardRef<
-  HTMLTableCellElement,
-  TableCellProps & HTMLMotionProps<"td">
->((props, ref) => <TableCell ref={ref} {...props} />);
-const MotionCell = motion(ForwardCell);
-*/
 
 const UploadProgress = ({ file }: FileItemProps) => {
   // We handle progress and retrying/restarting of file uploads here
