@@ -35,8 +35,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { getSingleFileSubmitStatus } from "../submit/submitSlice";
-import { useSubmitFilesMutation } from "../submit/submitApi";
-import { formatFileData } from "../submit/submitHelpers";
+import { uploadFiles } from "../submit/submitApi";
 import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
 import { getFormDisabled } from "../../deposit/depositSlice";
 
@@ -318,11 +317,12 @@ const UploadProgress = ({ file }: FileItemProps) => {
   const sessionId = useAppSelector(getSessionId);
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const { t } = useTranslation("files");
-  const [submitFiles] = useSubmitFilesMutation();
 
   const handleSingleFileUpload = () => {
-    formatFileData(sessionId, [file]).then((d) => {
-      submitFiles(d);
+    uploadFiles({
+      files: [file],
+      headerData: '',
+      sessionId: sessionId,
     });
   };
 

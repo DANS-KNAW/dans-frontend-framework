@@ -18,7 +18,7 @@ import {
   setOpenTab,
 } from "../metadata/metadataSlice";
 import { getFiles, resetFiles } from "../files/filesSlice";
-import { useSubmitDataMutation, useSubmitFilesMutation } from "./submitApi";
+import { useSubmitDataMutation, /*useSubmitFilesMutation*/ } from "./submitApi";
 import {
   setMetadataSubmitStatus,
   getMetadataSubmitStatus,
@@ -27,7 +27,7 @@ import {
   resetMetadataSubmitStatus,
   getLatestSave,
 } from "./submitSlice";
-import { formatFormData, formatFileData } from "./submitHelpers";
+import { formatFormData } from "./submitHelpers";
 import { useTranslation } from "react-i18next";
 import {
   getData,
@@ -86,10 +86,10 @@ const Submit = ({
 
   const [submitData, { isError: isErrorMeta, reset: resetMeta }] =
     useSubmitDataMutation();
-  const [
-    submitFiles,
-    { isLoading: isLoadingFiles, reset: resetSubmittedFiles },
-  ] = useSubmitFilesMutation();
+  // const [
+  //   submitFiles,
+  //   { isLoading: isLoadingFiles, reset: resetSubmittedFiles },
+  // ] = useSubmitFilesMutation();
 
   // Access token might just be expiring, or user settings just changed
   // we get the required submit header data as a callback to signinSilent, which refreshes the current user
@@ -136,6 +136,8 @@ const Submit = ({
     dispatch(setFormDisabled(true));
     dispatch(setMetadataSubmitStatus("submitting"));
 
+    const filesToUpload = selectedFiles.filter((f) => !f.submittedFile);
+
     // do the actual submit
     getHeaderData().then((headerData) =>
       // with fresh headerdata/user info, we can submit the metadata
@@ -143,19 +145,8 @@ const Submit = ({
         data: formattedMetadata,
         headerData: headerData,
         actionType: actionType,
-      }).then((result: { data?: any; error?: any }) => {
-        if (result.data?.data?.status === "OK") {
-          // if metadata has been submitted ok, we start the file submit
-          const filesToUpload = selectedFiles.filter((f) => !f.submittedFile);
-          formatFileData(sessionId, filesToUpload).then((d) => {
-            submitFiles({
-              data: d,
-              headerData: headerData,
-              actionType: actionType,
-            });
-          });
-        }
-      }),
+        files: filesToUpload,
+      })
     );
   };
 
@@ -166,7 +157,7 @@ const Submit = ({
       setSearchParams(searchParams);
     }
     // reset RTK mutations
-    resetSubmittedFiles();
+    // resetSubmittedFiles();
     resetMeta();
     // reset files in file slice
     dispatch(resetFiles());
@@ -214,8 +205,8 @@ const Submit = ({
                   : t("metadataSuccess")
               : // submit process has started, let's check for responses
                 metadataSubmitStatus === "submitting" ||
-                  fileStatus === "submitting" ||
-                  isLoadingFiles
+                  fileStatus === "submitting" 
+                  //|| isLoadingFiles
                 ? t("submitting")
                 : metadataSubmitStatus === "submitted" &&
                     (fileStatus === "success" || selectedFiles.length === 0)
@@ -255,8 +246,8 @@ const Submit = ({
                 }.main`,
                 opacity:
                   metadataSubmitStatus === "submitting" ||
-                  fileStatus === "submitting" ||
-                  isLoadingFiles
+                  fileStatus === "submitting" 
+                  // || isLoadingFiles
                     ? 0.5
                     : 1,
               }}
@@ -270,15 +261,15 @@ const Submit = ({
                   isErrorMeta) &&
                 !(
                   metadataSubmitStatus === "submitting" ||
-                  fileStatus === "submitting" ||
-                  isLoadingFiles
+                  fileStatus === "submitting" 
+                  // || isLoadingFiles
                 ) ? (
                 <ErrorOutlineOutlinedIcon sx={iconSx} />
               ) : (
                 <SendIcon sx={iconSx} />
               )}
             </Box>
-            {(fileStatus === "submitting" || isLoadingFiles) && (
+            {(fileStatus === "submitting" /*|| isLoadingFiles*/) && (
               <CircularProgress
                 size={54}
                 sx={{

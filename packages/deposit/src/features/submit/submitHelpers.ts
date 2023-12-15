@@ -1,4 +1,4 @@
-import { SelectedFile } from "../../types/Files";
+import { SelectedFile, FileBlob } from "../../types/Files";
 import { SectionType } from "../../types/Metadata";
 
 // Function to rearrange the metadata for submission
@@ -27,28 +27,23 @@ export const formatFormData = (
 };
 
 export const formatFileData = async (
-  sessionId: string,
   files: SelectedFile[],
 ) => {
-  // Submit files individually using multipart form data
-  // Convert file blob url's back to a js File object and add them to a FormData object
-  // Add FormData to the file array
+  // Convert file blob url's back to a js File object 
+  // And add the required metadata (sessionId gets added in the upload function)
   const fileData =
     Array.isArray(files) &&
     (await Promise.all(
       files.map((file) =>
         fetch(file.url)
           .then((result) => result.blob())
-          .then((blob) => {
-            let formData = new FormData();
-            formData.append("file", blob);
-            formData.append("fileName", file.name);
-            formData.append("fileId", file.id);
-            formData.append("metadataId", sessionId);
-            return formData;
-          }),
+          .then((blob) => ({
+            blob: blob,
+            fileName: file.name,
+            fileId: file.id,
+          })),
       ),
     ));
 
-  return fileData;
+  return fileData as FileBlob[];
 };
