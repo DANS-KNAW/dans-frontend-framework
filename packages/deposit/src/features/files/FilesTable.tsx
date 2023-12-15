@@ -37,7 +37,8 @@ import Stack from "@mui/material/Stack";
 import { getSingleFileSubmitStatus } from "../submit/submitSlice";
 import { uploadFiles } from "../submit/submitApi";
 import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
-import { getFormDisabled } from "../../deposit/depositSlice";
+import { getFormDisabled, getData } from "../../deposit/depositSlice";
+import { useAuth } from "react-oidc-context";
 
 const FilesTable = () => {
   const { t } = useTranslation("files");
@@ -314,16 +315,25 @@ const UploadProgress = ({ file }: FileItemProps) => {
   // We handle progress and retrying/restarting of file uploads here
   // If metadata submission is successful, and file fails right away, there needs to be an option to manually start file upload.
   // So we check if the submit button has been touched.
+  const auth = useAuth();
   const sessionId = useAppSelector(getSessionId);
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const { t } = useTranslation("files");
+  const formConfig = useAppSelector(getData);
+
+  const getHeaderData = () =>
+    auth.signinSilent().then(() => ({
+      // we use the Keycloak access token if no auth key is set manually in the form config
+      submitKey: formConfig.submitKey || auth.user?.access_token || '',
+      userId: auth.user?.profile.sub || '',
+    }));
 
   const handleSingleFileUpload = () => {
-    uploadFiles({
+    getHeaderData().then((headerData) => uploadFiles({
       files: [file],
-      headerData: '',
+      headerData: headerData,
       sessionId: sessionId,
-    });
+    }));
   };
 
   return (

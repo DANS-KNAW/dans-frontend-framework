@@ -14,110 +14,19 @@ import moment from "moment";
 import * as tus from 'tus-js-client';
 import type { SelectedFile } from "../../types/Files";
 
-// We use Axios to enable file upload progress monitoring
-// const axiosBaseQuery =
-//   (
-//     { baseUrl }: { baseUrl: string } = { baseUrl: "" },
-//   ): BaseQueryFn<
-//     {
-//       url: string;
-//       method: AxiosRequestConfig["method"];
-//       data?: AxiosRequestConfig["data"];
-//       params?: AxiosRequestConfig["params"];
-//       headers?: AxiosRequestConfig["headers"];
-//       actionType?: string;
-//     },
-//     unknown,
-//     unknown
-//   > =>
-//   async ({ url, method, data, params, headers, actionType }) => {
-//     // Perform actions based on server response here, so we can truly separate metadata and file handling
-//     // Files are always a FormData object, metadata is JSON
-//     const isFile = data instanceof FormData;
-//     try {
-//       const result = await axios({
-//         url: baseUrl + url,
-//         method,
-//         data,
-//         params,
-//         headers,
-//         onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-//           if (isFile) {
-//             // Calculate progress percentage and set state in fileSlice
-//             const percentCompleted = progressEvent.total
-//               ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
-//               : 0;
-//             store.dispatch(
-//               setFilesSubmitStatus({
-//                 id: data.get("fileId") as string,
-//                 progress: percentCompleted,
-//                 status: "submitting",
-//               }),
-//             );
-//           }
-//         },
-//       });
-//       // set upload successful in file object
-//       if (isFile && result.data) {
-//         console.log(result);
-//         // we need to remove the actual files from the list, as otherwise on anothes save in the same session the files will reupload
-//         store.dispatch(
-//           setFileMeta({
-//             id: data.get("fileId") as string,
-//             type: "submittedFile",
-//             value: true,
-//           }),
-//         );
-//         store.dispatch(
-//           setFilesSubmitStatus({
-//             id: data.get("fileId") as string,
-//             status: "success",
-//           }),
-//         );
-//       }
-//       // Metadata has been successfully submitted, so let's store that right away
-//       else if (result.data) {
-//         store.dispatch(
-//           setMetadataSubmitStatus(
-//             actionType === "submit" ? "submitted" : "saved",
-//           ),
-//         );
-//       }
-//       return { data: result.data };
-//     } catch (axiosError) {
-//       const err = axiosError as AxiosError;
-//       if (isFile) {
-//         // set error in the file object, so user can retry uploading
-//         store.dispatch(
-//           setFilesSubmitStatus({
-//             id: data.get("fileId") as string,
-//             status: "error",
-//           }),
-//         );
-//       } else {
-//         store.dispatch(setMetadataSubmitStatus("error"));
-//       }
-//       return {
-//         error: {
-//           status: err.response?.status,
-//           data: err.response?.data || err.message,
-//         },
-//       };
-//     }
-//   };
-
-export const uploadFiles = ({files, headerData, sessionId}: {files: SelectedFile[]; headerData: SubmitHeaders, sessionId: string;}) => {
+export const uploadFiles = ({files, headerData, sessionId}: {files: SelectedFile[]; headerData: HeaderData, sessionId: string;}) => {
   // convert files to blobs
   formatFileData(files).then((fileBlobs) => {
 
     fileBlobs.map( (file: any) => {
+      console.log(file)
       var upload = new tus.Upload(file.blob, {
         // Endpoint is the upload creation URL from your tus server
         // endpoint: `${import.meta.env.VITE_PACKAGING_TARGET}/inbox/files`,
-        endpoint: `http://localhost:1210/files`,
+        endpoint: `http://127.0.0.1:1080/files`,
         // Retry delays will enable tus-js-client to automatically retry on errors
         retryDelays: [0, 3000, 5000, 10000, 20000],
-        headers: headerData,
+        // headers: formatHeaderData(headerData),
         // Attach additional meta data about the file for the server
         metadata: {
           fileName: file.fileName,
@@ -136,7 +45,7 @@ export const uploadFiles = ({files, headerData, sessionId}: {files: SelectedFile
         },
         // Callback for reporting upload progress
         onProgress: (bytesUploaded, bytesTotal) => {
-          var percentage = (((bytesUploaded / bytesTotal) * 100).toFixed(2) || 0) as number;
+          var percentage = parseFloat(((bytesUploaded / bytesTotal) * 100).toFixed(2)) || 0;
           store.dispatch(
             setFilesSubmitStatus({
               id: file.fileId,
@@ -181,18 +90,21 @@ const formatHeaderData = (headerData: HeaderData) =>
   ({
     Authorization: `Bearer ${headerData.submitKey}`,
     "user-id": headerData.userId,
-    "auth-env-name": headerData.target.envName,
-    "assistant-config-name": headerData.target.configName,
-    "targets-credentials": JSON.stringify(
-      headerData.targetCredentials.map((t: Target) => ({
-        "target-repo-name": t.repo,
-        credentials: {
-          username: t.auth,
-          password: headerData.targetKeys[t.authKey],
-        },
-      })),
-    ),
-    title: headerData.title,
+    // header data only for metadata, not required for files
+    ...headerData.target && headerData.targetCredentials && headerData.targetKeys ? {
+      "auth-env-name": headerData.target.envName,
+      "assistant-config-name": headerData.target.configName,
+      "targets-credentials": JSON.stringify(
+        headerData.targetCredentials.map((t: Target) => ({
+          "target-repo-name": t.repo,
+          credentials: {
+            username: t.auth,
+            password: headerData.targetKeys![t.authKey],
+          },
+        })),
+      ),
+      title: headerData.title
+    } : [],
   }) as SubmitHeaders;
 
 export const submitApi = createApi({
@@ -210,6 +122,7 @@ export const submitApi = createApi({
       }),
       async onQueryStarted(arg, { queryFulfilled }) {
         console.log(arg)
+        console.log(formatHeaderData(arg.headerData))
         await queryFulfilled;
         // when metadata has been submitted, we set this in our store
         store.dispatch(
@@ -241,45 +154,3 @@ export const submitApi = createApi({
 });
 
 export const { useSubmitDataMutation } = submitApi;
-
-/*
-submitFiles: build.mutation({
-      async queryFn(
-        { data, headerData, actionType },
-        _queryApi,
-        _extraOptions,
-        fetchWithBQ,
-      ) {
-        console.log("submitting files...");
-        console.log(data.map((d: any) => [...d]));
-        const headers = formatHeaderData(headerData);
-        const filesResults =
-          Array.isArray(data) &&
-          (await Promise.all(
-            data.map((file: any) =>
-              fetchWithBQ({
-                url: "file",
-                method: "POST",
-                data: file,
-                headers: headers,
-              }),
-            ),
-          ));
-
-        console.log(filesResults);
-
-        const filesErrors =
-          filesResults &&
-          filesResults.filter((res: any) => res.error as FetchBaseQueryError);
-        if (Array.isArray(filesErrors) && filesErrors.length > 0)
-          return { error: filesErrors };
-
-        if (actionType === "save") {
-          // enable form again after successful save
-          store.dispatch(setLatestSave(moment().format("D-M-YYYY @ HH:mm")));
-          store.dispatch(setFormDisabled(false));
-        }
-
-        return { data: filesResults };
-      },
-    }),*/

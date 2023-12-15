@@ -36,12 +36,12 @@ export interface InitialStateType {
 export interface HeaderData {
   submitKey: string;
   userId: string;
-  target: {
+  target?: {
     envName: string;
     configName: string;
   };
-  targetCredentials: Target[];
-  targetKeys: {
+  targetCredentials?: Target[];
+  targetKeys?: {
     [k: string]: string;
   };
   title?: string;
@@ -50,8 +50,8 @@ export interface HeaderData {
 export interface SubmitHeaders extends AxiosHeaders {
   Authorization: string;
   "user-id": string;
-  "auth-env-name": string;
-  "assistant-config-name": string;
-  "targets-credentials": string;
+  "auth-env-name"?: string;
+  "assistant-config-name"?: string;
+  "targets-credentials"?: string;
   title?: string;
 }
