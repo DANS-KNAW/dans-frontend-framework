@@ -13,9 +13,11 @@ import type { HeaderData, SubmitHeaders } from "../../types/Submit";
 import moment from "moment";
 import * as tus from 'tus-js-client';
 import type { SelectedFile } from "../../types/Files";
+import { enqueueSnackbar } from "notistack";
 
 export const uploadFiles = ({files, headerData, sessionId}: {files: SelectedFile[]; headerData: HeaderData, sessionId: string;}) => {
   // convert files to blobs
+  console.log(headerData)
   formatFileData(files).then((fileBlobs) => {
 
     fileBlobs.map( (file: any) => {
@@ -25,7 +27,8 @@ export const uploadFiles = ({files, headerData, sessionId}: {files: SelectedFile
         // endpoint: `${import.meta.env.VITE_PACKAGING_TARGET}/inbox/files`,
         endpoint: `http://127.0.0.1:1080/files`,
         // Retry delays will enable tus-js-client to automatically retry on errors
-        retryDelays: [0, 3000, 5000, 10000, 20000],
+        retryDelays: [3000, 8000, 15000, 25000],
+        // specific headers for packaging service, disabled for testing with demo nodejs server
         // headers: formatHeaderData(headerData),
         // Attach additional meta data about the file for the server
         metadata: {
@@ -33,9 +36,41 @@ export const uploadFiles = ({files, headerData, sessionId}: {files: SelectedFile
           fileId: file.fileId,
           datasetId: sessionId,
         },
+        // action before connecting to server
+        onBeforeRequest: () => {
+          store.dispatch(
+            setFilesSubmitStatus({
+              id: file.fileId,
+              progress: 0,
+              status: "submitting",
+            }),
+          );
+        },
+        // callback for every retry
+        onShouldRetry: (err, retryAttempt) => {
+          console.log("Error", err)
+          console.log("Request", err.originalRequest)
+          console.log("Response", err.originalResponse)
+
+          var status = err.originalResponse ? err.originalResponse.getStatus() : 0
+          // Do not retry if the status is a 403.
+          if (status === 403) {
+            return false
+          }
+
+          enqueueSnackbar(`Error uploading ${file.fileName}. Retrying... (${retryAttempt + 1})`, {
+            variant: "warning",
+          });
+
+          // For any other status code, we retry.
+          return true
+        },
         // Callback for errors which cannot be fixed using retries
         onError: (error) => {
           console.log('Failed because: ' + error)
+          enqueueSnackbar(`Uploading ${file.fileName} failed: ${error}`, {
+            variant: "error",
+          });
           store.dispatch(
             setFilesSubmitStatus({
               id: file.fileId,

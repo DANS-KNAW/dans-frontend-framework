@@ -177,7 +177,7 @@ const Submit = ({
   };
 
   return (
-    <Stack direction="column" alignItems="flex-end" sx={{ overflow: "hidden" }}>
+    <Stack direction="column" alignItems="flex-end">
       <AnimatePresence>
         {fileWarning && (
           <motion.div
