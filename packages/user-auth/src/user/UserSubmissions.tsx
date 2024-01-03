@@ -54,16 +54,17 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
   // are there any targets that have been submitted not complete yet?
   const allTargetsComplete =
     data &&
+    data.length > 0 &&
     data
       .filter((d) => d["release-version"] === "PUBLISH")
       .every(
         // if all are finished, or one has an error, stop checking
         (d) =>
           d.targets.every(
-            (t) => depositStatus.success.indexOf(t["ingest-status"]) !== -1,
+            (t) => depositStatus.success.indexOf(t["deposit-status"]) !== -1,
           ) ||
           d.targets.some(
-            (t) => depositStatus.error.indexOf(t["ingest-status"]) !== -1,
+            (t) => depositStatus.error.indexOf(t["deposit-status"]) !== -1,
           ),
       );
 
@@ -84,14 +85,14 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
         <Grid xs={12} mdOffset={1} md={10}>
           <Typography variant="h1">{t("userSubmissions")}</Typography>
           <SubmissionList
-            data={data?.filter((d) => d["release-version"] === "DRAFT") || []}
+            data={(data && data.filter((d) => d["release-version"] === "DRAFT")) || []}
             type="draft"
             isLoading={isLoading}
             header={t("userSubmissionsDrafts")}
             depositSlug={depositSlug}
           />
           <SubmissionList
-            data={data?.filter((d) => d["release-version"] === "PUBLISH") || []}
+            data={(data && data.filter((d) => d["release-version"] === "PUBLISH")) || []}
             type="published"
             isLoading={isLoading}
             header={t("userSubmissionsCompleted")}
@@ -198,10 +199,10 @@ const SubmissionList = ({
     data.map((d) => ({
       // Todo: API needs work and standardisation, also see types.
       error: d["targets"].some(
-        (t) => depositStatus.error.indexOf(t["ingest-status"]) !== -1,
+        (t) => depositStatus.error.indexOf(t["deposit-status"]) !== -1,
       ),
       processing: d["targets"].some(
-        (t) => depositStatus.processing.indexOf(t["ingest-status"]) !== -1,
+        (t) => depositStatus.processing.indexOf(t["deposit-status"]) !== -1,
       ),
       id: d["dataset-id"],
       // viewLink: '',
@@ -286,17 +287,17 @@ const SingleTargetStatus = ({
       <Stack direction="row" alignItems="center" pt={0.1} pb={0.1}>
         <Tooltip
           title={
-            depositStatus.processing.indexOf(target["ingest-status"]) !== -1
+            depositStatus.processing.indexOf(target["deposit-status"]) !== -1
               ? t("processing")
-              : depositStatus.error.indexOf(target["ingest-status"]) !== -1
+              : depositStatus.error.indexOf(target["deposit-status"]) !== -1
                 ? t("error")
                 : t("success")
           }
           placement="left"
         >
-          {depositStatus.processing.indexOf(target["ingest-status"]) !== -1 ? (
+          {depositStatus.processing.indexOf(target["deposit-status"]) !== -1 ? (
             <CircularProgress size={16} />
-          ) : depositStatus.error.indexOf(target["ingest-status"]) !== -1 ? (
+          ) : depositStatus.error.indexOf(target["deposit-status"]) !== -1 ? (
             <Button
               variant="contained"
               color="error"
@@ -307,14 +308,14 @@ const SingleTargetStatus = ({
             >
               {t("moreInfo")}
             </Button>
-          ) : depositStatus.success.indexOf(target["ingest-status"]) !== -1 ? (
+          ) : depositStatus.success.indexOf(target["deposit-status"]) !== -1 ? (
             <CheckCircleIcon fontSize="small" color="success" />
           ) : (
             <PendingIcon fontSize="small" color="neutral" />
           )}
         </Tooltip>
         <Typography variant="body2" ml={1}>
-          {target["target-repo-display-name"]}
+          {target["display-name"]}
         </Typography>
       </Stack>
       <Popover
@@ -340,7 +341,7 @@ const SingleTargetStatus = ({
               fontSize: "0.8rem",
             }}
           >
-            {JSON.stringify(target["target-output"], null, 2)}
+            {JSON.stringify(target["output-response"], null, 2)}
           </pre>
         </Box>
       </Popover>
