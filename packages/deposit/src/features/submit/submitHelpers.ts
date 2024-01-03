@@ -44,7 +44,7 @@ export const formatFileData = async (
             formData.append("file", blob);
             formData.append("fileName", file.name);
             formData.append("fileId", file.id);
-            formData.append("metadataId", sessionId);
+            formData.append("datasetId", sessionId);
             return formData;
           }),
       ),

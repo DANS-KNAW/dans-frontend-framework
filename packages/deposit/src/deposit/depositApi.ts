@@ -5,7 +5,7 @@ import type { InitialFormType } from "../types/Metadata";
 export const depositApi = createApi({
   reducerPath: "savedDeposit",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${import.meta.env.VITE_PACKAGING_TARGET}/metadata/`,
+    baseUrl: `${import.meta.env.VITE_PACKAGING_TARGET}/dataset/`,
   }),
   refetchOnMountOrArgChange: true,
   endpoints: (build) => ({
@@ -14,17 +14,18 @@ export const depositApi = createApi({
         url: id,
         headers: { Accept: "application/json" },
       }),
-      transformResponse: (response: InitialFormType) => {
+      transformResponse: (response: { md: InitialFormType }) => {
+        const md = response.md;
         const modifiedResponse =
-          response["file-metadata"]!.length > 0
+          md["file-metadata"]!.length > 0
             ? {
-                ...response,
-                ["file-metadata"]: response["file-metadata"]!.map((f) => ({
+                ...md,
+                ["file-metadata"]: md["file-metadata"]!.map((f) => ({
                   ...f,
                   submittedFile: true,
                 })),
               }
-            : response;
+            : md;
         return modifiedResponse;
       },
     }),

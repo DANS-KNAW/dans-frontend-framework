@@ -148,7 +148,7 @@ export const submitApi = createApi({
 
         // First post the metadata
         const metadataResult = await fetchWithBQ({
-          url: `metadata/${actionType === "save" ? "DRAFT" : "PUBLISH"}`,
+          url: `dataset/${actionType === "save" ? "DRAFT" : "PUBLISH"}`,
           method: "POST",
           data: data,
           headers: headers,

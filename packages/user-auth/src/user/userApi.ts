@@ -75,8 +75,8 @@ export const userSubmissionsApi = createApi({
           },
         };
       },
-      transformResponse: (response: SubmissionResponse[]) => {
-        return response;
+      transformResponse: (response: { assets: SubmissionResponse[] }) => {
+        return response.assets;
       },
     }),
   }),
