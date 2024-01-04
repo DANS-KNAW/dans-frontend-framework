@@ -29,7 +29,7 @@ export interface ValidateTarget {
 
 export type ReleaseVersion = "DRAFT" | "PUBLISH";
 
-type ActiveStatus = "initial" | "processing" | "submitted" | "finalizing";
+type ActiveStatus = "initial" | "processing" | "submitted" | "finalizing" | "progress";
 type ErrorStatus = "rejected" | "failed" | "error";
 type SuccessStatus = "finish" | "accepted" | "success";
 export type IngestStatus = ActiveStatus | ErrorStatus | SuccessStatus;
@@ -47,7 +47,6 @@ export interface TargetOutput {
 export interface SubmissionResponse {
   "created-date": string;
   "dataset-id": string;
-  "md": string;
   "release-version": ReleaseVersion;
   "saved-date": string | null;
   "submitted-date": string | null;

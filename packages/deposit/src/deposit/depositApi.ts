@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { InitialFormType } from "../types/Metadata";
+import type { SavedFormResponse } from "../types/Metadata";
 
 // Function for retrieving saved forms
 export const depositApi = createApi({
@@ -14,7 +14,8 @@ export const depositApi = createApi({
         url: id,
         headers: { Accept: "application/json" },
       }),
-      transformResponse: (response: { md: InitialFormType }) => {
+      transformResponse: (response: SavedFormResponse) => {
+        console.log(response)
         const md = response.md;
         const modifiedResponse =
           md["file-metadata"]!.length > 0
@@ -26,7 +27,10 @@ export const depositApi = createApi({
                 })),
               }
             : md;
-        return modifiedResponse;
+        return {
+          ...response,
+          modifiedResponse
+        };
       },
     }),
   }),

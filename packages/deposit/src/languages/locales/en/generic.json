@@ -3,5 +3,7 @@
   "warning": "Not required, but recommended you enter some data.",
   "success": "Good to go!",
   "missingInfoHeader": "Missing or invalid API keys",
-  "missingInfoText": "You need to enter your personal API keys to be able to submit this form. <0>Check your settings</0>."
+  "missingInfoText": "You need to enter your personal API keys to be able to submit this form. <0>Check your settings</0>.",
+  "hasRejectedError": "There was an error processing your submission",
+  "tryAgain": "Please correct these errors and try submitting again"
 }

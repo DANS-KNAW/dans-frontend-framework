@@ -24,14 +24,21 @@ import CircularProgress from "@mui/material/CircularProgress";
 import LinearProgress from "@mui/material/LinearProgress";
 import PendingIcon from "@mui/icons-material/Pending";
 import ErrorIcon from "@mui/icons-material/Error";
-import ReplayIcon from "@mui/icons-material/Replay";
+// import ReplayIcon from "@mui/icons-material/Replay";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Tooltip from "@mui/material/Tooltip";
 import Popover from "@mui/material/Popover";
 import Button from "@mui/material/Button";
 
+/* 
+* Note TODO: 
+* Resubmitting of errored forms does not work yet
+* It is partially implemented here and in Deposit.tsx,
+* but needs work on the API side
+*/
+
 const depositStatus: DepositStatus = {
-  processing: ["initial", "processing", "submitted", "finalizing"],
+  processing: ["initial", "processing", "submitted", "finalizing", "progress"],
   error: ["rejected", "failed", "error"],
   success: ["finish", "accepted", "success"],
 };
@@ -140,18 +147,19 @@ const SubmissionList = ({
             : // for submitted forms, either edit in case of error, or load with existing data for new submission
               // params.value is true for an error, false for success
               !params.row.processing && params.row.error
-              ? [
+              ? [ /*
                   <Tooltip title={t("retryItem")} placement="bottom">
                     <GridActionsCellItem
                       icon={<ReplayIcon />}
                       label={t("retryItem")}
                       onClick={() =>
                         // todo: need to work on this, how are we going to reload submitted form data for resubmission
-                        navigate(`/${depositSlug}?id=${params.row.id}`)
+                        // only 'rejected' errors for now, meaning data errors
+                        navigate(`/${depositSlug}?id=${params.row.id}&error=rejected`)
                       }
                     />
                   </Tooltip>,
-                ]
+                */ ]
               : [];
         },
         type: "actions",
@@ -164,7 +172,7 @@ const SubmissionList = ({
       },
       {
         field: "created",
-        headerName: type === "draft" ? t("createdOn") : t("submittedOn"),
+        headerName: type === "draft" ? t("savedOn") : t("submittedOn"),
         width: 200,
         type: "dateTime",
         valueGetter: (params) => new Date(params.value),
@@ -199,14 +207,14 @@ const SubmissionList = ({
     data.map((d) => ({
       // Todo: API needs work and standardisation, also see types.
       error: d["targets"].some(
-        (t) => depositStatus.error.indexOf(t["deposit-status"]) !== -1,
+        // Only if the error is rejected (input data related error), we offer the option to edit & resubmit
+        (t) => t["deposit-status"] === "rejected"
       ),
       processing: d["targets"].some(
         (t) => depositStatus.processing.indexOf(t["deposit-status"]) !== -1,
       ),
       id: d["dataset-id"],
-      // viewLink: '',
-      created: type === "draft" ? d["created-date"] : d["submitted-date"],
+      created: type === "draft" ? d["saved-date"] : d["submitted-date"],
       title: d["title"],
       ...(type === "published" ? { status: d["targets"] } : null),
     }));
@@ -329,7 +337,7 @@ const SingleTargetStatus = ({
         }}
         sx={{ maxWidth: "50rem" }}
       >
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 2, minWidth: '15rem' }}>
           <Typography variant="h6">{t("errorExplanation")}</Typography>
           <pre
             style={{
