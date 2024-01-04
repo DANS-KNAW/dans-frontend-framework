@@ -9,7 +9,7 @@ jobs:
 
   test:
 
-    runs-on: ubuntu-latest
+    runs-on: ohsmart-production 
     strategy:
       matrix:
         node-version: ["18"]
@@ -33,7 +33,7 @@ jobs:
   push:
 
     name: Push to registry.
-    runs-on: ohsmart
+    runs-on: ohsmart-production
     needs: test
     strategy:
       matrix:
@@ -47,7 +47,7 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v3
     - name: Copy file
-      run: "cp /data/secrets/fc4e/.env.production apps/swh/."
+      run: "cp /root/secrets/fc4e/.env.production apps/swh/."
     - name: Login to registry
       uses: docker/login-action@v3
       with:
