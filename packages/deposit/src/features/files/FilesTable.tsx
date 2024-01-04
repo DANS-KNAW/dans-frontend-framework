@@ -34,15 +34,18 @@ import { getSessionId } from "../metadata/metadataSlice";
 import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { getSingleFileSubmitStatus } from "../submit/submitSlice";
+import { getSingleFileSubmitStatus, getMetadataSubmitStatus } from "../submit/submitSlice";
 import { useSubmitFilesMutation } from "../submit/submitApi";
 import { formatFileData } from "../submit/submitHelpers";
 import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
-import { getFormDisabled } from "../../deposit/depositSlice";
+import { getFormDisabled, getData } from "../../deposit/depositSlice";
+import { useAuth } from "react-oidc-context";
 
 const FilesTable = () => {
   const { t } = useTranslation("files");
   const selectedFiles = useAppSelector<SelectedFile[]>(getFiles);
+
+  console.log(selectedFiles)
 
   return selectedFiles.length !== 0 ? (
     <TableContainer component={Paper} sx={{ overflow: "hidden" }}>
@@ -319,10 +322,20 @@ const UploadProgress = ({ file }: FileItemProps) => {
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const { t } = useTranslation("files");
   const [submitFiles] = useSubmitFilesMutation();
+  const auth = useAuth();
+  const formConfig = useAppSelector(getData);
+  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
 
   const handleSingleFileUpload = () => {
     formatFileData(sessionId, [file]).then((d) => {
-      submitFiles(d);
+      submitFiles({
+        data: d,
+        headerData: {
+          submitKey: auth.user?.access_token,
+          target: formConfig.target,
+        },
+        actionType: metadataSubmitStatus === "saved" ?  "save" : "submit",
+      });
     });
   };
 

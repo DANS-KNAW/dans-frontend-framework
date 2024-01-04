@@ -6,7 +6,7 @@
   "submitSuccess": "Je data is succesvol ontvangen!",
   "saveSuccess": "Laatst opgeslagen op {{dateTime}}",
   "submitErrorMetadata": "Oh nee! Er is iets misgegaan bij het versturen van je metadata",
-  "submitErrorFiles": "Oh nee! Er is iets misgegaan bij het uploaden van je bestaden",
+  "submitErrorFiles": "Oh nee! Er is iets misgegaan bij het uploaden van je bestanden. Probeer ze nog eens te uploaden.",
   "reset": "Reset formulier",
   "fileWarning": "Je hebt geen bestanden toegevoegd. Weet je zeker dat je het formulier wilt versturen?",
   "submit": "Verstuur data",

@@ -15,22 +15,20 @@ export const depositApi = createApi({
         headers: { Accept: "application/json" },
       }),
       transformResponse: (response: SavedFormResponse) => {
-        console.log(response)
-        const md = response.md;
-        const modifiedResponse =
-          md["file-metadata"]!.length > 0
-            ? {
-                ...md,
-                ["file-metadata"]: md["file-metadata"]!.map((f) => ({
+        // mark previously submitted files
+        const modifiedResponse = {
+          ...response,
+          md: {
+            ...response.md,
+            "file-metadata": response.md["file-metadata"] ?
+              response.md["file-metadata"].map((f) => ({
                   ...f,
                   submittedFile: true,
-                })),
-              }
-            : md;
-        return {
-          ...response,
-          modifiedResponse
-        };
+                }))
+            : []
+          }
+        }
+        return modifiedResponse;
       },
     }),
   }),
