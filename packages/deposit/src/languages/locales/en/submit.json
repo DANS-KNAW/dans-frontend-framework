@@ -6,7 +6,7 @@
   "submitSuccess": "Your data has successfully been submitted",
   "saveSuccess": "Last saved on {{dateTime}}",
   "submitErrorMetadata": "Oh no! Error sending data to the server",
-  "submitErrorFiles": "Oh no! Error uploading your files",
+  "submitErrorFiles": "Oh no! Error uploading your files. Please retry the failed files.",
   "reset": "Reset form",
   "fileWarning": "You have not added any files. Do you really want to submit?",
   "submit": "Submit data",

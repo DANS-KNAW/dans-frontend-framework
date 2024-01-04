@@ -91,7 +91,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
         ),
       );
       // and load the files if there are any
-      serverFormData &&
+      savedFormId && serverFormData &&
         serverFormData.md["file-metadata"] &&
         dispatch(addFiles(serverFormData.md["file-metadata"]));
     }
