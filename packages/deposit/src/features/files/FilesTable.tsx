@@ -1,7 +1,7 @@
 import { useState, forwardRef } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { TableCellProps } from "@mui/material/TableCell";
+import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow, { TableRowProps } from "@mui/material/TableRow";
@@ -195,9 +195,9 @@ const FileTableRow = ({ file }: FileItemProps) => {
     <>
       <MotionRow
         layout
-        initial={{ x: "-100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "-100%" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         sx={{
           backgroundColor:
             file.valid === false
@@ -299,9 +299,9 @@ const FileTableRow = ({ file }: FileItemProps) => {
       </MotionRow>
       <MotionRow
         layout
-        initial={{ x: "-100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "-100%" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
       >
         <AnimatePresence>
           <UploadProgress file={file} key={`progress-${file.name}`} />
@@ -310,12 +310,6 @@ const FileTableRow = ({ file }: FileItemProps) => {
     </>
   );
 };
-
-const ForwardCell = forwardRef<
-  HTMLTableCellElement,
-  TableCellProps & HTMLMotionProps<"td">
->((props, ref) => <TableCell ref={ref} {...props} />);
-const MotionCell = motion(ForwardCell);
 
 const UploadProgress = ({ file }: FileItemProps) => {
   // We handle progress and retrying/restarting of file uploads here
@@ -334,11 +328,7 @@ const UploadProgress = ({ file }: FileItemProps) => {
 
   return (
     fileStatus && (
-      <MotionCell
-        layout
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
+      <TableCell
         sx={{
           paddingBottom: 0,
           paddingTop: 0,
@@ -385,7 +375,7 @@ const UploadProgress = ({ file }: FileItemProps) => {
             )}
           </Box>
         </Box>
-      </MotionCell>
+      </TableCell>
     )
   );
 };
