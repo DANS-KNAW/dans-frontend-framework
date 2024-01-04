@@ -9,7 +9,7 @@ jobs:
 
   test:
 
-    runs-on: ohsmart-production 
+    runs-on: ubuntu-latest 
     strategy:
       matrix:
         node-version: ["18"]
@@ -33,7 +33,7 @@ jobs:
   push:
 
     name: Push to registry.
-    runs-on: ohsmart-production
+    runs-on: ohsmart-demo
     needs: test
     strategy:
       matrix:
@@ -49,7 +49,7 @@ jobs:
       with:
         submodules: "true"
     - name: Copy file
-      run: "cp /root/secrets/rda/.env.production apps/rda/."
+      run: "cp /data/secrets/rda/.env.production apps/rda/."
     - name: Login to registry
       uses: docker/login-action@v3
       with:
