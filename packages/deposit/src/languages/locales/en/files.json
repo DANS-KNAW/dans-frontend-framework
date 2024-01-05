@@ -38,6 +38,6 @@
   "submittedFile": "File has been uploaded previously",
   "confirmDelete": "Confirm deletion",
   "limitHeader": "Warning! Files larger than {{amount}} MB",
-  "lowerLimitDescription": "It might not be feasable to upload these files, depending on your connection speed. You can remove them and submit and contact DANS for assistance with these larger files. Also contact DANS if you run into issues when you do decide to upload them.",
-  "upperLimitDescription": "You might run into issues uploading these files. You can remove them, submit and contact DANS for assistance with these larger files."
+  "lowerLimitDescription": "If you have a slow connection, uploading might not work. If the upload times out and retrying doesn't work, <0>contact DANS for assistance</0>.",
+  "upperLimitDescription": "Uploading a file of this size might take too long, depending on your connection and server traffic. If the upload times out and retrying doesn't work, <0>contact DANS for assistance</0>."
 }

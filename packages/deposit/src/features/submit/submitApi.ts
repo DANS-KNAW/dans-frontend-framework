@@ -122,6 +122,7 @@ export const submitApi = createApi({
       ) {
         console.log("submitting metadata...");
         console.log(data);
+
         // Format the headers
         const headers = {
           Authorization: `Bearer ${headerData.submitKey}`,
@@ -152,6 +153,7 @@ export const submitApi = createApi({
           actionType: actionType,
         });
 
+        console.log("metadata result...");
         console.log(metadataResult);
 
         if (metadataResult.error) {
@@ -171,9 +173,6 @@ export const submitApi = createApi({
         fetchWithBQ,
       ) {
         console.log("submitting files...");
-        console.log(data)
-        console.log(headerData)
-        console.log(actionType)
         
         const filesResults =
           Array.isArray(data) &&
@@ -191,6 +190,7 @@ export const submitApi = createApi({
             ),
           ));
 
+        console.log("files result...");
         console.log(filesResults);
 
         const filesErrors =
