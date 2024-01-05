@@ -29,7 +29,7 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import AutocompleteField, { InfoLink, InfoChip } from "./AutocompleteField";
-import { getData, getFormDisabled } from "../../../deposit/depositSlice";
+import { getFormDisabled } from "../../../deposit/depositSlice";
 import { useFetchGorcQuery } from "../api/gorc";
 import { useFetchLicensesQuery } from "../api/licenses";
 import { useFetchSshLicencesQuery } from "../api/sshLicences";
@@ -147,13 +147,11 @@ export const GeonamesField = ({
 }: AutocompleteFieldProps) => {
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
-  const apiKey = useAppSelector(getData).geonamesApiKey;
   // Fetch data on input change
   const { data, isFetching, isLoading } =
-    useFetchGeonamesFreeTextQuery<QueryReturnType>(
-      { value: debouncedInputValue, apiKey: apiKey },
-      { skip: debouncedInputValue === "" },
-    );
+    useFetchGeonamesFreeTextQuery<QueryReturnType>(debouncedInputValue, { 
+      skip: debouncedInputValue === "" 
+    });
 
   return (
     <AutocompleteAPIField
@@ -376,11 +374,9 @@ export const SheetsField = ({
   field,
   sectionIndex,
 }: AutocompleteFieldProps) => {
-  const apiKey = useAppSelector(getData).gsheetsApiKey;
-  const { data, isFetching, isLoading } = useFetchSheetsQuery<QueryReturnType>({
-    options: field.sheetOptions,
-    apiKey: apiKey,
-  });
+  const { data, isFetching, isLoading } = useFetchSheetsQuery<QueryReturnType>(
+    field.sheetOptions
+  );
   const newField = {
     ...field,
     options: data && data.response ? data.response : [],

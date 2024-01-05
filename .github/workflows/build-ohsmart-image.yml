@@ -33,7 +33,7 @@ jobs:
   push:
 
     name: Push to registry.
-    runs-on: ohsmart-production
+    runs-on: ohsmart-demo
     needs: test
     strategy:
       matrix:
@@ -52,7 +52,7 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
     - name: Copy file
-      run: "cp /root/secrets/ohsmart/.env.production apps/ohsmart/."
+      run: "cp /data/secrets/ohsmart/.env.production apps/ohsmart/."
     - name: Push to dockerhub
       run: |
         docker build -f apps/ohsmart/Dockerfile . -t $ORG/$IMAGE_NAME:$IMAGE_TAG

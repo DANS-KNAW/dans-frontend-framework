@@ -24,14 +24,21 @@ import CircularProgress from "@mui/material/CircularProgress";
 import LinearProgress from "@mui/material/LinearProgress";
 import PendingIcon from "@mui/icons-material/Pending";
 import ErrorIcon from "@mui/icons-material/Error";
-import ReplayIcon from "@mui/icons-material/Replay";
+// import ReplayIcon from "@mui/icons-material/Replay";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Tooltip from "@mui/material/Tooltip";
 import Popover from "@mui/material/Popover";
 import Button from "@mui/material/Button";
 
+/* 
+* Note TODO: 
+* Resubmitting of errored forms does not work yet
+* It is partially implemented here and in Deposit.tsx,
+* but needs work on the API side
+*/
+
 const depositStatus: DepositStatus = {
-  processing: ["initial", "processing", "submitted", "finalizing"],
+  processing: ["initial", "processing", "submitted", "finalizing", "progress"],
   error: ["rejected", "failed", "error"],
   success: ["finish", "accepted", "success"],
 };
@@ -54,16 +61,17 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
   // are there any targets that have been submitted not complete yet?
   const allTargetsComplete =
     data &&
+    data.length > 0 &&
     data
       .filter((d) => d["release-version"] === "PUBLISH")
       .every(
         // if all are finished, or one has an error, stop checking
         (d) =>
           d.targets.every(
-            (t) => depositStatus.success.indexOf(t["ingest-status"]) !== -1,
+            (t) => depositStatus.success.indexOf(t["deposit-status"]) !== -1,
           ) ||
           d.targets.some(
-            (t) => depositStatus.error.indexOf(t["ingest-status"]) !== -1,
+            (t) => depositStatus.error.indexOf(t["deposit-status"]) !== -1,
           ),
       );
 
@@ -84,14 +92,14 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
         <Grid xs={12} mdOffset={1} md={10}>
           <Typography variant="h1">{t("userSubmissions")}</Typography>
           <SubmissionList
-            data={data?.filter((d) => d["release-version"] === "DRAFT") || []}
+            data={(data && data.filter((d) => d["release-version"] === "DRAFT")) || []}
             type="draft"
             isLoading={isLoading}
             header={t("userSubmissionsDrafts")}
             depositSlug={depositSlug}
           />
           <SubmissionList
-            data={data?.filter((d) => d["release-version"] === "PUBLISH") || []}
+            data={(data && data.filter((d) => d["release-version"] === "PUBLISH")) || []}
             type="published"
             isLoading={isLoading}
             header={t("userSubmissionsCompleted")}
@@ -139,18 +147,19 @@ const SubmissionList = ({
             : // for submitted forms, either edit in case of error, or load with existing data for new submission
               // params.value is true for an error, false for success
               !params.row.processing && params.row.error
-              ? [
+              ? [ /*
                   <Tooltip title={t("retryItem")} placement="bottom">
                     <GridActionsCellItem
                       icon={<ReplayIcon />}
                       label={t("retryItem")}
                       onClick={() =>
                         // todo: need to work on this, how are we going to reload submitted form data for resubmission
-                        navigate(`/${depositSlug}?id=${params.row.id}`)
+                        // only 'rejected' errors for now, meaning data errors
+                        navigate(`/${depositSlug}?id=${params.row.id}&error=rejected`)
                       }
                     />
                   </Tooltip>,
-                ]
+                */ ]
               : [];
         },
         type: "actions",
@@ -163,7 +172,7 @@ const SubmissionList = ({
       },
       {
         field: "created",
-        headerName: type === "draft" ? t("createdOn") : t("submittedOn"),
+        headerName: type === "draft" ? t("savedOn") : t("submittedOn"),
         width: 200,
         type: "dateTime",
         valueGetter: (params) => new Date(params.value),
@@ -198,14 +207,14 @@ const SubmissionList = ({
     data.map((d) => ({
       // Todo: API needs work and standardisation, also see types.
       error: d["targets"].some(
-        (t) => depositStatus.error.indexOf(t["ingest-status"]) !== -1,
+        // Only if the error is rejected (input data related error), we offer the option to edit & resubmit
+        (t) => t["deposit-status"] === "rejected"
       ),
       processing: d["targets"].some(
-        (t) => depositStatus.processing.indexOf(t["ingest-status"]) !== -1,
+        (t) => depositStatus.processing.indexOf(t["deposit-status"]) !== -1,
       ),
-      id: d["metadata-id"],
-      // viewLink: '',
-      created: type === "draft" ? d["created-date"] : d["submitted-date"],
+      id: d["dataset-id"],
+      created: type === "draft" ? d["saved-date"] : d["submitted-date"],
       title: d["title"],
       ...(type === "published" ? { status: d["targets"] } : null),
     }));
@@ -286,17 +295,17 @@ const SingleTargetStatus = ({
       <Stack direction="row" alignItems="center" pt={0.1} pb={0.1}>
         <Tooltip
           title={
-            depositStatus.processing.indexOf(target["ingest-status"]) !== -1
+            depositStatus.processing.indexOf(target["deposit-status"]) !== -1
               ? t("processing")
-              : depositStatus.error.indexOf(target["ingest-status"]) !== -1
+              : depositStatus.error.indexOf(target["deposit-status"]) !== -1
                 ? t("error")
                 : t("success")
           }
           placement="left"
         >
-          {depositStatus.processing.indexOf(target["ingest-status"]) !== -1 ? (
+          {depositStatus.processing.indexOf(target["deposit-status"]) !== -1 ? (
             <CircularProgress size={16} />
-          ) : depositStatus.error.indexOf(target["ingest-status"]) !== -1 ? (
+          ) : depositStatus.error.indexOf(target["deposit-status"]) !== -1 ? (
             <Button
               variant="contained"
               color="error"
@@ -307,14 +316,14 @@ const SingleTargetStatus = ({
             >
               {t("moreInfo")}
             </Button>
-          ) : depositStatus.success.indexOf(target["ingest-status"]) !== -1 ? (
+          ) : depositStatus.success.indexOf(target["deposit-status"]) !== -1 ? (
             <CheckCircleIcon fontSize="small" color="success" />
           ) : (
             <PendingIcon fontSize="small" color="neutral" />
           )}
         </Tooltip>
         <Typography variant="body2" ml={1}>
-          {target["target-repo-display-name"]}
+          {target["display-name"]}
         </Typography>
       </Stack>
       <Popover
@@ -328,7 +337,7 @@ const SingleTargetStatus = ({
         }}
         sx={{ maxWidth: "50rem" }}
       >
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 2, minWidth: '15rem' }}>
           <Typography variant="h6">{t("errorExplanation")}</Typography>
           <pre
             style={{
@@ -340,7 +349,7 @@ const SingleTargetStatus = ({
               fontSize: "0.8rem",
             }}
           >
-            {JSON.stringify(target["target-output"], null, 2)}
+            {JSON.stringify(target["output-response"], null, 2)}
           </pre>
         </Box>
       </Popover>

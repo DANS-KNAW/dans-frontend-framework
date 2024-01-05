@@ -39,7 +39,6 @@ const form: FormConfig = {
   ],
   submitKey: import.meta.env.VITE_PACKAGING_KEY, // only if we dont use keycloak
   skipValidation: import.meta.env.DEV,
-  geonamesApiKey: import.meta.env.VITE_GEONAMES_API_KEY,
 };
 
 export default form;

@@ -36,5 +36,8 @@
   "fileSubmitError": "Try uploading again",
   "fileTypeCheckError": "Something went wrong checking the file type. Please try again.",
   "submittedFile": "File has been uploaded previously",
-  "confirmDelete": "Confirm deletion"
+  "confirmDelete": "Confirm deletion",
+  "limitHeader": "Warning! Files larger than {{amount}} MB",
+  "lowerLimitDescription": "If you have a slow connection, uploading might not work. If the upload times out and retrying doesn't work, <0>contact DANS for assistance</0>.",
+  "upperLimitDescription": "Uploading a file of this size might take too long, depending on your connection and server traffic. If the upload times out and retrying doesn't work, <0>contact DANS for assistance</0>."
 }

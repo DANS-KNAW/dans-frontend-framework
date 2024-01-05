@@ -6,6 +6,7 @@ import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import List from "@mui/material/List";
+import Link from "@mui/material/Link";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
@@ -15,19 +16,25 @@ import CloseIcon from "@mui/icons-material/Close";
 import Collapse from "@mui/material/Collapse";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import IconButton from "@mui/material/IconButton";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { getFiles, addFiles } from "./filesSlice";
 import type {
   SelectedFile,
   FileLocation,
-  RejectedFilesProps,
+  RejectedFiles,
   DansSimpleListQueryResponse,
 } from "../../types/Files";
 import { v4 as uuidv4 } from "uuid";
 import { useFetchSimpleListQuery } from "./api/dansFormats";
 import { enqueueSnackbar } from "notistack";
 import { getFormDisabled } from "../../deposit/depositSlice";
+import { getSessionId } from "../metadata/metadataSlice";
+
+// Temporary soft file limits in bytes
+const bytes =  1048576;
+const lowerLimit = 300 * bytes;
+const upperLimit = 1000 * bytes;
 
 const FilesUpload = () => {
   const dispatch = useAppDispatch();
@@ -123,6 +130,11 @@ const FilesUpload = () => {
 
   const formDisabled = useAppSelector(getFormDisabled);
 
+  const filesTooBig = currentFiles.filter(
+    (f) => lowerLimit < f.size && f.size < upperLimit,
+  );
+  const filesWayTooBig = currentFiles.filter((f) => upperLimit < f.size);
+
   return (
     <Card>
       <CardHeader title={t("addLocal") as string} />
@@ -174,50 +186,92 @@ const FilesUpload = () => {
           </Box>
         )}
         {fileRejections.length > 0 && (
-          <RejectedFiles fileRejections={fileRejections} />
+          <FileAlert
+            files={fileRejections}
+            color="error"
+            title={t("fileTypeError")}
+          />
+        )}
+        {filesTooBig.length > 0 && (
+          <FileAlert
+            files={filesTooBig}
+            color="warning"
+            title={t("limitHeader", { amount: lowerLimit / 1048576 })}
+            description="lowerLimitDescription"
+          />
+        )}
+        {filesWayTooBig.length > 0 && (
+          <FileAlert
+            files={filesWayTooBig}
+            color="warning"
+            title={t("limitHeader", { amount: upperLimit / 1048576 })}
+            description="upperLimitDescription"
+          />
         )}
       </CardContent>
     </Card>
   );
 };
 
-const RejectedFiles = ({ fileRejections }: RejectedFilesProps) => {
+// This alert show either rejected files, or warnings
+const FileAlert = ({
+  color,
+  title,
+  files,
+  description,
+}: {
+  color: "warning" | "error";
+  title: string;
+  files: SelectedFile[] | RejectedFiles[];
+  description?: string;
+}) => {
   const [open, setOpen] = useState(true);
-  const { t } = useTranslation("files");
+  const sessionId = useAppSelector(getSessionId);
 
   return (
     <Collapse in={open}>
       <Alert
-        severity="error"
+        severity={color}
         sx={{ mt: 2 }}
         action={
           <IconButton
             aria-label="close"
             color="inherit"
             size="small"
-            onClick={() => {
-              setOpen(false);
-            }}
+            onClick={() => setOpen(false)}
           >
             <CloseIcon fontSize="inherit" />
           </IconButton>
         }
       >
-        <AlertTitle>{t("fileTypeError")}</AlertTitle>
+        <AlertTitle>{title}</AlertTitle>
+        {description && (
+          <Typography variant="body2" gutterBottom>
+            <Trans
+              i18nKey={`files:${description}`}
+              components={[
+                <Link href={`mailto:info@dans.knaw.nl?subject=Large file upload for dataset: ${sessionId}`} />,
+              ]}
+            />
+          </Typography>
+        )}
         <List dense={true}>
-          {fileRejections.map((file, i) => (
+          {files.map((file, i) => (
             <ListItem key={i} disableGutters>
               <ListItemIcon>
                 <InsertDriveFileIcon />
               </ListItemIcon>
               <ListItemText
-                primary={file.file.name}
-                secondary={file.errors.map(
-                  (error, i) =>
-                    `${error.message}${
-                      i < file.errors.length - 1 ? " | " : ""
-                    }`,
-                )}
+                primary={file.file?.name || file.name}
+                secondary={
+                  file.errors &&
+                  file.errors.map(
+                    (error, i) =>
+                      `${error.message}${
+                        i < file.errors.length - 1 ? " | " : ""
+                      }`,
+                  )
+                }
               />
             </ListItem>
           ))}

@@ -32,6 +32,7 @@
 	"title": "Titel",
 	"createdOn": "Aangemaakt op",
 	"submittedOn": "Gesubmit op",
+	"savedOn": "Laatst opgeslagen",
 	"submittedTo": "Gesubmit naar",
 	"submissionStatus": "Status",
 	"processing": "Bezig met verwerken",

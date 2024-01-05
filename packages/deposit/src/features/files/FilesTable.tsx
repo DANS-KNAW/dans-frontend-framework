@@ -1,7 +1,7 @@
 import { useState, forwardRef } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { TableCellProps } from "@mui/material/TableCell";
+import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow, { TableRowProps } from "@mui/material/TableRow";
@@ -34,15 +34,18 @@ import { getSessionId } from "../metadata/metadataSlice";
 import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { getSingleFileSubmitStatus } from "../submit/submitSlice";
+import { getSingleFileSubmitStatus, getMetadataSubmitStatus } from "../submit/submitSlice";
 import { useSubmitFilesMutation } from "../submit/submitApi";
 import { formatFileData } from "../submit/submitHelpers";
 import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
-import { getFormDisabled } from "../../deposit/depositSlice";
+import { getFormDisabled, getData } from "../../deposit/depositSlice";
+import { useAuth } from "react-oidc-context";
 
 const FilesTable = () => {
   const { t } = useTranslation("files");
   const selectedFiles = useAppSelector<SelectedFile[]>(getFiles);
+
+  console.log(selectedFiles)
 
   return selectedFiles.length !== 0 ? (
     <TableContainer component={Paper} sx={{ overflow: "hidden" }}>
@@ -195,9 +198,9 @@ const FileTableRow = ({ file }: FileItemProps) => {
     <>
       <MotionRow
         layout
-        initial={{ x: "-100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "-100%" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         sx={{
           backgroundColor:
             file.valid === false
@@ -299,9 +302,9 @@ const FileTableRow = ({ file }: FileItemProps) => {
       </MotionRow>
       <MotionRow
         layout
-        initial={{ x: "-100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "-100%" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
       >
         <AnimatePresence>
           <UploadProgress file={file} key={`progress-${file.name}`} />
@@ -311,12 +314,6 @@ const FileTableRow = ({ file }: FileItemProps) => {
   );
 };
 
-const ForwardCell = forwardRef<
-  HTMLTableCellElement,
-  TableCellProps & HTMLMotionProps<"td">
->((props, ref) => <TableCell ref={ref} {...props} />);
-const MotionCell = motion(ForwardCell);
-
 const UploadProgress = ({ file }: FileItemProps) => {
   // We handle progress and retrying/restarting of file uploads here
   // If metadata submission is successful, and file fails right away, there needs to be an option to manually start file upload.
@@ -325,20 +322,26 @@ const UploadProgress = ({ file }: FileItemProps) => {
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const { t } = useTranslation("files");
   const [submitFiles] = useSubmitFilesMutation();
+  const auth = useAuth();
+  const formConfig = useAppSelector(getData);
+  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
 
   const handleSingleFileUpload = () => {
     formatFileData(sessionId, [file]).then((d) => {
-      submitFiles(d);
+      submitFiles({
+        data: d,
+        headerData: {
+          submitKey: auth.user?.access_token,
+          target: formConfig.target,
+        },
+        actionType: metadataSubmitStatus === "saved" ?  "save" : "submit",
+      });
     });
   };
 
   return (
     fileStatus && (
-      <MotionCell
-        layout
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
+      <TableCell
         sx={{
           paddingBottom: 0,
           paddingTop: 0,
@@ -385,7 +388,7 @@ const UploadProgress = ({ file }: FileItemProps) => {
             )}
           </Box>
         </Box>
-      </MotionCell>
+      </TableCell>
     )
   );
 };

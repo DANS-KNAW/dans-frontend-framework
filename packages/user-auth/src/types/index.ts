@@ -29,7 +29,7 @@ export interface ValidateTarget {
 
 export type ReleaseVersion = "DRAFT" | "PUBLISH";
 
-type ActiveStatus = "initial" | "processing" | "submitted" | "finalizing";
+type ActiveStatus = "initial" | "processing" | "submitted" | "finalizing" | "progress";
 type ErrorStatus = "rejected" | "failed" | "error";
 type SuccessStatus = "finish" | "accepted" | "success";
 export type IngestStatus = ActiveStatus | ErrorStatus | SuccessStatus;
@@ -37,20 +37,21 @@ type IngestStatusKeys = "processing" | "error" | "success";
 export type DepositStatus = { [key in IngestStatusKeys]: IngestStatus[] };
 
 export interface TargetOutput {
-  "ingest-status": IngestStatus;
-  "target-output": any;
-  "target-repo-name": string;
-  "target-repo-display-name": string;
-  "target-url": string;
+  "deposit-status": IngestStatus;
+  "deposit-time": string;
+  "display-name": string;
+  "output-response": any;
+  "repo-name": string;
 }
 
 export interface SubmissionResponse {
   "created-date": string;
-  "metadata-id": string;
-  targets: TargetOutput[];
+  "dataset-id": string;
   "release-version": ReleaseVersion;
-  title: string;
+  "saved-date": string | null;
   "submitted-date": string | null;
+  targets: TargetOutput[];
+  title: string;
 }
 
 // Some values that the system can pull and fill in from the User Auth object

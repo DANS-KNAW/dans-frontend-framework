@@ -37,6 +37,8 @@ export interface SelectedFile {
   submitSuccess?: boolean;
   submitError?: boolean;
   submittedFile?: boolean;
+  errors?: never;
+  file?: never;
 }
 
 interface FileError {
@@ -47,10 +49,7 @@ interface FileError {
 export interface RejectedFiles {
   file: File;
   errors: FileError[];
-}
-
-export interface RejectedFilesProps {
-  fileRejections: RejectedFiles[];
+  name?: never;
 }
 
 export type FileLocation = "local" | "online";

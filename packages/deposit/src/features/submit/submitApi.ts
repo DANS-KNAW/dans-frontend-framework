@@ -11,7 +11,6 @@ import { setFileMeta } from "../files/filesSlice";
 import { setFormDisabled } from "../../deposit/depositSlice";
 import { store } from "../../redux/store";
 import type { Target } from "@dans-framework/user-auth";
-import type { HeaderData, SubmitHeaders } from "../../types/Submit";
 import moment from "moment";
 
 // We use Axios to enable file upload progress monitoring
@@ -106,24 +105,6 @@ const axiosBaseQuery =
     }
   };
 
-const formatHeaderData = (headerData: HeaderData) =>
-  ({
-    Authorization: `Bearer ${headerData.submitKey}`,
-    "user-id": headerData.userId,
-    "auth-env-name": headerData.target.envName,
-    "assistant-config-name": headerData.target.configName,
-    "targets-credentials": JSON.stringify(
-      headerData.targetCredentials.map((t: Target) => ({
-        "target-repo-name": t.repo,
-        credentials: {
-          username: t.auth,
-          password: headerData.targetKeys[t.authKey],
-        },
-      })),
-    ),
-    title: headerData.title,
-  }) as SubmitHeaders;
-
 export const submitApi = createApi({
   reducerPath: "submitApi",
   baseQuery: axiosBaseQuery({
@@ -141,20 +122,38 @@ export const submitApi = createApi({
       ) {
         console.log("submitting metadata...");
         console.log(data);
+
         // Format the headers
-        const headers = formatHeaderData(headerData);
+        const headers = {
+          Authorization: `Bearer ${headerData.submitKey}`,
+          "user-id": headerData.userId,
+          "auth-env-name": headerData.target.envName,
+          "assistant-config-name": headerData.target.configName,
+          "targets-credentials": JSON.stringify(
+            headerData.targetCredentials.map((t: Target) => ({
+              "target-repo-name": t.repo,
+              credentials: {
+                username: t.auth,
+                password: headerData.targetKeys[t.authKey],
+              },
+            })),
+          ),
+          title: headerData.title,
+        }
+
         console.log("submitting with headers...");
         console.log(headers);
 
         // First post the metadata
         const metadataResult = await fetchWithBQ({
-          url: `metadata/${actionType === "save" ? "DRAFT" : "PUBLISH"}`,
+          url: `dataset/${actionType === "save" ? "DRAFT" : "PUBLISH"}`,
           method: "POST",
           data: data,
           headers: headers,
           actionType: actionType,
         });
 
+        console.log("metadata result...");
         console.log(metadataResult);
 
         if (metadataResult.error) {
@@ -174,8 +173,7 @@ export const submitApi = createApi({
         fetchWithBQ,
       ) {
         console.log("submitting files...");
-        console.log(data.map((d: any) => [...d]));
-        const headers = formatHeaderData(headerData);
+        
         const filesResults =
           Array.isArray(data) &&
           (await Promise.all(
@@ -184,11 +182,15 @@ export const submitApi = createApi({
                 url: "file",
                 method: "POST",
                 data: file,
-                headers: headers,
+                headers: { 
+                  Authorization: `Bearer ${headerData.submitKey}`,
+                  "auth-env-name": headerData.target.envName,
+                }
               }),
             ),
           ));
 
+        console.log("files result...");
         console.log(filesResults);
 
         const filesErrors =

@@ -32,6 +32,7 @@
 	"title": "Title",
 	"createdOn": "Created on",
 	"submittedOn": "Submitted on",
+	"savedOn": "Last saved",
 	"submittedTo": "Submitted to",
 	"submissionStatus": "Status",
 	"processing": "Processing your submission",
