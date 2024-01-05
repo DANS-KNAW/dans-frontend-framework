@@ -11,7 +11,7 @@ import { store } from "../../redux/store";
 import type { Target } from "@dans-framework/user-auth";
 import type { HeaderData, SubmitHeaders } from "../../types/Submit";
 import moment from "moment";
-import * as tus from 'tus-js-client';
+import * as tus from "tus-js-client";
 import type { SelectedFile } from "../../types/Files";
 import { enqueueSnackbar } from "notistack";
 
@@ -25,11 +25,11 @@ export const uploadFiles = ({files, headerData, sessionId}: {files: SelectedFile
       var upload = new tus.Upload(file.blob, {
         // Endpoint is the upload creation URL from your tus server
         // endpoint: `${import.meta.env.VITE_PACKAGING_TARGET}/inbox/files`,
-        endpoint: `http://127.0.0.1:1080/files`,
+        endpoint: `https://master.tus.io/files`,
         // Retry delays will enable tus-js-client to automatically retry on errors
         retryDelays: [3000, 8000, 15000, 25000],
         // specific headers for packaging service, disabled for testing with demo nodejs server
-        // headers: formatHeaderData(headerData),
+        headers: { "Authorization": "Bearer D@NS-ei-2023" },
         // Attach additional meta data about the file for the server
         metadata: {
           fileName: file.fileName,
@@ -89,7 +89,7 @@ export const uploadFiles = ({files, headerData, sessionId}: {files: SelectedFile
             }),
           );
         },
-        // Callback for once the upload is completed
+        // Callback once the upload is completed
         onSuccess: () => {
           console.log('Download %s from %s', file.fileName, upload.url);
           store.dispatch(
@@ -150,7 +150,7 @@ export const submitApi = createApi({
   endpoints: (build) => ({
     submitData: build.mutation({
       query: ({ data, headerData, actionType }) => ({
-        url: `metadata/${actionType === "save" ? "DRAFT" : "PUBLISH"}`,
+        url: `dataset/${actionType === "save" ? "DRAFT" : "PUBLISH"}`,
         method: "POST",
         headers: formatHeaderData(headerData),
         body: data,
