@@ -153,13 +153,13 @@ export const metadataSlice = createSlice({
                       ],
                     }
                   : {
+                      // Omit the conditionalFor property
                       ...((({ conditionalFor, ...rest }) => rest)(f)),
+                      // reset what needs resetting
                       id: uuidv4(),
                       value: "",
                       valid: "",
                       touched: false,
-                      // reset for conditional fields
-                      // Omit the conditionalFor property
                       required: f.noIndicator ? undefined : f.required,
                     },
               );
