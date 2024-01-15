@@ -93,7 +93,7 @@ const Submit = ({
     useSubmitDataMutation();
   const [
     submitFiles,
-    { isError: isErrorFiles, isLoading: isLoadingFiles, reset: resetSubmittedFiles, isSuccess: isSuccessFiles },
+    { isLoading: isLoadingFiles, reset: resetSubmittedFiles, isSuccess: isSuccessFiles },
   ] = useSubmitFilesMutation();
 
   // Access token might just be expiring, or user settings just changed
@@ -198,7 +198,7 @@ const Submit = ({
     ) {
       window.removeEventListener("beforeunload", beforeUnloadHandler);
     }
-  }, [isSuccessMeta, isSuccessFiles, isErrorMeta, isErrorFiles, fileStatus])
+  }, [isSuccessMeta, isSuccessFiles, fileStatus])
 
   const iconSx = {
     color: "white",
