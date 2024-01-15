@@ -29,6 +29,8 @@ interface BasisFieldType {
   required?: boolean; // Form won't submit if this field has not been filled in
   private?: boolean; // gets sent to a separate non-public metadata file
   noIndicator?: boolean; // gives a non-required field a neutral status indicator
+  makesRequired?: string[]; // list of field names this field controls conditionally
+  conditionalFor?: string[]; // filled programmatically with uuid's
 }
 
 export interface TextFieldType extends BasisFieldType {

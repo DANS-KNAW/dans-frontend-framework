@@ -190,7 +190,7 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
             </TransitionGroup>
           </CardContent>
         )}
-        {field.repeatable && !metadataSubmitStatus && (
+        {field.repeatable && metadataSubmitStatus !== "submitted" && metadataSubmitStatus !== "submitting" && (
           <CardActions sx={{ pl: 3, pr: 3, justifyContent: "right" }}>
             <Stack direction="row" alignItems="center" justifyContent="end">
               <AddButtonText

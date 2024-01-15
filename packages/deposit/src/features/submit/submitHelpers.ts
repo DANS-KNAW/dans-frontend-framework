@@ -52,3 +52,10 @@ export const formatFileData = async (
 
   return fileData;
 };
+
+
+// event handler for leaving page when form is submitting or errored and unsaved
+export const beforeUnloadHandler = (event: any) => {
+  event.preventDefault();
+  event.returnValue = true;
+};

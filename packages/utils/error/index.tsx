@@ -1,10 +1,11 @@
-import { forwardRef } from "react";
+import { forwardRef, useCallback } from "react";
 import { isRejectedWithValue } from "@reduxjs/toolkit";
 import type { Middleware } from "@reduxjs/toolkit";
 import {
   enqueueSnackbar,
   SnackbarContent,
   CustomContentProps,
+  useSnackbar,
 } from "notistack";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
@@ -21,15 +22,20 @@ export const errorLogger: Middleware = () => (next) => (action) => {
     const error = JSON.stringify(
       action.payload.error || action.payload,
     ).replaceAll('"', "");
-    enqueueSnackbar(error, { variant: "customError" });
+    enqueueSnackbar(error, { variant: "customError", persist: true });
   }
 
   return next(action);
 };
 
 export const CustomError = forwardRef<HTMLDivElement, CustomContentProps>(
-  (props, ref) => {
+  ({ id, ...props}, ref) => {
     const { message } = props;
+    const { closeSnackbar } = useSnackbar();
+
+    const handleDismiss = useCallback(() => {
+      closeSnackbar(id);
+    }, [id, closeSnackbar]);
 
     return (
       <SnackbarContent ref={ref}>
@@ -40,6 +46,7 @@ export const CustomError = forwardRef<HTMLDivElement, CustomContentProps>(
             boxShadow:
               "0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12)",
           }}
+          onClose={handleDismiss}
         >
           <AlertTitle>Error!</AlertTitle>
           {message}
