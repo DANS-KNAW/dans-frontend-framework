@@ -44,6 +44,25 @@ export const findById = (id: string, fields: Field[]): Field | undefined => {
   return;
 };
 
+// Find array of dependant id's based on a specific id, for conditional fields
+// Bit ugly
+export const findConditionalChanges = (id: string, fields: Field[]): string[] | undefined => {
+  for (let item of fields) {
+    if (item.id === id && item.makesRequired) {
+      return item.makesRequired.map( name => fields.map( f => f.name === name && f.id ) ).flat().filter(Boolean) as string[];
+    }
+    if (item.fields && item.type === "group") {
+      let result = item.fields.map( 
+        fieldGroup => Array.isArray(fieldGroup) && findConditionalChanges(id, fieldGroup)
+      ).flat().filter(Boolean) as string[];
+      if (result) {
+        return result;
+      }
+    }
+  }
+  return;
+};
+
 // Get the status of a single field
 export const getFieldStatus = (field: InputField): SectionStatus => {
   const fieldEmpty =

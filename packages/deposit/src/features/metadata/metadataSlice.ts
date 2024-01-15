@@ -26,6 +26,7 @@ import {
   getSectionStatus,
   formatInitialState,
   findById,
+  findConditionalChanges,
 } from "./metadataHelpers";
 import { v4 as uuidv4 } from "uuid";
 
@@ -72,6 +73,21 @@ export const metadataSlice = createSlice({
       if (field) {
         field.value = action.payload.value;
         field.touched = true;
+
+        // For setting required state of 'conditional' fields, we need to find the parent array
+        if (field.makesRequired) {
+          const conditionalIds = field.conditionalFor || findConditionalChanges(action.payload.id, section.fields);
+          if (!field.conditionalFor) { 
+            field.conditionalFor = conditionalIds;
+          }
+          // change the conditional fields required state
+          conditionalIds && conditionalIds.map( id => {
+            const changeField = findById(id, section.fields);
+            if (changeField) {
+              changeField.required = action.payload.value ? true : undefined
+            }
+          });
+        }
 
         // After every input, we need to update field valid status and section status as well.
         // Only needed when the new status differs from the old one.
@@ -142,6 +158,9 @@ export const metadataSlice = createSlice({
                       value: "",
                       valid: "",
                       touched: false,
+                      // reset for conditional fields
+                      conditionalFor: undefined,
+                      required: f.noIndicator ? undefined : f.required,
                     },
               );
 
