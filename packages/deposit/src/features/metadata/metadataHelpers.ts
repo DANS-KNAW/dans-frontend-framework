@@ -66,7 +66,9 @@ export const findConditionalChanges = (id: string, fields: Field[]): string[] | 
 // Get the status of a single field
 export const getFieldStatus = (field: InputField): SectionStatus => {
   const fieldEmpty =
-    !field.value || (Array.isArray(field.value) && field.value.length === 0);
+    !field.value || 
+    (typeof field.value === "string" && !field.value.trim()) || 
+    (Array.isArray(field.value) && field.value.length === 0);
   if (field.noIndicator && !field.required && fieldEmpty) {
     return "neutral";
   } else if (!field.required && fieldEmpty) {
