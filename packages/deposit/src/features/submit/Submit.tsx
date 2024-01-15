@@ -27,7 +27,7 @@ import {
   resetMetadataSubmitStatus,
   getLatestSave,
 } from "./submitSlice";
-import { formatFormData, formatFileData } from "./submitHelpers";
+import { formatFormData, formatFileData, beforeUnloadHandler } from "./submitHelpers";
 import { useTranslation } from "react-i18next";
 import {
   getData,
@@ -89,11 +89,11 @@ const Submit = ({
     fileStatus === "error" && dispatch(setOpenTab(1));
   }, [fileStatus])
 
-  const [submitData, { isError: isErrorMeta, reset: resetMeta }] =
+  const [submitData, { isError: isErrorMeta, reset: resetMeta, isSuccess: isSuccessMeta }] =
     useSubmitDataMutation();
   const [
     submitFiles,
-    { isLoading: isLoadingFiles, reset: resetSubmittedFiles },
+    { isError: isErrorFiles, isLoading: isLoadingFiles, reset: resetSubmittedFiles, isSuccess: isSuccessFiles },
   ] = useSubmitFilesMutation();
 
   // Access token might just be expiring, or user settings just changed
@@ -140,6 +140,8 @@ const Submit = ({
     );
     dispatch(setFormDisabled(true));
     dispatch(setMetadataSubmitStatus("submitting"));
+    // add event listener to make sure user doesn't navigate outside of app
+    window.addEventListener("beforeunload", beforeUnloadHandler);
 
     // do the actual submit
     getHeaderData().then((headerData) =>
@@ -186,6 +188,17 @@ const Submit = ({
     // and enable form
     dispatch(setFormDisabled(false));
   };
+
+  // remove event listener when successfully submitted
+  useEffect(() => {
+    if (
+      (isSuccessMeta && selectedFiles.length === 0) || 
+      isSuccessFiles || 
+      fileStatus === "success"
+    ) {
+      window.removeEventListener("beforeunload", beforeUnloadHandler);
+    }
+  }, [isSuccessMeta, isSuccessFiles, isErrorMeta, isErrorFiles, fileStatus])
 
   const iconSx = {
     color: "white",

@@ -44,9 +44,6 @@ import { useAuth } from "react-oidc-context";
 const FilesTable = () => {
   const { t } = useTranslation("files");
   const selectedFiles = useAppSelector<SelectedFile[]>(getFiles);
-
-  console.log(selectedFiles)
-
   return selectedFiles.length !== 0 ? (
     <TableContainer component={Paper} sx={{ overflow: "hidden" }}>
       <Table size="small">
