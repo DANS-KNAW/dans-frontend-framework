@@ -487,10 +487,6 @@ const AutocompleteAPIField = ({
   isLoading,
   isFetching,
 }: AutocompleteAPIFieldProps) => {
-  console.log(data);
-  console.log(inputValue);
-  console.log(debouncedInputValue);
-  console.log(isFetching);
   const dispatch = useAppDispatch();
   const status = getFieldStatus(field);
   const { t, i18n } = useTranslation("metadata");

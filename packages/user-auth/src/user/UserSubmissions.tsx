@@ -63,7 +63,7 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
     data &&
     data.length > 0 &&
     data
-      .filter((d) => d["release-version"] === "PUBLISH")
+      .filter((d) => d["release-version"] === "PUBLISHED")
       .every(
         // if all are finished, or one has an error, stop checking
         (d) =>
@@ -99,7 +99,7 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
             depositSlug={depositSlug}
           />
           <SubmissionList
-            data={(data && data.filter((d) => d["release-version"] === "PUBLISH")) || []}
+            data={(data && data.filter((d) => d["release-version"] === "PUBLISHED")) || []}
             type="published"
             isLoading={isLoading}
             header={t("userSubmissionsCompleted")}
