@@ -76,12 +76,12 @@ export const metadataSlice = createSlice({
 
         // For setting required state of 'conditional' fields, we need to find the parent array
         if (field.makesRequired) {
-          const conditionalIds = field.conditionalFor || findConditionalChanges(action.payload.id, section.fields);
-          if (!field.conditionalFor) { 
-            field.conditionalFor = conditionalIds;
+          const requiredIds = field.makesRequiredIds || findConditionalChanges(action.payload.id, section.fields);
+          if (!field.makesRequiredIds) { 
+            field.makesRequiredIds = requiredIds;
           }
           // change the conditional fields required state
-          conditionalIds && conditionalIds.map( id => {
+          requiredIds && requiredIds.map( id => {
             const changeField = findById(id, section.fields);
             if (changeField) {
               changeField.required = action.payload.value ? true : undefined
@@ -153,8 +153,8 @@ export const metadataSlice = createSlice({
                       ],
                     }
                   : {
-                      // Omit the conditionalFor property
-                      ...((({ conditionalFor, ...rest }) => rest)(f)),
+                      // Omit the makesRequiredIds property
+                      ...((({ makesRequiredIds, ...rest }) => rest)(f)),
                       // reset what needs resetting
                       id: uuidv4(),
                       value: "",
