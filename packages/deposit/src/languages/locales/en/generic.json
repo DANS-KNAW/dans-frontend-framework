@@ -1,7 +1,8 @@
 {
-  "error": "Required. Please enter some more data.",
-  "warning": "Not required, but recommended you enter some data.",
+  "error": "Required: please supply some data",
+  "warning": "Recommended you supply some data",
   "success": "Good to go!",
+  "neutral": "Not required",
   "missingInfoHeader": "Missing or invalid API keys",
   "missingInfoText": "You need to enter your personal API keys to be able to submit this form. <0>Check your settings</0>.",
   "hasRejectedError": "There was an error processing your submission",

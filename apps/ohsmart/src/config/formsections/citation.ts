@@ -137,6 +137,10 @@ const section: InitialSectionType = {
           },
           name: "grant_agency",
           noIndicator: true,
+          description: {
+            en: "Information about the agency providing a grant",
+            nl: "Informatie over de verstrekker van de beurs of subsidie",
+          },
         },
         {
           type: "text",
@@ -146,6 +150,10 @@ const section: InitialSectionType = {
           },
           name: "grant_number",
           noIndicator: true,
+          description: {
+            en: "Information about the grant number or identifier",
+            nl: "Informatie over het dossiernummer van de beurs of subsidie",
+          },
         },
       ],
     },
