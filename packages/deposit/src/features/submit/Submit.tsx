@@ -38,6 +38,7 @@ import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
+import { enqueueSnackbar } from "notistack";
 
 const Submit = ({
   hasTargetCredentials,
@@ -204,6 +205,14 @@ const Submit = ({
     color: "white",
   };
 
+  // after saving, show snackbar
+  useEffect(() => {
+    metadataSubmitStatus === "saved" && !formDisabled && latestSave &&
+    enqueueSnackbar(t("saveSuccess", { dateTime: latestSave }), {
+      variant: "success",
+    });
+  }, [metadataSubmitStatus, formDisabled, latestSave])
+
   return (
     <Stack direction="column" alignItems="flex-end">
       <AnimatePresence>
@@ -348,12 +357,6 @@ const Submit = ({
           </Button>
         </Stack>
       </Stack>
-
-      {metadataSubmitStatus === "saved" && !formDisabled && latestSave && (
-        <Typography variant="body2" mt={2}>
-          {t("saveSuccess", { dateTime: latestSave })}
-        </Typography>
-      )}
     </Stack>
   );
 };

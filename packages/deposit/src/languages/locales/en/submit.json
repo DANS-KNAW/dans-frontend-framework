@@ -4,7 +4,7 @@
   "metadataSuccess": "All set, ready to submit!",
   "submitting": "Sending your data to the server...",
   "submitSuccess": "Your data has successfully been submitted",
-  "saveSuccess": "Last saved on {{dateTime}}",
+  "saveSuccess": "Succesfully saved on our server on {{dateTime}}",
   "submitErrorMetadata": "Oh no! Error sending data to the server",
   "submitErrorFiles": "Oh no! Error uploading your files. Please retry the failed files.",
   "reset": "Reset form",

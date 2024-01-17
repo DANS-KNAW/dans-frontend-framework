@@ -4,7 +4,7 @@
   "metadataSuccess": "Helemaal klaar om te versturen!",
   "submitting": "Je data wordt upgeload, een moment geduld...",
   "submitSuccess": "Je data is succesvol ontvangen!",
-  "saveSuccess": "Laatst opgeslagen op {{dateTime}}",
+  "saveSuccess": "Succesvol op onze server opgeslagen op {{dateTime}}",
   "submitErrorMetadata": "Oh nee! Er is iets misgegaan bij het versturen van je metadata",
   "submitErrorFiles": "Oh nee! Er is iets misgegaan bij het uploaden van je bestanden. Probeer ze nog eens te uploaden.",
   "reset": "Reset formulier",
