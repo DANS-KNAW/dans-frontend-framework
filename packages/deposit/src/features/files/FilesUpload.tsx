@@ -6,6 +6,7 @@ import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import List from "@mui/material/List";
+import Link from "@mui/material/Link";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
@@ -15,7 +16,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Collapse from "@mui/material/Collapse";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import IconButton from "@mui/material/IconButton";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { getFiles, addFiles } from "./filesSlice";
 import type {
@@ -28,10 +29,12 @@ import { v4 as uuidv4 } from "uuid";
 import { useFetchSimpleListQuery } from "./api/dansFormats";
 import { enqueueSnackbar } from "notistack";
 import { getFormDisabled } from "../../deposit/depositSlice";
+import { getSessionId } from "../metadata/metadataSlice";
 
 // Temporary soft file limits in bytes
-const lowerLimit = 52428800;
-const upperLimit = 209715200;
+const bytes =  1048576;
+const lowerLimit = 300 * bytes;
+const upperLimit = 1000 * bytes;
 
 const FilesUpload = () => {
   const dispatch = useAppDispatch();
@@ -194,7 +197,7 @@ const FilesUpload = () => {
             files={filesTooBig}
             color="warning"
             title={t("limitHeader", { amount: lowerLimit / 1048576 })}
-            description={t("lowerLimitDescription")}
+            description="lowerLimitDescription"
           />
         )}
         {filesWayTooBig.length > 0 && (
@@ -202,7 +205,7 @@ const FilesUpload = () => {
             files={filesWayTooBig}
             color="warning"
             title={t("limitHeader", { amount: upperLimit / 1048576 })}
-            description={t("upperLimitDescription")}
+            description="upperLimitDescription"
           />
         )}
       </CardContent>
@@ -223,6 +226,7 @@ const FileAlert = ({
   description?: string;
 }) => {
   const [open, setOpen] = useState(true);
+  const sessionId = useAppSelector(getSessionId);
 
   return (
     <Collapse in={open}>
@@ -243,7 +247,12 @@ const FileAlert = ({
         <AlertTitle>{title}</AlertTitle>
         {description && (
           <Typography variant="body2" gutterBottom>
-            {description}
+            <Trans
+              i18nKey={`files:${description}`}
+              components={[
+                <Link href={`mailto:info@dans.knaw.nl?subject=Large file upload for dataset: ${sessionId}`} />,
+              ]}
+            />
           </Typography>
         )}
         <List dense={true}>

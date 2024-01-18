@@ -64,6 +64,7 @@ const section: InitialSectionType = {
           },
           noIndicator: true,
           options: relationships.map((r: string) => ({ label: r, value: r })),
+          makesRequired: ["relation_item", "relation_reference"],
         },
         {
           type: "text",

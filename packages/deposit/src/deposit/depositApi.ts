@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { InitialFormType } from "../types/Metadata";
+import type { SavedFormResponse } from "../types/Metadata";
 
 // Function for retrieving saved forms
 export const depositApi = createApi({
   reducerPath: "savedDeposit",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${import.meta.env.VITE_PACKAGING_TARGET}/metadata/`,
+    baseUrl: `${import.meta.env.VITE_PACKAGING_TARGET}/dataset/`,
   }),
   refetchOnMountOrArgChange: true,
   endpoints: (build) => ({
@@ -14,17 +14,20 @@ export const depositApi = createApi({
         url: id,
         headers: { Accept: "application/json" },
       }),
-      transformResponse: (response: InitialFormType) => {
-        const modifiedResponse =
-          response["file-metadata"]!.length > 0
-            ? {
-                ...response,
-                ["file-metadata"]: response["file-metadata"]!.map((f) => ({
+      transformResponse: (response: SavedFormResponse) => {
+        // mark previously submitted files
+        const modifiedResponse = {
+          ...response,
+          md: {
+            ...response.md,
+            "file-metadata": response.md["file-metadata"] ?
+              response.md["file-metadata"].map((f) => ({
                   ...f,
                   submittedFile: true,
-                })),
-              }
-            : response;
+                }))
+            : []
+          }
+        }
         return modifiedResponse;
       },
     }),

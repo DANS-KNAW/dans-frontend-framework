@@ -3,6 +3,7 @@ import Container from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2";
 import Metadata from "../features/metadata/Metadata";
 import Files from "../features/files/Files";
@@ -43,6 +44,13 @@ import { useSearchParams } from "react-router-dom";
 import { useFetchSavedMetadataQuery } from "./depositApi";
 import { useValidateAllKeysQuery } from "@dans-framework/user-auth";
 
+/* 
+* Note TODO: 
+* Resubmitting of errored forms does not work yet
+* It is partially implemented here and in UserSubmissions.tsx,
+* but needs work on the API side
+*/
+
 const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const dispatch = useAppDispatch();
   const auth = useAuth();
@@ -54,7 +62,8 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
 
   // Can load a saved form based on metadata id, passed along from e.g. UserSubmissions
   const savedFormId = searchParams.get("id");
-  const { data: savedFormData, isSuccess } = useFetchSavedMetadataQuery(
+  const hasRejectedError = searchParams.get("error");
+  const { data: serverFormData, isSuccess } = useFetchSavedMetadataQuery(
     savedFormId,
     { skip: !savedFormId },
   );
@@ -68,7 +77,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // Or initialize saved data (overwrites the previously set sessionId)
   // Must initialize on page load when a savedFormId is set, to load new saved data
   useEffect(() => {
-    if (!sessionId || (sessionId && savedFormData?.id && savedFormId)) {
+    if (!sessionId || (sessionId && serverFormData && savedFormId)) {
       // we need to reset the form status first, in case data had been previously entered
       dispatch(resetMetadataSubmitStatus());
       dispatch(resetFilesSubmitStatus());
@@ -78,15 +87,15 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       // then we load new/empty data
       dispatch(
         initForm(
-          savedFormId && savedFormData?.id ? savedFormData : config.form,
+          savedFormId && serverFormData ? serverFormData.md : config.form,
         ),
       );
       // and load the files if there are any
-      savedFormData &&
-        savedFormData["file-metadata"] &&
-        dispatch(addFiles(savedFormData["file-metadata"]));
+      savedFormId && serverFormData &&
+        serverFormData.md["file-metadata"] &&
+        dispatch(addFiles(serverFormData.md["file-metadata"]));
     }
-  }, [dispatch, sessionId, config.form, savedFormData, savedFormId, isSuccess]);
+  }, [dispatch, sessionId, config.form, serverFormData, savedFormId, isSuccess]);
 
   // Set init form props in redux, all props without the form metadata config itself
   useEffect(() => {
@@ -131,6 +140,15 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
                     <Link component={RouterLink} to="/user-settings" />,
                   ]}
                 />
+              </Alert>
+            )}
+            {serverFormData && hasRejectedError && (
+              <Alert severity="error">
+                <AlertTitle>{t("hasRejectedError")}</AlertTitle>
+                {serverFormData.targets.map( t =>
+                  <Typography>{t["display-name"]}: {t["deposit-status"]} - {t["output-response"]}</Typography>
+                )}
+                <Typography sx={{mt: 1}}>{t("tryAgain")}</Typography>
               </Alert>
             )}
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
