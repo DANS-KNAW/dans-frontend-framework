@@ -13,6 +13,7 @@ import moment from "moment";
 import * as tus from "tus-js-client";
 import type { SelectedFile } from "../../types/Files";
 import { enqueueSnackbar } from "notistack";
+import type { HeaderData, SubmitHeaders } from "../../types/Submit";
 
 export const uploadFiles = ({files, headerData, sessionId}: {files: SelectedFile[]; headerData: HeaderData, sessionId: string;}) => {
   // convert files to blobs
@@ -21,6 +22,7 @@ export const uploadFiles = ({files, headerData, sessionId}: {files: SelectedFile
 
     fileBlobs.map( (file: any) => {
       console.log(file)
+      console.log(`dataset id = ${sessionId}`)
       var upload = new tus.Upload(file.blob, {
         // Endpoint is the upload creation URL from your tus server
         // endpoint: `${import.meta.env.VITE_PACKAGING_TARGET}/inbox/files`,
@@ -170,10 +172,7 @@ export const submitApi = createApi({
         if (arg.files.length > 0) {
           uploadFiles({
             files: arg.files,
-            headers: { 
-              Authorization: `Bearer ${headerData.submitKey}`,
-              "auth-env-name": headerData.target.envName,
-            }
+            headerData: arg.headerData,
             sessionId: arg.data.id,
           });
         }

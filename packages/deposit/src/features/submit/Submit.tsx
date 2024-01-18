@@ -181,12 +181,11 @@ const Submit = ({
   useEffect(() => {
     if (
       (isSuccessMeta && selectedFiles.length === 0) || 
-      isSuccessFiles || 
       fileStatus === "success"
     ) {
       window.removeEventListener("beforeunload", beforeUnloadHandler);
     }
-  }, [isSuccessMeta, isSuccessFiles, fileStatus])
+  }, [isSuccessMeta, fileStatus])
 
   const iconSx = {
     color: "white",
