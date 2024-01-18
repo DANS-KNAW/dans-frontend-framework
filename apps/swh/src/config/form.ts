@@ -26,7 +26,6 @@ const form: FormConfig = {
   ],
   submitKey: import.meta.env.VITE_PACKAGING_KEY, // still needed??
   skipValidation: import.meta.env.DEV,
-  geonamesApiKey: import.meta.env.VITE_GEONAMES_API_KEY,
 };
 
 export default form;

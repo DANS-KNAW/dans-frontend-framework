@@ -27,7 +27,7 @@ import {
   resetMetadataSubmitStatus,
   getLatestSave,
 } from "./submitSlice";
-import { formatFormData } from "./submitHelpers";
+import { formatFormData, beforeUnloadHandler } from "./submitHelpers";
 import { useTranslation } from "react-i18next";
 import {
   getData,
@@ -38,6 +38,7 @@ import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
+import { enqueueSnackbar } from "notistack";
 
 const Submit = ({
   hasTargetCredentials,
@@ -77,20 +78,21 @@ const Submit = ({
   const fileStatusArray = [...new Set(filesSubmitStatus.map((f) => f.status))];
   const fileStatus =
     fileStatusArray.indexOf("error") !== -1
-      ? "error"
-      : fileStatusArray.indexOf("submitting") !== -1
-        ? "submitting"
-        : fileStatusArray.indexOf("success") !== -1
-          ? "success"
-          : "";
+    ? "error"
+    : fileStatusArray.indexOf("submitting") !== -1
+    ? "submitting"
+    : fileStatusArray.indexOf("success") !== -1
+    ? "success"
+    : "";
 
-  const [submitData, { isError: isErrorMeta, reset: resetMeta }] =
+  // If there's an error with uploading files, focus on the files tab
+  useEffect(() => {
+    fileStatus === "error" && dispatch(setOpenTab(1));
+  }, [fileStatus])
+
+  const [submitData, { isError: isErrorMeta, reset: resetMeta, isSuccess: isSuccessMeta }] =
     useSubmitDataMutation();
-  // const [
-  //   submitFiles,
-  //   { isLoading: isLoadingFiles, reset: resetSubmittedFiles },
-  // ] = useSubmitFilesMutation();
-
+  
   // Access token might just be expiring, or user settings just changed
   // we get the required submit header data as a callback to signinSilent, which refreshes the current user
   const getHeaderData = () =>
@@ -135,6 +137,8 @@ const Submit = ({
     );
     dispatch(setFormDisabled(true));
     dispatch(setMetadataSubmitStatus("submitting"));
+    // add event listener to make sure user doesn't navigate outside of app
+    window.addEventListener("beforeunload", beforeUnloadHandler);
 
     const filesToUpload = selectedFiles.filter((f) => !f.submittedFile);
 
@@ -151,6 +155,7 @@ const Submit = ({
   };
 
   const resetForm = () => {
+    console.log('reset form')
     // clear searchParams/form id
     if (searchParams.has("id")) {
       searchParams.delete("id");
@@ -159,22 +164,41 @@ const Submit = ({
     // reset RTK mutations
     // resetSubmittedFiles();
     resetMeta();
-    // reset files in file slice
-    dispatch(resetFiles());
     // reset metadata in metadata slice
     dispatch(resetMetadata());
     // reset status in submit slice
     dispatch(resetMetadataSubmitStatus());
     dispatch(resetFilesSubmitStatus());
+    // reset files in file slice
+    dispatch(resetFiles());
     // finally reset all section statusses
     dispatch(setSectionStatus(null));
     // and enable form
     dispatch(setFormDisabled(false));
   };
 
+  // remove event listener when successfully submitted
+  useEffect(() => {
+    if (
+      (isSuccessMeta && selectedFiles.length === 0) || 
+      isSuccessFiles || 
+      fileStatus === "success"
+    ) {
+      window.removeEventListener("beforeunload", beforeUnloadHandler);
+    }
+  }, [isSuccessMeta, isSuccessFiles, fileStatus])
+
   const iconSx = {
     color: "white",
   };
+
+  // after saving, show snackbar
+  useEffect(() => {
+    metadataSubmitStatus === "saved" && !formDisabled && latestSave &&
+    enqueueSnackbar(t("saveSuccess", { dateTime: latestSave }), {
+      variant: "success",
+    });
+  }, [metadataSubmitStatus, formDisabled, latestSave])
 
   return (
     <Stack direction="column" alignItems="flex-end">
@@ -209,7 +233,7 @@ const Submit = ({
                   //|| isLoadingFiles
                 ? t("submitting")
                 : metadataSubmitStatus === "submitted" &&
-                    (fileStatus === "success" || selectedFiles.length === 0)
+                    (fileStatus === "success" || selectedFiles.length === 0 || selectedFiles.filter( f => f.submittedFile).length > 0)
                   ? t("submitSuccess")
                   : metadataSubmitStatus === "error"
                     ? t("submitErrorMetadata")
@@ -233,7 +257,7 @@ const Submit = ({
                 borderRadius: "50%",
                 backgroundColor: `${
                   metadataSubmitStatus === "submitted" &&
-                  (fileStatus === "success" || selectedFiles.length === 0)
+                  (fileStatus === "success" || selectedFiles.length === 0 || selectedFiles.filter( f => f.submittedFile).length > 0)
                     ? "success"
                     : metadataStatus === "error" ||
                         fileStatus === "error" ||
@@ -254,7 +278,7 @@ const Submit = ({
             >
               {(metadataSubmitStatus === "submitted" ||
                 metadataSubmitStatus === "saved") &&
-              (fileStatus === "success" || selectedFiles.length === 0) ? (
+              (fileStatus === "success" || selectedFiles.length === 0 || selectedFiles.filter( f => f.submittedFile).length > 0) ? (
                 <CheckIcon sx={iconSx} />
               ) : (metadataStatus === "error" ||
                   fileStatus === "error" ||
@@ -320,12 +344,6 @@ const Submit = ({
           </Button>
         </Stack>
       </Stack>
-
-      {metadataSubmitStatus === "saved" && !formDisabled && latestSave && (
-        <Typography variant="body2" mt={2}>
-          {t("saveSuccess", { dateTime: latestSave })}
-        </Typography>
-      )}
     </Stack>
   );
 };

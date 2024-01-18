@@ -1,6 +1,6 @@
 import type { LanguageStrings, RecursiveOmit } from "@dans-framework/utils";
 import type { Field } from "./MetadataFields";
-import type { Target } from "@dans-framework/user-auth";
+import type { Target, SubmissionResponse } from "@dans-framework/user-auth";
 import type { SelectedFile } from "./Files";
 
 // Accordion sections
@@ -34,6 +34,10 @@ export interface InitialFormType {
   id?: string;
   "file-metadata"?: SelectedFile[];
   files?: SelectedFile[];
+}
+
+export interface SavedFormResponse extends SubmissionResponse {
+  md: InitialFormType;
 }
 
 export interface FormConfig {

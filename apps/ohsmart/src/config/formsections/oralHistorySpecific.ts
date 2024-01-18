@@ -48,7 +48,6 @@ const section: InitialSectionType = {
           name: "interviewee_preferred_name",
           noIndicator: true,
           private: true,
-          repeatable: true,
         },
         {
           type: "date",
@@ -69,7 +68,6 @@ const section: InitialSectionType = {
           },
           name: "interviewee_function",
           private: true,
-          repeatable: true,
         },
         {
           type: "text",
@@ -79,7 +77,6 @@ const section: InitialSectionType = {
           },
           name: "interviewee_affiliation",
           private: true,
-          repeatable: true,
         },
         {
           type: "check",
@@ -144,7 +141,6 @@ const section: InitialSectionType = {
           name: "interviewer_preferred_name",
           noIndicator: true,
           private: true,
-          repeatable: true,
         },
         {
           type: "date",
@@ -154,6 +150,7 @@ const section: InitialSectionType = {
             nl: "Geboortedatum",
           },
           name: "interviewer_dob",
+          noIndicator: true,
           private: true,
         },
         {
@@ -164,7 +161,6 @@ const section: InitialSectionType = {
           },
           name: "interviewer_function",
           private: true,
-          repeatable: true,
         },
         {
           type: "text",
@@ -174,7 +170,6 @@ const section: InitialSectionType = {
           },
           name: "interviewer_affiliation",
           private: true,
-          repeatable: true,
         },
         {
           type: "check",
@@ -239,7 +234,6 @@ const section: InitialSectionType = {
           name: "interpreter_function",
           private: true,
           noIndicator: true,
-          repeatable: true,
         },
         {
           type: "text",
@@ -249,7 +243,6 @@ const section: InitialSectionType = {
           },
           name: "interpreter_affiliation",
           private: true,
-          repeatable: true,
           noIndicator: true,
         },
         {
@@ -314,7 +307,6 @@ const section: InitialSectionType = {
           },
           name: "others_function",
           private: true,
-          repeatable: true,
           noIndicator: true,
         },
         {
@@ -325,7 +317,6 @@ const section: InitialSectionType = {
           },
           name: "others_affiliation",
           private: true,
-          repeatable: true,
           noIndicator: true,
         },
         {
@@ -380,8 +371,8 @@ const section: InitialSectionType = {
       fields: [
         {
           type: "date",
-          format: "DD-MM-YYYY",
-          formatOptions: ["YYYY", "MM-YYYY", "DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
+          format: "DD-MM-YYYY HH:mm",
+          formatOptions: ["DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
           label: {
             en: "Start time and date",
             nl: "Starttijd en -datum",
@@ -391,20 +382,21 @@ const section: InitialSectionType = {
         },
         {
           type: "date",
-          format: "DD-MM-YYYY",
-          formatOptions: ["YYYY", "MM-YYYY", "DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
+          format: "DD-MM-YYYY HH:mm",
+          formatOptions: ["DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
           label: {
             en: "End time and date",
             nl: "Eindtijd en -datum",
           },
           name: "interview_date_time_end",
+          noIndicator: true,
         },
       ],
     },
     {
       type: "group",
       label: {
-        en: "Recorded by",
+        en: "Recording by",
         nl: "Opgenomen door",
       },
       name: "recorded_by",
@@ -456,6 +448,7 @@ const section: InitialSectionType = {
         nl: "MIME type en andere type-informatie",
       },
       options: "dansFormats",
+      noIndicator: true,
     },
     {
       type: "text",
@@ -464,12 +457,16 @@ const section: InitialSectionType = {
         nl: "Opnameapparatuur",
       },
       name: "recording_equipment",
-      repeatable: true,
+      noIndicator: true,
+      description: {
+        en: "Equipment, method, or platform used for recording",
+        nl: "Apparatuur/methode gebruikt voor de opname",
+      },
     },
     {
       type: "group",
       label: {
-        en: "Transcriper",
+        en: "Transcriber",
         nl: "Transcribent",
       },
       name: "transcript_human",
@@ -487,6 +484,7 @@ const section: InitialSectionType = {
           },
           name: "transcript_human_first_name",
           private: true,
+          noIndicator: true,
         },
         {
           type: "text",
@@ -496,6 +494,7 @@ const section: InitialSectionType = {
           },
           name: "transcript_human_last_name",
           private: true,
+          noIndicator: true,
         },
         {
           type: "text",
@@ -505,7 +504,7 @@ const section: InitialSectionType = {
           },
           name: "transcript_human_function",
           private: true,
-          repeatable: true,
+          noIndicator: true,
         },
         {
           type: "text",
@@ -515,7 +514,7 @@ const section: InitialSectionType = {
           },
           name: "transcript_human_affiliation",
           private: true,
-          repeatable: true,
+          noIndicator: true,
         },
         {
           type: "check",
@@ -525,6 +524,7 @@ const section: InitialSectionType = {
             nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik, bijvoorbeeld via een toestemmingsformulier)",
           },
           private: true,
+          noIndicator: true,
           options: [
             {
               value: "transcript_human_consent_signed",
@@ -544,7 +544,7 @@ const section: InitialSectionType = {
         nl: "Machinetranscriptie",
       },
       name: "transcript_machine",
-      repeatable: false,
+      noIndicator: true,
     },
   ],
 };

@@ -9,7 +9,6 @@ import { formatFileData } from "./submitHelpers";
 import { setFormDisabled } from "../../deposit/depositSlice";
 import { store } from "../../redux/store";
 import type { Target } from "@dans-framework/user-auth";
-import type { HeaderData, SubmitHeaders } from "../../types/Submit";
 import moment from "moment";
 import * as tus from "tus-js-client";
 import type { SelectedFile } from "../../types/Files";
@@ -171,7 +170,10 @@ export const submitApi = createApi({
         if (arg.files.length > 0) {
           uploadFiles({
             files: arg.files,
-            headerData: arg.headerData,
+            headers: { 
+              Authorization: `Bearer ${headerData.submitKey}`,
+              "auth-env-name": headerData.target.envName,
+            }
             sessionId: arg.data.id,
           });
         }

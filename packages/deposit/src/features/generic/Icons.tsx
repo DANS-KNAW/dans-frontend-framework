@@ -47,20 +47,18 @@ export const StatusIcon = ({
               {subtitle}
             </Typography>
           )}
-          {status !== "neutral" && (
-            <Typography
-              sx={{
-                fontSize: 12,
-                pl: 2,
-                pr: 2,
-                pb: 1,
-                pt: 1,
-                backgroundColor: `${status}.main`,
-              }}
-            >
-              {t(status as string)}
-            </Typography>
-          )}
+          <Typography
+            sx={{
+              fontSize: 12,
+              pl: 2,
+              pr: 2,
+              pb: 1,
+              pt: 1,
+              backgroundColor: `${status}.main`,
+            }}
+          >
+            {t(status as string)}
+          </Typography>
         </>
       }
     >
