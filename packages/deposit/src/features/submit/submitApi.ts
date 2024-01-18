@@ -15,22 +15,28 @@ import type { SelectedFile } from "../../types/Files";
 import { enqueueSnackbar } from "notistack";
 import type { HeaderData, SubmitHeaders } from "../../types/Submit";
 
-export const uploadFiles = ({files, headerData, sessionId}: {files: SelectedFile[]; headerData: HeaderData, sessionId: string;}) => {
+export const uploadFiles = ({files, headerData, sessionId}: {
+  files: SelectedFile[]; 
+  headerData: HeaderData; 
+  sessionId: string;
+}) => {
   // convert files to blobs
   console.log(headerData)
   formatFileData(files).then((fileBlobs) => {
+    // here we have an array of fileblobs that we want to upload
+    // we need to keep track of all uploads, make sure not too many run simultaniously, and set status when all done
 
     fileBlobs.map( (file: any) => {
       console.log(file)
       console.log(`dataset id = ${sessionId}`)
       var upload = new tus.Upload(file.blob, {
-        // Endpoint is the upload creation URL from your tus server
+        // Endpoint is the upload creation URL from the tus server
         // endpoint: `${import.meta.env.VITE_PACKAGING_TARGET}/inbox/files`,
         endpoint: `https://master.tus.io/files`,
         // Retry delays will enable tus-js-client to automatically retry on errors
         retryDelays: [3000, 8000, 15000, 25000],
         // specific headers for packaging service, disabled for testing with demo nodejs server
-        headers: { "Authorization": "Bearer D@NS-ei-2023" },
+        // headers: headerData,
         // Attach additional meta data about the file for the server
         metadata: {
           fileName: file.fileName,
@@ -39,6 +45,7 @@ export const uploadFiles = ({files, headerData, sessionId}: {files: SelectedFile
         },
         // action before connecting to server
         onBeforeRequest: () => {
+          console.log('starting request to upload')
           store.dispatch(
             setFilesSubmitStatus({
               id: file.fileId,
@@ -81,7 +88,7 @@ export const uploadFiles = ({files, headerData, sessionId}: {files: SelectedFile
         },
         // Callback for reporting upload progress
         onProgress: (bytesUploaded, bytesTotal) => {
-          var percentage = parseFloat(((bytesUploaded / bytesTotal) * 100).toFixed(2)) || 0;
+          var percentage = parseFloat(((bytesUploaded / bytesTotal) * 100).toFixed(1)) || 0;
           store.dispatch(
             setFilesSubmitStatus({
               id: file.fileId,
@@ -111,6 +118,8 @@ export const uploadFiles = ({files, headerData, sessionId}: {files: SelectedFile
       // Check if there are any previous uploads to continue.
       upload.findPreviousUploads().then((previousUploads) => {
         // Found previous uploads so we select the first one.
+        console.log('prev uls...');
+        console.log(previousUploads);
         if (previousUploads.length) {
           upload.resumeFromPreviousUpload(previousUploads[0])
         }
@@ -170,11 +179,12 @@ export const submitApi = createApi({
         arg.actionType === 'save' && store.dispatch(setLatestSave(moment().format("D-M-YYYY @ HH:mm")));
         // then we check for files and start uploading them
         if (arg.files.length > 0) {
-          uploadFiles({
+          const upload = uploadFiles({
             files: arg.files,
             headerData: arg.headerData,
             sessionId: arg.data.id,
           });
+          console.log(upload)
         }
         else {
           // if there are no files, we enable the form right away again
@@ -182,7 +192,10 @@ export const submitApi = createApi({
         }
       },
       transformErrorResponse: (response) => {
+        // set error status for user feedback below form
         store.dispatch(setMetadataSubmitStatus("error"));
+        // reenable form for further editing or retrying
+        store.dispatch(setFormDisabled(false));
         return response.status
       },
     }),

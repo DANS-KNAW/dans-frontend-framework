@@ -319,9 +319,6 @@ const UploadProgress = ({ file }: FileItemProps) => {
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const { t } = useTranslation("files");
   const formConfig = useAppSelector(getData);
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
-
-  console.log(metadataSubmitStatus)
 
   const getHeaderData = () =>
     auth.signinSilent().then(() => ({
@@ -334,7 +331,6 @@ const UploadProgress = ({ file }: FileItemProps) => {
     getHeaderData().then((headerData) => uploadFiles({
       files: [file],
       headerData: headerData,
-      // actionType: metadataSubmitStatus === "saved" ?  "save" : "submit",
       sessionId: sessionId,
     }));
   };
