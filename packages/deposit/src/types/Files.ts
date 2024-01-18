@@ -41,6 +41,12 @@ export interface SelectedFile {
   file?: never;
 }
 
+export interface FileBlob {
+  blob: Blob;
+  fileName: string;
+  fileId: string;
+}
+
 interface FileError {
   code: string;
   message: string;
