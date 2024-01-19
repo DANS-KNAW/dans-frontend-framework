@@ -246,7 +246,7 @@ const Submit = ({
                   isLoadingFiles
                 ? t("submitting")
                 : metadataSubmitStatus === "submitted" &&
-                    (fileStatus === "success" || selectedFiles.length === 0 || selectedFiles.filter( f => f.submittedFile).length > 0)
+                    (fileStatus === "success" || selectedFiles.length === 0 || selectedFiles.every( f => f.submittedFile ))
                   ? t("submitSuccess")
                   : metadataSubmitStatus === "error"
                     ? t("submitErrorMetadata")
@@ -270,7 +270,7 @@ const Submit = ({
                 borderRadius: "50%",
                 backgroundColor: `${
                   metadataSubmitStatus === "submitted" &&
-                  (fileStatus === "success" || selectedFiles.length === 0 || selectedFiles.filter( f => f.submittedFile).length > 0)
+                  (fileStatus === "success" || selectedFiles.length === 0 || selectedFiles.every( f => f.submittedFile ))
                     ? "success"
                     : metadataStatus === "error" ||
                         fileStatus === "error" ||
@@ -291,7 +291,7 @@ const Submit = ({
             >
               {(metadataSubmitStatus === "submitted" ||
                 metadataSubmitStatus === "saved") &&
-              (fileStatus === "success" || selectedFiles.length === 0 || selectedFiles.filter( f => f.submittedFile).length > 0) ? (
+              (fileStatus === "success" || selectedFiles.length === 0 || selectedFiles.every( f => f.submittedFile )) ? (
                 <CheckIcon sx={iconSx} />
               ) : (metadataStatus === "error" ||
                   fileStatus === "error" ||
@@ -332,7 +332,10 @@ const Submit = ({
             {t("save")}
           </Button>
 
-          {metadataSubmitStatus === "submitted" && formDisabled && (
+          {
+            metadataSubmitStatus === "submitted" && 
+            ( fileStatus === "success" || selectedFiles.length === 0 || selectedFiles.every( f => f.submittedFile ) ) &&
+            formDisabled && (
             <Button
               variant="contained"
               onClick={resetForm}
