@@ -33,8 +33,8 @@ import { getSessionId } from "../metadata/metadataSlice";
 
 // Temporary soft file limits in bytes
 const bytes =  1048576;
-const lowerLimit = 300 * bytes;
-const upperLimit = 1000 * bytes;
+const lowerLimit = 1000 * bytes;
+const upperLimit = 2000 * bytes;
 
 const FilesUpload = () => {
   const dispatch = useAppDispatch();
