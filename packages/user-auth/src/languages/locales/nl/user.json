@@ -36,6 +36,7 @@
 	"submittedTo": "Gesubmit naar",
 	"submissionStatus": "Status",
 	"processing": "Bezig met verwerken",
+	"queue": "Nog niet begonnen met verwerken",
 	"error": "Fout bij het verwerken van je data, click om details te zien",
 	"success": "Succesvol gesubmit",
 	"moreInfo": "Fout",

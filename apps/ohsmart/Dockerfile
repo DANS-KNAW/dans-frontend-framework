@@ -6,6 +6,7 @@ RUN apk update && apk add git && npm i -g turbo && npm i -g pnpm
 WORKDIR /app
 
 COPY . .
+RUN git submodule update --init --recursive
 ## RUN turbo prune --scope=@dans-framework/ohsmart --docker
 RUN pnpm i && pnpm build --filter=@dans-framework/ohsmart
 

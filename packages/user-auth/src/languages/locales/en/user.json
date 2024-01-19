@@ -38,6 +38,7 @@
 	"processing": "Processing your submission",
 	"error": "Error with your submission, click to see details",
 	"success": "Succesfully submitted",
+	"queue": "Processing not yet started",
 	"moreInfo": "Error",
 	"errorExplanation": "This is the error we got back from the server",
 	"retryItem": "Correct the error and try again",

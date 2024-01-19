@@ -295,6 +295,8 @@ const SingleTargetStatus = ({
       <Stack direction="row" alignItems="center" pt={0.1} pb={0.1}>
         <Tooltip
           title={
+            !target["deposit-status"] ?
+            t("queue") :
             depositStatus.processing.indexOf(target["deposit-status"]) !== -1
               ? t("processing")
               : depositStatus.error.indexOf(target["deposit-status"]) !== -1
