@@ -84,7 +84,7 @@ export const userSubmissionsApi = createApi({
 
 const getUrl = (url: string, key: string, type: AuthKeys) =>
   type === "dataverse_api_key"
-    ? `${url}?key=${key}`
+    ? `${url}`
     : type === "zenodo_api_key"
       ? `${url}?access_token=${key}`
       : url;
@@ -98,6 +98,11 @@ export const validateKeyApi = createApi({
       query: ({ url, key, type }) => {
         return {
           url: getUrl(url, key, type),
+          ...(type === "dataverse_api_key") && {
+            headers: {
+              "X-Dataverse-key": key
+            }
+          }
         };
       },
       transformResponse: (response: { status: string | number }) =>
@@ -108,8 +113,16 @@ export const validateKeyApi = createApi({
     validateAllKeys: build.query({
       // this will return all targets that have an invalid API key set
       async queryFn(arg, _queryApi, _extraOptions, fetchWithBQ) {
+        console.log(_queryApi)
         const promises = arg.map((t: any) =>
-          fetchWithBQ(getUrl(t.url, t.key, t.type)),
+          fetchWithBQ({
+            url: getUrl(t.url, t.key, t.type),
+            ...(t.type === "dataverse_api_key") && {
+              headers: {
+                "X-Dataverse-key": t.key
+              }
+            }
+          })
         );
         const result = await Promise.all(promises);
         const error = result.some((r) => r.error);

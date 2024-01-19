@@ -40,8 +40,6 @@ export const UserSettings = ({
   const siteTitle = useSiteTitle();
   const auth = useAuth();
 
-  console.log(auth);
-
   useEffect(() => {
     setSiteTitle(siteTitle, t("userSettings"));
   }, [siteTitle, name]);
@@ -49,7 +47,6 @@ export const UserSettings = ({
   const { data: profileData } = useFetchUserProfileQuery(
     auth.settings.client_id,
   );
-  console.log(profileData);
 
   // Check if all API keys are valid, to enable/disable button, but make sure they're in the users profile first
   const validateTargets = target.map((t) => ({
@@ -64,6 +61,8 @@ export const UserSettings = ({
   const { error: apiKeyError } = useValidateAllKeysQuery(validateTargets, {
     skip: !target || !profileData || skipValidate,
   });
+
+  console.log(apiKeyError)
 
   return (
     <Container>
