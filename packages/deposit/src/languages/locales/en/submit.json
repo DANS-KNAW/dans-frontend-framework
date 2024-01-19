@@ -3,7 +3,7 @@
   "metadataWarning": "You can submit, but your metadata could be more complete",
   "metadataSuccess": "All set, ready to submit!",
   "submitting": "Sending your data to the server...",
-  "submitSuccess": "Your data has successfully been submitted",
+  "submitSuccess": "Your data has been submitted for processing",
   "saveSuccess": "Succesfully saved on our server on {{dateTime}}",
   "submitErrorMetadata": "Oh no! Error sending data to the server",
   "submitErrorFiles": "Oh no! Error uploading your files. Please retry the failed files.",

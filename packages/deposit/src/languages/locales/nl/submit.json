@@ -3,7 +3,7 @@
   "metadataWarning": "Je kunt submitten, maar je data zou nog wat completer kunnen zijn",
   "metadataSuccess": "Helemaal klaar om te versturen!",
   "submitting": "Je data wordt upgeload, een moment geduld...",
-  "submitSuccess": "Je data is succesvol ontvangen!",
+  "submitSuccess": "Je data is ontvangen en wordt verwerkt",
   "saveSuccess": "Succesvol op onze server opgeslagen op {{dateTime}}",
   "submitErrorMetadata": "Oh nee! Er is iets misgegaan bij het versturen van je metadata",
   "submitErrorFiles": "Oh nee! Er is iets misgegaan bij het uploaden van je bestanden. Probeer ze nog eens te uploaden.",
