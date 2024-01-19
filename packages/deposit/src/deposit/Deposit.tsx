@@ -119,6 +119,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     url: t.keyCheckUrl,
     type: t.authKey,
   }));
+  
   const { error: apiKeyError } = useValidateAllKeysQuery(validateTargets, {
     skip: !targetCredentials,
   });
