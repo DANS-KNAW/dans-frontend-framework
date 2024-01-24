@@ -161,19 +161,23 @@ const Submit = ({
             dispatch(
               setFilesSubmitStatus({
                 id: f.id as string,
-                progress: 0,
+                progress: undefined,
                 status: "submitting",
               }),
             )
           );
           // then format and start submitting
-          formatFileData(sessionId, filesToUpload).then((d) => {
-            submitFiles({
-              data: d,
-              headerData: headerData,
-              actionType: actionType,
+          formatFileData(sessionId, filesToUpload)
+            .then((d) => {
+              submitFiles({
+                data: d,
+                headerData: headerData,
+                actionType: actionType,
+              });
+            })
+            .catch((e) => {
+              console.log(e);
             });
-          });
         }
       }),
     );
