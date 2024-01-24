@@ -26,6 +26,7 @@ import {
   resetFilesSubmitStatus,
   resetMetadataSubmitStatus,
   getLatestSave,
+  setFilesSubmitStatus,
 } from "./submitSlice";
 import { formatFormData, formatFileData, beforeUnloadHandler } from "./submitHelpers";
 import { useTranslation } from "react-i18next";
@@ -90,7 +91,7 @@ const Submit = ({
     fileStatus === "error" && dispatch(setOpenTab(1));
   }, [fileStatus])
 
-  const [submitData, { isError: isErrorMeta, reset: resetMeta, isSuccess: isSuccessMeta }] =
+  const [submitData, { isLoading: isLoadingMeta, isError: isErrorMeta, reset: resetMeta, isSuccess: isSuccessMeta }] =
     useSubmitDataMutation();
   const [
     submitFiles,
@@ -155,6 +156,17 @@ const Submit = ({
         if (result.data?.data?.status === "OK") {
           // if metadata has been submitted ok, we start the file submit
           const filesToUpload = selectedFiles.filter((f) => !f.submittedFile);
+          // formatting the file data can take a while, so in the meantime, we activate a spinner
+          filesToUpload.forEach( f => 
+            dispatch(
+              setFilesSubmitStatus({
+                id: f.id as string,
+                progress: 0,
+                status: "submitting",
+              }),
+            )
+          );
+          // then format and start submitting
           formatFileData(sessionId, filesToUpload).then((d) => {
             submitFiles({
               data: d,
@@ -243,7 +255,8 @@ const Submit = ({
               : // submit process has started, let's check for responses
                 metadataSubmitStatus === "submitting" ||
                   fileStatus === "submitting" ||
-                  isLoadingFiles
+                  isLoadingFiles ||
+                  isLoadingMeta
                 ? t("submitting")
                 : metadataSubmitStatus === "submitted" &&
                     (fileStatus === "success" || selectedFiles.length === 0 || selectedFiles.every( f => f.submittedFile ))
@@ -284,7 +297,8 @@ const Submit = ({
                 opacity:
                   metadataSubmitStatus === "submitting" ||
                   fileStatus === "submitting" ||
-                  isLoadingFiles
+                  isLoadingFiles ||
+                  isLoadingMeta
                     ? 0.5
                     : 1,
               }}
@@ -306,7 +320,7 @@ const Submit = ({
                 <SendIcon sx={iconSx} />
               )}
             </Box>
-            {(fileStatus === "submitting" || isLoadingFiles) && (
+            {(fileStatus === "submitting" || isLoadingFiles || isLoadingMeta) && (
               <CircularProgress
                 size={54}
                 sx={{
