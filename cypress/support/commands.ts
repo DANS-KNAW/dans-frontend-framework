@@ -26,10 +26,10 @@ Cypress.Commands.add("kcLogin", (user: string) => {
                 const html = document.createElement("html");
                 html.innerHTML = response.body;
                 
-                // select the form via the id, kc-form-login.
-                const form = cy.get('#kc-form-login');
-
+                const form = html.getElementsByTagName("form")[0];
+                console.log("dit is form", form)
                 const url = form.action;
+                console.log("dit is form action", url)
 
                 return cy.request({
                     method: "POST",
