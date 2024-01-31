@@ -3,8 +3,8 @@ describe('Login Test', () => {
     cy.visit(Cypress.config('baseUrl'));
     cy.contains('log in', { matchCase: false }).click();
     cy.fixture('users/ohsmart').then((data) => {
-      cy.get('#username').type(data.ohsmart.username);
-      cy.get('#password').type(data.ohsmart.password);
+      cy.get('#username').type(data.user_1.username);
+      cy.get('#password').type(data.user_1.password);
       cy.get('#kc-login').click();
     });
   });
