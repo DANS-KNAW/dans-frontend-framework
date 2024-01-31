@@ -18,6 +18,11 @@ describe('Login Test', () => {
     const file = new File([blob], 'test.zip', { type: 'application/zip' });
 
     // using cypress-file-upload plugin attach the zip file
+    cy.get('input[type=file]').attachFile({
+      fileContent: blob.stream(),
+      fileName: 'test.zip',
+      mimeType: 'application/zip'
+    });
 
   });
 });
