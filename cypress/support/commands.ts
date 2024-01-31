@@ -26,8 +26,8 @@ Cypress.Commands.add("kcLogin", (user: string) => {
                 const html = document.createElement("html");
                 html.innerHTML = response.body;
                 
-                // select the form via the id, kc-form-login.
-                const form = html.getElementById("kc-form-login");
+                // select the form via the id, kc-form-login. Alter the line below to do so.
+                const form = html.getElementsByTagName("form")[0];
 
                 const url = form.action;
 
