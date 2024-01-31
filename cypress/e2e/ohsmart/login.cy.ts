@@ -21,6 +21,12 @@ describe('Login Test', () => {
             uint8Array[i] = 0; // or any other value to fill the file with
         }
 
+        // Save the file to disk
+        cy.writeFile('path/to/file.zip', uint8Array);
+
+        // Upload the file
+        cy.get('input[type=file]').attachFile('path/to/file.zip');
+
         cy.contains('save', { matchCase: false }).click();
 
     });
