@@ -13,7 +13,11 @@ describe('Login Test', () => {
 
     cy.contains('deposit data', { matchCase: false }).click();
     cy.contains('files', { matchCase: false }).click();
-    // generate a 10 mb zip file in memory
-    // upload the file using the drag and drop upload function on the page 
+    // generate a 10 mb file in memory
+    const blob = new Blob([new ArrayBuffer(1024 * 1024 * 10)], { type: 'application/zip' });
+    const file = new File([blob], 'test.zip', { type: 'application/zip' });
+
+    // upload the file using the drag and drop upload function on the page
+    cy.get('input[type=file]').attachFile(file);
   });
 });
