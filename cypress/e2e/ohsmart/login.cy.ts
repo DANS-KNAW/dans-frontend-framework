@@ -2,13 +2,15 @@ describe('Login Test', () => {
   beforeEach(() => {
     cy.visit(Cypress.config('baseUrl'));
     cy.contains('log in', { matchCase: false }).click();
-    // fill in user name using the username from the fixture ohsmart, the username field has id username
-    // fill in password using the password from the fixture ohsmart, the passwword field has id password
-    // click sign in button, the button has id kc-login
+    cy.fixture('ohsmart').then((ohsmart) => {
+      cy.get('#username').type(ohsmart.username);
+      cy.get('#password').type(ohsmart.password);
+      cy.get('#kc-login').click();
+    });
   });
 
   it('should navigate to baseUrl and login', () => {
-    // cy.visit(Cypress.config('baseUrl'));
+    cy.visit(Cypress.config('baseUrl'));
     cy.contains('log in', { matchCase: false }).click();
   });
 });
