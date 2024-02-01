@@ -13,19 +13,22 @@ describe('Login Test', () => {
 
         cy.contains('deposit data', { matchCase: false }).click();
         cy.contains('files', { matchCase: false }).click();
-        // Generate a 10 MB file in memory
-        const size = 1024 * 1024 * 10; // 10 MB
-        const buffer = new ArrayBuffer(size);
-        const uint8Array = new Uint8Array(buffer);
-        for (let i = 0; i < size; i++) {
-            uint8Array[i] = 0; // or any other value to fill the file with
-        }
 
-        // Save the file to disk
-        cy.writeFile('path/to/file.zip', uint8Array);
 
-        // Upload the file
-        cy.get('input[type=file]').attachFile('path/to/file.zip');
+        const fileName = 'largeFile.pdf';
+        const sizeInMB = 100;
+
+        cy.generateLargeFile(fileName, sizeInMB).then(file => {
+            cy.get('[data-cy="dropzone"]') // replace with your drag & drop area selector
+                .attachFile({
+                    fileContent: file,
+                    fileName: fileName,
+                    mimeType: 'application/pdf',
+                    encoding: 'utf-8',
+                }, {
+                    subjectType: 'drag-n-drop',
+                });
+        });
 
         cy.contains('save', { matchCase: false }).click();
 

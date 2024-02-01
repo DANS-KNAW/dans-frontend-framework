@@ -24,14 +24,4 @@ Cypress.Commands.add('generateLargeFile', (fileName, sizeInMB) => {
   });
 });
 
-Cypress.Commands.add('forEachStep', (steps) => {
-  steps.forEach(step => {
-    if (step.type === 'click') {
-      cy.get(step.selector).click();
-    } else if (step.type === 'type') {
-      cy.get(step.selector).type(step.text);
-    } else if (step.type === 'assert') {
-      cy.get(step.selector).should('contain', step.text);
-    }
-  });
-});
+
