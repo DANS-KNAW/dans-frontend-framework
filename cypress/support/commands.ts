@@ -25,3 +25,22 @@ Cypress.Commands.add('generateLargeFile', (fileName, sizeInMB) => {
 });
 
 
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      /**
+       * Custom command to log in a user.
+       * @example cy.login('users/ohsmart', 'user_1')
+       */
+      login(fixturePath: string, userKey: string): Chainable<void>
+    }
+  }
+}
+
+Cypress.Commands.add('login', (fixturePath, userKey) => {
+  cy.fixture(fixturePath).then((data) => {
+    cy.get('#username').type(data[userKey].username);
+    cy.get('#password').type(data[userKey].password);
+    cy.get('#kc-login').click();
+  });
+});
