@@ -17,7 +17,10 @@ describe('Metadata Tests', () => {
 
     function fillOutAdministrativeTab(){
         // click the on  dropdown menu identified by: #895cca3d-9ed8-435e-9481-6e2716a8c7ff
+        cy.get('#895cca3d-9ed8-435e-9481-6e2716a8c7ff').click();
+
         // select the Dutch language
+        cy.get('.dropdown-menu').contains('Dutch').click();
     }
 
     function fillOutCitationTab(){
