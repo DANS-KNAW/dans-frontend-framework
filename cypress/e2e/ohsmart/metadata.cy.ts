@@ -17,7 +17,7 @@ describe('Metadata Tests', () => {
 
     function fillOutAdministrativeTab(){
         cy.get('label').contains('Language *', { matchCase: false }).parent().find('input').click().type('Dutch');
-        // The line above seaches for the Dutch language in a dropdown menu. You now need to click on the value that appears.
+        cy.contains('Dutch').click();
     }
 
     function fillOutCitationTab(){
