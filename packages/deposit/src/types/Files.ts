@@ -92,6 +92,12 @@ export interface FileItemProps {
   file: SelectedFile;
 }
 
+export interface FileItemNoRoleProcessProps {
+  file: SelectedFile;
+  display_role?: boolean;
+  display_process?: boolean;
+}
+
 export interface FileActionOptionsProps {
   file: SelectedFile;
   type: "process" | "role";

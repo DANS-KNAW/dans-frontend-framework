@@ -210,6 +210,7 @@ const section: InitialSectionType = {
         nl: "De Repository URL van de software die gearchiveerd moet worden (Opmerking: momenteel wordt alleen Github ondersteund)",
       },
       placeholder: "https://github.com/...",
+      required: true,
     },
     {
       type: "text",
