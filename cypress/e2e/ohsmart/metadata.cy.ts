@@ -20,7 +20,9 @@ describe('Metadata Tests', () => {
         // click on the dropdown menu inside this diff and select the Dutch language. You will find a html snippet on the next line.
         // The dropdown does not have a static id. You need to use an alternative way to select it.
         // <input aria-invalid="false" autocomplete="off" id="d9b7494c-1010-4ded-bea4-df1510984236" type="text" class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused css-1uvydh2" aria-autocomplete="list" aria-expanded="false" autocapitalize="none" spellcheck="false" role="combobox" value=""><div class="MuiAutocomplete-endAdornment css-2iz2x6"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiAutocomplete-popupIndicator css-uge3vf" tabindex="-1" type="button" aria-label="Open" title="Open"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowDropDownIcon"><path d="M7 10l5 5 5-5z"></path></svg><span class="MuiTouchRipple-root css-w0pj6f"></span></button></div><fieldset aria-hidden="true" class="MuiOutlinedInput-notchedOutline css-igs3ac"><legend class="css-yjsfm1"><span>Language *</span></legend></fieldset>
-
+        
+        // Select the dropdown menu by its class and type 'Dutch' to select the Dutch language
+        cy.get('.MuiInputBase-input').type('Dutch{enter}');
     }
 
     function fillOutCitationTab(){
