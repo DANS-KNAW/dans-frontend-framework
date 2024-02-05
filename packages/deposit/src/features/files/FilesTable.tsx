@@ -27,6 +27,7 @@ import type {
   SelectedFile,
   FileActionOptionsProps,
   FileItemProps,
+  FileItemNoRoleProcessProps,
 } from "../../types/Files";
 import { dansUtilityApi, useCheckTypeQuery } from "./api/dansUtility";
 import { LightTooltip } from "../generic/Tooltip";
@@ -41,7 +42,12 @@ import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
 import { getFormDisabled, getData } from "../../deposit/depositSlice";
 import { useAuth } from "react-oidc-context";
 
-const FilesTable = () => {
+interface FileTableProps {
+  display_roles?: boolean;
+  display_processing?: boolean;
+}
+
+const FilesTable = ({display_roles = true, display_processing = true}: FileTableProps) => {
   const { t } = useTranslation("files");
   const selectedFiles = useAppSelector<SelectedFile[]>(getFiles);
   return selectedFiles.length !== 0 ? (
@@ -54,14 +60,18 @@ const FilesTable = () => {
             <TableCell sx={{ p: 1 }}>{t("fileSize")}</TableCell>
             <TableCell sx={{ p: 1 }}>{t("fileType")}</TableCell>
             <TableCell sx={{ p: 1, width: 10 }}>{t("private")}</TableCell>
-            <TableCell sx={{ p: 1, width: 230 }}>{t("role")}</TableCell>
-            <TableCell sx={{ p: 1, width: 280 }}>{t("processing")}</TableCell>
+            {display_roles && (
+              <TableCell sx={{ p: 1, width: 230 }}>{t("role")}</TableCell>
+            )}
+            {display_processing && (
+              <TableCell sx={{ p: 1, width: 280 }}>{t("processing")}</TableCell>
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
           <AnimatePresence initial={false}>
             {selectedFiles.map((file) => (
-              <FileTableRow key={file.name} file={file} />
+              <FileTableRow key={file.name} display_process={display_processing} display_role={display_roles} file={file} />
             ))}
           </AnimatePresence>
         </TableBody>
@@ -184,7 +194,7 @@ const ForwardRow = forwardRef<
 >((props, ref) => <TableRow ref={ref} {...props} />);
 const MotionRow = motion(ForwardRow);
 
-const FileTableRow = ({ file }: FileItemProps) => {
+const FileTableRow = ({ file, display_process = true, display_role = true }: FileItemNoRoleProcessProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("files");
   const [toDelete, setToDelete] = useState<boolean>(false);
@@ -285,17 +295,22 @@ const FileTableRow = ({ file }: FileItemProps) => {
             disabled={file.valid === false || formDisabled}
           />
         </TableCell>
-        <TableCell
-          sx={{ p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1 }}
-        >
-          <FileActionOptions type="role" file={file} />
-        </TableCell>
+        {display_role && (
+            <TableCell
+              sx={{ p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1 }}
+            >
+              <FileActionOptions type="role" file={file} />
+            </TableCell>
+        )}
         {/* TODO: remove or spec this */}
-        <TableCell
-          sx={{ p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1 }}
-        >
-          <FileActionOptions type="process" file={file} />
-        </TableCell>
+        {display_process && (
+          <TableCell
+            sx={{ p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1 }}
+          >
+            <FileActionOptions type="process" file={file} />
+          </TableCell>
+        )}
+
       </MotionRow>
       <MotionRow
         layout
