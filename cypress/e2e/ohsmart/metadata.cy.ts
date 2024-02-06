@@ -53,6 +53,11 @@ describe('Metadata Tests', () => {
         }
 
         // Fill in the three subtitle fields
+        // Look for a field with the label "subtitle" and the value "", fill in Subtitle 1
+        // Then look for the second field the label "subtitle" and the value "", fill in Subtitle 2
+        // Then look for the third field the label "subtitle" and the value "", fill in Subtitle 3
+
+        // this bit of code does not work correctly. It only fills in the first subtitle field.
         for (let i = 1; i <= 3; i++) {
             cy.get('label').contains('Subtitle', { matchCase: false }).parent().find('input').eq(i-1).type(`Subtitle ${i}`);
         }
