@@ -8,6 +8,7 @@ describe('Metadata Tests', () => {
     it('Test metadata depost', () => {
         navigateToDepositPage()
         fillOutAdministrativeTab()
+        fillOutCitationTab()
     });
 
     function navigateToDepositPage(){
@@ -29,10 +30,29 @@ describe('Metadata Tests', () => {
         let formattedDate = dd + '-' + mm + '-' + yyyy;
 
         // Fill in the yesterday's date in the Embargo Date field
-        cy.get('label').contains('Embargo date', { matchCase: false }).parent().find('input').type(formattedDate);
+        cy.get('label').contains('embargo date', { matchCase: false }).parent().find('input').type(formattedDate);
+
+        // Set the affiliation
+        cy.get('label').contains('affiliation', { matchCase: false }).parent().find('input').type("DANS Cypress");
+
     }
 
     function fillOutCitationTab(){
+        // Open the Citation menu
+        cy.contains('citation', { matchCase: false }).click();
+
+        // Set the title
+        cy.get('label').contains('title', { matchCase: false }).parent().find('input').type("Citation Title");
+
+        // Set the description
+        // You task is fill in the value Citation Description in the description field
+        // You will find html of this field in the snippet.html file
+        
+
+
+
+
+
     }
 
     function fillOutOralHistorySpecificTab(){
