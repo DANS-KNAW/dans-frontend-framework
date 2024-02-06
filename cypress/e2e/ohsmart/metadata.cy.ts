@@ -47,14 +47,20 @@ describe('Metadata Tests', () => {
         // Set the description
         cy.get('label').contains('Description', { matchCase: false }).parent().find('textarea').first().type("Citation Description");
 
-        // Your task is to fill in three subtitles using the following steps. Look at the snippt.html for html you need to use.
-        // You can not rely on the id of fields as they are randomly generated.
-        // 1. look for the subtitle label, be case insensitive.
-        // 2. Fill in "Subtitle 1"
-        // 3. Click the "add another" button, be case insensitive
-        // 4. There should be a new subtitle field now that is empty. "Fill in Subtitle 2"
-        // 5. Click the "add another" button, be case insensitive
-        // 6. There should be a new subtitle field now that is empty. "Fill in Subtitle 3"
+        // Fill in the first subtitle
+        cy.get('label').contains('Subtitle', { matchCase: false }).parent().find('input').type("Subtitle 1");
+
+        // Click the "add another" button
+        cy.get('button').contains('Add another', { matchCase: false }).click();
+
+        // Fill in the second subtitle
+        cy.get('label').contains('Subtitle', { matchCase: false }).parent().find('input').last().type("Subtitle 2");
+
+        // Click the "add another" button again
+        cy.get('button').contains('Add another', { matchCase: false }).click();
+
+        // Fill in the third subtitle
+        cy.get('label').contains('Subtitle', { matchCase: false }).parent().find('input').last().type("Subtitle 3");
 
 
     }
