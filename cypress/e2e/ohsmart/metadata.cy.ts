@@ -45,6 +45,8 @@ describe('Metadata Tests', () => {
         cy.get('label').contains('title', { matchCase: false }).parent().find('input').type("Citation Title");
 
         // Set the description
+        // the following line runs in to this error: "cy.type() can only be called on a single element. Your subject contained 2 elements."
+        // Your task is to resolve the error. You can find the required html in the snippet file
         cy.get('label').contains('Description', { matchCase: false }).parent().find('textarea').type("Citation Description");
         
 
