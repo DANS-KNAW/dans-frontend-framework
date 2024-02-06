@@ -45,9 +45,12 @@ describe('Metadata Tests', () => {
         cy.get('label').contains('title', { matchCase: false }).parent().find('input').type("Citation Title");
 
         // Set the description
-        // the following line runs in to this error: "cy.type() can only be called on a single element. Your subject contained 2 elements."
-        // Your task is to resolve the error. You can find the required html in the snippet file
         cy.get('label').contains('Description', { matchCase: false }).parent().find('textarea').first().type("Citation Description");
+
+        // Your Task is to add three subtitles. To do this follow the steps below. The you will find the html in the snippet. Always be case insensitive
+        // 1. Click the "add another button" two times, look for the label
+        // 2. There should be thee fields now that can contain a Subtitle. In the first fill in Subtitle One, the second Subtitle two, the third Subtitle Three
+
         
 
 
