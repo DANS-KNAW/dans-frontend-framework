@@ -52,6 +52,8 @@ describe('Metadata Tests', () => {
             cy.get('button[aria-label="Add another"]').click();
         }
 
+        // Your task is to update the following code.
+        // You can not use the id of any field. You must look for the label "subtitle" to fiend the fields
         cy.get('input[id^=":r42:"]').eq(0).type('Subtitle One');
         cy.get('input[id^=":r42:"]').eq(1).type('Subtitle Two');
         cy.get('input[id^=":r42:"]').eq(2).type('Subtitle Three');
