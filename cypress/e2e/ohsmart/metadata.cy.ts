@@ -52,11 +52,9 @@ describe('Metadata Tests', () => {
             cy.get('button[aria-label="Add another"]').click();
         }
 
-        // Your task is to update the following code.
-        // You can not use the id of any field. You must look for the label "subtitle" to find the fields
-        cy.contains('Subtitle').parent().find('input').eq(0).type('Subtitle One');
-        cy.contains('Subtitle').parent().find('input').eq(1).type('Subtitle Two');
-        cy.contains('Subtitle').parent().find('input').eq(2).type('Subtitle Three');
+        // Your task is to fill in the three subtile fields. You will find an example of the html in the snippet file
+        // You must look for the label "subtitle" as you can not rely on the field's id
+        // Once you have found the field fill in the value Subtitle 1, Subtitle 2, Subtitle 3
 
         
 
