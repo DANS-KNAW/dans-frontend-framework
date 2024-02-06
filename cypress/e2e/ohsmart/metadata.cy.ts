@@ -52,9 +52,10 @@ describe('Metadata Tests', () => {
             cy.get('button[aria-label="Add another"]').click();
         }
 
-        // Your task is to fill in the three subtile fields. You will find an example of the html in the snippet file
-        // You must look for the label "subtitle" as you can not rely on the field's id
-        // Once you have found the field fill in the value Subtitle 1, Subtitle 2, Subtitle 3
+        // Fill in the three subtitle fields
+        for (let i = 1; i <= 3; i++) {
+            cy.get('label').contains('Subtitle', { matchCase: false }).parent().find('input').eq(i-1).type(`Subtitle ${i}`);
+        }
 
         
 
