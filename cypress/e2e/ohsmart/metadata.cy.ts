@@ -45,8 +45,7 @@ describe('Metadata Tests', () => {
         cy.get('label').contains('title', { matchCase: false }).parent().find('input').type("Citation Title");
 
         // Set the description
-        // You task is fill in the value Citation Description in the description field
-        // You will find html of this field in the snippet.html file
+        cy.get('label').contains('Description', { matchCase: false }).parent().find('textarea').type("Citation Description");
         
 
 
