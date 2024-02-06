@@ -15,9 +15,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import ReplayCircleFilledIcon from "@mui/icons-material/ReplayCircleFilled";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
-import ErrorRoundedIcon from "@mui/icons-material/ErrorRounded";
-import CircularProgress from "@mui/material/CircularProgress";
 import Tooltip from "@mui/material/Tooltip";
 import { useTranslation } from "react-i18next";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
@@ -29,25 +26,30 @@ import type {
   FileItemProps,
   FileItemNoRoleProcessProps,
 } from "../../types/Files";
-import { dansUtilityApi, useCheckTypeQuery } from "./api/dansUtility";
-import { LightTooltip } from "../generic/Tooltip";
 import { getSessionId } from "../metadata/metadataSlice";
 import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { getSingleFileSubmitStatus, getMetadataSubmitStatus } from "../submit/submitSlice";
+import {
+  getSingleFileSubmitStatus,
+  getMetadataSubmitStatus,
+} from "../submit/submitSlice";
 import { useSubmitFilesMutation } from "../submit/submitApi";
 import { formatFileData } from "../submit/submitHelpers";
 import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
 import { getFormDisabled, getData } from "../../deposit/depositSlice";
 import { useAuth } from "react-oidc-context";
+import FileStatusIndicator from "./FileStatusIndicator";
 
 interface FileTableProps {
   display_roles?: boolean;
   display_processing?: boolean;
 }
 
-const FilesTable = ({display_roles = true, display_processing = true}: FileTableProps) => {
+const FilesTable = ({
+  display_roles = true,
+  display_processing = true,
+}: FileTableProps) => {
   const { t } = useTranslation("files");
   const selectedFiles = useAppSelector<SelectedFile[]>(getFiles);
   return selectedFiles.length !== 0 ? (
@@ -71,7 +73,12 @@ const FilesTable = ({display_roles = true, display_processing = true}: FileTable
         <TableBody>
           <AnimatePresence initial={false}>
             {selectedFiles.map((file) => (
-              <FileTableRow key={file.name} display_process={display_processing} display_role={display_roles} file={file} />
+              <FileTableRow
+                key={file.name}
+                display_process={display_processing}
+                display_role={display_roles}
+                file={file}
+              />
             ))}
           </AnimatePresence>
         </TableBody>
@@ -96,7 +103,7 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
             id: file.id,
             type: type,
             value: newValue,
-          }),
+          })
         )
       }
       renderInput={(params) => (
@@ -113,88 +120,17 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
   );
 };
 
-const FileConversion = ({ file }: FileItemProps) => {
-  const dispatch = useAppDispatch();
-  const { data, isError } = useCheckTypeQuery<any>(file.type);
-  const { t } = useTranslation("files");
-
-  return data ? (
-    <LightTooltip
-      title={
-        <>
-          <Typography sx={{ fontSize: 14, p: 2 }}>
-            {file.submittedFile
-              ? t("submittedFile")
-              : file.valid === false
-                ? t("invalid", { type: file.type })
-                : data.preferred
-                  ? t("noConversion")
-                  : t("conversion", { type: data["required-convert-to"] })}
-          </Typography>
-          {!file.submittedFile && (
-            <Typography
-              sx={{
-                fontSize: 12,
-                pl: 2,
-                pr: 2,
-                pb: 1,
-                pt: 1,
-                backgroundColor: `${
-                  file.valid === false
-                    ? "error"
-                    : data.preferred
-                      ? "success"
-                      : "warning"
-                }.main`,
-              }}
-            >
-              {file.valid === false
-                ? t("invalidHead")
-                : data.preferred
-                  ? t("noConversionHead")
-                  : t("conversionHead", { type: file.type })}
-            </Typography>
-          )}
-        </>
-      }
-    >
-      {file.submittedFile ? (
-        <InfoRoundedIcon color="neutral" />
-      ) : file.valid === false ? (
-        <ErrorRoundedIcon color="error" />
-      ) : data.preferred ? (
-        <CheckCircleIcon color="success" />
-      ) : (
-        <InfoRoundedIcon color="warning" />
-      )}
-    </LightTooltip>
-  ) : isError ? (
-    <IconButton
-      onClick={() =>
-        dispatch(
-          dansUtilityApi.endpoints.checkType.initiate(file.type, {
-            forceRefetch: true,
-          }),
-        )
-      }
-      sx={{ marginLeft: "-8px" }}
-    >
-      <Tooltip title={t("fileTypeCheckError")}>
-        <ReplayCircleFilledIcon color="error" />
-      </Tooltip>
-    </IconButton>
-  ) : (
-    <CircularProgress size={20} />
-  );
-};
-
 const ForwardRow = forwardRef<
   HTMLTableRowElement,
   TableRowProps & HTMLMotionProps<"tr">
 >((props, ref) => <TableRow ref={ref} {...props} />);
 const MotionRow = motion(ForwardRow);
 
-const FileTableRow = ({ file, display_process = true, display_role = true }: FileItemNoRoleProcessProps) => {
+const FileTableRow = ({
+  file,
+  display_process = true,
+  display_role = true,
+}: FileItemNoRoleProcessProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("files");
   const [toDelete, setToDelete] = useState<boolean>(false);
@@ -278,7 +214,7 @@ const FileTableRow = ({ file, display_process = true, display_role = true }: Fil
           {file.size ? `${(file.size / 1048576).toFixed(2)} MB` : "-"}
         </TableCell>
         <TableCell sx={{ p: 1, borderWidth: fileStatus ? 0 : 1 }}>
-          <FileConversion file={file} />
+          <FileStatusIndicator file={file} />
         </TableCell>
         <TableCell sx={{ p: 0, borderWidth: fileStatus ? 0 : 1 }}>
           <Checkbox
@@ -289,18 +225,18 @@ const FileTableRow = ({ file, display_process = true, display_role = true }: Fil
                   id: file.id,
                   type: "private",
                   value: e.target.checked,
-                }),
+                })
               )
             }
             disabled={file.valid === false || formDisabled}
           />
         </TableCell>
         {display_role && (
-            <TableCell
-              sx={{ p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1 }}
-            >
-              <FileActionOptions type="role" file={file} />
-            </TableCell>
+          <TableCell
+            sx={{ p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1 }}
+          >
+            <FileActionOptions type="role" file={file} />
+          </TableCell>
         )}
         {/* TODO: remove or spec this */}
         {display_process && (
@@ -310,7 +246,6 @@ const FileTableRow = ({ file, display_process = true, display_role = true }: Fil
             <FileActionOptions type="process" file={file} />
           </TableCell>
         )}
-
       </MotionRow>
       <MotionRow
         layout
@@ -346,7 +281,7 @@ const UploadProgress = ({ file }: FileItemProps) => {
           submitKey: auth.user?.access_token,
           target: formConfig.target,
         },
-        actionType: metadataSubmitStatus === "saved" ?  "save" : "submit",
+        actionType: metadataSubmitStatus === "saved" ? "save" : "submit",
       });
     });
   };
