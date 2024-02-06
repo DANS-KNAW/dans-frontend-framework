@@ -47,9 +47,14 @@ describe('Metadata Tests', () => {
         // Set the description
         cy.get('label').contains('Description', { matchCase: false }).parent().find('textarea').first().type("Citation Description");
 
-        // Your Task is to add three subtitles. To do this follow the steps below. The you will find the html in the snippet. Always be case insensitive
-        // 1. Click the "add another button" two times, look for the label
-        // 2. There should be thee fields now that can contain a Subtitle. In the first fill in Subtitle One, the second Subtitle two, the third Subtitle Three
+        // Add three subtitles
+        for (let i = 0; i < 2; i++) {
+            cy.get('button[aria-label="Add another"]').click();
+        }
+
+        cy.get('input[id^=":r42:"]').eq(0).type('Subtitle One');
+        cy.get('input[id^=":r42:"]').eq(1).type('Subtitle Two');
+        cy.get('input[id^=":r42:"]').eq(2).type('Subtitle Three');
 
         
 
