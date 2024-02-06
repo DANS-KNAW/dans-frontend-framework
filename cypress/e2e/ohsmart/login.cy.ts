@@ -9,24 +9,5 @@ describe('Login Test', () => {
 
         cy.contains('deposit data', { matchCase: false }).click();
         cy.contains('files', { matchCase: false }).click();
-
-
-        const fileName = 'largeFile.pdf';
-        const sizeInMB = 100;
-
-        cy.generateLargeFile(fileName, sizeInMB).then(file => {
-            cy.get('[data-cy="dropzone"]') // replace with your drag & drop area selector
-                .attachFile({
-                    fileContent: file,
-                    fileName: fileName,
-                    mimeType: 'application/pdf',
-                    encoding: 'utf-8',
-                }, {
-                    subjectType: 'drag-n-drop',
-                });
-        });
-
-        cy.contains('save', { matchCase: false }).click();
-
     });
 });

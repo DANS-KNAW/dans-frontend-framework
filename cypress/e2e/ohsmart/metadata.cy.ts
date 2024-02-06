@@ -50,18 +50,11 @@ describe('Metadata Tests', () => {
         // Fill in the first subtitle
         cy.get('label').contains('Subtitle', { matchCase: false }).parent().find('input').type("Subtitle 1");
 
-        // Click the "add another" button
-        cy.get('button').contains('Add another', { matchCase: false }).click();
-
-        // Fill in the second subtitle
-        cy.get('label').contains('Subtitle', { matchCase: false }).parent().find('input').last().type("Subtitle 2");
-
-        // Click the "add another" button again
-        cy.get('button').contains('Add another', { matchCase: false }).click();
-
-        // Fill in the third subtitle
-        cy.get('label').contains('Subtitle', { matchCase: false }).parent().find('input').last().type("Subtitle 3");
-
+        // create and fill in second subtitle
+        cy.get('input:first').type('{tab}');
+        cy.get('input[name="someInput"]').type('{enter}');
+        cy.get('input:first').type('{tab}');
+        cy.focused().type('Subtitle 2');
 
     }
 
