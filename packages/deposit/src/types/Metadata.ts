@@ -53,4 +53,9 @@ export interface FormConfig {
   gsheetsApiKey?: string;
   formDisabled?: boolean;
   formTitle?: any;
+  filesUpload?: {
+    convertFiles?: boolean;
+    displayRoles?: boolean;
+    displayProcesses?: boolean;
+  }
 }

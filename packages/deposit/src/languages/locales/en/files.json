@@ -24,6 +24,7 @@
   "fileTypeError": "Sorry, the following files cannot be added",
   "noConversion": "File will be uploaded as-is",
   "conversion": "File will be converted to: {{type}}",
+  "preferredFile": "File type ({{fileType}}) is preferred to be: {{type}}",
   "invalid": "This file does not seem to be a valid {{type}} and won't be uploaded",
   "noConversionHead": "Good to go!",
   "conversionHead": "{{type}} is a non-preferred file type",
