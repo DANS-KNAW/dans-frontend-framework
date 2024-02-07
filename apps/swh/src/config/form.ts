@@ -9,6 +9,11 @@ const sections: InitialSectionType[] = [administrative];
 const form: FormConfig = {
   form: sections,
   formTitle: "[0].fields[0]", // pointer to the field in the 'sections' array that contains form title, which is used in a users submissions overview
+  filesUpload: {
+    convertFiles: false,
+    displayRoles: false,
+    displayProcesses: false,
+  },
   target: {
     envName: import.meta.env.VITE_ENV_NAME,
     configName: import.meta.env.VITE_CONFIG_NAME,

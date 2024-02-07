@@ -15,7 +15,10 @@ import Tooltip from "@mui/material/Tooltip";
  * If the file type is being checked, a loading spinner is displayed.
  * If there is an error while checking the file type, a retry button is shown.
  */
-const FileStatusIndicator = ({ file }: FileItemProps) => {
+const FileStatusIndicator = ({
+  file,
+  convertFiles,
+}: FileItemProps & { convertFiles: boolean }) => {
   const dispatch = useAppDispatch();
   const { data, isError } = useCheckTypeQuery<any>(file.type);
   const { t } = useTranslation("files");
@@ -27,7 +30,7 @@ const FileStatusIndicator = ({ file }: FileItemProps) => {
   const renderTooltipTitle = () => (
     <>
       <Typography sx={{ fontSize: 14, p: 2 }}>{getTooltipTitle()}</Typography>
-      {renderAdditionalInfo()}
+      {convertFiles ? renderAdditionalInfo() : null}
     </>
   );
 
@@ -38,6 +41,9 @@ const FileStatusIndicator = ({ file }: FileItemProps) => {
   const getTooltipTitle = () => {
     if (file.submittedFile) return t("submittedFile");
     if (file.valid === false) return t("invalid", { type: file.type });
+    if (!convertFiles && data?.preferred) return t("noConversionHead");
+    if (!convertFiles)
+      return t("preferredFile", { fileType: file.type, type: data["required-convert-to"] });
     if (data?.preferred) return t("noConversion");
     return t("conversion", { type: data["required-convert-to"] });
   };
