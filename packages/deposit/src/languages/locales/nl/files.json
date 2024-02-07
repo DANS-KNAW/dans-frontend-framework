@@ -24,6 +24,7 @@
   "fileTypeError": "Sorry, deze bestanden kunnen niet worden toegevoegd",
   "noConversion": "Bestand wordt as-is geupload",
   "conversion": "Bestand wordt geconverteerd naar: {{type}}",
+  "preferredFile": "Bestandstype ({{fileType}}) heeft de voorkeur om type ({{type}}) zijn.",
   "invalid": "Geen valide {{type}} bestand. Wordt niet geupload.",
   "noConversionHead": "Good to go!",
   "conversionHead": "{{type}} is een niet-geprefereerd bestandstype",
