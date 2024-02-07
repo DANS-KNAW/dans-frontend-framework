@@ -24,7 +24,6 @@ import type {
   SelectedFile,
   FileActionOptionsProps,
   FileItemProps,
-  FileItemNoRoleProcessProps,
 } from "../../types/Files";
 import { getSessionId } from "../metadata/metadataSlice";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -41,17 +40,14 @@ import { getFormDisabled, getData } from "../../deposit/depositSlice";
 import { useAuth } from "react-oidc-context";
 import FileStatusIndicator from "./FileStatusIndicator";
 
-interface FileTableProps {
-  display_roles?: boolean;
-  display_processing?: boolean;
-}
-
-const FilesTable = ({
-  display_roles = true,
-  display_processing = true,
-}: FileTableProps) => {
+const FilesTable = () => {
   const { t } = useTranslation("files");
   const selectedFiles = useAppSelector<SelectedFile[]>(getFiles);
+  const formConfig = useAppSelector(getData);
+
+  const { displayRoles = true, displayProcesses = true } =
+    formConfig?.filesUpload || {};
+
   return selectedFiles.length !== 0 ? (
     <TableContainer component={Paper} sx={{ overflow: "hidden" }}>
       <Table size="small">
@@ -62,10 +58,10 @@ const FilesTable = ({
             <TableCell sx={{ p: 1 }}>{t("fileSize")}</TableCell>
             <TableCell sx={{ p: 1 }}>{t("fileType")}</TableCell>
             <TableCell sx={{ p: 1, width: 10 }}>{t("private")}</TableCell>
-            {display_roles && (
+            {displayRoles && (
               <TableCell sx={{ p: 1, width: 230 }}>{t("role")}</TableCell>
             )}
-            {display_processing && (
+            {displayProcesses && (
               <TableCell sx={{ p: 1, width: 280 }}>{t("processing")}</TableCell>
             )}
           </TableRow>
@@ -73,12 +69,7 @@ const FilesTable = ({
         <TableBody>
           <AnimatePresence initial={false}>
             {selectedFiles.map((file) => (
-              <FileTableRow
-                key={file.name}
-                display_process={display_processing}
-                display_role={display_roles}
-                file={file}
-              />
+              <FileTableRow key={file.name} file={file} />
             ))}
           </AnimatePresence>
         </TableBody>
@@ -126,16 +117,16 @@ const ForwardRow = forwardRef<
 >((props, ref) => <TableRow ref={ref} {...props} />);
 const MotionRow = motion(ForwardRow);
 
-const FileTableRow = ({
-  file,
-  display_process = true,
-  display_role = true,
-}: FileItemNoRoleProcessProps) => {
+const FileTableRow = ({ file }: FileItemProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("files");
   const [toDelete, setToDelete] = useState<boolean>(false);
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const formDisabled = useAppSelector(getFormDisabled);
+  const formConfig = useAppSelector(getData);
+
+  const { displayRoles = true, displayProcesses = true, convertFiles = true} =
+    formConfig?.filesUpload || {};
 
   return (
     <>
@@ -214,7 +205,7 @@ const FileTableRow = ({
           {file.size ? `${(file.size / 1048576).toFixed(2)} MB` : "-"}
         </TableCell>
         <TableCell sx={{ p: 1, borderWidth: fileStatus ? 0 : 1 }}>
-          <FileStatusIndicator file={file} />
+          <FileStatusIndicator convertFiles={convertFiles} file={file} />
         </TableCell>
         <TableCell sx={{ p: 0, borderWidth: fileStatus ? 0 : 1 }}>
           <Checkbox
@@ -231,7 +222,7 @@ const FileTableRow = ({
             disabled={file.valid === false || formDisabled}
           />
         </TableCell>
-        {display_role && (
+        {displayRoles && (
           <TableCell
             sx={{ p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1 }}
           >
@@ -239,7 +230,7 @@ const FileTableRow = ({
           </TableCell>
         )}
         {/* TODO: remove or spec this */}
-        {display_process && (
+        {displayProcesses && (
           <TableCell
             sx={{ p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1 }}
           >

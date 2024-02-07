@@ -8,7 +8,7 @@ const Files = () => (
       <FilesUpload />
     </Grid>
     <Grid xs={12}>
-      <FilesTable display_processing={false} display_roles={false} />
+      <FilesTable />
     </Grid>
   </Grid>
 );
