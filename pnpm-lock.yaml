@@ -490,6 +490,9 @@ importers:
       ngeohash:
         specifier: ^0.6.3
         version: 0.6.3
+      notistack:
+        specifier: ^3.0.1
+        version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
       ol:
         specifier: ^7.3.0
         version: 7.5.2
