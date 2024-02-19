@@ -70,6 +70,7 @@ interface FieldButtonProps {
 
 export interface DeleteFieldButtonProps extends FieldButtonProps {
   deleteFieldIndex: number;
+  deleteGroup?: string;
 }
 
 export interface AddFieldButtonProps extends FieldButtonProps {
