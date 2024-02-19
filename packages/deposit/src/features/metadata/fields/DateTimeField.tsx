@@ -37,6 +37,7 @@ const DateTimeField = ({
         <FormControl sx={{ minWidth: 110, mr: 1 }}>
           <InputLabel id="select-api">{t("selectDateType")}</InputLabel>
           <Select
+            id={`range-${field.name}-${field.id}`}
             label={t("selectDateType")}
             onChange={(e) => {
               // set the type of date
@@ -59,6 +60,7 @@ const DateTimeField = ({
             }}
             value={field.format}
             disabled={formDisabled}
+            inputProps={{'data-cy': `range-${field.name}-${field.id}`}}
           >
             {field.formatOptions.map((option) => (
               <MenuItem key={option} value={option}>
@@ -70,6 +72,7 @@ const DateTimeField = ({
       )}
 
       <MUIDateTimeField
+        id={`${field.name}-${field.id}`}
         fullWidth
         format={field.format}
         helperText={status === "error" && field.touched && t("incorrect")}

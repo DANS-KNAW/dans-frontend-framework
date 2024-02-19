@@ -55,7 +55,7 @@ const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
         <DateTimeField field={field} sectionIndex={sectionIndex} />
       )}
       {field.type === "repeatSingleField" && (
-        <TransitionGroup>
+        <TransitionGroup id={field.id}>
           {field.fields.map((f: TextFieldType | DateFieldType, i: number) => (
             <Collapse key={f.id}>
               {(f.type === "text" || f.type === "number") && (
@@ -150,7 +150,7 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
           sx={{ pb: 0, pl: 2.25, pr: 2.25 }}
         />
         {fieldArray && (
-          <CardContent>
+          <CardContent id={field.id}>
             <TransitionGroup>
               {fieldArray.map((groupedField, i) => (
                 <Collapse key={groupedField[0].id}>
@@ -164,6 +164,7 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
                       pt: i > 0 ? 2 : 0,
                       mt: i > 0 ? 2 : 0,
                     }}
+                    data-cy={`group-${groupedField[0].id}`}
                   >
                     <Grid container sx={{ flex: 1 }} spacing={2}>
                       {groupedField.map((f) => (
@@ -182,6 +183,7 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
                           groupedFieldId={field.id}
                           deleteFieldIndex={i}
                           size="medium"
+                          deleteGroup={groupedField[0].id}
                         />
                       )}
                   </Stack>

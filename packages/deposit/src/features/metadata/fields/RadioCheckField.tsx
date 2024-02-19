@@ -38,8 +38,10 @@ export const RadioField = ({ field, sectionIndex }: RadioFieldProps) => {
         </FormLabel>
       )}
       <RadioGroup
+        id={`${field.name}-${field.id}`}
         row={field.layout === "row"}
         aria-labelledby={field.id}
+        data-cy={`${field.name}-${field.id}`}
         name={field.name}
         value={field.value || ""}
         onChange={(e) =>
@@ -80,7 +82,7 @@ export const CheckField = ({ field, sectionIndex }: CheckFieldProps) => {
       component="fieldset"
     >
       {field.label && (
-        <FormLabel id={field.id} sx={{ display: "flex", mb: 1 }}>
+        <FormLabel sx={{ display: "flex", mb: 1 }}>
           <StatusIcon
             status={status}
             margin="r"
@@ -89,7 +91,7 @@ export const CheckField = ({ field, sectionIndex }: CheckFieldProps) => {
           {lookupLanguageString(field.label, i18n.language)}
         </FormLabel>
       )}
-      <FormGroup>
+      <FormGroup id={`${field.name}-${field.id}`}>
         {field.options.map((option) => (
           <Stack direction="row" alignItems="center" key={option.value}>
             <FormControlLabel
