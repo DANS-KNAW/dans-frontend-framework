@@ -29,6 +29,7 @@ const Form = () => {
     <>
       {(metadata as SectionType[]).map((section, sectionIndex) => (
         <Accordion
+          id={`section-${section.id}`}
           key={`section-${section.id}`}
           expanded={openPanel === section.id}
           onChange={handleChange(section.id)}

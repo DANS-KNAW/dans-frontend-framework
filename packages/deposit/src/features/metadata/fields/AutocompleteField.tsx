@@ -43,7 +43,7 @@ const AutocompleteField = ({
       <Autocomplete
         multiple={field.multiselect}
         fullWidth
-        id={field.id}
+        id={`${field.name}-${field.id}`}
         options={localizedOptions}
         groupBy={(option) =>
           (option.header &&
