@@ -194,6 +194,7 @@ const TabHeader = ({ value, handleChange }: TabHeaderProps) => {
         label={t("heading", { ns: "metadata" })}
         icon={<StatusIcon status={metadataStatus} margin="r" />}
         iconPosition="start"
+        id="metadata-tab"
       />
       <Tab
         label={t("heading", { ns: "files" })}
@@ -204,6 +205,7 @@ const TabHeader = ({ value, handleChange }: TabHeaderProps) => {
           />
         }
         iconPosition="start"
+        id="files-tab"
       />
     </Tabs>
   );
