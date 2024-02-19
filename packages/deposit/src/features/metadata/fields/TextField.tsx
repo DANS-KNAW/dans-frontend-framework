@@ -43,6 +43,7 @@ const SingleTextField = ({
     <Stack direction="row" alignItems="start">
       <TextField
         fullWidth
+        id={`${field.name}-${field.id}`}
         error={status === "error" && field.touched}
         helperText={status === "error" && field.touched && t("incorrect")}
         variant="outlined"
@@ -93,6 +94,7 @@ const SingleTextField = ({
               groupedFieldId={groupedFieldId}
               deleteFieldIndex={currentField}
               mt={currentField === 0 ? 1.75 : 2.75}
+              deleteGroup={field.id}
             />
           ),
           currentField + 1 === totalFields && (

@@ -341,6 +341,7 @@ const Submit = ({
 
         <Stack direction="row" alignItems="center" mb={2}>
           <Button
+            id="save-form"
             variant="contained"
             disabled={formDisabled}
             onClick={() => handleButtonClick("save")}
@@ -365,6 +366,7 @@ const Submit = ({
           )}
 
           <Button
+            id="submit-form"
             variant="contained"
             disabled={
               !hasTargetCredentials ||

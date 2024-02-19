@@ -404,6 +404,7 @@ export const MultiApiField = ({
       <FormControl sx={{ minWidth: 110, mr: 1 }}>
         <InputLabel id="select-api">{t("multiApiSelectLabel")}</InputLabel>
         <Select
+          id={`select-api-${field.id}`}
           labelId="select-api"
           label={t("multiApiSelectLabel")}
           onChange={(e) => {
@@ -427,6 +428,7 @@ export const MultiApiField = ({
           }}
           value={field.multiApiValue}
           disabled={formDisabled}
+          inputProps={{'data-cy': `select-api-${field.name}`}}
         >
           {Array.isArray(field.options) &&
             (field.options as TypeaheadAPI[]).map((option) => (
@@ -501,7 +503,7 @@ const AutocompleteAPIField = ({
         multiple={field.multiselect}
         fullWidth
         includeInputInList
-        id={field.id}
+        id={`${field.name}-${field.id}`}
         options={
           inputValue &&
           debouncedInputValue === inputValue &&
