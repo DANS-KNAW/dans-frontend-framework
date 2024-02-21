@@ -35,6 +35,7 @@ const section: InitialSectionType = {
         en: "In case of an embargo, you should provide a future date for this field.",
         nl: "In het geval van een embargo kun je hier een toekomstige datum invullen.",
       },
+      repeatable: true,
     },
     {
       type: "group",
