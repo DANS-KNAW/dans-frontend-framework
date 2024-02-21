@@ -37,7 +37,6 @@ const DateTimeField = ({
         <FormControl sx={{ minWidth: 110, mr: 1 }}>
           <InputLabel id="select-api">{t("selectDateType")}</InputLabel>
           <Select
-            id={`range-${field.name}-${field.id}`}
             label={t("selectDateType")}
             onChange={(e) => {
               // set the type of date
@@ -60,7 +59,7 @@ const DateTimeField = ({
             }}
             value={field.format}
             disabled={formDisabled}
-            inputProps={{'data-cy': `range-${field.name}-${field.id}`}}
+            inputProps={{id: `datetype-${field.name}-${field.id}`}}
           >
             {field.formatOptions.map((option) => (
               <MenuItem key={option} value={option}>
@@ -131,6 +130,8 @@ const DateTimeField = ({
               groupedFieldId={groupedFieldId}
               deleteFieldIndex={currentField}
               mt={currentField === 0 ? 1.75 : 2.75}
+              deleteGroupId={field.id}
+              groupedFieldName={field.name}
             />
           ),
           currentField + 1 === totalFields && (
@@ -140,6 +141,7 @@ const DateTimeField = ({
               groupedFieldId={groupedFieldId}
               type="single"
               mt={currentField === 0 ? 1.75 : 2.75}
+              groupedFieldName={field.name}
             />
           ),
         ]}
