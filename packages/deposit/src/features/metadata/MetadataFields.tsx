@@ -165,6 +165,7 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
                       pt: i > 0 ? 2 : 0,
                       mt: i > 0 ? 2 : 0,
                     }}
+                    data-cy={`group-${groupedField[0].id}`}
                   >
                     <Grid container sx={{ flex: 1 }} spacing={2}>
                       {groupedField.map((f) => (

@@ -41,6 +41,7 @@ export const RadioField = ({ field, sectionIndex }: RadioFieldProps) => {
         id={`${field.name}-${field.id}`}
         row={field.layout === "row"}
         aria-labelledby={field.id}
+        data-cy={`${field.name}-${field.id}`}
         name={field.name}
         value={field.value || ""}
         onChange={(e) =>
