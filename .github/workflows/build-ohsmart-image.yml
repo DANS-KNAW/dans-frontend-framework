@@ -33,7 +33,8 @@ jobs:
   push:
 
     name: Push to registry.
-    runs-on: ohsmart-production
+    # Do not change this on the demo branch.
+    runs-on: ohsmart-demo
     needs: test
     strategy:
       matrix:
