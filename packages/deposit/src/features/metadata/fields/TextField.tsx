@@ -94,7 +94,8 @@ const SingleTextField = ({
               groupedFieldId={groupedFieldId}
               deleteFieldIndex={currentField}
               mt={currentField === 0 ? 1.75 : 2.75}
-              deleteGroup={field.id}
+              deleteGroupId={field.id}
+              groupedFieldName={field.name}
             />
           ),
           currentField + 1 === totalFields && (
@@ -102,6 +103,7 @@ const SingleTextField = ({
               key="add"
               sectionIndex={sectionIndex}
               groupedFieldId={groupedFieldId}
+              groupedFieldName={field.name}
               type="single"
               mt={currentField === 0 ? 1.75 : 2.75}
             />
