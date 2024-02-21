@@ -66,11 +66,12 @@ interface FieldButtonProps {
   groupedFieldId: string;
   size?: "small" | "medium" | "large";
   mt?: number;
+  groupedFieldName?: string;
 }
 
 export interface DeleteFieldButtonProps extends FieldButtonProps {
   deleteFieldIndex: number;
-  deleteGroup?: string;
+  deleteGroupId?: string;
 }
 
 export interface AddFieldButtonProps extends FieldButtonProps {

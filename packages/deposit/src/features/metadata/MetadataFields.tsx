@@ -55,7 +55,7 @@ const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
         <DateTimeField field={field} sectionIndex={sectionIndex} />
       )}
       {field.type === "repeatSingleField" && (
-        <TransitionGroup id={field.id}>
+        <TransitionGroup id={`group-${field.name}-${field.id}`}>
           {field.fields.map((f: TextFieldType | DateFieldType, i: number) => (
             <Collapse key={f.id}>
               {(f.type === "text" || f.type === "number") && (
@@ -150,11 +150,12 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
           sx={{ pb: 0, pl: 2.25, pr: 2.25 }}
         />
         {fieldArray && (
-          <CardContent id={field.id}>
+          <CardContent id={`group-${field.name}-${field.id}`}>
             <TransitionGroup>
               {fieldArray.map((groupedField, i) => (
                 <Collapse key={groupedField[0].id}>
                   <Stack
+                    id={`single-${field.name}-${groupedField[0].id}`}
                     direction="row"
                     alignItems="center"
                     key={i}
@@ -183,7 +184,8 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
                           groupedFieldId={field.id}
                           deleteFieldIndex={i}
                           size="medium"
-                          deleteGroup={groupedField[0].id}
+                          deleteGroupId={groupedField[0].id}
+                          groupedFieldName={field.name}
                         />
                       )}
                   </Stack>
@@ -198,6 +200,7 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
               <AddButtonText
                 sectionIndex={sectionIndex}
                 groupedFieldId={field.id}
+                groupedFieldName={field.name}
                 type="group"
               />
             </Stack>

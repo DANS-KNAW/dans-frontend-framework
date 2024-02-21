@@ -17,7 +17,8 @@ export const DeleteButton = ({
   deleteFieldIndex,
   size = "small",
   mt,
-  deleteGroup
+  deleteGroupId,
+  groupedFieldName
 }: DeleteFieldButtonProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
@@ -26,7 +27,7 @@ export const DeleteButton = ({
       <IconButton
         color="error"
         aria-label={t("delete") as string}
-        id={`delete-button-${deleteGroup}`}
+        id={`delete-button-${groupedFieldName}-${deleteGroupId}`}
         size={size}
         sx={{ mt: mt }}
         onClick={() =>
@@ -51,6 +52,7 @@ export const AddButton = ({
   type,
   size = "small",
   mt,
+  groupedFieldName
 }: AddFieldButtonProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
@@ -59,7 +61,7 @@ export const AddButton = ({
       <IconButton
         color="primary"
         aria-label={t("add") as string}
-        id={`add-button-${groupedFieldId}`}
+        id={`add-button-${groupedFieldName}-${groupedFieldId}`}
         size={size}
         sx={{ mt: mt }}
         onClick={() =>
@@ -83,6 +85,7 @@ export const AddButtonText = ({
   groupedFieldId,
   type,
   size = "medium",
+  groupedFieldName,
 }: AddFieldButtonProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
@@ -99,7 +102,7 @@ export const AddButtonText = ({
       }
       size={size}
       startIcon={<AddCircleOutlineIcon />}
-      id={`add-button-${groupedFieldId}`}
+      id={`add-button-${groupedFieldName}-${groupedFieldId}`}
     >
       {t("add")}
     </Button>

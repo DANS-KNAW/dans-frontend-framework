@@ -56,9 +56,10 @@ export const RadioField = ({ field, sectionIndex }: RadioFieldProps) => {
       >
         {field.options.map((option) => (
           <FormControlLabel
+            htmlFor={option.value}
             key={option.value}
             value={option.value}
-            control={<Radio sx={{ mr: 0.15 }} />}
+            control={<Radio sx={{ mr: 0.15 }} id={option.value}/>}
             label={lookupLanguageString(option.label, i18n.language)}
             disabled={formDisabled}
           />
@@ -115,10 +116,12 @@ export const CheckField = ({ field, sectionIndex }: CheckFieldProps) => {
                     )
                   }
                   name={option.value}
+                  id={option.value}
                   disabled={formDisabled}
                 />
               }
               label={lookupLanguageString(option.label, i18n.language)}
+              htmlFor={option.value}
             />
             {!field.label && (
               // todo: maybe we should make individual checkboxes required/not required
