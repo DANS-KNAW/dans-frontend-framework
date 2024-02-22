@@ -28,7 +28,7 @@ export const RadioField = ({ field, sectionIndex }: RadioFieldProps) => {
   return (
     <FormControl>
       {field.label && (
-        <FormLabel id={field.id} sx={{ display: "flex", mb: 1 }}>
+        <FormLabel sx={{ display: "flex", mb: 1 }}>
           <StatusIcon
             status={status}
             margin="r"
@@ -38,9 +38,9 @@ export const RadioField = ({ field, sectionIndex }: RadioFieldProps) => {
         </FormLabel>
       )}
       <RadioGroup
-        id={`${field.name}-${field.id}`}
         row={field.layout === "row"}
         aria-labelledby={field.id}
+        data-testid={`${field.name}-${field.id}`}
         name={field.name}
         value={field.value || ""}
         onChange={(e) =>
@@ -55,10 +55,9 @@ export const RadioField = ({ field, sectionIndex }: RadioFieldProps) => {
       >
         {field.options.map((option) => (
           <FormControlLabel
-            htmlFor={option.value}
             key={option.value}
             value={option.value}
-            control={<Radio sx={{ mr: 0.15 }} id={option.value}/>}
+            control={<Radio sx={{ mr: 0.15 }} />}
             label={lookupLanguageString(option.label, i18n.language)}
             disabled={formDisabled}
           />
@@ -91,7 +90,9 @@ export const CheckField = ({ field, sectionIndex }: CheckFieldProps) => {
           {lookupLanguageString(field.label, i18n.language)}
         </FormLabel>
       )}
-      <FormGroup id={`${field.name}-${field.id}`}>
+      <FormGroup 
+        data-testid={`${field.name}-${field.id}`}
+      >
         {field.options.map((option) => (
           <Stack direction="row" alignItems="center" key={option.value}>
             <FormControlLabel
@@ -115,12 +116,10 @@ export const CheckField = ({ field, sectionIndex }: CheckFieldProps) => {
                     )
                   }
                   name={option.value}
-                  id={option.value}
                   disabled={formDisabled}
                 />
               }
               label={lookupLanguageString(option.label, i18n.language)}
-              htmlFor={option.value}
             />
             {!field.label && (
               // todo: maybe we should make individual checkboxes required/not required

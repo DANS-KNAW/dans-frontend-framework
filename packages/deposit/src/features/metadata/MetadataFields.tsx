@@ -150,12 +150,13 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
           sx={{ pb: 0, pl: 2.25, pr: 2.25 }}
         />
         {fieldArray && (
-          <CardContent id={`group-${field.name}-${field.id}`}>
+          <CardContent 
+            data-testid={`group-${field.name}-${field.id}`}
+          >
             <TransitionGroup>
               {fieldArray.map((groupedField, i) => (
                 <Collapse key={groupedField[0].id}>
                   <Stack
-                    id={`single-${field.name}-${groupedField[0].id}`}
                     direction="row"
                     alignItems="center"
                     key={i}
@@ -165,6 +166,7 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
                       pt: i > 0 ? 2 : 0,
                       mt: i > 0 ? 2 : 0,
                     }}
+                    data-testid={`single-${field.name}-${groupedField[0].id}`}
                   >
                     <Grid container sx={{ flex: 1 }} spacing={2}>
                       {groupedField.map((f) => (

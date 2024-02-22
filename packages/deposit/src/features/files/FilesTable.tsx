@@ -101,6 +101,10 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
         <TextField
           {...params}
           label={t(type === "process" ? "selectOptions" : "selectOption")}
+          inputProps={{
+            ...params.inputProps,
+            'data-testid': `actions-${type}-${file.name}`,
+          }}
         />
       )}
       options={type === "process" ? fileProcessing : fileRoles}
@@ -156,6 +160,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
                 : setToDelete(!toDelete))
             }
             disabled={formDisabled}
+            data-testid={`delete-${file.name}`}
           >
             <DeleteIcon fontSize="small" color="error" />
           </IconButton>
@@ -219,6 +224,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
                 })
               )
             }
+            data-testid={`private-${file.name}`}
             disabled={file.valid === false || formDisabled}
           />
         </TableCell>
