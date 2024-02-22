@@ -135,6 +135,7 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
     ? (field.fields as InputField[][])
     : [field.fields as InputField[]];
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
+  console.log(field)
 
   return (
     <Grid xs={12}>
@@ -155,7 +156,7 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
           >
             <TransitionGroup>
               {fieldArray.map((groupedField, i) => (
-                <Collapse key={groupedField[0].id}>
+                <Collapse key={`group-${groupedField[0].id}`}>
                   <Stack
                     direction="row"
                     alignItems="center"
@@ -166,7 +167,7 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
                       pt: i > 0 ? 2 : 0,
                       mt: i > 0 ? 2 : 0,
                     }}
-                    data-testid={`single-${field.name}-${groupedField[0].id}`}
+                    data-testid={`single-${field.name}-group-${i}`}
                   >
                     <Grid container sx={{ flex: 1 }} spacing={2}>
                       {groupedField.map((f) => (
@@ -185,7 +186,7 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
                           groupedFieldId={field.id}
                           deleteFieldIndex={i}
                           size="medium"
-                          deleteGroupId={groupedField[0].id}
+                          deleteGroupId={`group-${i}`}
                           groupedFieldName={field.name}
                         />
                       )}
