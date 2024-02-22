@@ -27,7 +27,6 @@ export const DeleteButton = ({
       <IconButton
         color="error"
         aria-label={t("delete") as string}
-        id={`delete-button-${groupedFieldName}-${deleteGroupId}`}
         size={size}
         sx={{ mt: mt }}
         onClick={() =>
@@ -39,6 +38,7 @@ export const DeleteButton = ({
             }),
           )
         }
+        data-testid={`delete-button-${groupedFieldName}-${deleteGroupId}`}
       >
         <RemoveCircleOutlineIcon fontSize={size} />
       </IconButton>
@@ -61,7 +61,6 @@ export const AddButton = ({
       <IconButton
         color="primary"
         aria-label={t("add") as string}
-        id={`add-button-${groupedFieldName}-${groupedFieldId}`}
         size={size}
         sx={{ mt: mt }}
         onClick={() =>
@@ -73,6 +72,7 @@ export const AddButton = ({
             }),
           )
         }
+        data-testid={`add-button-${groupedFieldName}-${groupedFieldId}`}
       >
         <AddCircleOutlineIcon fontSize={size} />
       </IconButton>
@@ -102,7 +102,7 @@ export const AddButtonText = ({
       }
       size={size}
       startIcon={<AddCircleOutlineIcon />}
-      id={`add-button-${groupedFieldName}-${groupedFieldId}`}
+      data-testid={`add-button-${groupedFieldName}-${groupedFieldId}`}
     >
       {t("add")}
     </Button>
