@@ -341,12 +341,12 @@ const Submit = ({
 
         <Stack direction="row" alignItems="center" mb={2}>
           <Button
-            id="save-form"
             variant="contained"
             disabled={formDisabled}
             onClick={() => handleButtonClick("save")}
             size="large"
             sx={{ mr: 1 }}
+            data-testid="save-form"
           >
             {t("save")}
           </Button>
@@ -360,13 +360,13 @@ const Submit = ({
               onClick={resetForm}
               size="large"
               sx={{ mr: 1 }}
+              data-testid="reset-form"
             >
               {t("reset")}
             </Button>
           )}
 
           <Button
-            id="submit-form"
             variant="contained"
             disabled={
               !hasTargetCredentials ||
@@ -375,6 +375,7 @@ const Submit = ({
             }
             onClick={() => handleButtonClick("submit")}
             size="large"
+            data-testid="submit-form"
           >
             {fileWarning ? t("submitAnyway") : t("submit")}
           </Button>

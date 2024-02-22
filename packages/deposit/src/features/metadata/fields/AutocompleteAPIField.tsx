@@ -404,7 +404,6 @@ export const MultiApiField = ({
       <FormControl sx={{ minWidth: 110, mr: 1 }}>
         <InputLabel id="select-api">{t("multiApiSelectLabel")}</InputLabel>
         <Select
-          id={`select-api-${field.id}`}
           labelId="select-api"
           label={t("multiApiSelectLabel")}
           onChange={(e) => {
@@ -428,7 +427,7 @@ export const MultiApiField = ({
           }}
           value={field.multiApiValue}
           disabled={formDisabled}
-          inputProps={{'data-cy': `select-api-${field.name}`}}
+          inputProps={{'data-testid': `selectapi-${field.name}-${field.id}`}}
         >
           {Array.isArray(field.options) &&
             (field.options as TypeaheadAPI[]).map((option) => (
@@ -542,6 +541,10 @@ const AutocompleteAPIField = ({
                 ) : (
                   params.InputProps.startAdornment
                 ),
+            }}
+            inputProps={{
+              ...params.inputProps,
+              'data-testid': `${field.name}-${field.id}`,
             }}
           />
         )}

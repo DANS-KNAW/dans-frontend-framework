@@ -35,7 +35,7 @@ const DateTimeField = ({
     <Stack direction="row" alignItems="start">
       {field.formatOptions && (
         <FormControl sx={{ minWidth: 110, mr: 1 }}>
-          <InputLabel id="select-api">{t("selectDateType")}</InputLabel>
+          <InputLabel>{t("selectDateType")}</InputLabel>
           <Select
             label={t("selectDateType")}
             onChange={(e) => {
@@ -59,7 +59,7 @@ const DateTimeField = ({
             }}
             value={field.format}
             disabled={formDisabled}
-            inputProps={{id: `datetype-${field.name}-${field.id}`}}
+            inputProps={{'data-testid': `datetype-${field.name}-${field.id}`}}
           >
             {field.formatOptions.map((option) => (
               <MenuItem key={option} value={option}>
@@ -71,7 +71,6 @@ const DateTimeField = ({
       )}
 
       <MUIDateTimeField
-        id={`${field.name}-${field.id}`}
         fullWidth
         format={field.format}
         helperText={status === "error" && field.touched && t("incorrect")}
@@ -117,6 +116,7 @@ const DateTimeField = ({
             </InputAdornment>
           ),
         }}
+        inputProps={{'data-testid': `${field.name}-${field.id}`}}
         slotProps={{
           textField: { error: status === "error" && field.touched },
         }}

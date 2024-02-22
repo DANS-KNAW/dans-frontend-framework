@@ -43,7 +43,7 @@ const AutocompleteField = ({
       <Autocomplete
         multiple={field.multiselect}
         fullWidth
-        id={`${field.name}-${field.id}`}
+        data-testid={`${field.name}-${field.id}`}
         options={localizedOptions}
         groupBy={(option) =>
           (option.header &&
@@ -77,6 +77,10 @@ const AutocompleteField = ({
                 ) : (
                   params.InputProps.startAdornment
                 ),
+            }}
+            inputProps={{
+              ...params.inputProps,
+              'data-testid': `${field.name}-${field.id}`,
             }}
           />
         )}
