@@ -77,6 +77,7 @@ export const UserSettings = ({
           <Link
             component={RouterLink}
             to={apiKeyError !== undefined ? "" : `/${depositSlug || `deposit`}`}
+            data-testid="deposit-data"
           >
             <Button
               variant="contained"
@@ -215,6 +216,7 @@ const UserSettingsItem = ({ target }: { target: Target }) => {
             </InputAdornment>
           ),
         }}
+        inputProps={{'data-testid': `apikey-${target.authKey}`}}
       />
     </Stack>
   );

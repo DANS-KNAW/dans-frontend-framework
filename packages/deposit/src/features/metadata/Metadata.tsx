@@ -29,16 +29,15 @@ const Form = () => {
     <>
       {(metadata as SectionType[]).map((section, sectionIndex) => (
         <Accordion
-          id={`section-${section.id}`}
           key={`section-${section.id}`}
           expanded={openPanel === section.id}
           onChange={handleChange(section.id)}
           TransitionProps={{ unmountOnExit: true }}
+          data-testid={`section-${section.id}`}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls={`${section.id}-content`}
-            id={`${section.id}-header`}
           >
             <StatusIcon status={section.status} margin="r" />
             <Typography>

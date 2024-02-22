@@ -133,7 +133,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
           <Grid xs={12} mt={4}>
             {!hasTargetCredentials && (
               // show a message if keys are missing
-              <Alert severity="warning">
+              <Alert severity="warning" data-testid="invalid-api-keys">
                 <AlertTitle>{t("missingInfoHeader")}</AlertTitle>
                 <Trans
                   i18nKey="generic:missingInfoText"
@@ -194,7 +194,7 @@ const TabHeader = ({ value, handleChange }: TabHeaderProps) => {
         label={t("heading", { ns: "metadata" })}
         icon={<StatusIcon status={metadataStatus} margin="r" />}
         iconPosition="start"
-        id="metadata-tab"
+        data-testid="metadata-tab"
       />
       <Tab
         label={t("heading", { ns: "files" })}
@@ -205,7 +205,7 @@ const TabHeader = ({ value, handleChange }: TabHeaderProps) => {
           />
         }
         iconPosition="start"
-        id="files-tab"
+        data-testid="files-tab"
       />
     </Tabs>
   );

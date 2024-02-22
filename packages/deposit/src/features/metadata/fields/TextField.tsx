@@ -43,7 +43,6 @@ const SingleTextField = ({
     <Stack direction="row" alignItems="start">
       <TextField
         fullWidth
-        id={`${field.name}-${field.id}`}
         error={status === "error" && field.touched}
         helperText={status === "error" && field.touched && t("incorrect")}
         variant="outlined"
@@ -84,6 +83,7 @@ const SingleTextField = ({
             </InputAdornment>
           ),
         }}
+        inputProps={{'data-testid': `${field.name}-${field.id}`}}
       />
       {groupedFieldId &&
         !formDisabled && [
