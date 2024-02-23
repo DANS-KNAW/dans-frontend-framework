@@ -34,7 +34,7 @@ const DateTimeField = ({
   return (
     <Stack direction="row" alignItems="start">
       {field.formatOptions && (
-        <FormControl sx={{ minWidth: 110, mr: 1 }}>
+        <FormControl sx={{ minWidth: 110, mr: 1, mt: currentField > 0 ? 1 : 0 }}>
           <InputLabel>{t("selectDateType")}</InputLabel>
           <Select
             label={t("selectDateType")}
