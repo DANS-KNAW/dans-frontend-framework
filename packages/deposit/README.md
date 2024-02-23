@@ -6,18 +6,62 @@ The Deposit component consists of the metadata form and a file upload section.
 
     <Deposit config=
       {
-        form: [{...}], // an array of form sections, see below
-        target: [{...}] // Target object, the destination of the submission.
-        submitKey: '', // A string that gets passed along in the header of the form submission: 'Bearer <submitKey>'
-        skipValidation: false, // if true, a form can always be submitted, handy for testing purposes
-        geonamesApiKey: '' // optional Geonames API key
-        gsheetsApiKey: '', // optional Google sheets API key
+        // an array of form sections, see below
+        form: [{...}], 
+
+        // pointer to the field in the 'sections' array that contains the form title, which is used in a users submissions overview
+        formTitle: "[1].fields[0]", 
+
+        // Target object, the destination of the submission. Config usually read from .env file,
+        // because of differences in demo/staging/production environment
+        target: {
+          envName: import.meta.env.VITE_ENV_NAME,
+          configName: import.meta.env.VITE_CONFIG_NAME,
+        },
+
+        // Credentials needed for the submissions target(s). Formatted as array, to support multiple targets.
+        targetCredentials: [
+          {
+            // user readable name for the target repository, e.g. 'Dataverse'
+            name: '', 
+
+            // the destination of the submission, as configured in the submission processing server, 
+            // e.g. ssh.datastations.nl. Usually read from .env file.
+            repo: '', 
+
+            // type of authentication that the target repository requires. Depends on config of submission
+            //  processing server, usually API_KEY.
+            auth: '', 
+
+            // key that the app needs to pull from the keycloak user profile
+            authKey: '', 
+
+            // URL where user can get their API key for this target repo, e.g. for Dataverse
+            // https://ssh.datastations.nl/dataverseuser.xhtml?selectTab=apiTokenTab.
+            // Usually read from .env file.
+            keyUrl: '' 
+
+            // URL that the app should check this key against, e.g. for Dataverse
+            // https://ssh.datastations.nl/api/users/token. Currently implemented for Dataverse and Zenodo.
+            // See function validateKeyApi in user-auth package.
+            // Usually read from .env file.
+            keyCheckUrl: '',
+          }
+        ],
+
+        // Legacy/redundant with Keycloak: an optional string that gets passed along 
+        // in the header of the form submission: 'Bearer <submitKey>'. Could be used if
+        // skipValidation is true.
+        submitKey: '', 
+
+        // if true, a form can always be submitted, handy for testing purposes
+        skipValidation: false,
+
       }
       page={...} // A page object
     />
 
-For target objects, see [@dans-framework/user-auth](/packes/auth/README.md).
-For page objects, see [@dans-framework/pages](/packages/pages/README.md).
+For page object, see [@dans-framework/pages](/packages/pages/README.md).
 
 Each section is a collapsible accordion in the front-end. A section is formatted like so:
 
@@ -53,6 +97,9 @@ Each section is a collapsible accordion in the front-end. A section is formatted
           // Optionally set field to required or not. Not applicable to radio buttons or group fields.
           required: true,
 
+          // Optionally set field to not display a 'recommended you fill this in' status. Field cannot be required obviously.
+          noIndicator: true,
+
           // Optional field description, can be a string or a language object. Appears in tooltip or under label in case of group field
           description: 'Some description',
 
@@ -65,7 +112,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
           // You can set the disabled flag if you don't want the user to change this field's value
           disabled: true,
 
-          // Text and group fields only, make field repeatable field
+          // Text, number, date and group fields only, make field repeatable field
           repeatable: true,
 
           // Text field only, enable this if you want a larger textarea
@@ -74,13 +121,17 @@ Each section is a collapsible accordion in the front-end. A section is formatted
           // Textfield only, to validate input. See ValidationType in types/Metadata.ts
           validation: 'email',
 
-          // Textfield only. Optionally provide this value if you want to fill a textfield based on user authentication object. See AuthProperty in types/Metadata.ts for options.
+          // Textfield only. Optionally provide this value if you want to fill a textfield based on user authentication object. 
+          // See AuthProperty in types/Metadata.ts for options.
           autofill: 'name',
 
           // Date field only. Specify the format you want to use. See DateTimeFormat in types/Metadata.ts.
           format: 'DD-MM-YYYY HH:mm',
 
-          // Date field only. Specify an optional minimum and/or maximum input date.
+          // Date field only. Provide an optional list of date format options the user can choose from.
+          formatOptions: ["YYYY", "MM-YYYY", "DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
+
+          // Date field only. Specify an optional minimum and/or maximum input date, in the format you've provided.
           minDate: '01-01-2020 12:00',
           maxDate: '01-01-2024 12:00',
 
