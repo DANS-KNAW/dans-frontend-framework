@@ -183,6 +183,10 @@ Each section is a collapsible accordion in the front-end. A section is formatted
 
           // Group field only. An array of inputfields (text, autocomplete, etc, as above).
           fields: [{...}],
+
+          // Optional selector that causes other fields, indicated by their name in an array, 
+          // and not required on their own, to change to a required status if the current field is filled in.
+          makesRequired: ["name_of_field_to_change_to_required"],
         },
       ]
     }
