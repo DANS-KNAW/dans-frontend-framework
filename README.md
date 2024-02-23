@@ -116,10 +116,11 @@ Open up the appropriate package/app folder and edit the **package.json**, **tsco
 Deployment is done using Docker containers and a Github Action that listens for changes to folders inside the apps folder. Current pipeline:
 
 1.  Make changes to an app.
-2.  Create pull request for main branch and merge into main.
-3.  A fresh Docker image should be created on the [DANS Dockerhub](https://hub.docker.com/u/dansknaw). If not, check Github Actions for errors.
+2.  The pipeline uses the .env files located in the [IST secrets repo](https://github.com/DANS-KNAW/IST-ohsmart-secrets) when building. So make sure these are up to date.
+2.  Create pull request for main or demo branch and merge into main or demo. Main is used for the production website, so is only to be updated for tried and tested releases from the demo branch.
+3.  After merging the pull request, a fresh Docker image should be created on the [DANS Dockerhub](https://hub.docker.com/u/dansknaw) for each app that's been modified. If not, check Github Actions for errors.
 4.  See the [Deployment repo](https://github.com/DANS-KNAW/ohsmart-deploy) for further steps.
 
 ## Authentication with Keycloak
 
-This framework is usually setup to make use of Keycloak for authentication and storing user data, like target credentials/. See the [user-auth package](/packages/user-auth/README.md) for more info.
+This framework has been developed to make use of Keycloak for authentication and storing user data, like target credentials. See the [user-auth package](/packages/user-auth/README.md) for more info.

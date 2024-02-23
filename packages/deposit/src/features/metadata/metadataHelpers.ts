@@ -132,7 +132,7 @@ export const formatInitialState = (form: InitialSectionType[]) => {
     fields: section.fields.map((field) => {
       if (field.type === "group" && field.fields) {
         const newFieldGroup = field.fields.map((f) =>
-          !Array.isArray(f) && f.type === "text" && f.repeatable
+          !Array.isArray(f) && (f.type === "text" || f.type === "number" || f.type === "date") && f.repeatable
             ? {
                 id: uuidv4(),
                 type: "repeatSingleField",
