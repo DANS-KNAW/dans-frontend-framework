@@ -33,10 +33,9 @@ export const rdaApi = createApi({
   endpoints: (build) => ({
     fetchRdaDomain: build.query({
       query: () => "domains",
-      transformResponse: (response: RdaDomainsResponse[], _meta, arg) => {
+      transformResponse: (response: RdaDomainsResponse[]) => {
         return response.length > 0
           ? {
-              arg: arg,
               response: response.map((item) => ({
                 label: item.title,
                 value: item.id,
@@ -50,10 +49,9 @@ export const rdaApi = createApi({
     }),
     fetchRdaInterestGroup: build.query({
       query: () => "interestgroups",
-      transformResponse: (response: RdaInterestGroupsResponse[], _meta, arg) => {
+      transformResponse: (response: RdaInterestGroupsResponse[]) => {
         return response.length > 0
           ? {
-              arg: arg,
               response: response.map((item) => ({
                 label: item.title,
                 value: item.id,
@@ -67,10 +65,9 @@ export const rdaApi = createApi({
     }),
     fetchRdaPathway: build.query({
       query: () => "pathways",
-      transformResponse: (response: RdaPathwaysResponse[], _meta, arg) => {
+      transformResponse: (response: RdaPathwaysResponse[]) => {
         return response.length > 0
           ? {
-              arg: arg,
               response: response.map((item) => ({
                 label: item.title,
                 value: item.id,
@@ -85,10 +82,9 @@ export const rdaApi = createApi({
     }),
     fetchRdaWorkingGroup: build.query({
       query: () => "workinggroups",
-      transformResponse: (response: RdaWorkGroupResponse[], _meta, arg) => {
+      transformResponse: (response: RdaWorkGroupResponse[]) => {
         return response.length > 0
           ? {
-              arg: arg,
               response: response.map((item) => ({
                 label: item.title,
                 value: `{"node_id":"${item.id}","UUID_WorkingGroup":"${item.parent_id}"}`,
