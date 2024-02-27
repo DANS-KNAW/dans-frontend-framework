@@ -181,6 +181,7 @@ export interface OptionsType {
   freetext?: boolean; // indicates if a value is manually entered by user
   categoryLabel?: string; // used for nested options
   categoryContent?: string; // used for nested options
+  url?: string;
 }
 
 // Validation for text fields

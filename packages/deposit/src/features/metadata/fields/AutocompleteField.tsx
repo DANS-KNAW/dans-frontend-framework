@@ -1,5 +1,6 @@
 import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
+import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
@@ -39,7 +40,7 @@ const AutocompleteField = ({
     })) as OptionsType[]) || [];
 
   return (
-    <Stack direction="row" alignItems="start">
+    <Stack direction="row" alignItems="start" sx={{width: '100%'}}>
       <Autocomplete
         multiple={field.multiselect}
         fullWidth
@@ -65,10 +66,9 @@ const AutocompleteField = ({
                 !field.multiselect &&
                 field.value &&
                 !Array.isArray(field.value) &&
-                field.value.value &&
-                field.value.value.startsWith("http") ? (
+                ((field.value.value && field.value.value.startsWith("http")) || field.value.url) ? (
                   <InfoLink
-                    link={field.value.value}
+                    link={(field.value.value.startsWith("http") && field.value.value) || field.value.url as string}
                     checkValue={lookupLanguageString(
                       field.value.label,
                       i18n.language,
@@ -106,6 +106,56 @@ const AutocompleteField = ({
         loading={isLoading === true}
         disabled={formDisabled}
         isOptionEqualToValue={(option, value) => option.value === value.value}
+        renderOption={(props, option) => (
+          <li {...props} key={option.value} style={{ flexWrap: "wrap" }}>
+            {option.categoryLabel && option.categoryContent && (
+              <Typography
+                component="div"
+                sx={{ width: "100%", fontSize: "0.8rem" }}
+                color="neutral.contrastText"
+              >
+                <Typography
+                  component="span"
+                  sx={{ fontWeight: "600", fontSize: "inherit" }}
+                >
+                  {t(option.categoryLabel)}
+                </Typography>
+                : {option.categoryContent}
+              </Typography>
+            )}
+            {lookupLanguageString(option.label, i18n.language)}
+            {option.extraContent && option.extraLabel && (
+              <Typography
+                component="div"
+                sx={{ width: "100%", fontSize: "0.8rem" }}
+                color="neutral.contrastText"
+              >
+                <Typography
+                  component="span"
+                  sx={{ fontWeight: "600", fontSize: "inherit" }}
+                >
+                  {t(option.extraLabel)}
+                </Typography>
+                : {option.extraContent}
+              </Typography>
+            )}
+            {option.id && option.idLabel && (
+              <Typography
+                component="div"
+                sx={{ width: "100%", fontSize: "0.8rem" }}
+                color="neutral.contrastText"
+              >
+                <Typography
+                  component="span"
+                  sx={{ fontWeight: "600", fontSize: "inherit" }}
+                >
+                  {t(option.idLabel)}
+                </Typography>
+                : {option.id}
+              </Typography>
+            )}
+          </li>
+        )}
       />
       <StatusIcon
         margin="lt"
@@ -172,9 +222,9 @@ export const InfoChip = ({
       }
       size="medium"
       icon={
-        option.value && option.value.startsWith("http") ? (
+        (option.value && option.value.startsWith("http")) || option.url ? (
           <InfoLink
-            link={option.value}
+            link={(option.value.startsWith("http") && option.value) || option.url as string}
             apiValue={apiValue}
             checkValue={lookupLanguageString(option.label, i18n.language)}
             chip={true}
