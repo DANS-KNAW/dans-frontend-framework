@@ -1,59 +1,35 @@
 import type { AutocompleteAPIFieldData } from "./MetadataFields";
 
-interface GorcItem {
+export interface GorcResponse {
   id: string;
   parent_id?: string;
   title: string;
   description: string;
+  parent_hierarchy?: string;
 }
 
-export interface GorcResponse {
-  number_of_results: number;
-  items: GorcItem[];
-}
-
-interface RdaInterestGroupItem {
+export interface RdaInterestGroupsResponse {
   id: string;
   title: string;
   url: string;
 }
 
-export interface RdaInterestGroupsResponse {
-  number_of_results: number;
-  items: RdaInterestGroupItem[];
-}
-
-interface RdaWorkGroupItem {
+export interface RdaWorkGroupResponse {
   id: string;
   title: string;
   parent_id: string;
 }
 
-export interface RdaWorkGroupResponse {
-  number_of_results: number;
-  items: RdaWorkGroupItem[];
-}
-
-interface RdaDomainItem {
+export interface RdaDomainsResponse {
   id: string;
   title: string;
   url: string;
 }
 
-export interface RdaDomainsResponse {
-  number_of_results: number;
-  items: RdaDomainItem[];
-}
-
-interface RdaPathwayItem {
+export interface RdaPathwaysResponse {
   id: string;
   title: string;
   description: string;
-}
-
-export interface RdaPathwaysResponse {
-  number_of_results: number;
-  items: RdaPathwayItem[];
 }
 
 interface License {

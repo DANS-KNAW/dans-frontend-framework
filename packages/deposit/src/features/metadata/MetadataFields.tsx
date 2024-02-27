@@ -135,7 +135,6 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
     ? (field.fields as InputField[][])
     : [field.fields as InputField[]];
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
-  console.log(field)
 
   return (
     <Grid xs={12}>

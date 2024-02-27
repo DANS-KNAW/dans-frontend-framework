@@ -14,13 +14,9 @@ import { submitApi } from "../features/submit/submitApi";
 import { dansFormatsApi } from "../features/files/api/dansFormats";
 import { dansUtilityApi } from "../features/files/api/dansUtility";
 import { errorLogger } from "@dans-framework/utils/error";
-import { gorcApi } from "../features/metadata/api/gorc";
-import { licenceApi } from "../features/metadata/api/licenses";
+import { licenceApi } from "../features/metadata/api/licences";
 import { sshLicenceApi } from "../features/metadata/api/sshLicences";
-import { rdaWorkingGroupsApi } from "../features/metadata/api/rdaWorkgroup";
-import { rdaPathwaysApi } from "../features/metadata/api/rdaPathways";
-import { rdaDomainsApi } from "../features/metadata/api/rdaDomains";
-import { rdaInterestGroupsApi } from "../features/metadata/api/rdaInterestGroups";
+import { rdaApi } from "../features/metadata/api/rdaApi";
 import { validateKeyApi } from "@dans-framework/user-auth";
 
 export const store = configureStore({
@@ -29,7 +25,6 @@ export const store = configureStore({
     files: filesReducer,
     [orcidApi.reducerPath]: orcidApi.reducer,
     [rorApi.reducerPath]: rorApi.reducer,
-    [gorcApi.reducerPath]: gorcApi.reducer,
     [licenceApi.reducerPath]: licenceApi.reducer,
     [sshLicenceApi.reducerPath]: sshLicenceApi.reducer,
     [gettyApi.reducerPath]: gettyApi.reducer,
@@ -39,10 +34,7 @@ export const store = configureStore({
     [datastationsApi.reducerPath]: datastationsApi.reducer,
     [dansFormatsApi.reducerPath]: dansFormatsApi.reducer,
     [dansUtilityApi.reducerPath]: dansUtilityApi.reducer,
-    [rdaWorkingGroupsApi.reducerPath]: rdaWorkingGroupsApi.reducer,
-    [rdaPathwaysApi.reducerPath]: rdaPathwaysApi.reducer,
-    [rdaDomainsApi.reducerPath]: rdaDomainsApi.reducer,
-    [rdaInterestGroupsApi.reducerPath]: rdaInterestGroupsApi.reducer,
+    [rdaApi.reducerPath]: rdaApi.reducer,
     [depositApi.reducerPath]: depositApi.reducer,
     [validateKeyApi.reducerPath]: validateKeyApi.reducer,
     submit: submitReducer,
@@ -52,7 +44,6 @@ export const store = configureStore({
     getDefaultMiddleware()
       .concat(orcidApi.middleware)
       .concat(rorApi.middleware)
-      .concat(gorcApi.middleware)
       .concat(licenceApi.middleware)
       .concat(sshLicenceApi.middleware)
       .concat(gettyApi.middleware)
@@ -62,10 +53,7 @@ export const store = configureStore({
       .concat(submitApi.middleware)
       .concat(dansFormatsApi.middleware)
       .concat(dansUtilityApi.middleware)
-      .concat(rdaWorkingGroupsApi.middleware)
-      .concat(rdaPathwaysApi.middleware)
-      .concat(rdaDomainsApi.middleware)
-      .concat(rdaInterestGroupsApi.middleware)
+      .concat(rdaApi.middleware)
       .concat(depositApi.middleware)
       .concat(validateKeyApi.middleware)
       .concat(errorLogger),

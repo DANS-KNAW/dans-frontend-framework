@@ -30,13 +30,15 @@ import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import AutocompleteField, { InfoLink, InfoChip } from "./AutocompleteField";
 import { getFormDisabled } from "../../../deposit/depositSlice";
-import { useFetchGorcQuery } from "../api/gorc";
-import { useFetchLicensesQuery } from "../api/licenses";
+import { useFetchLicencesQuery } from "../api/licences";
 import { useFetchSshLicencesQuery } from "../api/sshLicences";
-import { useFetchRdaWorkingGroupQuery } from "../api/rdaWorkgroup";
-import { useFetchRdaPathwayQuery } from "../api/rdaPathways";
-import { useFetchRdaDomainQuery } from "../api/rdaDomains";
-import { useFetchRdaInterestGroupQuery } from "../api/rdaInterestGroups";
+import {
+  useFetchGorcQuery,
+  useFetchRdaWorkingGroupQuery,
+  useFetchRdaPathwayQuery,
+  useFetchRdaDomainQuery,
+  useFetchRdaInterestGroupQuery
+} from "../api/rdaApi";
 
 /*
  *  Type ahead fields for different API endpoints
@@ -74,56 +76,6 @@ export const RorField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
   // Fetch data on input change
   const { data, isFetching, isLoading } =
     useFetchRorByNameQuery<QueryReturnType>(debouncedInputValue, {
-      skip: debouncedInputValue === "",
-    });
-
-  return (
-    <AutocompleteAPIField
-      field={field}
-      sectionIndex={sectionIndex}
-      inputValue={inputValue}
-      setInputValue={setInputValue}
-      debouncedInputValue={debouncedInputValue}
-      data={data}
-      isLoading={isLoading}
-      isFetching={isFetching}
-    />
-  );
-};
-
-export const GorcField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
-  const [inputValue, setInputValue] = useState<string>("");
-  const debouncedInputValue = useDebounce(inputValue, 500)[0];
-  // Fetch data on input change
-  const { data, isFetching, isLoading } = useFetchGorcQuery<QueryReturnType>(
-    debouncedInputValue,
-    { skip: debouncedInputValue === "" },
-  );
-  return (
-    <>
-      <AutocompleteAPIField
-        field={field}
-        sectionIndex={sectionIndex}
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        debouncedInputValue={debouncedInputValue}
-        data={data}
-        isLoading={isLoading}
-        isFetching={isFetching}
-      />
-    </>
-  );
-};
-
-export const LicensesField = ({
-  field,
-  sectionIndex,
-}: AutocompleteFieldProps) => {
-  const [inputValue, setInputValue] = useState<string>("");
-  const debouncedInputValue = useDebounce(inputValue, 500)[0];
-  // Fetch data on input change
-  const { data, isFetching, isLoading } =
-    useFetchLicensesQuery<QueryReturnType>(debouncedInputValue, {
       skip: debouncedInputValue === "",
     });
 
@@ -266,28 +218,63 @@ export const SshLicencesField = ({
   );
 };
 
+
+export const LicensesField = ({
+  field,
+  sectionIndex,
+}: AutocompleteFieldProps) => {
+  // Fetch data right away
+  const { data, isFetching, isLoading } =
+    useFetchLicencesQuery<QueryReturnType>(null);
+  const newField = {
+    ...field,
+    options: data && data.response ? data.response : [],
+  };
+
+  return (
+    <AutocompleteField
+      field={newField}
+      sectionIndex={sectionIndex}
+      isLoading={isLoading || isFetching}
+    />
+  );
+};
+
+export const GorcField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
+  // Fetch data right away
+  const { data, isFetching, isLoading } =
+    useFetchGorcQuery<QueryReturnType>(null);
+  const newField = {
+    ...field,
+    options: data && data.response ? data.response : [],
+  };
+
+  return (
+    <AutocompleteField
+      field={newField}
+      sectionIndex={sectionIndex}
+      isLoading={isLoading || isFetching}
+    />
+  );
+};
+
 export const RdaPathwaysField = ({
   field,
   sectionIndex,
 }: AutocompleteFieldProps) => {
-  const [inputValue, setInputValue] = useState<string>("");
-  const debouncedInputValue = useDebounce(inputValue, 500)[0];
-
+  // Fetch data right away
   const { data, isFetching, isLoading } =
-    useFetchRdaPathwayQuery<QueryReturnType>(debouncedInputValue, {
-      skip: debouncedInputValue === "",
-    });
+    useFetchRdaPathwayQuery<QueryReturnType>(null);
+  const newField = {
+    ...field,
+    options: data && data.response ? data.response : [],
+  };
 
   return (
-    <AutocompleteAPIField
-      field={field}
+    <AutocompleteField
+      field={newField}
       sectionIndex={sectionIndex}
-      inputValue={inputValue}
-      setInputValue={setInputValue}
-      debouncedInputValue={debouncedInputValue}
-      data={data}
-      isLoading={isLoading}
-      isFetching={isFetching}
+      isLoading={isLoading || isFetching}
     />
   );
 };
@@ -296,24 +283,19 @@ export const RdaDomainsField = ({
   field,
   sectionIndex,
 }: AutocompleteFieldProps) => {
-  const [inputValue, setInputValue] = useState<string>("");
-  const debouncedInputValue = useDebounce(inputValue, 500)[0];
-
+  // Fetch data right away
   const { data, isFetching, isLoading } =
-    useFetchRdaDomainQuery<QueryReturnType>(debouncedInputValue, {
-      skip: debouncedInputValue === "",
-    });
+    useFetchRdaDomainQuery<QueryReturnType>(null);
+  const newField = {
+    ...field,
+    options: data && data.response ? data.response : [],
+  };
 
   return (
-    <AutocompleteAPIField
-      field={field}
+    <AutocompleteField
+      field={newField}
       sectionIndex={sectionIndex}
-      inputValue={inputValue}
-      setInputValue={setInputValue}
-      debouncedInputValue={debouncedInputValue}
-      data={data}
-      isLoading={isLoading}
-      isFetching={isFetching}
+      isLoading={isLoading || isFetching}
     />
   );
 };
@@ -322,24 +304,19 @@ export const RdaInterestGroupsField = ({
   field,
   sectionIndex,
 }: AutocompleteFieldProps) => {
-  const [inputValue, setInputValue] = useState<string>("");
-  const debouncedInputValue = useDebounce(inputValue, 500)[0];
-
+  // Fetch data right away
   const { data, isFetching, isLoading } =
-    useFetchRdaInterestGroupQuery<QueryReturnType>(debouncedInputValue, {
-      skip: debouncedInputValue === "",
-    });
+    useFetchRdaInterestGroupQuery<QueryReturnType>(null);
+  const newField = {
+    ...field,
+    options: data && data.response ? data.response : [],
+  };
 
   return (
-    <AutocompleteAPIField
-      field={field}
+    <AutocompleteField
+      field={newField}
       sectionIndex={sectionIndex}
-      inputValue={inputValue}
-      setInputValue={setInputValue}
-      debouncedInputValue={debouncedInputValue}
-      data={data}
-      isLoading={isLoading}
-      isFetching={isFetching}
+      isLoading={isLoading || isFetching}
     />
   );
 };
@@ -348,24 +325,19 @@ export const RdaWorkingGroupsField = ({
   field,
   sectionIndex,
 }: AutocompleteFieldProps) => {
-  const [inputValue, setInputValue] = useState<string>("");
-  const debouncedInputValue = useDebounce(inputValue, 500)[0];
-
+  // Fetch data right away
   const { data, isFetching, isLoading } =
-    useFetchRdaWorkingGroupQuery<QueryReturnType>(debouncedInputValue, {
-      skip: debouncedInputValue === "",
-    });
+    useFetchRdaWorkingGroupQuery<QueryReturnType>(null);
+  const newField = {
+    ...field,
+    options: data && data.response ? data.response : [],
+  };
 
   return (
-    <AutocompleteAPIField
-      field={field}
+    <AutocompleteField
+      field={newField}
       sectionIndex={sectionIndex}
-      inputValue={inputValue}
-      setInputValue={setInputValue}
-      debouncedInputValue={debouncedInputValue}
-      data={data}
-      isLoading={isLoading}
-      isFetching={isFetching}
+      isLoading={isLoading || isFetching}
     />
   );
 };
