@@ -6,5 +6,8 @@
   "missingInfoHeader": "Missing or invalid API keys",
   "missingInfoText": "You need to enter your personal API keys to be able to submit this form. <0>Check your settings</0>.",
   "hasRejectedError": "There was an error processing your submission",
+  "dataMessageHeader": "Continue with your metadata",
+  "dataMessageContent": "Finish filling out your form, or reset the form if you want to start over.",
+  "resetForm": "Clear form",
   "tryAgain": "Please correct these errors and try submitting again"
 }
