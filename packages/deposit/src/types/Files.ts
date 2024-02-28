@@ -3,6 +3,7 @@ import type { LanguageStrings } from "@dans-framework/utils";
 export interface FileActions {
   label: string | LanguageStrings;
   value: string;
+  for?: string[];
 }
 
 export type FileActionType =
@@ -56,6 +57,14 @@ export type FileLocation = "local" | "online";
 
 export interface DansSimpleList {
   list: string[];
+}
+
+export interface GroupedDataObject {
+  [key: string]: string[];
+}
+
+export interface DansGroupedList {
+  type: GroupedDataObject[];
 }
 
 export interface DansSimpleListQueryResponse {

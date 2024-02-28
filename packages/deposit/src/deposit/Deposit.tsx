@@ -1,12 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Container from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2";
 import Metadata from "../features/metadata/Metadata";
 import Files from "../features/files/Files";
+import Collapse from '@mui/material/Collapse';
 import type { TabPanelProps, TabHeaderProps } from "../types/Deposit";
 import type { FormConfig } from "../types/Metadata";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
@@ -16,6 +18,7 @@ import {
   getOpenTab,
   setOpenTab,
   initForm,
+  resetMetadata,
 } from "../features/metadata/metadataSlice";
 import {
   resetFilesSubmitStatus,
@@ -58,7 +61,8 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const openTab = useAppSelector(getOpenTab);
   const { t, i18n } = useTranslation("generic");
   const siteTitle = useSiteTitle();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [dataMessage, setDataMessage] = useState(false);
 
   // Can load a saved form based on metadata id, passed along from e.g. UserSubmissions
   const savedFormId = searchParams.get("id");
@@ -97,6 +101,13 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     }
   }, [dispatch, sessionId, config.form, serverFormData, savedFormId, isSuccess]);
 
+  // Show a message when a saved form is loaded.
+  // Show a message when data's been entered previously.
+  // Give option to clear form and start again.
+  useEffect(() => {
+    sessionId && setDataMessage(true);
+  }, []);
+
   // Set init form props in redux, all props without the form metadata config itself
   useEffect(() => {
     dispatch(setData(config));
@@ -131,6 +142,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       <Container>
         <Grid container>
           <Grid xs={12} mt={4}>
+
             {!hasTargetCredentials && (
               // show a message if keys are missing
               <Alert severity="warning" data-testid="invalid-api-keys">
@@ -143,7 +155,9 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
                 />
               </Alert>
             )}
+
             {serverFormData && hasRejectedError && (
+              // show a message if form with an error has been loaded
               <Alert severity="error">
                 <AlertTitle>{t("hasRejectedError")}</AlertTitle>
                 {serverFormData.targets.map( t =>
@@ -152,6 +166,43 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
                 <Typography sx={{mt: 1}}>{t("tryAgain")}</Typography>
               </Alert>
             )}
+
+            <Collapse in={dataMessage}>
+              <Alert 
+                severity="info"
+                data-testid="data-message" 
+                onClose={() => setDataMessage(false)} 
+                sx={{ 
+                  position: "relative",
+                  "& .MuiAlert-message": { 
+                    flex: 1,
+                  },
+                  "& .MuiAlert-action": { 
+                    position: "absolute",
+                    right: "0.75rem",
+                    marginRight: 0,
+                  },
+                }}
+              >
+                <AlertTitle>{t("dataMessageHeader")}</AlertTitle>
+                <Typography mb={1}>{t("dataMessageContent")}</Typography>
+                <Button 
+                  variant="contained" 
+                  sx={{float: "right"}}
+                  onClick={() => {
+                    if (searchParams.has("id")) {
+                      searchParams.delete("id");
+                      setSearchParams(searchParams);
+                    }
+                    dispatch(resetMetadata());
+                    setDataMessage(false);
+                  }}
+                >
+                  {t('resetForm')}
+                </Button>
+              </Alert>
+            </Collapse>
+
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
               <TabHeader
                 value={openTab}
