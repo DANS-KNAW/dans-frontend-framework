@@ -2,16 +2,14 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import type { BaseQueryFn, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import axios from "axios";
 import type { AxiosRequestConfig, AxiosError, AxiosProgressEvent } from "axios";
-import {
-  setMetadataSubmitStatus,
-  setFilesSubmitStatus,
-  setLatestSave,
-} from "./submitSlice";
+import { setMetadataSubmitStatus, setFilesSubmitStatus } from "./submitSlice";
 import { setFileMeta } from "../files/filesSlice";
 import { setFormDisabled } from "../../deposit/depositSlice";
 import { store } from "../../redux/store";
 import type { Target } from "@dans-framework/user-auth";
 import moment from "moment";
+import { enqueueSnackbar } from "notistack";
+import i18n from "../../languages/i18n";
 
 // We use Axios to enable file upload progress monitoring
 const axiosBaseQuery =
@@ -200,8 +198,10 @@ export const submitApi = createApi({
           return { error: filesErrors };
 
         if (actionType === "save") {
-          // enable form again after successful save
-          store.dispatch(setLatestSave(moment().format("D-M-YYYY @ HH:mm")));
+          // show notice and enable form again after successful save
+          enqueueSnackbar(i18n.t("saveSuccess", { ns: "submit", dateTime: moment().format("D-M-YYYY @ HH:mm") }), {
+            variant: "success",
+          });
           store.dispatch(setFormDisabled(false));
         }
 

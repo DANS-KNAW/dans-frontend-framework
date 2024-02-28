@@ -10,7 +10,6 @@ import type {
 const initialState: InitialStateType = {
   metadataStatus: "",
   submittedFiles: [],
-  latestSave: "",
 };
 
 export const submitSlice = createSlice({
@@ -19,9 +18,6 @@ export const submitSlice = createSlice({
   reducers: {
     setMetadataSubmitStatus: (state, action: PayloadAction<SubmitStatus>) => {
       state.metadataStatus = action.payload;
-    },
-    setLatestSave: (state, action: PayloadAction<string>) => {
-      state.latestSave = action.payload;
     },
     setFilesSubmitStatus: (
       state,
@@ -58,13 +54,11 @@ export const {
   setFilesSubmitStatus,
   resetFilesSubmitStatus,
   resetMetadataSubmitStatus,
-  setLatestSave,
 } = submitSlice.actions;
 
 // Select values from state
 export const getMetadataSubmitStatus = (state: RootState) =>
   state.submit.metadataStatus;
-export const getLatestSave = (state: RootState) => state.submit.latestSave;
 export const getFilesSubmitStatus = (state: RootState) =>
   state.submit.submittedFiles;
 export const getSingleFileSubmitStatus = (id: string) => (state: RootState) =>

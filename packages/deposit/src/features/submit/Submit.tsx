@@ -25,7 +25,6 @@ import {
   getFilesSubmitStatus,
   resetFilesSubmitStatus,
   resetMetadataSubmitStatus,
-  getLatestSave,
   setFilesSubmitStatus,
 } from "./submitSlice";
 import { formatFormData, formatFileData, beforeUnloadHandler } from "./submitHelpers";
@@ -39,7 +38,6 @@ import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
-import { enqueueSnackbar } from "notistack";
 
 const Submit = ({
   hasTargetCredentials,
@@ -61,9 +59,6 @@ const Submit = ({
   // get form config
   const formConfig = useAppSelector(getData);
   const formDisabled = useAppSelector(getFormDisabled);
-
-  // get latest save time of the form
-  const latestSave = useAppSelector(getLatestSave);
 
   // File status exists in an array, so we need to do some processing and filtering.
   const filesSubmitStatus = useAppSelector(getFilesSubmitStatus).filter(
@@ -152,7 +147,8 @@ const Submit = ({
         data: formattedMetadata,
         headerData: headerData,
         actionType: actionType,
-      }).then((result: { data?: any; error?: any }) => {
+      })
+      .then((result: { data?: any; error?: any }) => {
         if (result.data?.data?.status === "OK") {
           // if metadata has been submitted ok, we start the file submit
           const filesToUpload = selectedFiles.filter((f) => !f.submittedFile);
@@ -179,7 +175,7 @@ const Submit = ({
               console.log(e);
             });
         }
-      }),
+      })
     );
   };
 
@@ -220,14 +216,6 @@ const Submit = ({
   const iconSx = {
     color: "white",
   };
-
-  // after saving, show snackbar
-  useEffect(() => {
-    metadataSubmitStatus === "saved" && !formDisabled && latestSave &&
-    enqueueSnackbar(t("saveSuccess", { dateTime: latestSave }), {
-      variant: "success",
-    });
-  }, [metadataSubmitStatus, formDisabled, latestSave])
 
   return (
     <Stack direction="column" alignItems="flex-end">
