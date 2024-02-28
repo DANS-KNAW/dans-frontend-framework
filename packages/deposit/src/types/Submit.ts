@@ -30,7 +30,6 @@ export interface ReduxFileSubmitActions {
 export interface InitialStateType {
   metadataStatus: string;
   submittedFiles: ReduxFileSubmitActions[];
-  latestSave: string;
 }
 
 export interface HeaderData {
