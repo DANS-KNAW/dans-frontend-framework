@@ -5,5 +5,8 @@
   "missingInfoHeader": "Missende of verkeerde API sleutels",
   "missingInfoText": "Je moet je persoonlijke API sleutels invullen om dit formulier op te kunnen sturen. <0>Check je instellingen</0>.",
   "hasRejectedError": "Er is een fout opgetreden bij het verwerken van je submissie",
+  "dataMessageHeader": "Ga verder met je metadata",
+  "dataMessageContent": "Vul het formulier verder in, of reset het als je opnieuw wilt beginnen.",
+  "resetForm": "Reset formulier",
   "tryAgain": "Pas je data aan en probeer het nog eens"
 }

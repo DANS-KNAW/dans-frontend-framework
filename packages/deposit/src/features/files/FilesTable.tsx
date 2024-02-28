@@ -24,6 +24,7 @@ import type {
   SelectedFile,
   FileActionOptionsProps,
   FileItemProps,
+  FileActions,
 } from "../../types/Files";
 import { getSessionId } from "../metadata/metadataSlice";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -39,6 +40,9 @@ import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
 import { getFormDisabled, getData } from "../../deposit/depositSlice";
 import { useAuth } from "react-oidc-context";
 import FileStatusIndicator from "./FileStatusIndicator";
+import { lookupLanguageString } from "@dans-framework/utils";
+import { useFetchGroupedListQuery } from "./api/dansFormats";
+import { findFileGroup } from "./filesHelpers";
 
 const FilesTable = () => {
   const { t } = useTranslation("files");
@@ -80,8 +84,22 @@ const FilesTable = () => {
 
 const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
   const dispatch = useAppDispatch();
-  const { t } = useTranslation("files");
+  const { t, i18n } = useTranslation("files");
   const formDisabled = useAppSelector(getFormDisabled);
+
+  const options = type === "process" ? fileProcessing : fileRoles;
+  const localizedOptions =
+    (options.map((option) => ({
+      ...option,
+      label: lookupLanguageString(option.label, i18n.language),
+    })) as FileActions[]) || [];
+
+  // Need to check the type of file and provide valid processing options
+  const { data } = useFetchGroupedListQuery(null);
+  const typeKey = file.name && data ? findFileGroup(file.name.split(".").pop(), data) : "";
+  const filteredOptions = type === "process" ? 
+    localizedOptions.filter( o => o.for && typeKey && o.for.indexOf(typeKey) !== -1 ) :
+    localizedOptions;
 
   return (
     <Autocomplete
@@ -107,7 +125,7 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
           }}
         />
       )}
-      options={type === "process" ? fileProcessing : fileRoles}
+      options={filteredOptions}
       value={file[type] || (type === "process" ? [] : null)}
       disabled={formDisabled}
       isOptionEqualToValue={(option, value) => option.value === value.value}

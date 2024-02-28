@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { DansSimpleList, DansFilesResponse } from "../../../types/Files";
+import type { DansSimpleList, DansFilesResponse, DansGroupedList } from "../../../types/Files";
 
 export const dansFormatsApi = createApi({
   reducerPath: "dansFormats",
@@ -41,8 +41,20 @@ export const dansFormatsApi = createApi({
         return response.list;
       },
     }),
+    fetchGroupedList: build.query({
+      query: () => ({
+        url: `type-list-grouped`,
+        headers: { Accept: "application/json" },
+      }),
+      transformResponse: (response: DansGroupedList) => {
+        return response.type;
+      },
+    }),
   }),
 });
 
-export const { useFetchDansFormatsQuery, useFetchSimpleListQuery } =
-  dansFormatsApi;
+export const { 
+  useFetchDansFormatsQuery, 
+  useFetchSimpleListQuery, 
+  useFetchGroupedListQuery 
+} = dansFormatsApi;

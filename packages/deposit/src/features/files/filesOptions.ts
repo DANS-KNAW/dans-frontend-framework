@@ -1,6 +1,22 @@
 // Defines actions a user can select for file processing and roles
 
 export const fileProcessing = [
+  {
+    value: "create_thumbnail",
+    label: {
+      en: "Create thumbnail",
+      nl: "Genereer thumbnail",
+    },
+    for: ["video", "images"],
+  },
+{
+    value: "transcribe_audio",
+    label: {
+      en: "Generate audio transcription",
+      nl: "Genereer audiotranscriptie",
+    },
+    for: ["video", "audio"],
+  },
 ];
 
 export const fileRoles = [
