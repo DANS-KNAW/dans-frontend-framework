@@ -49,6 +49,7 @@ export interface CheckFieldProps extends Omit<SingleFieldProps, "field"> {
 export interface AutocompleteFieldProps
   extends Omit<SingleFieldProps, "field"> {
   field: AutocompleteFieldType;
+  onOpen?: () => void;
   isLoading?: boolean;
 }
 
