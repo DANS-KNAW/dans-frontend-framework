@@ -14,6 +14,8 @@ import {
   GridActionsCellItem,
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
+import ReplayIcon from "@mui/icons-material/Replay";
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import Box from "@mui/material/Box";
 import moment from "moment";
 import { useSiteTitle, setSiteTitle } from "@dans-framework/utils";
@@ -29,6 +31,8 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Tooltip from "@mui/material/Tooltip";
 import Popover from "@mui/material/Popover";
 import Button from "@mui/material/Button";
+import { setFormAction } from "./userSlice";
+import { useAppDispatch } from "../redux/hooks";
 
 /* 
 * Note TODO: 
@@ -125,6 +129,7 @@ const SubmissionList = ({
 }) => {
   const { t, i18n } = useTranslation("user");
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   // useMemo to make sure columns don't change
   const columns = useMemo<GridColDef[]>(
@@ -132,34 +137,61 @@ const SubmissionList = ({
       {
         field: "viewLink",
         headerName: "",
-        width: 30,
+        width: 80,
         getActions: (params: any) => {
           return type === "draft"
             ? [
-                <GridActionsCellItem
-                  icon={<EditIcon />}
-                  label={t("editItem")}
-                  onClick={() =>
-                    navigate(`/${depositSlug}?id=${params.row.id}`)
-                  }
-                />,
+                <Tooltip title={t("editItem")} placement="bottom">
+                  <GridActionsCellItem
+                    icon={<EditIcon />}
+                    label={t("editItem")}
+                    onClick={() => {
+                      // set which form to load in userSlice (accessed in Deposit package)
+                      dispatch(setFormAction({
+                        id: params.row.id,
+                        action: "load",
+                      }));
+                      // navigate to deposit page
+                      navigate(`/${depositSlug}`)
+                    }}
+                  />
+                </Tooltip>,
+                <Tooltip title={t("copyItem")} placement="bottom">
+                  <GridActionsCellItem
+                    icon={<ContentCopyIcon />}
+                    label={t("copyItem")}
+                    onClick={() => {
+                      // set which form to load in userSlice (accessed in Deposit package)
+                      dispatch(setFormAction({
+                        id: params.row.id,
+                        action: "copy",
+                      }));
+                      // navigate to deposit page
+                      navigate(`/${depositSlug}`)
+                    }}
+                  />
+                </Tooltip>,
               ]
             : // for submitted forms, either edit in case of error, or load with existing data for new submission
               // params.value is true for an error, false for success
               !params.row.processing && params.row.error
-              ? [ /*
+              ? [ 
                   <Tooltip title={t("retryItem")} placement="bottom">
                     <GridActionsCellItem
                       icon={<ReplayIcon />}
                       label={t("retryItem")}
-                      onClick={() =>
-                        // todo: need to work on this, how are we going to reload submitted form data for resubmission
-                        // only 'rejected' errors for now, meaning data errors
-                        navigate(`/${depositSlug}?id=${params.row.id}&error=rejected`)
-                      }
+                      onClick={() => {
+                        // set which form to load in userSlice (accessed in Deposit package)
+                        dispatch(setFormAction({
+                          id: params.row.id,
+                          action: "resubmit",
+                        }));
+                        // navigate to deposit page
+                        navigate(`/${depositSlug}`)
+                      }}
                     />
                   </Tooltip>,
-                */ ]
+                ]
               : [];
         },
         type: "actions",

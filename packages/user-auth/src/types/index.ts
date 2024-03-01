@@ -61,3 +61,12 @@ export type AuthProperty =
   | "voperson_external_affiliation"
   | "family_name"
   | "given_name";
+
+export interface FormAction {
+    id: string;
+    action: "load" | "copy" | "resubmit"
+}
+
+export interface UserFormAction {
+  formAction?: FormAction
+}

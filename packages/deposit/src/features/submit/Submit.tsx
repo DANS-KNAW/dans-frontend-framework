@@ -37,7 +37,6 @@ import {
 import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSearchParams } from "react-router-dom";
 
 const Submit = ({
   hasTargetCredentials,
@@ -52,7 +51,6 @@ const Submit = ({
   const metadata = useAppSelector(getMetadata);
   const selectedFiles = useAppSelector(getFiles);
   const sessionId = useAppSelector(getSessionId);
-  const [searchParams, setSearchParams] = useSearchParams();
 
   const [fileWarning, setFileWarning] = useState<boolean>(false);
 
@@ -181,11 +179,6 @@ const Submit = ({
 
   const resetForm = () => {
     console.log('reset form')
-    // clear searchParams/form id
-    if (searchParams.has("id")) {
-      searchParams.delete("id");
-      setSearchParams(searchParams);
-    }
     // reset RTK mutations
     resetSubmittedFiles();
     resetMeta();
