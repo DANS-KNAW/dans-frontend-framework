@@ -45,7 +45,8 @@ import type { Page } from "@dans-framework/pages";
 import { useAuth } from "react-oidc-context";
 import { useSearchParams } from "react-router-dom";
 import { useFetchSavedMetadataQuery } from "./depositApi";
-import { useValidateAllKeysQuery } from "@dans-framework/user-auth";
+import { useValidateAllKeysQuery, getFormActions, resetFormActions } from "@dans-framework/user-auth";
+import { v4 as uuidv4 } from "uuid";
 
 /* 
 * Note TODO: 
@@ -65,12 +66,22 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const [dataMessage, setDataMessage] = useState(false);
 
   // Can load a saved form based on metadata id, passed along from e.g. UserSubmissions
-  const savedFormId = searchParams.get("id");
-  const hasRejectedError = searchParams.get("error");
+  // And set form action based on action param
+  // No action: loaded a saved form, default form behaviour
+  // Action = copy: copy saved form data to a new sessionId
+  // Action = resubmit: set submit button target to resubmit action in API
+  const formAction = getFormActions();
+  const savedFormId = formAction && formAction.id;
+  const savedFormAction = formAction && formAction.action;
   const { data: serverFormData, isSuccess } = useFetchSavedMetadataQuery(
     savedFormId,
     { skip: !savedFormId },
   );
+
+  console.log(formAction)
+  console.log(serverFormData)
+  console.log(sessionId)
+  console.log(savedFormId)
 
   // set page title
   useEffect(() => {
@@ -81,7 +92,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // Or initialize saved data (overwrites the previously set sessionId)
   // Must initialize on page load when a savedFormId is set, to load new saved data
   useEffect(() => {
-    if (!sessionId || (sessionId && serverFormData && savedFormId)) {
+    if (!sessionId || (sessionId && serverFormData && savedFormId && savedFormAction)) {
       // we need to reset the form status first, in case data had been previously entered
       dispatch(resetMetadataSubmitStatus());
       dispatch(resetFilesSubmitStatus());
@@ -91,31 +102,36 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       // then we load new/empty data
       dispatch(
         initForm(
-          savedFormId && serverFormData ? serverFormData.md : config.form,
+          savedFormId && serverFormData && (savedFormAction === "load" || savedFormAction === "resubmit") ?
+          serverFormData.md : 
+          serverFormData && savedFormAction === "copy" ?
+          {
+            ...serverFormData.md,
+            id: uuidv4(),
+          } :
+          config.form,
         ),
       );
       // and load the files if there are any
-      savedFormId && serverFormData &&
+      savedFormId && serverFormData && savedFormAction === "load" &&
         serverFormData.md["file-metadata"] &&
         dispatch(addFiles(serverFormData.md["file-metadata"]));
+
+      // Remove formActions to prevent eternal loops
+      resetFormActions();
     }
-  }, [dispatch, sessionId, config.form, serverFormData, savedFormId, isSuccess]);
+  }, [dispatch, sessionId, config.form, serverFormData, savedFormId, savedFormAction, isSuccess]);
 
-  // Show a message when a saved form is loaded.
-  // Show a message when data's been entered previously.
-  // Give option to clear form and start again.
+  // actions only on initial render
   useEffect(() => {
+    // Show a message when a saved form is loaded.
+    // Show a message when data's been entered previously.
+    // Give option to clear form and start again.
     sessionId && setDataMessage(true);
-  }, []);
-
-  // Set init form props in redux, all props without the form metadata config itself
-  useEffect(() => {
-    dispatch(setData(config));
-  }, [config]);
-
-  // Update user on initial render, makes sure all keys are up-to-date
-  useEffect(() => {
+    // Update user on initial render, makes sure all keys are up-to-date
     auth.signinSilent();
+    // Set init form props in redux, all props without the form metadata config itself
+    dispatch(setData(config));
   }, []);
 
   // Check the user object if target credentials are filled in
@@ -156,7 +172,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
               </Alert>
             )}
 
-            {serverFormData && hasRejectedError && (
+            {/*serverFormData && hasRejectedError && (
               // show a message if form with an error has been loaded
               <Alert severity="error">
                 <AlertTitle>{t("hasRejectedError")}</AlertTitle>
@@ -165,7 +181,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
                 )}
                 <Typography sx={{mt: 1}}>{t("tryAgain")}</Typography>
               </Alert>
-            )}
+            )*/}
 
             <Collapse in={dataMessage}>
               <Alert 
