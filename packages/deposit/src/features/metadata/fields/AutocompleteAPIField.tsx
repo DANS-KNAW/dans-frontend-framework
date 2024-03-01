@@ -241,9 +241,10 @@ export const LicensesField = ({
 };
 
 export const GorcField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
-  // Fetch data right away
+  // Fetch data if field is opened
+  const [touched, setTouched] = useState(false);
   const { data, isFetching, isLoading } =
-    useFetchGorcQuery<QueryReturnType>(null);
+    useFetchGorcQuery<QueryReturnType>(null, { skip: !touched });
   const newField = {
     ...field,
     options: data && data.response ? data.response : [],
@@ -254,6 +255,7 @@ export const GorcField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
       field={newField}
       sectionIndex={sectionIndex}
       isLoading={isLoading || isFetching}
+      onOpen={() => setTouched(true)}
     />
   );
 };
@@ -262,9 +264,10 @@ export const RdaPathwaysField = ({
   field,
   sectionIndex,
 }: AutocompleteFieldProps) => {
-  // Fetch data right away
+  // Fetch data if field is opened
+  const [touched, setTouched] = useState(false);
   const { data, isFetching, isLoading } =
-    useFetchRdaPathwayQuery<QueryReturnType>(null);
+    useFetchRdaPathwayQuery<QueryReturnType>(null, { skip: !touched });
   const newField = {
     ...field,
     options: data && data.response ? data.response : [],
@@ -275,6 +278,7 @@ export const RdaPathwaysField = ({
       field={newField}
       sectionIndex={sectionIndex}
       isLoading={isLoading || isFetching}
+      onOpen={() => setTouched(true)}
     />
   );
 };
@@ -283,9 +287,10 @@ export const RdaDomainsField = ({
   field,
   sectionIndex,
 }: AutocompleteFieldProps) => {
-  // Fetch data right away
+  // Fetch data if field is opened
+  const [touched, setTouched] = useState(false);
   const { data, isFetching, isLoading } =
-    useFetchRdaDomainQuery<QueryReturnType>(null);
+    useFetchRdaDomainQuery<QueryReturnType>(null, { skip: !touched });
   const newField = {
     ...field,
     options: data && data.response ? data.response : [],
@@ -296,6 +301,7 @@ export const RdaDomainsField = ({
       field={newField}
       sectionIndex={sectionIndex}
       isLoading={isLoading || isFetching}
+      onOpen={() => setTouched(true)}
     />
   );
 };
@@ -304,9 +310,10 @@ export const RdaInterestGroupsField = ({
   field,
   sectionIndex,
 }: AutocompleteFieldProps) => {
-  // Fetch data right away
+  /// Fetch data if field is opened
+  const [touched, setTouched] = useState(false);
   const { data, isFetching, isLoading } =
-    useFetchRdaInterestGroupQuery<QueryReturnType>(null);
+    useFetchRdaInterestGroupQuery<QueryReturnType>(null, { skip: !touched });
   const newField = {
     ...field,
     options: data && data.response ? data.response : [],
@@ -317,6 +324,7 @@ export const RdaInterestGroupsField = ({
       field={newField}
       sectionIndex={sectionIndex}
       isLoading={isLoading || isFetching}
+      onOpen={() => setTouched(true)}
     />
   );
 };
@@ -325,9 +333,10 @@ export const RdaWorkingGroupsField = ({
   field,
   sectionIndex,
 }: AutocompleteFieldProps) => {
-  // Fetch data right away
+  // Fetch data if field is opened
+  const [touched, setTouched] = useState(false);
   const { data, isFetching, isLoading } =
-    useFetchRdaWorkingGroupQuery<QueryReturnType>(null);
+    useFetchRdaWorkingGroupQuery<QueryReturnType>(null, { skip: !touched });
   const newField = {
     ...field,
     options: data && data.response ? data.response : [],
@@ -338,6 +347,7 @@ export const RdaWorkingGroupsField = ({
       field={newField}
       sectionIndex={sectionIndex}
       isLoading={isLoading || isFetching}
+      onOpen={() => setTouched(true)}
     />
   );
 };
@@ -346,8 +356,11 @@ export const SheetsField = ({
   field,
   sectionIndex,
 }: AutocompleteFieldProps) => {
+  // Fetch data if field is opened
+  const [touched, setTouched] = useState(false);
   const { data, isFetching, isLoading } = useFetchSheetsQuery<QueryReturnType>(
-    field.sheetOptions
+    field.sheetOptions,
+    { skip: !touched }
   );
   const newField = {
     ...field,
@@ -359,6 +372,7 @@ export const SheetsField = ({
       field={newField}
       sectionIndex={sectionIndex}
       isLoading={isLoading || isFetching}
+      onOpen={() => setTouched(true)}
     />
   );
 };
