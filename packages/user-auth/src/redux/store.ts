@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { userApi, userSubmissionsApi, validateKeyApi } from "../user/userApi";
+import userReducer, { resetFormAction } from "../user/userSlice";
 
 export const store = configureStore({
   reducer: {
     [userApi.reducerPath]: userApi.reducer,
     [validateKeyApi.reducerPath]: validateKeyApi.reducer,
     [userSubmissionsApi.reducerPath]: userSubmissionsApi.reducer,
+    user: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -24,6 +26,7 @@ export const initUserProfile = ({
   store.dispatch(
     userApi.endpoints.fetchUserProfile.initiate({ provider: provider, id: id }),
   );
+
 export const fetchUserProfile = ({
   provider,
   id,
@@ -34,6 +37,9 @@ export const fetchUserProfile = ({
   userApi.endpoints.fetchUserProfile.select({ provider: provider, id: id })(
     store.getState(),
   );
+
+export const getFormActions = () => store.getState().user.formAction;
+export const resetFormActions = () => store.dispatch(resetFormAction());
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
