@@ -63,10 +63,10 @@ export type AuthProperty =
   | "given_name";
 
 export interface FormAction {
-    id: string;
-    action: "load" | "copy" | "resubmit"
+    id?: string;
+    action?: "load" | "copy" | "resubmit"
 }
 
 export interface UserFormAction {
-  formAction?: FormAction
+  formAction: FormAction
 }
