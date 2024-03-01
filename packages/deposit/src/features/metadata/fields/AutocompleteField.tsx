@@ -24,6 +24,7 @@ const AutocompleteField = ({
   field,
   sectionIndex,
   isLoading,
+  onOpen,
 }: AutocompleteFieldProps) => {
   const dispatch = useAppDispatch();
   const status = getFieldStatus(field);
@@ -106,6 +107,7 @@ const AutocompleteField = ({
         loading={isLoading === true}
         disabled={formDisabled}
         isOptionEqualToValue={(option, value) => option.value === value.value}
+        onOpen={onOpen}
         renderOption={(props, option) => (
           <li {...props} key={option.value} style={{ flexWrap: "wrap" }}>
             {option.categoryLabel && option.categoryContent && (
