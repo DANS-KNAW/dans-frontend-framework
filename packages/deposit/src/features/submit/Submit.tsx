@@ -37,6 +37,7 @@ import {
 import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
+import { getFormActions } from "@dans-framework/user-auth";
 
 const Submit = ({
   hasTargetCredentials,
@@ -51,7 +52,7 @@ const Submit = ({
   const metadata = useAppSelector(getMetadata);
   const selectedFiles = useAppSelector(getFiles);
   const sessionId = useAppSelector(getSessionId);
-
+  const formAction = getFormActions();
   const [fileWarning, setFileWarning] = useState<boolean>(false);
 
   // get form config
@@ -115,7 +116,7 @@ const Submit = ({
   }, [selectedFiles.length]);
 
   // submit the data
-  const handleButtonClick = (actionType: "submit" | "save") => {
+  const handleButtonClick = (actionType: "submit" | "save" | "resubmit") => {
     // check to see if any files have been added.
     // If not, and there is no warning yet, show a warning to confirm actual submission first
     if (selectedFiles.length === 0 && !fileWarning && actionType === "submit") {
@@ -354,7 +355,7 @@ const Submit = ({
               formDisabled ||
               (metadataStatus === "error" && !formConfig.skipValidation)
             }
-            onClick={() => handleButtonClick("submit")}
+            onClick={() => handleButtonClick(formAction.action === "resubmit" ? "resubmit" : "submit")}
             size="large"
             data-testid="submit-form"
           >

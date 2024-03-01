@@ -45,7 +45,7 @@ import type { Page } from "@dans-framework/pages";
 import { useAuth } from "react-oidc-context";
 import { useSearchParams } from "react-router-dom";
 import { useFetchSavedMetadataQuery } from "./depositApi";
-import { useValidateAllKeysQuery, getFormActions, resetFormActions } from "@dans-framework/user-auth";
+import { useValidateAllKeysQuery, getFormActions, clearFormActionId } from "@dans-framework/user-auth";
 import { v4 as uuidv4 } from "uuid";
 
 /* 
@@ -71,17 +71,14 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // Action = copy: copy saved form data to a new sessionId
   // Action = resubmit: set submit button target to resubmit action in API
   const formAction = getFormActions();
-  const savedFormId = formAction && formAction.id;
-  const savedFormAction = formAction && formAction.action;
   const { data: serverFormData, isSuccess } = useFetchSavedMetadataQuery(
-    savedFormId,
-    { skip: !savedFormId },
+    formAction.id,
+    { skip: !formAction.id },
   );
 
   console.log(formAction)
   console.log(serverFormData)
   console.log(sessionId)
-  console.log(savedFormId)
 
   // set page title
   useEffect(() => {
@@ -92,7 +89,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // Or initialize saved data (overwrites the previously set sessionId)
   // Must initialize on page load when a savedFormId is set, to load new saved data
   useEffect(() => {
-    if (!sessionId || (sessionId && serverFormData && savedFormId && savedFormAction)) {
+    if (!sessionId || (sessionId && serverFormData && formAction.id && formAction.action)) {
       // we need to reset the form status first, in case data had been previously entered
       dispatch(resetMetadataSubmitStatus());
       dispatch(resetFilesSubmitStatus());
@@ -102,9 +99,9 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       // then we load new/empty data
       dispatch(
         initForm(
-          savedFormId && serverFormData && (savedFormAction === "load" || savedFormAction === "resubmit") ?
+          formAction.id && serverFormData && (formAction.action === "load" || formAction.action === "resubmit") ?
           serverFormData.md : 
-          serverFormData && savedFormAction === "copy" ?
+          serverFormData && formAction.action === "copy" ?
           {
             ...serverFormData.md,
             id: uuidv4(),
@@ -113,14 +110,14 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
         ),
       );
       // and load the files if there are any
-      savedFormId && serverFormData && savedFormAction === "load" &&
+      formAction.id && serverFormData && formAction.action === "load" &&
         serverFormData.md["file-metadata"] &&
         dispatch(addFiles(serverFormData.md["file-metadata"]));
 
-      // Remove formActions to prevent eternal loops
-      resetFormActions();
+      // Remove formAction ID to prevent eternal loops
+      clearFormActionId();
     }
-  }, [dispatch, sessionId, config.form, serverFormData, savedFormId, savedFormAction, isSuccess]);
+  }, [dispatch, sessionId, config.form, serverFormData, formAction, isSuccess]);
 
   // actions only on initial render
   useEffect(() => {

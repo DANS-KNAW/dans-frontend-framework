@@ -76,7 +76,7 @@ const axiosBaseQuery =
       else if (result.data) {
         store.dispatch(
           setMetadataSubmitStatus(
-            actionType === "submit" ? "submitted" : "saved",
+            actionType === "save" ? "saved" : "submitted",
           ),
         );
       }
@@ -143,8 +143,13 @@ export const submitApi = createApi({
         console.log(headers);
 
         // First post the metadata
+        const submitUrl = 
+          actionType === "resubmit" ?
+          `resubmit/${data.id}` :
+          `dataset/${actionType === "save" ? "DRAFT" : "PUBLISH"}`
+
         const metadataResult = await fetchWithBQ({
-          url: `dataset/${actionType === "save" ? "DRAFT" : "PUBLISH"}`,
+          url: submitUrl,
           method: "POST",
           data: data,
           headers: headers,
