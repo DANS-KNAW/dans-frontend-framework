@@ -74,6 +74,8 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     { skip: !formAction.id },
   );
 
+  console.log(formAction)
+
   // set page title
   useEffect(() => {
     setSiteTitle(siteTitle, lookupLanguageString(page.name, i18n.language));
@@ -120,7 +122,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     // Show a message when a saved form is loaded.
     // Show a message when data's been entered previously.
     // Give option to clear form and start again.
-    sessionId && setDataMessage(true);
+    (sessionId || formAction.id) && setDataMessage(true);
     // Update user on initial render, makes sure all keys are up-to-date
     auth.signinSilent();
     // Set init form props in redux, all props without the form metadata config itself
@@ -145,6 +147,9 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   });
 
   const hasTargetCredentials = targetCredentials && !apiKeyError;
+
+  // TODO: Need to clear formactions or at least ID when data has been edited
+  // Don't want to loose edits when navigating away and returning to deposit route
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
