@@ -42,5 +42,6 @@
 	"moreInfo": "Fout",
 	"errorExplanation": "Dit is de foutmelding die we van de server terugkregen",
 	"retryItem": "Verbeter de foutmelding en probeer opnieuw",
-	"copyItem": "Kopiëer deze dataset voor een nieuwe submissie"
+	"copyItem": "Kopiëer deze dataset voor een nieuwe submissie",
+	"editItem": "Bewerk deze opgeslagen dataset"
 }
