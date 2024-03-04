@@ -135,64 +135,59 @@ const SubmissionList = ({
       {
         field: "viewLink",
         headerName: "",
-        width: 80,
         getActions: (params: any) => {
-          return type === "draft"
-            ? [
-                <Tooltip title={t("editItem")} placement="bottom">
-                  <GridActionsCellItem
-                    icon={<EditIcon />}
-                    label={t("editItem")}
-                    onClick={() => {
-                      // set which form to load in userSlice (accessed in Deposit package)
-                      dispatch(setFormAction({
-                        id: params.row.id,
-                        action: "load",
-                      }));
-                      // navigate to deposit page
-                      navigate(`/${depositSlug}`)
-                    }}
-                  />
-                </Tooltip>,
-                <Tooltip title={t("copyItem")} placement="bottom">
-                  <GridActionsCellItem
-                    icon={<ContentCopyIcon />}
-                    label={t("copyItem")}
-                    onClick={() => {
-                      // set which form to load in userSlice (accessed in Deposit package)
-                      dispatch(setFormAction({
-                        id: params.row.id,
-                        action: "copy",
-                      }));
-                      // navigate to deposit page
-                      navigate(`/${depositSlug}`)
-                    }}
-                  />
-                </Tooltip>,
-              ]
-            : // for submitted forms, either edit in case of error, or load with existing data for new submission
-              // params.value is true for an error, false for success
-              !params.row.processing && params.row.error
-              ? [ 
-                  <Tooltip title={t("retryItem")} placement="bottom">
-                    <GridActionsCellItem
-                      icon={<ReplayIcon />}
-                      label={t("retryItem")}
-                      onClick={() => {
-                        // set which form to load in userSlice (accessed in Deposit package)
-                        dispatch(setFormAction({
-                          id: params.row.id,
-                          action: "resubmit",
-                        }));
-                        // navigate to deposit page
-                        navigate(`/${depositSlug}`)
-                      }}
-                    />
-                  </Tooltip>,
-                ]
-              : [];
+          return [
+            type === "draft" &&
+            <Tooltip title={t("editItem")} placement="bottom">
+              <GridActionsCellItem
+                icon={<EditIcon />}
+                label={t("editItem")}
+                onClick={() => {
+                  // set which form to load in userSlice (accessed in Deposit package)
+                  dispatch(setFormAction({
+                    id: params.row.id,
+                    action: "load",
+                  }));
+                  // navigate to deposit page
+                  navigate(`/${depositSlug}`)
+                }}
+              />
+            </Tooltip>,
+            !params.row.processing && params.row.error &&
+            <Tooltip title={t("retryItem")} placement="bottom">
+              <GridActionsCellItem
+                icon={<ReplayIcon />}
+                label={t("retryItem")}
+                onClick={() => {
+                  // set which form to load in userSlice (accessed in Deposit package)
+                  dispatch(setFormAction({
+                    id: params.row.id,
+                    action: "resubmit",
+                  }));
+                  // navigate to deposit page
+                  navigate(`/${depositSlug}`)
+                }}
+              />
+            </Tooltip>,
+            <Tooltip title={t("copyItem")} placement="bottom">
+              <GridActionsCellItem
+                icon={<ContentCopyIcon />}
+                label={t("copyItem")}
+                onClick={() => {
+                  // set which form to load in userSlice (accessed in Deposit package)
+                  dispatch(setFormAction({
+                    id: params.row.id,
+                    action: "copy",
+                  }));
+                  // navigate to deposit page
+                  navigate(`/${depositSlug}`)
+                }}
+              />
+            </Tooltip>
+          ].filter(Boolean);
         },
         type: "actions",
+        align: "right",
       },
       {
         field: "title",
