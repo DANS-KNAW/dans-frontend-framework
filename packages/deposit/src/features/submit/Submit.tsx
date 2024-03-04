@@ -37,7 +37,7 @@ import {
 import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
-import { getFormActions, clearFormActions } from "@dans-framework/user-auth";
+import { getFormActions, clearFormActions, setFormActions } from "@dans-framework/user-auth";
 
 const Submit = ({
   hasTargetCredentials,
@@ -181,6 +181,9 @@ const Submit = ({
             });
 
           // TODO: on save, set the form actions to "load" with the current sessionId
+          if (actionType === "save") {
+            setFormActions({ id: sessionId, action: "load" })
+          }
         }
       })
     );
