@@ -130,9 +130,11 @@ const Submit = ({
     // Files are present or a warning has already been shown to the user
     setFileWarning(false);
 
-    // Clear any form action messages
-    clearFormActions();
-    
+    // Clear any form action messages on submit
+    if (actionType === "resubmit" || actionType === "submit") {
+      clearFormActions();
+    } 
+
     const formattedMetadata = formatFormData(
       sessionId,
       metadata,
@@ -177,6 +179,8 @@ const Submit = ({
             .catch((e) => {
               console.log(e);
             });
+
+          // TODO: on save, set the form actions to "load" with the current sessionId
         }
       })
     );
@@ -328,7 +332,7 @@ const Submit = ({
         <Stack direction="row" alignItems="center" mb={2}>
           <Button
             variant="contained"
-            disabled={formDisabled}
+            disabled={formDisabled || formAction.action === "resubmit"}
             onClick={() => handleButtonClick("save")}
             size="large"
             sx={{ mr: 1 }}
