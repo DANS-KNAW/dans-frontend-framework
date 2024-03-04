@@ -4,6 +4,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2";
 import Metadata from "../features/metadata/Metadata";
@@ -43,10 +44,8 @@ import {
 } from "@dans-framework/utils";
 import type { Page } from "@dans-framework/pages";
 import { useAuth } from "react-oidc-context";
-import { useSearchParams } from "react-router-dom";
 import { useFetchSavedMetadataQuery } from "./depositApi";
-import { useValidateAllKeysQuery, getFormActions, clearFormActionId } from "@dans-framework/user-auth";
-import { v4 as uuidv4 } from "uuid";
+import { useValidateAllKeysQuery, getFormActions, clearFormActions } from "@dans-framework/user-auth";
 
 /* 
 * Note TODO: 
@@ -62,7 +61,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const openTab = useAppSelector(getOpenTab);
   const { t, i18n } = useTranslation("generic");
   const siteTitle = useSiteTitle();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [dataMessage, setDataMessage] = useState(false);
 
   // Can load a saved form based on metadata id, passed along from e.g. UserSubmissions
@@ -75,10 +73,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     formAction.id,
     { skip: !formAction.id },
   );
-
-  console.log(formAction)
-  console.log(serverFormData)
-  console.log(sessionId)
 
   // set page title
   useEffect(() => {
@@ -97,27 +91,29 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       // enable the form
       dispatch(setFormDisabled(false));
       // then we load new/empty data
-      dispatch(
-        initForm(
-          formAction.id && serverFormData && (formAction.action === "load" || formAction.action === "resubmit") ?
-          serverFormData.md : 
-          serverFormData && formAction.action === "copy" ?
-          {
-            ...serverFormData.md,
-            id: uuidv4(),
-          } :
-          config.form,
-        ),
-      );
+      // make sure when copied, only perform this action when the current id is different from the loaded form
+      if ((formAction.action === "copy" && formAction.id !== sessionId) || formAction.action !== "copy") {
+        dispatch(
+          initForm(
+            serverFormData && formAction.id && (formAction.action === "load" || formAction.action === "resubmit") ?
+            serverFormData.md : 
+            serverFormData && formAction.action === "copy" ?
+            {
+              ...serverFormData.md,
+              id: sessionId,
+            } :
+            config.form,
+          )
+        );
+      }
       // and load the files if there are any
       formAction.id && serverFormData && formAction.action === "load" &&
         serverFormData.md["file-metadata"] &&
         dispatch(addFiles(serverFormData.md["file-metadata"]));
-
-      // Remove formAction ID to prevent eternal loops
-      clearFormActionId();
     }
+    
   }, [dispatch, sessionId, config.form, serverFormData, formAction, isSuccess]);
+
 
   // actions only on initial render
   useEffect(() => {
@@ -169,22 +165,17 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
               </Alert>
             )}
 
-            {/*serverFormData && hasRejectedError && (
-              // show a message if form with an error has been loaded
-              <Alert severity="error">
-                <AlertTitle>{t("hasRejectedError")}</AlertTitle>
-                {serverFormData.targets.map( t =>
-                  <Typography>{t["display-name"]}: {t["deposit-status"]} - {t["output-response"]}</Typography>
-                )}
-                <Typography sx={{mt: 1}}>{t("tryAgain")}</Typography>
-              </Alert>
-            )*/}
-
             <Collapse in={dataMessage}>
               <Alert 
-                severity="info"
+                severity={
+                  formAction.action === "resubmit" ?
+                  "error" :
+                  "info"
+                }
                 data-testid="data-message" 
-                onClose={() => setDataMessage(false)} 
+                onClose={() => {
+                  setDataMessage(false);
+                }} 
                 sx={{ 
                   position: "relative",
                   "& .MuiAlert-message": { 
@@ -197,22 +188,42 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
                   },
                 }}
               >
-                <AlertTitle>{t("dataMessageHeader")}</AlertTitle>
-                <Typography mb={1}>{t("dataMessageContent")}</Typography>
-                <Button 
-                  variant="contained" 
-                  sx={{float: "right"}}
-                  onClick={() => {
-                    if (searchParams.has("id")) {
-                      searchParams.delete("id");
-                      setSearchParams(searchParams);
-                    }
-                    dispatch(resetMetadata());
-                    setDataMessage(false);
-                  }}
-                >
-                  {t('resetForm')}
-                </Button>
+                <AlertTitle>
+                  {
+                    formAction.action === "resubmit" ?
+                    t("dataMessageHeaderResubmit", {title: (serverFormData && serverFormData.title) || t("untitled")}) :
+                    formAction.action === "copy" ?
+                    t("dataMessageHeaderCopy", {title: (serverFormData && serverFormData.title) || t("untitled")}) :
+                    formAction.action === "load" ?
+                    t("dataMessageHeaderLoad", {title: (serverFormData && serverFormData.title) || t("untitled")}) :
+                    t("dataMessageHeader")
+                  }
+                </AlertTitle>
+                <Typography mb={1}>
+                {
+                  formAction.action === "resubmit" ?
+                  t("dataMessageContentResubmit") :
+                  formAction.action === "copy" ?
+                  t("dataMessageContentCopy") :
+                  formAction.action === "load" ?
+                  t("dataMessageContentLoad") :
+                  t("dataMessageContent")
+                }
+                </Typography>
+                <Stack justifyContent="flex-end" direction="row" alignItems="center">
+                  <Typography mb={0} mr={2} variant="h6">{t("dataResetHeader")}</Typography>
+                  <Button 
+                    variant="contained" 
+                    onClick={() => {
+                      dispatch(resetMetadata());
+                      setDataMessage(false);
+                      clearFormActions();
+                    }}
+                    color="warning"
+                  >
+                    {t('dataResetButton')}
+                  </Button>
+                </Stack>
               </Alert>
             </Collapse>
 

@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { userApi, userSubmissionsApi, validateKeyApi } from "../user/userApi";
-import userReducer, { resetFormActionId, resetFormActionType } from "../user/userSlice";
+import userReducer, { resetFormActions } from "../user/userSlice";
 
 export const store = configureStore({
   reducer: {
@@ -39,8 +39,7 @@ export const fetchUserProfile = ({
   );
 
 export const getFormActions = () => store.getState().user.formAction;
-export const clearFormActionId = () => store.dispatch(resetFormActionId());
-export const clearFormActionType = () => store.dispatch(resetFormActionType());
+export const clearFormActions = () => store.dispatch(resetFormActions());
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;

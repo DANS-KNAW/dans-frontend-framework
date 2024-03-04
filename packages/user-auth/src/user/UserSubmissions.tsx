@@ -79,8 +79,6 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
           ),
       );
 
-  console.log(data);
-
   // if all targets are complete, skip further fetching
   useEffect(() => {
     allTargetsComplete && setSkip(true);

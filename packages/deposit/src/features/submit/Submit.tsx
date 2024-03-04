@@ -37,7 +37,7 @@ import {
 import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
-import { getFormActions } from "@dans-framework/user-auth";
+import { getFormActions, clearFormActions } from "@dans-framework/user-auth";
 
 const Submit = ({
   hasTargetCredentials,
@@ -129,6 +129,10 @@ const Submit = ({
 
     // Files are present or a warning has already been shown to the user
     setFileWarning(false);
+
+    // Clear any form action messages
+    clearFormActions();
+    
     const formattedMetadata = formatFormData(
       sessionId,
       metadata,
