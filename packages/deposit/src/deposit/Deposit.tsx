@@ -85,7 +85,9 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // Or initialize saved data (overwrites the previously set sessionId)
   // Must initialize on page load when a savedFormId is set, to load new saved data
   useEffect(() => {
-    if (!sessionId || (sessionId && serverFormData && formAction.id && formAction.action)) {
+    if (!sessionId || (sessionId && serverFormData && formAction.id && formAction)) {
+      console.log('init')
+      console.log(sessionId)
       // we need to reset the form status first, in case data had been previously entered
       dispatch(resetMetadataSubmitStatus());
       dispatch(resetFilesSubmitStatus());
@@ -93,28 +95,32 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       // enable the form
       dispatch(setFormDisabled(false));
       // then we load new/empty data
+      // Only do this when needed
       // make sure when copied, only perform this action when the current id is different from the loaded form
-      if ((formAction.action === "copy" && formAction.id !== sessionId) || formAction.action !== "copy") {
+      if (!sessionId && !formAction.id) {
+        console.log('creating fresh form')
+        dispatch(initForm(config.form));
+      }
+      else if ( ((sessionId && formAction.id !== sessionId) || !sessionId) && serverFormData) {
+        console.log('creating form from loaded data')
         dispatch(
           initForm(
-            serverFormData && formAction.id && (formAction.action === "load" || formAction.action === "resubmit") ?
-            serverFormData.md : 
-            serverFormData && formAction.action === "copy" ?
+            formAction.action === "copy" ?
             {
               ...serverFormData.md,
               id: sessionId,
             } :
-            config.form,
+            serverFormData.md
           )
         );
       }
       // and load the files if there are any
-      formAction.id && serverFormData && formAction.action === "load" &&
+      formAction.id && serverFormData &&
         serverFormData.md["file-metadata"] &&
         dispatch(addFiles(serverFormData.md["file-metadata"]));
     }
     
-  }, [dispatch, sessionId, config.form, serverFormData, formAction, isSuccess]);
+  }, [dispatch, sessionId, config.form, serverFormData, formAction.id, isSuccess]);
 
 
   // actions only on initial render
@@ -147,9 +153,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   });
 
   const hasTargetCredentials = targetCredentials && !apiKeyError;
-
-  // TODO: Need to clear formactions or at least ID when data has been edited
-  // Don't want to loose edits when navigating away and returning to deposit route
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
