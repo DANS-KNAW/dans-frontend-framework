@@ -17,15 +17,12 @@ export const userSlice = createSlice({
     setFormAction: (state, action: PayloadAction<FormAction>) => {
       state.formAction = action.payload;
     },
-    resetFormActionId: (state) => {
-      state.formAction.id = undefined;
-    },
-    resetFormActionType: (state) => {
-      state.formAction.action = undefined;
+    resetFormActions: (state) => {
+      state.formAction = initialState.formAction;
     },
   },
 });
 
-export const { setFormAction, resetFormActionId, resetFormActionType } = userSlice.actions;
+export const { setFormAction, resetFormActions } = userSlice.actions;
 
 export default userSlice.reducer;
