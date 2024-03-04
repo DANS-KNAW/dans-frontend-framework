@@ -42,5 +42,6 @@
 	"moreInfo": "Error",
 	"errorExplanation": "This is the error we got back from the server",
 	"retryItem": "Correct the error and try again",
-	"copyItem": "Copy this dataset for a new submission"
+	"copyItem": "Copy this dataset for a new submission",
+	"editItem": "Edit this saved dataset"
 }
