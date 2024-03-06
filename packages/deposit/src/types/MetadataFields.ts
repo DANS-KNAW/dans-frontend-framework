@@ -55,6 +55,7 @@ export interface DateFieldType extends BasisFieldType {
   fields?: never;
   multiApiValue?: never;
   options?: never;
+  autofill?: never;
 }
 
 export interface AutocompleteFieldType
@@ -69,6 +70,7 @@ export interface AutocompleteFieldType
   repeatable?: never;
   fields?: never;
   format?: never;
+  autofill?: never;
 }
 
 export interface GroupedFieldType
@@ -82,6 +84,7 @@ export interface GroupedFieldType
   options?: never;
   format?: never;
   touched?: never;
+  autofill?: never;
 }
 
 export interface RepeatGroupedFieldType
@@ -105,6 +108,7 @@ export interface RepeatTextFieldType
   required?: never;
   format?: never;
   touched?: never;
+  autofill?: never;
 }
 
 export interface RadioFieldType
@@ -118,6 +122,7 @@ export interface RadioFieldType
   multiApiValue?: never;
   fields?: never;
   format?: never;
+  autofill?: never;
 }
 
 export interface CheckFieldType
@@ -131,6 +136,7 @@ export interface CheckFieldType
   multiApiValue?: never;
   fields?: never;
   format?: never;
+  autofill?: never;
 }
 
 // Date and time formats to be used in a Date field

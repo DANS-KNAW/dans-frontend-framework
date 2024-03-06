@@ -36,6 +36,7 @@ const initialState: InitialStateType = {
   form: [],
   panel: "",
   tab: 0,
+  touched: false,
 };
 
 export const metadataSlice = createSlice({
@@ -68,6 +69,10 @@ export const metadataSlice = createSlice({
     setField: (state, action: PayloadAction<SetFieldPayload>) => {
       const section = state.form[action.payload.sectionIndex];
       const field = findById(action.payload.id, section.fields);
+
+      if (!state.touched && field && !field.autofill) {
+        state.touched = true;
+      }
 
       // field is found, lets set it
       if (field) {
@@ -260,5 +265,6 @@ export const getMetadataStatus = (state: RootState) => {
   const statusArray = state.metadata.form.map((section) => section.status);
   return getSectionStatus(statusArray);
 };
+export const getTouchedStatus = (state: RootState) => state.metadata.touched;
 
 export default metadataSlice.reducer;

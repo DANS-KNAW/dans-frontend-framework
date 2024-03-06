@@ -27,6 +27,7 @@ export interface InitialStateType {
   form: SectionType[];
   panel: string;
   tab: number;
+  touched: boolean;
 }
 
 export interface InitialFormType {
