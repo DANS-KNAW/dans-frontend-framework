@@ -7,6 +7,7 @@ const initialState: UserFormAction = {
   formAction: {
     id: undefined,
     action: undefined,
+    actionDone: undefined,
   }
 };
 

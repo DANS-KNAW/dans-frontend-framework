@@ -24,6 +24,7 @@ import {
 import {
   resetFilesSubmitStatus,
   resetMetadataSubmitStatus,
+  getMetadataSubmitStatus,
 } from "../features/submit/submitSlice";
 import { getFiles, resetFiles, addFiles } from "../features/files/filesSlice";
 import { StatusIcon } from "../features/generic/Icons";
@@ -45,7 +46,8 @@ import {
 import type { Page } from "@dans-framework/pages";
 import { useAuth } from "react-oidc-context";
 import { useFetchSavedMetadataQuery } from "./depositApi";
-import { useValidateAllKeysQuery, getFormActions, clearFormActions } from "@dans-framework/user-auth";
+import { useValidateAllKeysQuery, getFormActions, clearFormActions, setFormActions } from "@dans-framework/user-auth";
+import { v4 as uuidv4 } from "uuid";
 
 /* 
 * Note TODO: 
@@ -62,7 +64,11 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const { t, i18n } = useTranslation("generic");
   const siteTitle = useSiteTitle();
   const [dataMessage, setDataMessage] = useState(false);
+  // const [formAction, setFormAction] = useState(getFormActions());
   const formAction = getFormActions();
+  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
+
+  console.log(metadataSubmitStatus)
 
   // Can load a saved form based on metadata id, passed along from e.g. UserSubmissions
   // And set form action based on action param
@@ -74,6 +80,13 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     { skip: !formAction.id },
   );
 
+  console.log(formAction)
+  console.log(sessionId)
+  console.log(serverFormData)
+
+  // TODO set form action to load on metadata save after copying form
+  // Also fix loading data for a copied form
+
   // set page title
   useEffect(() => {
     setSiteTitle(siteTitle, lookupLanguageString(page.name, i18n.language));
@@ -81,43 +94,42 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
 
   // Initialize form on initial render when there's no sessionId yet or when form gets reset
   // Or initialize saved data (overwrites the previously set sessionId)
-  // Must initialize on page load when a savedFormId is set, to load new saved data
   useEffect(() => {
     if (!sessionId || (sessionId && serverFormData && formAction.id)) {
-      console.log('init')
-      console.log(sessionId)
       // we need to reset the form status first, in case data had been previously entered
       dispatch(resetMetadataSubmitStatus());
       dispatch(resetFilesSubmitStatus());
       dispatch(resetFiles());
       // enable the form
       dispatch(setFormDisabled(false));
-      // then we load new/empty data
-      // Only do this when needed
-      // make sure when copied, only perform this action when the current id is different from the loaded form
+      // then we set new/empty data if there's no id to load
       if (!sessionId && !formAction.id) {
-        console.log('creating fresh form')
+        console.log('empty form')
         dispatch(initForm(config.form));
       }
-      else if ( ((sessionId && formAction.id !== sessionId) || !sessionId) && serverFormData) {
-        console.log('creating form from loaded data')
-        console.log(serverFormData)
-        // TODO fix this
+      // if there's server data available, load that into the form
+      else if (serverFormData && formAction && !formAction.actionDone) {
         dispatch(
           initForm(
             formAction.action === "copy" ?
-            {
-              ...serverFormData.md,
-              id: sessionId,
-            } :
-            serverFormData.md
-          )
+              {
+                ...serverFormData.md,
+                id: uuidv4(),
+              } :
+              serverFormData.md
+            )
         );
+        // make sure we only do this once
+        setFormActions({
+          ...formAction,
+          actionDone: true,
+        });
       }
-      // and load the files if there are any
-      formAction.id && serverFormData &&
-        serverFormData.md["file-metadata"] &&
+      // load the files if there are any. Probably not doable for copy? TODO: check
+      if (formAction.id && serverFormData && serverFormData.md["file-metadata"]) {
+        console.log('adding files')
         dispatch(addFiles(serverFormData.md["file-metadata"]));
+      }
     }
     
   }, [dispatch, sessionId, config.form, serverFormData, formAction.id, isSuccess]);

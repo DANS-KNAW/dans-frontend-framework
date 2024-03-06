@@ -43,6 +43,7 @@ export const metadataSlice = createSlice({
   initialState,
   reducers: {
     initForm: (state, action: PayloadAction<InitialFormType | InitialSectionType[]>) => {
+      console.log(action.payload)
       if (!Array.isArray(action.payload) && action.payload.id) {
         console.log('initializing from loaded data...')
         // form is loaded from existing data
