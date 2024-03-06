@@ -62,19 +62,17 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const { t, i18n } = useTranslation("generic");
   const siteTitle = useSiteTitle();
   const [dataMessage, setDataMessage] = useState(false);
+  const formAction = getFormActions();
 
   // Can load a saved form based on metadata id, passed along from e.g. UserSubmissions
   // And set form action based on action param
   // No action: loaded a saved form, default form behaviour
   // Action = copy: copy saved form data to a new sessionId
   // Action = resubmit: set submit button target to resubmit action in API
-  const formAction = getFormActions();
   const { data: serverFormData, isSuccess } = useFetchSavedMetadataQuery(
     formAction.id,
     { skip: !formAction.id },
   );
-
-  console.log(formAction)
 
   // set page title
   useEffect(() => {
@@ -85,7 +83,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // Or initialize saved data (overwrites the previously set sessionId)
   // Must initialize on page load when a savedFormId is set, to load new saved data
   useEffect(() => {
-    if (!sessionId || (sessionId && serverFormData && formAction.id && formAction)) {
+    if (!sessionId || (sessionId && serverFormData && formAction.id)) {
       console.log('init')
       console.log(sessionId)
       // we need to reset the form status first, in case data had been previously entered
@@ -103,12 +101,13 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       }
       else if ( ((sessionId && formAction.id !== sessionId) || !sessionId) && serverFormData) {
         console.log('creating form from loaded data')
+        console.log(serverFormData)
         dispatch(
           initForm(
             formAction.action === "copy" ?
             {
-              ...serverFormData.md,
               id: sessionId,
+              ...serverFormData.md,
             } :
             serverFormData.md
           )
