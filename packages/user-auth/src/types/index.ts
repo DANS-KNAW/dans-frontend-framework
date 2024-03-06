@@ -64,7 +64,8 @@ export type AuthProperty =
 
 export interface FormAction {
     id?: string;
-    action?: "load" | "copy" | "resubmit"
+    action?: "load" | "copy" | "resubmit";
+    actionDone?: boolean;
 }
 
 export interface UserFormAction {
