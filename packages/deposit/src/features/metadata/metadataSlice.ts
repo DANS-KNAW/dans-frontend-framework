@@ -44,11 +44,13 @@ export const metadataSlice = createSlice({
   reducers: {
     initForm: (state, action: PayloadAction<InitialFormType | InitialSectionType[]>) => {
       if (!Array.isArray(action.payload) && action.payload.id) {
+        console.log('initializing from loaded data...')
         // form is loaded from existing data
         state.id = action.payload.id;
         state.form = action.payload.metadata;
         state.panel = action.payload.metadata[0].id;
       } else {
+        console.log('initializing new form...')
         // otherwise initialize a brand new form
         state.id = uuidv4();
         state.form = formatInitialState(action.payload as InitialSectionType[]);
