@@ -109,7 +109,7 @@ const AutocompleteField = ({
         isOptionEqualToValue={(option, value) => option.value === value.value}
         onOpen={onOpen}
         renderOption={(props, option) => (
-          <li {...props} key={option.value} style={{ flexWrap: "wrap" }}>
+          <li {...props} key={`${option.value}-${option.label}`} style={{ flexWrap: "wrap" }}>
             {option.categoryLabel && option.categoryContent && (
               <Typography
                 component="div"
