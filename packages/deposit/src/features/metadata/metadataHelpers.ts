@@ -127,6 +127,7 @@ Structure we want:
 ]
 */
 export const formatInitialState = (form: InitialSectionType[]) => {
+  console.log(form)
   const newForm = form.map((section) => ({
     ...section,
     fields: section.fields.map((field) => {
