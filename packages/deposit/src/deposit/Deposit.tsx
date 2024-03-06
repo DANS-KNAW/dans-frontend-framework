@@ -20,6 +20,7 @@ import {
   setOpenTab,
   initForm,
   resetMetadata,
+  getTouchedStatus,
 } from "../features/metadata/metadataSlice";
 import {
   resetFilesSubmitStatus,
@@ -67,8 +68,10 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // const [formAction, setFormAction] = useState(getFormActions());
   const formAction = getFormActions();
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
+  const formTouched = useAppSelector(getTouchedStatus);
 
   console.log(metadataSubmitStatus)
+  console.log(formTouched)
 
   // Can load a saved form based on metadata id, passed along from e.g. UserSubmissions
   // And set form action based on action param
@@ -140,7 +143,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     // Show a message when a saved form is loaded.
     // Show a message when data's been entered previously.
     // Give option to clear form and start again.
-    (sessionId || formAction.id) && setDataMessage(true);
+    ((sessionId && formTouched) || formAction.id) && setDataMessage(true);
     // Update user on initial render, makes sure all keys are up-to-date
     auth.signinSilent();
     // Set init form props in redux, all props without the form metadata config itself
