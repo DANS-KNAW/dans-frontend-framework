@@ -102,12 +102,13 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       else if ( ((sessionId && formAction.id !== sessionId) || !sessionId) && serverFormData) {
         console.log('creating form from loaded data')
         console.log(serverFormData)
+        // TODO fix this
         dispatch(
           initForm(
             formAction.action === "copy" ?
             {
-              id: sessionId,
               ...serverFormData.md,
+              id: sessionId,
             } :
             serverFormData.md
           )
