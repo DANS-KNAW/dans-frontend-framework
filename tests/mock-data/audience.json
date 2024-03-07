@@ -1,0 +1,40 @@
+{
+    "@context": {
+        "skos": "http:\/\/www.w3.org\/2004\/02\/skos\/core#",
+        "isothes": "http:\/\/purl.org\/iso25964\/skos-thes#",
+        "onki": "http:\/\/schema.onki.fi\/onki#",
+        "uri": "@id",
+        "type": "@type",
+        "results": {
+            "@id": "onki:results",
+            "@container": "@list"
+        },
+        "prefLabel": "skos:prefLabel",
+        "altLabel": "skos:altLabel",
+        "hiddenLabel": "skos:hiddenLabel",
+        "@language": "en"
+    },
+    "uri": "",
+    "results": [
+        {
+            "uri": "https:\/\/www.narcis.nl\/classification\/D14500",
+            "type": [
+                "skos:Concept"
+            ],
+            "localname": "D14500",
+            "prefLabel": "Chemical technology, process technology",
+            "lang": "en",
+            "vocab": "NARCIS"
+        },
+        {
+            "uri": "https:\/\/www.narcis.nl\/classification\/D13000",
+            "type": [
+                "skos:Concept"
+            ],
+            "localname": "D13000",
+            "prefLabel": "Chemistry",
+            "lang": "en",
+            "vocab": "NARCIS"
+        }
+    ]
+}
