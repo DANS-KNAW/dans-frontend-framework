@@ -83,7 +83,7 @@ const SingleTextField = ({
             </InputAdornment>
           ),
         }}
-        inputProps={{'data-testid': `${field.name}-${field.id}`}}
+        inputProps={{ "data-testid": `${field.name}-${field.id}` }}
       />
       {groupedFieldId &&
         !formDisabled && [

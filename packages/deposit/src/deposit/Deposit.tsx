@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2";
 import Metadata from "../features/metadata/Metadata";
 import Files from "../features/files/Files";
-import Collapse from '@mui/material/Collapse';
+import Collapse from "@mui/material/Collapse";
 import type { TabPanelProps, TabHeaderProps } from "../types/Deposit";
 import type { FormConfig } from "../types/Metadata";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
@@ -25,7 +25,6 @@ import {
 import {
   resetFilesSubmitStatus,
   resetMetadataSubmitStatus,
-  getMetadataSubmitStatus,
 } from "../features/submit/submitSlice";
 import { getFiles, resetFiles, addFiles } from "../features/files/filesSlice";
 import { StatusIcon } from "../features/generic/Icons";
@@ -47,15 +46,19 @@ import {
 import type { Page } from "@dans-framework/pages";
 import { useAuth } from "react-oidc-context";
 import { useFetchSavedMetadataQuery } from "./depositApi";
-import { useValidateAllKeysQuery, getFormActions, clearFormActions, setFormActions } from "@dans-framework/user-auth";
+import {
+  useValidateAllKeysQuery,
+  getFormActions,
+  clearFormActions,
+  setFormActions,
+} from "@dans-framework/user-auth";
 import { v4 as uuidv4 } from "uuid";
 
-/* 
-* Note TODO: 
-* Resubmitting of errored forms does not work yet
-* It is partially implemented here and in UserSubmissions.tsx,
-* but needs work on the API side
-*/
+/*
+ * TODO:
+ * Resubmitting of (errored) forms does not work yet
+ * It needs work on the API side
+ */
 
 const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const dispatch = useAppDispatch();
@@ -67,28 +70,17 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const [dataMessage, setDataMessage] = useState(false);
   // const [formAction, setFormAction] = useState(getFormActions());
   const formAction = getFormActions();
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const formTouched = useAppSelector(getTouchedStatus);
 
-  console.log(metadataSubmitStatus)
-  console.log(formTouched)
-
-  // Can load a saved form based on metadata id, passed along from e.g. UserSubmissions
-  // And set form action based on action param
-  // No action: loaded a saved form, default form behaviour
-  // Action = copy: copy saved form data to a new sessionId
-  // Action = resubmit: set submit button target to resubmit action in API
+  // Can load a saved form based on metadata id, passed along from UserSubmissions.
+  // Set form behaviour based on action param.
+  // load: loaded data from a saved form, to edit
+  // copy: copy data from saved form to a new sessionId
+  // resubmit: resubmit existing and already submitted data (save disabled), set submit button target to resubmit action in API
   const { data: serverFormData, isSuccess } = useFetchSavedMetadataQuery(
     formAction.id,
     { skip: !formAction.id },
   );
-
-  console.log(formAction)
-  console.log(sessionId)
-  console.log(serverFormData)
-
-  // TODO set form action to load on metadata save after copying form
-  // Also fix loading data for a copied form
 
   // set page title
   useEffect(() => {
@@ -99,46 +91,53 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // Or initialize saved data (overwrites the previously set sessionId)
   useEffect(() => {
     if (!sessionId || (sessionId && serverFormData && formAction.id)) {
-      // we need to reset the form status first, in case data had been previously entered
+      // We need to reset the form status first, in case data had been previously entered
       dispatch(resetMetadataSubmitStatus());
       dispatch(resetFilesSubmitStatus());
       dispatch(resetFiles());
-      // enable the form
+      // Enable the form
       dispatch(setFormDisabled(false));
-      // then we set new/empty data if there's no id to load
+      // Then we create a fresh form if there's no id to load
       if (!sessionId && !formAction.id) {
-        console.log('empty form')
         dispatch(initForm(config.form));
       }
-      // if there's server data available, load that into the form
+      // If there's server data available, load that into the form
+      // For copying a form, we create a new uuid as sessionId.
       else if (serverFormData && formAction && !formAction.actionDone) {
         dispatch(
           initForm(
-            formAction.action === "copy" ?
-              {
-                ...serverFormData.md,
-                id: uuidv4(),
-              } :
-              serverFormData.md
-            )
+            formAction.action === "copy"
+              ? {
+                  ...serverFormData.md,
+                  id: uuidv4(),
+                }
+              : serverFormData.md,
+          ),
         );
-        // make sure we only do this once
+        // Make sure we only do this once, otherwise it's an infinite loop
         setFormActions({
           ...formAction,
           actionDone: true,
         });
       }
-      // load the files if there are any. Probably not doable for copy? TODO: check
-      if (formAction.id && serverFormData && serverFormData.md["file-metadata"]) {
-        console.log('adding files')
+      // Load the files if there are any. Probably not doable for copy? TODO: check
+      if (
+        formAction.id &&
+        serverFormData &&
+        serverFormData.md["file-metadata"]
+      ) {
         dispatch(addFiles(serverFormData.md["file-metadata"]));
       }
     }
-    
-  }, [dispatch, sessionId, config.form, serverFormData, formAction.id, isSuccess]);
+  }, [
+    dispatch,
+    sessionId,
+    config.form,
+    serverFormData,
+    formAction.id,
+    isSuccess,
+  ]);
 
-
-  // actions only on initial render
   useEffect(() => {
     // Show a message when a saved form is loaded.
     // Show a message when data's been entered previously.
@@ -162,7 +161,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     url: t.keyCheckUrl,
     type: t.authKey,
   }));
-  
+
   const { error: apiKeyError } = useValidateAllKeysQuery(validateTargets, {
     skip: !targetCredentials,
   });
@@ -174,9 +173,8 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       <Container>
         <Grid container>
           <Grid xs={12} mt={4}>
-
             {!hasTargetCredentials && (
-              // show a message if keys are missing
+              // Show a message if keys are missing
               <Alert severity="warning" data-testid="invalid-api-keys">
                 <AlertTitle>{t("missingInfoHeader")}</AlertTitle>
                 <Trans
@@ -189,22 +187,18 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
             )}
 
             <Collapse in={dataMessage}>
-              <Alert 
-                severity={
-                  formAction.action === "resubmit" ?
-                  "error" :
-                  "info"
-                }
-                data-testid="data-message" 
+              <Alert
+                severity={formAction.action === "resubmit" ? "error" : "info"}
+                data-testid="data-message"
                 onClose={() => {
                   setDataMessage(false);
-                }} 
-                sx={{ 
+                }}
+                sx={{
                   position: "relative",
-                  "& .MuiAlert-message": { 
+                  "& .MuiAlert-message": {
                     flex: 1,
                   },
-                  "& .MuiAlert-action": { 
+                  "& .MuiAlert-action": {
                     position: "absolute",
                     right: "0.75rem",
                     marginRight: 0,
@@ -212,31 +206,45 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
                 }}
               >
                 <AlertTitle>
-                  {
-                    formAction.action === "resubmit" ?
-                    t("dataMessageHeaderResubmit", {title: (serverFormData && serverFormData.title) || t("untitled")}) :
-                    formAction.action === "copy" ?
-                    t("dataMessageHeaderCopy", {title: (serverFormData && serverFormData.title) || t("untitled")}) :
-                    formAction.action === "load" ?
-                    t("dataMessageHeaderLoad", {title: (serverFormData && serverFormData.title) || t("untitled")}) :
-                    t("dataMessageHeader")
-                  }
+                  {formAction.action === "resubmit"
+                    ? t("dataMessageHeaderResubmit", {
+                        title:
+                          (serverFormData && serverFormData.title) ||
+                          t("untitled"),
+                      })
+                    : formAction.action === "copy"
+                      ? t("dataMessageHeaderCopy", {
+                          title:
+                            (serverFormData && serverFormData.title) ||
+                            t("untitled"),
+                        })
+                      : formAction.action === "load"
+                        ? t("dataMessageHeaderLoad", {
+                            title:
+                              (serverFormData && serverFormData.title) ||
+                              t("untitled"),
+                          })
+                        : t("dataMessageHeader")}
                 </AlertTitle>
                 <Typography mb={1}>
-                {
-                  formAction.action === "resubmit" ?
-                  t("dataMessageContentResubmit") :
-                  formAction.action === "copy" ?
-                  t("dataMessageContentCopy") :
-                  formAction.action === "load" ?
-                  t("dataMessageContentLoad") :
-                  t("dataMessageContent")
-                }
+                  {formAction.action === "resubmit"
+                    ? t("dataMessageContentResubmit")
+                    : formAction.action === "copy"
+                      ? t("dataMessageContentCopy")
+                      : formAction.action === "load"
+                        ? t("dataMessageContentLoad")
+                        : t("dataMessageContent")}
                 </Typography>
-                <Stack justifyContent="flex-end" direction="row" alignItems="center">
-                  <Typography mb={0} mr={2} variant="h6">{t("dataResetHeader")}</Typography>
-                  <Button 
-                    variant="contained" 
+                <Stack
+                  justifyContent="flex-end"
+                  direction="row"
+                  alignItems="center"
+                >
+                  <Typography mb={0} mr={2} variant="h6">
+                    {t("dataResetHeader")}
+                  </Typography>
+                  <Button
+                    variant="contained"
                     onClick={() => {
                       dispatch(resetMetadata());
                       setDataMessage(false);
@@ -244,7 +252,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
                     }}
                     color="warning"
                   >
-                    {t('dataResetButton')}
+                    {t("dataResetButton")}
                   </Button>
                 </Stack>
               </Alert>

@@ -58,5 +58,5 @@ export interface FormConfig {
     convertFiles?: boolean;
     displayRoles?: boolean;
     displayProcesses?: boolean;
-  }
+  };
 }

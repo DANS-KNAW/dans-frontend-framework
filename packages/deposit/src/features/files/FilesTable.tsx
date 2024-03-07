@@ -96,10 +96,14 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
 
   // Need to check the type of file and provide valid processing options
   const { data } = useFetchGroupedListQuery(null);
-  const typeKey = file.name && data ? findFileGroup(file.name.split(".").pop(), data) : "";
-  const filteredOptions = type === "process" ? 
-    localizedOptions.filter( o => o.for && typeKey && o.for.indexOf(typeKey) !== -1 ) :
-    localizedOptions;
+  const typeKey =
+    file.name && data ? findFileGroup(file.name.split(".").pop(), data) : "";
+  const filteredOptions =
+    type === "process"
+      ? localizedOptions.filter(
+          (o) => o.for && typeKey && o.for.indexOf(typeKey) !== -1,
+        )
+      : localizedOptions;
 
   return (
     <Autocomplete
@@ -112,7 +116,7 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
             id: file.id,
             type: type,
             value: newValue,
-          })
+          }),
         )
       }
       renderInput={(params) => (
@@ -121,7 +125,7 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
           label={t(type === "process" ? "selectOptions" : "selectOption")}
           inputProps={{
             ...params.inputProps,
-            'data-testid': `actions-${type}-${file.name}`,
+            "data-testid": `actions-${type}-${file.name}`,
           }}
         />
       )}
@@ -147,8 +151,11 @@ const FileTableRow = ({ file }: FileItemProps) => {
   const formDisabled = useAppSelector(getFormDisabled);
   const formConfig = useAppSelector(getData);
 
-  const { displayRoles = true, displayProcesses = true, convertFiles = true} =
-    formConfig?.filesUpload || {};
+  const {
+    displayRoles = true,
+    displayProcesses = true,
+    convertFiles = true,
+  } = formConfig?.filesUpload || {};
 
   return (
     <>
@@ -239,7 +246,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
                   id: file.id,
                   type: "private",
                   value: e.target.checked,
-                })
+                }),
               )
             }
             data-testid={`private-${file.name}`}

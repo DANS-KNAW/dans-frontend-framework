@@ -32,7 +32,7 @@ import { getFormDisabled } from "../../deposit/depositSlice";
 import { getSessionId } from "../metadata/metadataSlice";
 
 // Temporary soft file limits in bytes
-const bytes =  1048576;
+const bytes = 1048576;
 const lowerLimit = 1000 * bytes;
 const upperLimit = 2000 * bytes;
 
@@ -250,7 +250,9 @@ const FileAlert = ({
             <Trans
               i18nKey={`files:${description}`}
               components={[
-                <Link href={`mailto:info@dans.knaw.nl?subject=Large file upload for dataset: ${sessionId}`} />,
+                <Link
+                  href={`mailto:info@dans.knaw.nl?subject=Large file upload for dataset: ${sessionId}`}
+                />,
               ]}
             />
           </Typography>
