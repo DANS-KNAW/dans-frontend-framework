@@ -140,7 +140,7 @@ export async function fillGroup(page: Page, groupName: string, groupFields: Grou
 
             if (groupField.isDateField === true) {
                 // handle date/time field
-                await field.pressSequentially(groupField.fieldValue, { delay: 50 })
+                await field.pressSequentially(groupField.fieldValue, { delay: 100 })
                 continue
             }
 

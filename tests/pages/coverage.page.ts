@@ -12,21 +12,26 @@ export class CoveragePage {
         await this.page.getByRole('button', { name: 'Coverage' }).click();
     }
 
-    async setLocation() {
+    async setKeywords() {
         await clickAndFillApiDropdown(this.page, 'subject_keywords', 'subjectKeywords', 'country.json', '**/searchJSON?q=*&username=*')
+    }
+
+    async setLocation(){
+        await clickAndFillApiDropdown(this.page, 'subject_location', 'The Netherlands', 'country.json', '**/searchJSON?q=*&username=*')
+
     }
 
     async setPeriods(numberOfPeriods: number) {
         const groupFields: GroupField[] = [
             {
                 fieldName: 'subject_date_time_start',
-                fieldValue: '1234',
+                fieldValue: '1970',
                 isDropdown: false,
                 isDateField: true
             },
             {
                 fieldName: 'subject_date_time_end',
-                fieldValue: '5678',
+                fieldValue: '1980',
                 isDropdown: false,
                 isDateField: true
             }
