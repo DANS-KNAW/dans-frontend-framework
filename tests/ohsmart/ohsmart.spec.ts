@@ -37,6 +37,7 @@ test('Test all ohsmart tabs/fields', async ({ page }) => {
 
     const coveragePage = new CoveragePage(page)
     await coveragePage.openTab()
+    await coveragePage.setKeywords()
     await coveragePage.setLocation()
     await coveragePage.setPeriods(3)
 
