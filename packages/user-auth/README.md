@@ -68,7 +68,7 @@ TBD. Displays a current users metadata submissions. Needs to be a child of `<Aut
 
 ## UserSettings
 
-Displays a current users settings, like API keys. Needs to be a child of `<AuthRoute />`. Takes `target` as props, usually taken from the targetCredentials object set in the form config: an array of target objects the component uses for form submission authentication. For the targetCredentials object, see [@dans-framework/deposit](/packages/deposit/README.md). 
+Displays a current users settings, like API keys. Needs to be a child of `<AuthRoute />`. Takes `target` as props, usually taken from the targetCredentials object set in the form config: an array of target objects the component uses for form submission authentication. For the targetCredentials object, see [@dans-framework/deposit](/packages/deposit/README.md).
 
     import { UserSettings } from '@dans-framework/user-auth'
 
@@ -86,10 +86,10 @@ Helper function to get the current users profile information. Exposes the Auth l
 
     const { data } = fetchUserProfile({
         // URL of OIDC provider/authority
-        provider: '', 
+        provider: '',
 
         // OIDC client id
-        id: '' 
+        id: ''
     });
 
 ## i18n

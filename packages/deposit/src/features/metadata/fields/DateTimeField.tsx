@@ -34,7 +34,9 @@ const DateTimeField = ({
   return (
     <Stack direction="row" alignItems="start">
       {field.formatOptions && (
-        <FormControl sx={{ minWidth: 110, mr: 1, mt: currentField > 0 ? 1 : 0 }}>
+        <FormControl
+          sx={{ minWidth: 110, mr: 1, mt: currentField > 0 ? 1 : 0 }}
+        >
           <InputLabel>{t("selectDateType")}</InputLabel>
           <Select
             label={t("selectDateType")}
@@ -59,7 +61,7 @@ const DateTimeField = ({
             }}
             value={field.format}
             disabled={formDisabled}
-            inputProps={{'data-testid': `datetype-${field.name}-${field.id}`}}
+            inputProps={{ "data-testid": `datetype-${field.name}-${field.id}` }}
           >
             {field.formatOptions.map((option) => (
               <MenuItem key={option} value={option}>
@@ -116,7 +118,7 @@ const DateTimeField = ({
             </InputAdornment>
           ),
         }}
-        inputProps={{'data-testid': `${field.name}-${field.id}`}}
+        inputProps={{ "data-testid": `${field.name}-${field.id}` }}
         slotProps={{
           textField: { error: status === "error" && field.touched },
         }}

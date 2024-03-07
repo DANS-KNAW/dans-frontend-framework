@@ -37,7 +37,7 @@ import {
   useFetchRdaWorkingGroupQuery,
   useFetchRdaPathwayQuery,
   useFetchRdaDomainQuery,
-  useFetchRdaInterestGroupQuery
+  useFetchRdaInterestGroupQuery,
 } from "../api/rdaApi";
 
 /*
@@ -101,8 +101,8 @@ export const GeonamesField = ({
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   // Fetch data on input change
   const { data, isFetching, isLoading } =
-    useFetchGeonamesFreeTextQuery<QueryReturnType>(debouncedInputValue, { 
-      skip: debouncedInputValue === "" 
+    useFetchGeonamesFreeTextQuery<QueryReturnType>(debouncedInputValue, {
+      skip: debouncedInputValue === "",
     });
 
   return (
@@ -218,7 +218,6 @@ export const SshLicencesField = ({
   );
 };
 
-
 export const LicensesField = ({
   field,
   sectionIndex,
@@ -243,8 +242,10 @@ export const LicensesField = ({
 export const GorcField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
   // Fetch data if field is opened
   const [touched, setTouched] = useState(false);
-  const { data, isFetching, isLoading } =
-    useFetchGorcQuery<QueryReturnType>(null, { skip: !touched });
+  const { data, isFetching, isLoading } = useFetchGorcQuery<QueryReturnType>(
+    null,
+    { skip: !touched },
+  );
   const newField = {
     ...field,
     options: data && data.response ? data.response : [],
@@ -360,7 +361,7 @@ export const SheetsField = ({
   const [touched, setTouched] = useState(false);
   const { data, isFetching, isLoading } = useFetchSheetsQuery<QueryReturnType>(
     field.sheetOptions,
-    { skip: !touched }
+    { skip: !touched },
   );
   const newField = {
     ...field,
@@ -413,7 +414,7 @@ export const MultiApiField = ({
           }}
           value={field.multiApiValue}
           disabled={formDisabled}
-          inputProps={{'data-testid': `selectapi-${field.name}-${field.id}`}}
+          inputProps={{ "data-testid": `selectapi-${field.name}-${field.id}` }}
         >
           {Array.isArray(field.options) &&
             (field.options as TypeaheadAPI[]).map((option) => (
@@ -530,7 +531,7 @@ const AutocompleteAPIField = ({
             }}
             inputProps={{
               ...params.inputProps,
-              'data-testid': `${field.name}-${field.id}`,
+              "data-testid": `${field.name}-${field.id}`,
             }}
           />
         )}

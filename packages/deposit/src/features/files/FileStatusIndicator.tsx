@@ -43,7 +43,10 @@ const FileStatusIndicator = ({
     if (file.valid === false) return t("invalid", { type: file.type });
     if (!convertFiles && data?.preferred) return t("noConversionHead");
     if (!convertFiles)
-      return t("preferredFile", { fileType: file.type, type: data["required-convert-to"] });
+      return t("preferredFile", {
+        fileType: file.type,
+        type: data["required-convert-to"],
+      });
     if (data?.preferred) return t("noConversion");
     return t("conversion", { type: data["required-convert-to"] });
   };
@@ -107,7 +110,7 @@ const FileStatusIndicator = ({
     dispatch(
       dansUtilityApi.endpoints.checkType.initiate(file.type, {
         forceRefetch: true,
-      })
+      }),
     );
   };
 

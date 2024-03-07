@@ -8,7 +8,7 @@ const initialState: UserFormAction = {
     id: undefined,
     action: undefined,
     actionDone: undefined,
-  }
+  },
 };
 
 export const userSlice = createSlice({

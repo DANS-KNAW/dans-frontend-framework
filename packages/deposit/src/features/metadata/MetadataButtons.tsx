@@ -18,7 +18,7 @@ export const DeleteButton = ({
   size = "small",
   mt,
   deleteGroupId,
-  groupedFieldName
+  groupedFieldName,
 }: DeleteFieldButtonProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
@@ -52,7 +52,7 @@ export const AddButton = ({
   type,
   size = "small",
   mt,
-  groupedFieldName
+  groupedFieldName,
 }: AddFieldButtonProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");

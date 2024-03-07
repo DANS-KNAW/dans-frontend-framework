@@ -27,7 +27,11 @@ import {
   resetMetadataSubmitStatus,
   setFilesSubmitStatus,
 } from "./submitSlice";
-import { formatFormData, formatFileData, beforeUnloadHandler } from "./submitHelpers";
+import {
+  formatFormData,
+  formatFileData,
+  beforeUnloadHandler,
+} from "./submitHelpers";
 import { useTranslation } from "react-i18next";
 import {
   getData,
@@ -73,23 +77,34 @@ const Submit = ({
   const fileStatusArray = [...new Set(filesSubmitStatus.map((f) => f.status))];
   const fileStatus =
     fileStatusArray.indexOf("error") !== -1
-    ? "error"
-    : fileStatusArray.indexOf("submitting") !== -1
-    ? "submitting"
-    : fileStatusArray.indexOf("success") !== -1
-    ? "success"
-    : "";
+      ? "error"
+      : fileStatusArray.indexOf("submitting") !== -1
+        ? "submitting"
+        : fileStatusArray.indexOf("success") !== -1
+          ? "success"
+          : "";
 
   // If there's an error with uploading files, focus on the files tab
   useEffect(() => {
     fileStatus === "error" && dispatch(setOpenTab(1));
-  }, [fileStatus])
+  }, [fileStatus]);
 
-  const [submitData, { isLoading: isLoadingMeta, isError: isErrorMeta, reset: resetMeta, isSuccess: isSuccessMeta }] =
-    useSubmitDataMutation();
+  const [
+    submitData,
+    {
+      isLoading: isLoadingMeta,
+      isError: isErrorMeta,
+      reset: resetMeta,
+      isSuccess: isSuccessMeta,
+    },
+  ] = useSubmitDataMutation();
   const [
     submitFiles,
-    { isLoading: isLoadingFiles, reset: resetSubmittedFiles, isSuccess: isSuccessFiles },
+    {
+      isLoading: isLoadingFiles,
+      reset: resetSubmittedFiles,
+      isSuccess: isSuccessFiles,
+    },
   ] = useSubmitFilesMutation();
 
   // Access token might just be expiring, or user settings just changed
@@ -152,20 +167,19 @@ const Submit = ({
         data: formattedMetadata,
         headerData: headerData,
         actionType: actionType,
-      })
-      .then((result: { data?: any; error?: any }) => {
+      }).then((result: { data?: any; error?: any }) => {
         if (result.data?.data?.status === "OK") {
           // if metadata has been submitted ok, we start the file submit
           const filesToUpload = selectedFiles.filter((f) => !f.submittedFile);
           // formatting the file data can take a while, so in the meantime, we activate a spinner
-          filesToUpload.forEach( f => 
+          filesToUpload.forEach((f) =>
             dispatch(
               setFilesSubmitStatus({
                 id: f.id as string,
                 progress: undefined,
                 status: "submitting",
               }),
-            )
+            ),
           );
           // then format and start submitting
           formatFileData(sessionId, filesToUpload)
@@ -180,12 +194,11 @@ const Submit = ({
               console.log(e);
             });
         }
-      })
+      }),
     );
   };
 
   const resetForm = () => {
-    console.log('reset form')
     // reset RTK mutations
     resetSubmittedFiles();
     resetMeta();
@@ -205,13 +218,13 @@ const Submit = ({
   // remove event listener when successfully submitted
   useEffect(() => {
     if (
-      (isSuccessMeta && selectedFiles.length === 0) || 
-      isSuccessFiles || 
+      (isSuccessMeta && selectedFiles.length === 0) ||
+      isSuccessFiles ||
       fileStatus === "success"
     ) {
       window.removeEventListener("beforeunload", beforeUnloadHandler);
     }
-  }, [isSuccessMeta, isSuccessFiles, fileStatus])
+  }, [isSuccessMeta, isSuccessFiles, fileStatus]);
 
   const iconSx = {
     color: "white",
@@ -251,7 +264,9 @@ const Submit = ({
                   isLoadingMeta
                 ? t("submitting")
                 : metadataSubmitStatus === "submitted" &&
-                    (fileStatus === "success" || selectedFiles.length === 0 || selectedFiles.every( f => f.submittedFile ))
+                    (fileStatus === "success" ||
+                      selectedFiles.length === 0 ||
+                      selectedFiles.every((f) => f.submittedFile))
                   ? t("submitSuccess")
                   : metadataSubmitStatus === "error"
                     ? t("submitErrorMetadata")
@@ -275,7 +290,9 @@ const Submit = ({
                 borderRadius: "50%",
                 backgroundColor: `${
                   metadataSubmitStatus === "submitted" &&
-                  (fileStatus === "success" || selectedFiles.length === 0 || selectedFiles.every( f => f.submittedFile ))
+                  (fileStatus === "success" ||
+                    selectedFiles.length === 0 ||
+                    selectedFiles.every((f) => f.submittedFile))
                     ? "success"
                     : metadataStatus === "error" ||
                         fileStatus === "error" ||
@@ -297,7 +314,9 @@ const Submit = ({
             >
               {(metadataSubmitStatus === "submitted" ||
                 metadataSubmitStatus === "saved") &&
-              (fileStatus === "success" || selectedFiles.length === 0 || selectedFiles.every( f => f.submittedFile )) ? (
+              (fileStatus === "success" ||
+                selectedFiles.length === 0 ||
+                selectedFiles.every((f) => f.submittedFile)) ? (
                 <CheckIcon sx={iconSx} />
               ) : (metadataStatus === "error" ||
                   fileStatus === "error" ||
@@ -312,7 +331,9 @@ const Submit = ({
                 <SendIcon sx={iconSx} />
               )}
             </Box>
-            {(fileStatus === "submitting" || isLoadingFiles || isLoadingMeta) && (
+            {(fileStatus === "submitting" ||
+              isLoadingFiles ||
+              isLoadingMeta) && (
               <CircularProgress
                 size={54}
                 sx={{
@@ -339,20 +360,21 @@ const Submit = ({
             {t("save")}
           </Button>
 
-          {
-            metadataSubmitStatus === "submitted" && 
-            ( fileStatus === "success" || selectedFiles.length === 0 || selectedFiles.every( f => f.submittedFile ) ) &&
+          {metadataSubmitStatus === "submitted" &&
+            (fileStatus === "success" ||
+              selectedFiles.length === 0 ||
+              selectedFiles.every((f) => f.submittedFile)) &&
             formDisabled && (
-            <Button
-              variant="contained"
-              onClick={resetForm}
-              size="large"
-              sx={{ mr: 1 }}
-              data-testid="reset-form"
-            >
-              {t("reset")}
-            </Button>
-          )}
+              <Button
+                variant="contained"
+                onClick={resetForm}
+                size="large"
+                sx={{ mr: 1 }}
+                data-testid="reset-form"
+              >
+                {t("reset")}
+              </Button>
+            )}
 
           <Button
             variant="contained"
@@ -361,7 +383,11 @@ const Submit = ({
               formDisabled ||
               (metadataStatus === "error" && !formConfig.skipValidation)
             }
-            onClick={() => handleButtonClick(formAction.action === "resubmit" ? "resubmit" : "submit")}
+            onClick={() =>
+              handleButtonClick(
+                formAction.action === "resubmit" ? "resubmit" : "submit",
+              )
+            }
             size="large"
             data-testid="submit-form"
           >

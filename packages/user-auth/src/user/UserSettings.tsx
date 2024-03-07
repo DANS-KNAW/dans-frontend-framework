@@ -62,8 +62,6 @@ export const UserSettings = ({
     skip: !target || !profileData || skipValidate,
   });
 
-  console.log(apiKeyError)
-
   return (
     <Container>
       <Grid container>
@@ -216,7 +214,7 @@ const UserSettingsItem = ({ target }: { target: Target }) => {
             </InputAdornment>
           ),
         }}
-        inputProps={{'data-testid': `apikey-${target.authKey}`}}
+        inputProps={{ "data-testid": `apikey-${target.authKey}` }}
       />
     </Stack>
   );

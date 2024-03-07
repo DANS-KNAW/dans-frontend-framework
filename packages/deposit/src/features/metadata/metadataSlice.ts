@@ -43,16 +43,16 @@ export const metadataSlice = createSlice({
   name: "metadata",
   initialState,
   reducers: {
-    initForm: (state, action: PayloadAction<InitialFormType | InitialSectionType[]>) => {
-      console.log(action.payload)
+    initForm: (
+      state,
+      action: PayloadAction<InitialFormType | InitialSectionType[]>,
+    ) => {
       if (!Array.isArray(action.payload) && action.payload.id) {
-        console.log('initializing from loaded data...')
         // form is loaded from existing data
         state.id = action.payload.id;
         state.form = action.payload.metadata;
         state.panel = action.payload.metadata[0].id;
       } else {
-        console.log('initializing new form...')
         // otherwise initialize a brand new form
         state.id = uuidv4();
         state.form = formatInitialState(action.payload as InitialSectionType[]);
@@ -82,17 +82,20 @@ export const metadataSlice = createSlice({
 
         // For setting required state of 'conditional' fields, we need to find the parent array
         if (field.makesRequired) {
-          const requiredIds = field.makesRequiredIds || findConditionalChanges(action.payload.id, section.fields);
-          if (!field.makesRequiredIds) { 
+          const requiredIds =
+            field.makesRequiredIds ||
+            findConditionalChanges(action.payload.id, section.fields);
+          if (!field.makesRequiredIds) {
             field.makesRequiredIds = requiredIds;
           }
           // change the conditional fields required state
-          requiredIds && requiredIds.map( id => {
-            const changeField = findById(id, section.fields);
-            if (changeField) {
-              changeField.required = action.payload.value ? true : undefined
-            }
-          });
+          requiredIds &&
+            requiredIds.map((id) => {
+              const changeField = findById(id, section.fields);
+              if (changeField) {
+                changeField.required = action.payload.value ? true : undefined;
+              }
+            });
         }
 
         // After every input, we need to update field valid status and section status as well.
@@ -160,7 +163,7 @@ export const metadataSlice = createSlice({
                     }
                   : {
                       // Omit the makesRequiredIds property
-                      ...((({ makesRequiredIds, ...rest }) => rest)(f)),
+                      ...(({ makesRequiredIds, ...rest }) => rest)(f),
                       // reset what needs resetting
                       id: uuidv4(),
                       value: "",
