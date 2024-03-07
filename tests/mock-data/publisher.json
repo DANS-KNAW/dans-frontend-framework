@@ -1,0 +1,292 @@
+{
+    "number_of_results": 3,
+    "time_taken": 1,
+    "items": [
+        {
+            "id": "https://ror.org/05fccw142",
+            "name": "Publisher 1",
+            "email_address": null,
+            "ip_addresses": [],
+            "established": 1996,
+            "types": [
+                "Healthcare"
+            ],
+            "relationships": [],
+            "addresses": [
+                {
+                    "lat": 41.964294,
+                    "lng": 12.451763,
+                    "state": null,
+                    "state_code": null,
+                    "city": "Rome",
+                    "geonames_city": {
+                        "id": 3169070,
+                        "city": "Rome",
+                        "geonames_admin1": {
+                            "name": "Latium",
+                            "id": 3174976,
+                            "ascii_name": "Latium",
+                            "code": "IT.07"
+                        },
+                        "geonames_admin2": {
+                            "name": "Città metropolitana di Roma Capitale",
+                            "id": 3169069,
+                            "ascii_name": "Citta metropolitana di Roma Capitale",
+                            "code": "IT.07.RM"
+                        },
+                        "license": {
+                            "attribution": "Data from geonames.org under a CC-BY 3.0 license",
+                            "license": "http://creativecommons.org/licenses/by/3.0/"
+                        },
+                        "nuts_level1": {
+                            "name": "CENTRO (IT)",
+                            "code": "ITI"
+                        },
+                        "nuts_level2": {
+                            "name": "Lazio",
+                            "code": "ITI4"
+                        },
+                        "nuts_level3": {
+                            "name": "Roma",
+                            "code": "ITI43"
+                        }
+                    },
+                    "postcode": null,
+                    "primary": false,
+                    "line": null,
+                    "country_geonames_id": 3175395
+                }
+            ],
+            "links": [
+                "http://www.ospedalesanpietro.it/"
+            ],
+            "aliases": [],
+            "acronyms": [],
+            "status": "active",
+            "wikipedia_url": "",
+            "labels": [],
+            "country": {
+                "country_name": "Italy",
+                "country_code": "IT"
+            },
+            "external_ids": {
+                "ISNI": {
+                    "preferred": null,
+                    "all": [
+                        "0000 0004 1760 5524"
+                    ]
+                },
+                "GRID": {
+                    "preferred": "grid.416418.e",
+                    "all": "grid.416418.e"
+                }
+            }
+        },
+        {
+            "id": "https://ror.org/0286fq017",
+            "name": "Publisher 2",
+            "email_address": null,
+            "ip_addresses": [],
+            "established": 1807,
+            "types": [
+                "Education"
+            ],
+            "relationships": [],
+            "addresses": [
+                {
+                    "lat": 40.849461,
+                    "lng": 14.252476,
+                    "state": null,
+                    "state_code": null,
+                    "city": "Naples",
+                    "geonames_city": {
+                        "id": 3172394,
+                        "city": "Naples",
+                        "geonames_admin1": {
+                            "name": "Campania",
+                            "id": 3181042,
+                            "ascii_name": "Campania",
+                            "code": "IT.04"
+                        },
+                        "geonames_admin2": {
+                            "name": "Napoli",
+                            "id": 3172391,
+                            "ascii_name": "Napoli",
+                            "code": "IT.04.NA"
+                        },
+                        "license": {
+                            "attribution": "Data from geonames.org under a CC-BY 3.0 license",
+                            "license": "http://creativecommons.org/licenses/by/3.0/"
+                        },
+                        "nuts_level1": {
+                            "name": "SUD",
+                            "code": "ITF"
+                        },
+                        "nuts_level2": {
+                            "name": "Campania",
+                            "code": "ITF3"
+                        },
+                        "nuts_level3": {
+                            "name": "Napoli",
+                            "code": "ITF33"
+                        }
+                    },
+                    "postcode": null,
+                    "primary": false,
+                    "line": null,
+                    "country_geonames_id": 3175395
+                }
+            ],
+            "links": [
+                "http://www.sanpietroamajella.it/index.php"
+            ],
+            "aliases": [
+                "Music conservatories of Naples"
+            ],
+            "acronyms": [],
+            "status": "active",
+            "wikipedia_url": "https://en.wikipedia.org/wiki/Music_conservatories_of_Naples",
+            "labels": [],
+            "country": {
+                "country_name": "Italy",
+                "country_code": "IT"
+            },
+            "external_ids": {
+                "ISNI": {
+                    "preferred": null,
+                    "all": [
+                        "0000 0001 2166 9166"
+                    ]
+                },
+                "GRID": {
+                    "preferred": "grid.466022.4",
+                    "all": "grid.466022.4"
+                }
+            }
+        },
+        {
+            "id": "https://ror.org/04z77bq11",
+            "name": "Publisher 3",
+            "email_address": null,
+            "ip_addresses": [],
+            "established": 2006,
+            "types": [
+                "Nonprofit"
+            ],
+            "relationships": [],
+            "addresses": [
+                {
+                    "lat": 53.353347,
+                    "lng": -6.242967,
+                    "state": null,
+                    "state_code": null,
+                    "city": "Dublin",
+                    "geonames_city": {
+                        "id": 2964574,
+                        "city": "Dublin",
+                        "geonames_admin1": {
+                            "name": "Leinster",
+                            "id": 7521314,
+                            "ascii_name": "Leinster",
+                            "code": "IE.L"
+                        },
+                        "geonames_admin2": {
+                            "name": "Dublin City",
+                            "id": 7778677,
+                            "ascii_name": "Dublin City",
+                            "code": "IE.L.33"
+                        },
+                        "license": {
+                            "attribution": "Data from geonames.org under a CC-BY 3.0 license",
+                            "license": "http://creativecommons.org/licenses/by/3.0/"
+                        },
+                        "nuts_level1": {
+                            "name": "IRELAND",
+                            "code": "IE0"
+                        },
+                        "nuts_level2": {
+                            "name": "Southern and Eastern",
+                            "code": "IE02"
+                        },
+                        "nuts_level3": {
+                            "name": "Dublin",
+                            "code": "IE021"
+                        }
+                    },
+                    "postcode": null,
+                    "primary": false,
+                    "line": null,
+                    "country_geonames_id": 2963597
+                }
+            ],
+            "links": [
+                "http://www.pieta.ie/"
+            ],
+            "aliases": [],
+            "acronyms": [],
+            "status": "active",
+            "wikipedia_url": "",
+            "labels": [],
+            "country": {
+                "country_name": "Ireland",
+                "country_code": "IE"
+            },
+            "external_ids": {
+                "ISNI": {
+                    "preferred": null,
+                    "all": [
+                        "0000 0004 8342 1715"
+                    ]
+                },
+                "Wikidata": {
+                    "preferred": null,
+                    "all": [
+                        "Q55453883"
+                    ]
+                },
+                "GRID": {
+                    "preferred": "grid.496871.5",
+                    "all": "grid.496871.5"
+                }
+            }
+        }
+    ],
+    "meta": {
+        "types": [
+            {
+                "id": "education",
+                "title": "Education",
+                "count": 1
+            },
+            {
+                "id": "healthcare",
+                "title": "Healthcare",
+                "count": 1
+            },
+            {
+                "id": "nonprofit",
+                "title": "Nonprofit",
+                "count": 1
+            }
+        ],
+        "countries": [
+            {
+                "id": "it",
+                "title": "Italy",
+                "count": 2
+            },
+            {
+                "id": "ie",
+                "title": "Ireland",
+                "count": 1
+            }
+        ],
+        "statuses": [
+            {
+                "id": "active",
+                "title": "active",
+                "count": 3
+            }
+        ]
+    }
+}
