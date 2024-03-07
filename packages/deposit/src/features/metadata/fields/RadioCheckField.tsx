@@ -90,9 +90,7 @@ export const CheckField = ({ field, sectionIndex }: CheckFieldProps) => {
           {lookupLanguageString(field.label, i18n.language)}
         </FormLabel>
       )}
-      <FormGroup 
-        data-testid={`${field.name}-${field.id}`}
-      >
+      <FormGroup data-testid={`${field.name}-${field.id}`}>
         {field.options.map((option) => (
           <Stack direction="row" alignItems="center" key={option.value}>
             <FormControlLabel

@@ -41,7 +41,7 @@ const AutocompleteField = ({
     })) as OptionsType[]) || [];
 
   return (
-    <Stack direction="row" alignItems="start" sx={{width: '100%'}}>
+    <Stack direction="row" alignItems="start" sx={{ width: "100%" }}>
       <Autocomplete
         multiple={field.multiselect}
         fullWidth
@@ -67,9 +67,14 @@ const AutocompleteField = ({
                 !field.multiselect &&
                 field.value &&
                 !Array.isArray(field.value) &&
-                ((field.value.value && field.value.value.startsWith("http")) || field.value.url) ? (
+                ((field.value.value && field.value.value.startsWith("http")) ||
+                  field.value.url) ? (
                   <InfoLink
-                    link={(field.value.value.startsWith("http") && field.value.value) || field.value.url as string}
+                    link={
+                      (field.value.value.startsWith("http") &&
+                        field.value.value) ||
+                      (field.value.url as string)
+                    }
                     checkValue={lookupLanguageString(
                       field.value.label,
                       i18n.language,
@@ -81,7 +86,7 @@ const AutocompleteField = ({
             }}
             inputProps={{
               ...params.inputProps,
-              'data-testid': `${field.name}-${field.id}`,
+              "data-testid": `${field.name}-${field.id}`,
             }}
           />
         )}
@@ -109,7 +114,11 @@ const AutocompleteField = ({
         isOptionEqualToValue={(option, value) => option.value === value.value}
         onOpen={onOpen}
         renderOption={(props, option) => (
-          <li {...props} key={`${option.value}-${option.label}`} style={{ flexWrap: "wrap" }}>
+          <li
+            {...props}
+            key={`${option.value}-${option.label}`}
+            style={{ flexWrap: "wrap" }}
+          >
             {option.categoryLabel && option.categoryContent && (
               <Typography
                 component="div"
@@ -226,7 +235,10 @@ export const InfoChip = ({
       icon={
         (option.value && option.value.startsWith("http")) || option.url ? (
           <InfoLink
-            link={(option.value.startsWith("http") && option.value) || option.url as string}
+            link={
+              (option.value.startsWith("http") && option.value) ||
+              (option.url as string)
+            }
             apiValue={apiValue}
             checkValue={lookupLanguageString(option.label, i18n.language)}
             chip={true}

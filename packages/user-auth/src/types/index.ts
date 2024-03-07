@@ -29,7 +29,12 @@ export interface ValidateTarget {
 
 export type ReleaseVersion = "DRAFT" | "PUBLISHED" | "PUBLISH";
 
-type ActiveStatus = "initial" | "processing" | "submitted" | "finalizing" | "progress";
+type ActiveStatus =
+  | "initial"
+  | "processing"
+  | "submitted"
+  | "finalizing"
+  | "progress";
 type ErrorStatus = "rejected" | "failed" | "error";
 type SuccessStatus = "finish" | "accepted" | "success";
 export type IngestStatus = ActiveStatus | ErrorStatus | SuccessStatus;
@@ -63,11 +68,11 @@ export type AuthProperty =
   | "given_name";
 
 export interface FormAction {
-    id?: string;
-    action?: "load" | "copy" | "resubmit";
-    actionDone?: boolean;
+  id?: string;
+  action?: "load" | "copy" | "resubmit";
+  actionDone?: boolean;
 }
 
 export interface UserFormAction {
-  formAction: FormAction
+  formAction: FormAction;
 }

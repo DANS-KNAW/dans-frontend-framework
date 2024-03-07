@@ -150,9 +150,7 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
           sx={{ pb: 0, pl: 2.25, pr: 2.25 }}
         />
         {fieldArray && (
-          <CardContent 
-            data-testid={`group-${field.name}-${field.id}`}
-          >
+          <CardContent data-testid={`group-${field.name}-${field.id}`}>
             <TransitionGroup>
               {fieldArray.map((groupedField, i) => (
                 <Collapse key={`group-${groupedField[0].id}`}>
@@ -195,18 +193,20 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
             </TransitionGroup>
           </CardContent>
         )}
-        {field.repeatable && metadataSubmitStatus !== "submitted" && metadataSubmitStatus !== "submitting" && (
-          <CardActions sx={{ pl: 3, pr: 3, justifyContent: "right" }}>
-            <Stack direction="row" alignItems="center" justifyContent="end">
-              <AddButtonText
-                sectionIndex={sectionIndex}
-                groupedFieldId={field.id}
-                groupedFieldName={field.name}
-                type="group"
-              />
-            </Stack>
-          </CardActions>
-        )}
+        {field.repeatable &&
+          metadataSubmitStatus !== "submitted" &&
+          metadataSubmitStatus !== "submitting" && (
+            <CardActions sx={{ pl: 3, pr: 3, justifyContent: "right" }}>
+              <Stack direction="row" alignItems="center" justifyContent="end">
+                <AddButtonText
+                  sectionIndex={sectionIndex}
+                  groupedFieldId={field.id}
+                  groupedFieldName={field.name}
+                  type="group"
+                />
+              </Stack>
+            </CardActions>
+          )}
       </Card>
     </Grid>
   );

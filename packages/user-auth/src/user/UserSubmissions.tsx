@@ -15,7 +15,7 @@ import {
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import ReplayIcon from "@mui/icons-material/Replay";
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import Box from "@mui/material/Box";
 import moment from "moment";
 import { useSiteTitle, setSiteTitle } from "@dans-framework/utils";
@@ -34,12 +34,12 @@ import Button from "@mui/material/Button";
 import { setFormAction } from "./userSlice";
 import { useAppDispatch } from "../redux/hooks";
 
-/* 
-* Note TODO: 
-* Resubmitting of errored forms does not work yet
-* It is partially implemented here and in Deposit.tsx,
-* but needs work on the API side
-*/
+/*
+ * Note TODO:
+ * Resubmitting of errored forms does not work yet
+ * It is partially implemented here and in Deposit.tsx,
+ * but needs work on the API side
+ */
 
 const depositStatus: DepositStatus = {
   processing: ["initial", "processing", "submitted", "finalizing", "progress"],
@@ -67,7 +67,11 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
     data &&
     data.length > 0 &&
     data
-      .filter((d) => d["release-version"] === "PUBLISHED" || d["release-version"] === "PUBLISH")
+      .filter(
+        (d) =>
+          d["release-version"] === "PUBLISHED" ||
+          d["release-version"] === "PUBLISH",
+      )
       .every(
         // if all are finished, or one has an error, stop checking
         (d) =>
@@ -94,14 +98,25 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
         <Grid xs={12} mdOffset={1} md={10}>
           <Typography variant="h1">{t("userSubmissions")}</Typography>
           <SubmissionList
-            data={(data && data.filter((d) => d["release-version"] === "DRAFT")) || []}
+            data={
+              (data && data.filter((d) => d["release-version"] === "DRAFT")) ||
+              []
+            }
             type="draft"
             isLoading={isLoading}
             header={t("userSubmissionsDrafts")}
             depositSlug={depositSlug}
           />
           <SubmissionList
-            data={(data && data.filter((d) => d["release-version"] === "PUBLISHED" || d["release-version"] === "PUBLISH")) || []}
+            data={
+              (data &&
+                data.filter(
+                  (d) =>
+                    d["release-version"] === "PUBLISHED" ||
+                    d["release-version"] === "PUBLISH",
+                )) ||
+              []
+            }
             type="published"
             isLoading={isLoading}
             header={t("userSubmissionsCompleted")}
@@ -137,53 +152,61 @@ const SubmissionList = ({
         headerName: "",
         getActions: (params: any) => {
           return [
-            type === "draft" &&
-            <Tooltip title={t("editItem")} placement="bottom">
-              <GridActionsCellItem
-                icon={<EditIcon />}
-                label={t("editItem")}
-                onClick={() => {
-                  // set which form to load in userSlice (accessed in Deposit package)
-                  dispatch(setFormAction({
-                    id: params.row.id,
-                    action: "load",
-                  }));
-                  // navigate to deposit page
-                  navigate(`/${depositSlug}`)
-                }}
-              />
-            </Tooltip>,
-            !params.row.processing && params.row.error &&
-            <Tooltip title={t("retryItem")} placement="bottom">
-              <GridActionsCellItem
-                icon={<ReplayIcon />}
-                label={t("retryItem")}
-                onClick={() => {
-                  // set which form to load in userSlice (accessed in Deposit package)
-                  dispatch(setFormAction({
-                    id: params.row.id,
-                    action: "resubmit",
-                  }));
-                  // navigate to deposit page
-                  navigate(`/${depositSlug}`)
-                }}
-              />
-            </Tooltip>,
+            type === "draft" && (
+              <Tooltip title={t("editItem")} placement="bottom">
+                <GridActionsCellItem
+                  icon={<EditIcon />}
+                  label={t("editItem")}
+                  onClick={() => {
+                    // set which form to load in userSlice (accessed in Deposit package)
+                    dispatch(
+                      setFormAction({
+                        id: params.row.id,
+                        action: "load",
+                      }),
+                    );
+                    // navigate to deposit page
+                    navigate(`/${depositSlug}`);
+                  }}
+                />
+              </Tooltip>
+            ),
+            !params.row.processing && params.row.error && (
+              <Tooltip title={t("retryItem")} placement="bottom">
+                <GridActionsCellItem
+                  icon={<ReplayIcon />}
+                  label={t("retryItem")}
+                  onClick={() => {
+                    // set which form to load in userSlice (accessed in Deposit package)
+                    dispatch(
+                      setFormAction({
+                        id: params.row.id,
+                        action: "resubmit",
+                      }),
+                    );
+                    // navigate to deposit page
+                    navigate(`/${depositSlug}`);
+                  }}
+                />
+              </Tooltip>
+            ),
             <Tooltip title={t("copyItem")} placement="bottom">
               <GridActionsCellItem
                 icon={<ContentCopyIcon />}
                 label={t("copyItem")}
                 onClick={() => {
                   // set which form to load in userSlice (accessed in Deposit package)
-                  dispatch(setFormAction({
-                    id: params.row.id,
-                    action: "copy",
-                  }));
+                  dispatch(
+                    setFormAction({
+                      id: params.row.id,
+                      action: "copy",
+                    }),
+                  );
                   // navigate to deposit page
-                  navigate(`/${depositSlug}`)
+                  navigate(`/${depositSlug}`);
                 }}
               />
-            </Tooltip>
+            </Tooltip>,
           ].filter(Boolean);
         },
         type: "actions",
@@ -233,7 +256,7 @@ const SubmissionList = ({
       // Todo: API needs work and standardisation, also see types.
       error: d["targets"].some(
         // Only if the error is rejected (input data related error), we offer the option to edit & resubmit
-        (t) => t["deposit-status"] === "rejected"
+        (t) => t["deposit-status"] === "rejected",
       ),
       processing: d["targets"].some(
         (t) => depositStatus.processing.indexOf(t["deposit-status"]) !== -1,
@@ -320,13 +343,14 @@ const SingleTargetStatus = ({
       <Stack direction="row" alignItems="center" pt={0.1} pb={0.1}>
         <Tooltip
           title={
-            !target["deposit-status"] ?
-            t("queue") :
-            depositStatus.processing.indexOf(target["deposit-status"]) !== -1
-              ? t("processing")
-              : depositStatus.error.indexOf(target["deposit-status"]) !== -1
-                ? t("error")
-                : t("success")
+            !target["deposit-status"]
+              ? t("queue")
+              : depositStatus.processing.indexOf(target["deposit-status"]) !==
+                  -1
+                ? t("processing")
+                : depositStatus.error.indexOf(target["deposit-status"]) !== -1
+                  ? t("error")
+                  : t("success")
           }
           placement="left"
         >
@@ -364,7 +388,7 @@ const SingleTargetStatus = ({
         }}
         sx={{ maxWidth: "50rem" }}
       >
-        <Box sx={{ p: 2, minWidth: '15rem' }}>
+        <Box sx={{ p: 2, minWidth: "15rem" }}>
           <Typography variant="h6">{t("errorExplanation")}</Typography>
           <pre
             style={{
