@@ -46,9 +46,9 @@ function ReadMore({ item }: { item: ResultBodyProps["result"] }) {
     <>
       <Typography mb={2}>
         {`${visibleText}${
-          visibleText.length < item.dc_description.length && !active
-            ? "..."
-            : hiddenText
+          visibleText.length < item.dc_description.length && !active ?
+            "..."
+          : hiddenText
         }`}
         <Button
           size="small"

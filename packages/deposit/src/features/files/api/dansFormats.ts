@@ -16,8 +16,8 @@ export const dansFormatsApi = createApi({
       }),
       transformResponse: (response: DansFilesResponse[]) => {
         // transform this list for use in a MUI dropdown
-        return response.length > 0
-          ? {
+        return response.length > 0 ?
+            {
               response: response
                 .map((item) =>
                   item.format.map((format) => ({

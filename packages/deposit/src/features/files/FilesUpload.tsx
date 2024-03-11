@@ -139,7 +139,7 @@ const FilesUpload = () => {
     <Card>
       <CardHeader title={t("addLocal") as string} />
       <CardContent>
-        {!formDisabled ? (
+        {!formDisabled ?
           <Box
             sx={{
               border: "1px dashed",
@@ -149,7 +149,7 @@ const FilesUpload = () => {
             p={3}
             {...getRootProps({ className: "dropzone" })}
           >
-            {data ? (
+            {data ?
               <>
                 <input {...getInputProps()} />
                 <Typography
@@ -159,17 +159,15 @@ const FilesUpload = () => {
                   {isDragActive ? t("dropNow") : t("drop")}
                 </Typography>
               </>
-            ) : (
-              <Typography
+            : <Typography
                 color="neutral.contrastText"
                 sx={{ textAlign: "center", cursor: "pointer" }}
               >
                 {t("dropLoading")}
               </Typography>
-            )}
+            }
           </Box>
-        ) : (
-          <Box
+        : <Box
             sx={{
               border: "1px dashed",
               borderColor: "neutral.main",
@@ -184,7 +182,7 @@ const FilesUpload = () => {
               {t("dropDisabled")}
             </Typography>
           </Box>
-        )}
+        }
         {fileRejections.length > 0 && (
           <FileAlert
             files={fileRejections}

@@ -41,8 +41,9 @@ const axiosBaseQuery =
         onUploadProgress: (progressEvent: AxiosProgressEvent) => {
           if (isFile) {
             // Calculate progress percentage and set state in fileSlice
-            const percentCompleted = progressEvent.total
-              ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
+            const percentCompleted =
+              progressEvent.total ?
+                Math.round((progressEvent.loaded * 100) / progressEvent.total)
               : 0;
             store.dispatch(
               setFilesSubmitStatus({
@@ -144,9 +145,9 @@ export const submitApi = createApi({
 
         // First post the metadata
         const submitUrl =
-          actionType === "resubmit"
-            ? `resubmit/${data.id}`
-            : `dataset/${actionType === "save" ? "DRAFT" : "PUBLISH"}`;
+          actionType === "resubmit" ?
+            `resubmit/${data.id}`
+          : `dataset/${actionType === "save" ? "DRAFT" : "PUBLISH"}`;
 
         const metadataResult = await fetchWithBQ({
           url: submitUrl,

@@ -52,34 +52,36 @@ const FilesTable = () => {
   const { displayRoles = true, displayProcesses = true } =
     formConfig?.filesUpload || {};
 
-  return selectedFiles.length !== 0 ? (
-    <TableContainer component={Paper} sx={{ overflow: "hidden" }}>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell sx={{ p: 1, width: 10 }} />
-            <TableCell sx={{ p: 1 }}>{t("fileName")}</TableCell>
-            <TableCell sx={{ p: 1 }}>{t("fileSize")}</TableCell>
-            <TableCell sx={{ p: 1 }}>{t("fileType")}</TableCell>
-            <TableCell sx={{ p: 1, width: 10 }}>{t("private")}</TableCell>
-            {displayRoles && (
-              <TableCell sx={{ p: 1, width: 230 }}>{t("role")}</TableCell>
-            )}
-            {displayProcesses && (
-              <TableCell sx={{ p: 1, width: 280 }}>{t("processing")}</TableCell>
-            )}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <AnimatePresence initial={false}>
-            {selectedFiles.map((file) => (
-              <FileTableRow key={file.name} file={file} />
-            ))}
-          </AnimatePresence>
-        </TableBody>
-      </Table>
-    </TableContainer>
-  ) : null;
+  return selectedFiles.length !== 0 ?
+      <TableContainer component={Paper} sx={{ overflow: "hidden" }}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ p: 1, width: 10 }} />
+              <TableCell sx={{ p: 1 }}>{t("fileName")}</TableCell>
+              <TableCell sx={{ p: 1 }}>{t("fileSize")}</TableCell>
+              <TableCell sx={{ p: 1 }}>{t("fileType")}</TableCell>
+              <TableCell sx={{ p: 1, width: 10 }}>{t("private")}</TableCell>
+              {displayRoles && (
+                <TableCell sx={{ p: 1, width: 230 }}>{t("role")}</TableCell>
+              )}
+              {displayProcesses && (
+                <TableCell sx={{ p: 1, width: 280 }}>
+                  {t("processing")}
+                </TableCell>
+              )}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <AnimatePresence initial={false}>
+              {selectedFiles.map((file) => (
+                <FileTableRow key={file.name} file={file} />
+              ))}
+            </AnimatePresence>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    : null;
 };
 
 const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
@@ -99,11 +101,11 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
   const typeKey =
     file.name && data ? findFileGroup(file.name.split(".").pop(), data) : "";
   const filteredOptions =
-    type === "process"
-      ? localizedOptions.filter(
-          (o) => o.for && typeKey && o.for.indexOf(typeKey) !== -1,
-        )
-      : localizedOptions;
+    type === "process" ?
+      localizedOptions.filter(
+        (o) => o.for && typeKey && o.for.indexOf(typeKey) !== -1,
+      )
+    : localizedOptions;
 
   return (
     <Autocomplete
@@ -166,11 +168,9 @@ const FileTableRow = ({ file }: FileItemProps) => {
         exit={{ opacity: 0 }}
         sx={{
           backgroundColor:
-            file.valid === false
-              ? "warning.light"
-              : toDelete
-                ? "neutral.light"
-                : "",
+            file.valid === false ? "warning.light"
+            : toDelete ? "neutral.light"
+            : "",
           transition: "background 0.2s ease",
         }}
       >
@@ -180,9 +180,9 @@ const FileTableRow = ({ file }: FileItemProps) => {
             size="small"
             onClick={() =>
               !formDisabled &&
-              (!file.submittedFile
-                ? dispatch(removeFile(file))
-                : setToDelete(!toDelete))
+              (!file.submittedFile ?
+                dispatch(removeFile(file))
+              : setToDelete(!toDelete))
             }
             disabled={formDisabled}
             data-testid={`delete-${file.name}`}
@@ -323,11 +323,10 @@ const UploadProgress = ({ file }: FileItemProps) => {
               variant="determinate"
               value={fileStatus.progress || 0}
               color={
-                fileStatus.status === "success"
-                  ? "success"
-                  : fileStatus.status === "error"
-                    ? "error"
-                    : "primary"
+                fileStatus.status === "success" ? "success"
+                : fileStatus.status === "error" ?
+                  "error"
+                : "primary"
               }
               sx={{ borderRadius: 2 }}
             />

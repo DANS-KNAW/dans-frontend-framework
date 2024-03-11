@@ -31,9 +31,8 @@ const AutocompleteField = ({
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
 
-  const options = Array.isArray(field.options)
-    ? (field.options as OptionsType[])
-    : [];
+  const options =
+    Array.isArray(field.options) ? (field.options as OptionsType[]) : [];
   const localizedOptions =
     (options.map((option) => ({
       ...option,
@@ -64,11 +63,14 @@ const AutocompleteField = ({
             InputProps={{
               ...params.InputProps,
               startAdornment:
-                !field.multiselect &&
-                field.value &&
-                !Array.isArray(field.value) &&
-                ((field.value.value && field.value.value.startsWith("http")) ||
-                  field.value.url) ? (
+                (
+                  !field.multiselect &&
+                  field.value &&
+                  !Array.isArray(field.value) &&
+                  ((field.value.value &&
+                    field.value.value.startsWith("http")) ||
+                    field.value.url)
+                ) ?
                   <InfoLink
                     link={
                       (field.value.value.startsWith("http") &&
@@ -80,9 +82,7 @@ const AutocompleteField = ({
                       i18n.language,
                     )}
                   />
-                ) : (
-                  params.InputProps.startAdornment
-                ),
+                : params.InputProps.startAdornment,
             }}
             inputProps={{
               ...params.inputProps,
@@ -194,9 +194,9 @@ export const InfoLink = ({
     >
       <Tooltip
         title={
-          apiValue
-            ? t("checkApi", { api: t(apiValue) })
-            : t("checkValue", { value: checkValue })
+          apiValue ?
+            t("checkApi", { api: t(apiValue) })
+          : t("checkValue", { value: checkValue })
         }
       >
         <a
@@ -227,13 +227,13 @@ export const InfoChip = ({
     <Chip
       {...getTagProps({ index })}
       label={
-        option.freetext
-          ? option.value
-          : lookupLanguageString(option.label, i18n.language)
+        option.freetext ?
+          option.value
+        : lookupLanguageString(option.label, i18n.language)
       }
       size="medium"
       icon={
-        (option.value && option.value.startsWith("http")) || option.url ? (
+        (option.value && option.value.startsWith("http")) || option.url ?
           <InfoLink
             link={
               (option.value.startsWith("http") && option.value) ||
@@ -243,7 +243,7 @@ export const InfoChip = ({
             checkValue={lookupLanguageString(option.label, i18n.language)}
             chip={true}
           />
-        ) : undefined
+        : undefined
       }
       disabled={option.mandatory || formDisabled}
     />

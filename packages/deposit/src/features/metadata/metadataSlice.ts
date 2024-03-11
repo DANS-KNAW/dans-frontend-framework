@@ -136,42 +136,42 @@ export const metadataSlice = createSlice({
       const field = findById(action.payload.groupedFieldId, section.fields);
       if (field) {
         const newField =
-          action.payload.type === "single"
-            ? // single repeatable field is just a copy with a new id, value, valid, touched state
-              {
-                ...(field as RepeatTextFieldType).fields[0],
-                id: uuidv4(),
-                value: "",
-                valid: "",
-                touched: false,
-              }
-            : // grouped fields a bit more complicated, since grouped fields can also contain single repeatable fields
-              (field as RepeatGroupedFieldType).fields[0].map((f) =>
-                f.type === "repeatSingleField"
-                  ? {
-                      ...f,
-                      id: uuidv4(),
-                      fields: [
-                        {
-                          ...f.fields[0],
-                          id: uuidv4(),
-                          value: "",
-                          valid: "",
-                          touched: false,
-                        },
-                      ],
-                    }
-                  : {
-                      // Omit the makesRequiredIds property
-                      ...(({ makesRequiredIds, ...rest }) => rest)(f),
-                      // reset what needs resetting
+          action.payload.type === "single" ?
+            // single repeatable field is just a copy with a new id, value, valid, touched state
+            {
+              ...(field as RepeatTextFieldType).fields[0],
+              id: uuidv4(),
+              value: "",
+              valid: "",
+              touched: false,
+            }
+            // grouped fields a bit more complicated, since grouped fields can also contain single repeatable fields
+          : (field as RepeatGroupedFieldType).fields[0].map((f) =>
+              f.type === "repeatSingleField" ?
+                {
+                  ...f,
+                  id: uuidv4(),
+                  fields: [
+                    {
+                      ...f.fields[0],
                       id: uuidv4(),
                       value: "",
                       valid: "",
                       touched: false,
-                      required: f.noIndicator ? undefined : f.required,
                     },
-              );
+                  ],
+                }
+              : {
+                  // Omit the makesRequiredIds property
+                  ...(({ makesRequiredIds, ...rest }) => rest)(f),
+                  // reset what needs resetting
+                  id: uuidv4(),
+                  value: "",
+                  valid: "",
+                  touched: false,
+                  required: f.noIndicator ? undefined : f.required,
+                },
+            );
 
         field.fields = [
           ...(field as RepeatGroupedFieldType | RepeatTextFieldType).fields,
@@ -222,15 +222,14 @@ export const metadataSlice = createSlice({
               // grouped field, can have either a fields key with a single array as value, or an array of arrays
               // note the check for a single repeatable field inside a grouped or repeatable grouped field
               return field.fields.flatMap((f) =>
-                Array.isArray(f)
-                  ? f.flatMap((inner) =>
-                      inner.fields
-                        ? inner.fields.flatMap((f) => getFieldStatus(f))
-                        : getFieldStatus(inner),
-                    )
-                  : f.fields
-                    ? f.fields.flatMap((f) => getFieldStatus(f))
-                    : getFieldStatus(f),
+                Array.isArray(f) ?
+                  f.flatMap((inner) =>
+                    inner.fields ?
+                      inner.fields.flatMap((f) => getFieldStatus(f))
+                    : getFieldStatus(inner),
+                  )
+                : f.fields ? f.fields.flatMap((f) => getFieldStatus(f))
+                : getFieldStatus(f),
               );
             } else {
               return getFieldStatus(field);

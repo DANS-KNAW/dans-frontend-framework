@@ -23,16 +23,16 @@ export const datastationsApi = createApi({
       }),
       transformResponse: (response: DatastationsResponse, _meta, arg) => {
         // Return an empty array when no results, which is what the Autocomplete field expects
-        return response.results.length > 0
-          ? {
+        return response.results.length > 0 ?
+            {
               arg: arg.query,
               response: response.results.map((item) => ({
                 // Elsst responses come in all caps. Not so nice, so let's change that
                 label:
-                  arg.vocabulary === "elsst"
-                    ? item.prefLabel.charAt(0).toUpperCase() +
-                      item.prefLabel.slice(1).toLowerCase()
-                    : item.prefLabel,
+                  arg.vocabulary === "elsst" ?
+                    item.prefLabel.charAt(0).toUpperCase() +
+                    item.prefLabel.slice(1).toLowerCase()
+                  : item.prefLabel,
                 value: item.uri,
                 id: item.localname,
               })),

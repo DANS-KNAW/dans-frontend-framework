@@ -9,8 +9,8 @@ export const sshLicenceApi = createApi({
       query: () => "licenses",
       transformResponse: (response: SshLicenceResponse) => {
         // Return an empty array when no results, which is what the Autocomplete field expects
-        return response.data?.length > 0
-          ? {
+        return response.data?.length > 0 ?
+            {
               response: response.data.map((d) => ({
                 label: d.name,
                 value: d.uri,

@@ -16,8 +16,8 @@ export const sheetsApi = createApi({
       }),
       transformResponse: (response: SheetsResponse, _meta, arg) => {
         // cut off everything above the starting row
-        return response.values.length > arg.startAtRow
-          ? {
+        return response.values.length > arg.startAtRow ?
+            {
               response: response.values
                 .slice(arg.startAtRow)
                 .map((value: any) => ({

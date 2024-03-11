@@ -13,9 +13,6 @@ import {
   GridColumnMenu,
   GridActionsCellItem,
 } from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import ReplayIcon from "@mui/icons-material/Replay";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import Box from "@mui/material/Box";
 import moment from "moment";
 import { useSiteTitle, setSiteTitle } from "@dans-framework/utils";
@@ -24,19 +21,29 @@ import { useAuth } from "react-oidc-context";
 import type { SubmissionResponse, TargetOutput, DepositStatus } from "../types";
 import CircularProgress from "@mui/material/CircularProgress";
 import LinearProgress from "@mui/material/LinearProgress";
+import Link from "@mui/material/Link";
+import EditIcon from "@mui/icons-material/Edit";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import ReplayIcon from "@mui/icons-material/Replay";
 import PendingIcon from "@mui/icons-material/Pending";
 import ErrorIcon from "@mui/icons-material/Error";
-// import ReplayIcon from "@mui/icons-material/Replay";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import Tooltip from "@mui/material/Tooltip";
+import PreviewIcon from "@mui/icons-material/Preview";
 import Popover from "@mui/material/Popover";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
 import { setFormAction } from "./userSlice";
 import { useAppDispatch } from "../redux/hooks";
 
 /*
  * Note TODO:
- * Resubmitting of errored forms does not work yet
+ * Resubmitting of (errored) forms does not work yet
  * It is partially implemented here and in Deposit.tsx,
  * but needs work on the API side
  */
@@ -80,6 +87,11 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
           ) ||
           d.targets.some(
             (t) => depositStatus.error.indexOf(t["deposit-status"]) !== -1,
+          ) ||
+          d.targets.some(
+            // Something went wrong if status is null.
+            // Todo: modify API to give more consistent output
+            (t) => t["deposit-status"] === null,
           ),
       );
 
@@ -153,6 +165,7 @@ const SubmissionList = ({
         getActions: (params: any) => {
           return [
             type === "draft" && (
+              // Edit function for saved but not submitted forms
               <Tooltip title={t("editItem")} placement="bottom">
                 <GridActionsCellItem
                   icon={<EditIcon />}
@@ -171,20 +184,29 @@ const SubmissionList = ({
                 />
               </Tooltip>
             ),
-            !params.row.processing && params.row.error && (
+            type !== "draft" && (
+              // Open a popover menu with these options:
+              // Open a read only version of a submitted form, so user can check input values
+              // Or go to the deposited data on the target website(s)
+              <ViewAction
+                id={params.row.id}
+                depositSlug={depositSlug}
+                status={params.row.status}
+              />
+            ),
+            type !== "draft" && (
+              // Resubmit a form
               <Tooltip title={t("retryItem")} placement="bottom">
                 <GridActionsCellItem
                   icon={<ReplayIcon />}
                   label={t("retryItem")}
                   onClick={() => {
-                    // set which form to load in userSlice (accessed in Deposit package)
                     dispatch(
                       setFormAction({
                         id: params.row.id,
                         action: "resubmit",
                       }),
                     );
-                    // navigate to deposit page
                     navigate(`/${depositSlug}`);
                   }}
                 />
@@ -195,14 +217,12 @@ const SubmissionList = ({
                 icon={<ContentCopyIcon />}
                 label={t("copyItem")}
                 onClick={() => {
-                  // set which form to load in userSlice (accessed in Deposit package)
                   dispatch(
                     setFormAction({
                       id: params.row.id,
                       action: "copy",
                     }),
                   );
-                  // navigate to deposit page
                   navigate(`/${depositSlug}`);
                 }}
               />
@@ -211,6 +231,7 @@ const SubmissionList = ({
         },
         type: "actions",
         align: "right",
+        width: type === "draft" ? 90 : 125,
       },
       {
         field: "title",
@@ -226,26 +247,26 @@ const SubmissionList = ({
         valueGetter: (params) => new Date(params.value),
         renderCell: (params) => moment(params.value).format("D-M-Y - HH:mm"),
       },
-      ...(type === "published"
-        ? [
-            {
-              field: "status",
-              headerName: t("submissionStatus"),
-              width: 250,
-              renderCell: (params: any) => (
-                <Stack direction="column" pt={0.5} pb={0.5}>
-                  {params.value.map((v: TargetOutput, i: number) => (
-                    <SingleTargetStatus
-                      target={v}
-                      depositStatus={depositStatus}
-                      key={i}
-                    />
-                  ))}
-                </Stack>
-              ),
-            },
-          ]
-        : []),
+      ...(type === "published" ?
+        [
+          {
+            field: "status",
+            headerName: t("submissionStatus"),
+            width: 250,
+            renderCell: (params: any) => (
+              <Stack direction="column" pt={0.5} pb={0.5}>
+                {params.value.map((v: TargetOutput, i: number) => (
+                  <SingleTargetStatus
+                    target={v}
+                    depositStatus={depositStatus}
+                    key={i}
+                  />
+                ))}
+              </Stack>
+            ),
+          },
+        ]
+      : []),
     ],
     [i18n.language],
   );
@@ -297,10 +318,10 @@ const SubmissionList = ({
           disableRowSelectionOnClick
           initialState={{
             pagination: {
-              paginationModel: { page: 0, pageSize: 25 },
+              paginationModel: { page: 0, pageSize: 10 },
             },
           }}
-          pageSizeOptions={[25, 50, 100]}
+          pageSizeOptions={[10, 50, 100]}
           getRowHeight={() => (type === "published" ? "auto" : 45)}
           sx={{
             // disable cell outlines
@@ -343,20 +364,20 @@ const SingleTargetStatus = ({
       <Stack direction="row" alignItems="center" pt={0.1} pb={0.1}>
         <Tooltip
           title={
-            !target["deposit-status"]
-              ? t("queue")
-              : depositStatus.processing.indexOf(target["deposit-status"]) !==
-                  -1
-                ? t("processing")
-                : depositStatus.error.indexOf(target["deposit-status"]) !== -1
-                  ? t("error")
-                  : t("success")
+            !target["deposit-status"] ? t("queue")
+            : (
+              depositStatus.processing.indexOf(target["deposit-status"]) !== -1
+            ) ?
+              t("processing")
+            : depositStatus.error.indexOf(target["deposit-status"]) !== -1 ?
+              t("error")
+            : t("success")
           }
           placement="left"
         >
-          {depositStatus.processing.indexOf(target["deposit-status"]) !== -1 ? (
+          {depositStatus.processing.indexOf(target["deposit-status"]) !== -1 ?
             <CircularProgress size={16} />
-          ) : depositStatus.error.indexOf(target["deposit-status"]) !== -1 ? (
+          : depositStatus.error.indexOf(target["deposit-status"]) !== -1 ?
             <Button
               variant="contained"
               color="error"
@@ -367,11 +388,9 @@ const SingleTargetStatus = ({
             >
               {t("moreInfo")}
             </Button>
-          ) : depositStatus.success.indexOf(target["deposit-status"]) !== -1 ? (
+          : depositStatus.success.indexOf(target["deposit-status"]) !== -1 ?
             <CheckCircleIcon fontSize="small" color="success" />
-          ) : (
-            <PendingIcon fontSize="small" color="neutral" />
-          )}
+          : <PendingIcon fontSize="small" color="neutral" />}
         </Tooltip>
         <Typography variant="body2" ml={1}>
           {target["display-name"]}
@@ -417,5 +436,84 @@ const CustomColumnMenu = (props: GridColumnMenuProps) => {
         columnMenuColumnsItem: null,
       }}
     />
+  );
+};
+
+const ViewAction = ({
+  id,
+  depositSlug,
+  status,
+}: {
+  id: string;
+  depositSlug: string;
+  status: TargetOutput[];
+}) => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { t } = useTranslation("user");
+
+  // Popover event handling
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const open = Boolean(anchorEl);
+
+  return (
+    <>
+      <Tooltip title={t("viewItem")} placement="bottom">
+        <GridActionsCellItem
+          icon={<PreviewIcon />}
+          label={t("viewItem")}
+          onClick={handleClick}
+        />
+      </Tooltip>
+      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+        {/* Go to read only view */}
+        <MenuItem
+          onClick={() => {
+            dispatch(
+              setFormAction({
+                id: id,
+                action: "view",
+              }),
+            );
+            navigate(`/${depositSlug}`);
+          }}
+        >
+          <ListItemIcon>
+            <VisibilityIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>{t("viewItemReadOnly")}</ListItemText>
+        </MenuItem>
+
+        {/* Open submission on target site. TODO: mod API to always return a response.url key */}
+        {status.map(
+          (target, i) =>
+            target["output-response"] &&
+            target["output-response"].response.url && (
+              <Link
+                href={target["output-response"].response.url}
+                color="inherit"
+                underline="none"
+                target="_blank"
+                key={i}
+              >
+                <MenuItem onClick={handleClose}>
+                  <ListItemIcon>
+                    <OpenInNewIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>
+                    {t("viewItemTarget", { name: target["display-name"] })}
+                  </ListItemText>
+                </MenuItem>
+              </Link>
+            ),
+        )}
+      </Menu>
+    </>
   );
 };
