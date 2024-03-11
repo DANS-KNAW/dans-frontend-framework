@@ -1,5 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { IconButton, CircularProgress, Typography } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
 import { FileItemProps } from "../../types/Files";
 import { useAppDispatch } from "../../redux/hooks";
 import { dansUtilityApi, useCheckTypeQuery } from "./api/dansUtility";

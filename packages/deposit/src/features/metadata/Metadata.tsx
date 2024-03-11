@@ -47,19 +47,17 @@ const Form = () => {
           <AccordionDetails>
             <Grid container spacing={2}>
               {section.fields.map((field, i) =>
-                field.type === "group" ? (
+                field.type === "group" ?
                   <GroupedField
                     key={i}
                     field={field}
                     sectionIndex={sectionIndex}
                   />
-                ) : (
-                  <SingleField
+                : <SingleField
                     key={i}
                     field={field}
                     sectionIndex={sectionIndex}
-                  />
-                ),
+                  />,
               )}
             </Grid>
           </AccordionDetails>

@@ -83,11 +83,9 @@ export const userSubmissionsApi = createApi({
 });
 
 const getUrl = (url: string, key: string, type: AuthKeys) =>
-  type === "dataverse_api_key"
-    ? `${url}`
-    : type === "zenodo_api_key"
-      ? `${url}?access_token=${key}`
-      : url;
+  type === "dataverse_api_key" ? `${url}`
+  : type === "zenodo_api_key" ? `${url}?access_token=${key}`
+  : url;
 
 // Basic api to check keys. No baseUrl, as this is dynamic, and we don't want a separate API for every possible baseUrl
 export const validateKeyApi = createApi({
@@ -126,8 +124,8 @@ export const validateKeyApi = createApi({
         const result = await Promise.all(promises);
         const error = result.some((r) => r.error);
 
-        return error
-          ? { error: result[0].error as FetchBaseQueryError }
+        return error ?
+            { error: result[0].error as FetchBaseQueryError }
           : { data: "OK" };
       },
     }),

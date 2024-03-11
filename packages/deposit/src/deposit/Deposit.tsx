@@ -96,7 +96,11 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       dispatch(resetFilesSubmitStatus());
       dispatch(resetFiles());
       // Enable the form
-      dispatch(setFormDisabled(false));
+      dispatch(
+        formAction.action === "view" ?
+          setFormDisabled(true)
+        : setFormDisabled(false),
+      );
       // Then we create a fresh form if there's no id to load
       if (!sessionId && !formAction.id) {
         dispatch(initForm(config.form));
@@ -106,12 +110,12 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       else if (serverFormData && formAction && !formAction.actionDone) {
         dispatch(
           initForm(
-            formAction.action === "copy"
-              ? {
-                  ...serverFormData.md,
-                  id: uuidv4(),
-                }
-              : serverFormData.md,
+            formAction.action === "copy" ?
+              {
+                ...serverFormData.md,
+                id: uuidv4(),
+              }
+            : serverFormData.md,
           ),
         );
         // Make sure we only do this once, otherwise it's an infinite loop
@@ -206,34 +210,42 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
                 }}
               >
                 <AlertTitle>
-                  {formAction.action === "resubmit"
-                    ? t("dataMessageHeaderResubmit", {
-                        title:
-                          (serverFormData && serverFormData.title) ||
-                          t("untitled"),
-                      })
-                    : formAction.action === "copy"
-                      ? t("dataMessageHeaderCopy", {
-                          title:
-                            (serverFormData && serverFormData.title) ||
-                            t("untitled"),
-                        })
-                      : formAction.action === "load"
-                        ? t("dataMessageHeaderLoad", {
-                            title:
-                              (serverFormData && serverFormData.title) ||
-                              t("untitled"),
-                          })
-                        : t("dataMessageHeader")}
+                  {formAction.action === "resubmit" ?
+                    t("dataMessageHeaderResubmit", {
+                      title:
+                        (serverFormData && serverFormData.title) ||
+                        t("untitled"),
+                    })
+                  : formAction.action === "copy" ?
+                    t("dataMessageHeaderCopy", {
+                      title:
+                        (serverFormData && serverFormData.title) ||
+                        t("untitled"),
+                    })
+                  : formAction.action === "load" ?
+                    t("dataMessageHeaderLoad", {
+                      title:
+                        (serverFormData && serverFormData.title) ||
+                        t("untitled"),
+                    })
+                  : formAction.action === "view" ?
+                    t("dataMessageHeaderView", {
+                      title:
+                        (serverFormData && serverFormData.title) ||
+                        t("untitled"),
+                    })
+                  : t("dataMessageHeader")}
                 </AlertTitle>
                 <Typography mb={1}>
-                  {formAction.action === "resubmit"
-                    ? t("dataMessageContentResubmit")
-                    : formAction.action === "copy"
-                      ? t("dataMessageContentCopy")
-                      : formAction.action === "load"
-                        ? t("dataMessageContentLoad")
-                        : t("dataMessageContent")}
+                  {formAction.action === "resubmit" ?
+                    t("dataMessageContentResubmit")
+                  : formAction.action === "copy" ?
+                    t("dataMessageContentCopy")
+                  : formAction.action === "load" ?
+                    t("dataMessageContentLoad")
+                  : formAction.action === "view" ?
+                    t("dataMessageContentView")
+                  : t("dataMessageContent")}
                 </Typography>
                 <Stack
                   justifyContent="flex-end"
@@ -241,7 +253,9 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
                   alignItems="center"
                 >
                   <Typography mb={0} mr={2} variant="h6">
-                    {t("dataResetHeader")}
+                    {formAction.action === "view" ?
+                      t("dataResetHeaderView")
+                    : t("dataResetHeader")}
                   </Typography>
                   <Button
                     variant="contained"
@@ -318,15 +332,15 @@ const TabHeader = ({ value, handleChange }: TabHeaderProps) => {
 };
 
 const TabPanel = ({ children, value, index }: TabPanelProps) => {
-  return value === index ? (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <Box mt={2}>{children}</Box>
-    </motion.div>
-  ) : null;
+  return value === index ?
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        <Box mt={2}>{children}</Box>
+      </motion.div>
+    : null;
 };
 
 export default Deposit;

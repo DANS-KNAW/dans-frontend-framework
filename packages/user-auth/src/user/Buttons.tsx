@@ -15,16 +15,16 @@ export const LoginButton = ({ variant }: { variant?: "contained" }) => {
     <Button
       variant={variant || "outlined"}
       sx={
-        !variant
-          ? {
-              color: "inherit",
+        !variant ?
+          {
+            color: "inherit",
+            borderColor: "inherit",
+            "&:hover": {
               borderColor: "inherit",
-              "&:hover": {
-                borderColor: "inherit",
-                backgroundColor: "rgba(255,255,255,0.1)",
-              },
-            }
-          : {}
+              backgroundColor: "rgba(255,255,255,0.1)",
+            },
+          }
+        : {}
       }
       onClick={
         // set the signin redirect with the current location in state

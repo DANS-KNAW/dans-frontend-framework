@@ -81,14 +81,14 @@ const DateTimeField = ({
         value={(field.value && moment(field.value, field.format)) || null}
         disabled={field.disabled || formDisabled}
         minDate={
-          field.minDate
-            ? moment(field.minDate, field.format)
-            : moment().subtract(273790, "year")
+          field.minDate ?
+            moment(field.minDate, field.format)
+          : moment().subtract(273790, "year")
         }
         maxDate={
-          field.maxDate
-            ? moment(field.maxDate, field.format)
-            : moment().add(100, "year")
+          field.maxDate ?
+            moment(field.maxDate, field.format)
+          : moment().add(100, "year")
         }
         onChange={(value: Moment | null, context) => {
           // Serialize the date value we get from the component so we can store it using Redux

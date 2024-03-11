@@ -34,13 +34,10 @@ const LanguageBar = ({
               key={lang}
               size="small"
               startIcon={
-                lang === "en" ? (
-                  <GB className={styles.flag} />
-                ) : lang === "nl" ? (
+                lang === "en" ? <GB className={styles.flag} />
+                : lang === "nl" ?
                   <NL className={styles.flag} />
-                ) : (
-                  ""
-                )
+                : ""
               }
               sx={{ mr: i === languages.length - 1 ? 0 : 2, color: "#fff" }}
               onClick={() => {

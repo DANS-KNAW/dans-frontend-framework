@@ -34,8 +34,8 @@ export const rdaApi = createApi({
     fetchRdaDomain: build.query({
       query: () => "domains",
       transformResponse: (response: RdaDomainsResponse[]) => {
-        return response.length > 0
-          ? {
+        return response.length > 0 ?
+            {
               response: response.map((item) => ({
                 label: item.title,
                 value: item.id,
@@ -50,8 +50,8 @@ export const rdaApi = createApi({
     fetchRdaInterestGroup: build.query({
       query: () => "interestgroups",
       transformResponse: (response: RdaInterestGroupsResponse[]) => {
-        return response.length > 0
-          ? {
+        return response.length > 0 ?
+            {
               response: response.map((item) => ({
                 label: item.title,
                 value: item.id,
@@ -66,8 +66,8 @@ export const rdaApi = createApi({
     fetchRdaPathway: build.query({
       query: () => "pathways",
       transformResponse: (response: RdaPathwaysResponse[]) => {
-        return response.length > 0
-          ? {
+        return response.length > 0 ?
+            {
               response: response.map((item) => ({
                 label: item.title,
                 value: item.id,
@@ -83,8 +83,8 @@ export const rdaApi = createApi({
     fetchRdaWorkingGroup: build.query({
       query: () => "workinggroups",
       transformResponse: (response: RdaWorkGroupResponse[]) => {
-        return response.length > 0
-          ? {
+        return response.length > 0 ?
+            {
               response: response.map((item) => ({
                 label: item.title,
                 value: `{"node_id":"${item.id}","UUID_WorkingGroup":"${item.parent_id}"}`,
