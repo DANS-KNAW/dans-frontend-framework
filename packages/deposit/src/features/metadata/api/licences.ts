@@ -15,8 +15,8 @@ export const licenceApi = createApi({
         const licenceArray = Object.values(response);
 
         // Return an empty array when no results, which is what the Autocomplete field expects
-        return licenceArray.length > 0
-          ? {
+        return licenceArray.length > 0 ?
+            {
               response: licenceArray.map((item) => ({
                 label: item.id + " " + item.title,
                 value: item.url,

@@ -34,11 +34,9 @@ const Generic = ({ logo, name, content, action }: Page) => {
           xsOffset={logo ? 2 : 0}
         >
           <Typography variant="h1" sx={{ textAlign: "center" }}>
-            {logo ? (
+            {logo ?
               <img src={logo} alt="RDA" title="RDA" />
-            ) : (
-              lookupLanguageString(name, i18n.language)
-            )}
+            : lookupLanguageString(name, i18n.language)}
           </Typography>
         </Grid>
 
@@ -50,16 +48,16 @@ const Generic = ({ logo, name, content, action }: Page) => {
           )}
           {action && (
             <Box mt={4} display="flex" justifyContent="center">
-              {(action.restricted && auth.isAuthenticated) ||
-              !action.restricted ? (
+              {(
+                (action.restricted && auth.isAuthenticated) ||
+                !action.restricted
+              ) ?
                 <Link to={`/${action.link}`}>
                   <Button variant="contained" size="large">
                     {lookupLanguageString(action.text, i18n.language)}
                   </Button>
                 </Link>
-              ) : (
-                <LoginButton variant="contained" />
-              )}
+              : <LoginButton variant="contained" />}
             </Box>
           )}
         </Grid>

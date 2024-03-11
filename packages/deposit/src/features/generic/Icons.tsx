@@ -62,13 +62,11 @@ export const StatusIcon = ({
         </>
       }
     >
-      {status === "error" ? (
+      {status === "error" ?
         <ErrorIcon sx={iconSx} color={status} />
-      ) : status === "warning" || status === "neutral" ? (
+      : status === "warning" || status === "neutral" ?
         <InfoIcon sx={iconSx} color={status} />
-      ) : (
-        <CheckCircleIcon sx={iconSx} color={status} />
-      )}
+      : <CheckCircleIcon sx={iconSx} color={status} />}
     </LightTooltip>
   );
 };

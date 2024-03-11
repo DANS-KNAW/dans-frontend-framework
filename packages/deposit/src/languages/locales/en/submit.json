@@ -10,6 +10,7 @@
   "reset": "Reset form",
   "fileWarning": "You have not added any files. Do you really want to submit?",
   "submit": "Submit data",
+  "resubmit": "Resubmit data",
   "submitAnyway": "Submit without files",
   "errorRetry": "Please try again or contact an administrator",
   "save": "Save"

@@ -76,13 +76,10 @@ const Submit = ({
   // If any file has an error, the form should indicate that
   const fileStatusArray = [...new Set(filesSubmitStatus.map((f) => f.status))];
   const fileStatus =
-    fileStatusArray.indexOf("error") !== -1
-      ? "error"
-      : fileStatusArray.indexOf("submitting") !== -1
-        ? "submitting"
-        : fileStatusArray.indexOf("success") !== -1
-          ? "success"
-          : "";
+    fileStatusArray.indexOf("error") !== -1 ? "error"
+    : fileStatusArray.indexOf("submitting") !== -1 ? "submitting"
+    : fileStatusArray.indexOf("success") !== -1 ? "success"
+    : "";
 
   // If there's an error with uploading files, focus on the files tab
   useEffect(() => {
@@ -249,30 +246,38 @@ const Submit = ({
       <Stack direction={{ xs: "column", md: "row" }} alignItems="flex-end">
         <Stack direction="row" alignItems="center" mb={2}>
           <Typography mr={2}>
-            {!metadataSubmitStatus ||
-            (metadataSubmitStatus === "saved" && !formDisabled)
-              ? // metadata has not yet been submitted, so let's just indicate metadata completeness
-                metadataStatus === "error"
-                ? t("metadataError")
-                : metadataStatus === "warning" || selectedFiles.length === 0
-                  ? t("metadataWarning")
-                  : t("metadataSuccess")
-              : // submit process has started, let's check for responses
+            {
+              (
+                !metadataSubmitStatus ||
+                (metadataSubmitStatus === "saved" && !formDisabled)
+              ) ?
+                // metadata has not yet been submitted, so let's just indicate metadata completeness
+                metadataStatus === "error" ?
+                  t("metadataError")
+                : metadataStatus === "warning" || selectedFiles.length === 0 ?
+                  t("metadataWarning")
+                : t("metadataSuccess")
+                // submit process has started, let's check for responses
+              : (
                 metadataSubmitStatus === "submitting" ||
-                  fileStatus === "submitting" ||
-                  isLoadingFiles ||
-                  isLoadingMeta
-                ? t("submitting")
-                : metadataSubmitStatus === "submitted" &&
-                    (fileStatus === "success" ||
-                      selectedFiles.length === 0 ||
-                      selectedFiles.every((f) => f.submittedFile))
-                  ? t("submitSuccess")
-                  : metadataSubmitStatus === "error"
-                    ? t("submitErrorMetadata")
-                    : fileStatus === "error"
-                      ? t("submitErrorFiles")
-                      : null}
+                fileStatus === "submitting" ||
+                isLoadingFiles ||
+                isLoadingMeta
+              ) ?
+                t("submitting")
+              : (
+                metadataSubmitStatus === "submitted" &&
+                (fileStatus === "success" ||
+                  selectedFiles.length === 0 ||
+                  selectedFiles.every((f) => f.submittedFile))
+              ) ?
+                t("submitSuccess")
+              : metadataSubmitStatus === "error" ?
+                t("submitErrorMetadata")
+              : fileStatus === "error" ?
+                t("submitErrorFiles")
+              : null
+            }
           </Typography>
 
           <Box
@@ -289,47 +294,54 @@ const Submit = ({
                 p: 1.2,
                 borderRadius: "50%",
                 backgroundColor: `${
-                  metadataSubmitStatus === "submitted" &&
-                  (fileStatus === "success" ||
-                    selectedFiles.length === 0 ||
-                    selectedFiles.every((f) => f.submittedFile))
-                    ? "success"
-                    : metadataStatus === "error" ||
-                        fileStatus === "error" ||
-                        isErrorMeta
-                      ? "error"
-                      : metadataStatus === "warning" ||
-                          selectedFiles.length === 0
-                        ? "warning"
-                        : "primary"
+                  (
+                    metadataSubmitStatus === "submitted" &&
+                    (fileStatus === "success" ||
+                      selectedFiles.length === 0 ||
+                      selectedFiles.every((f) => f.submittedFile))
+                  ) ?
+                    "success"
+                  : (
+                    metadataStatus === "error" ||
+                    fileStatus === "error" ||
+                    isErrorMeta
+                  ) ?
+                    "error"
+                  : metadataStatus === "warning" || selectedFiles.length === 0 ?
+                    "warning"
+                  : "primary"
                 }.main`,
                 opacity:
-                  metadataSubmitStatus === "submitting" ||
-                  fileStatus === "submitting" ||
-                  isLoadingFiles ||
-                  isLoadingMeta
-                    ? 0.5
-                    : 1,
+                  (
+                    metadataSubmitStatus === "submitting" ||
+                    fileStatus === "submitting" ||
+                    isLoadingFiles ||
+                    isLoadingMeta
+                  ) ?
+                    0.5
+                  : 1,
               }}
             >
-              {(metadataSubmitStatus === "submitted" ||
-                metadataSubmitStatus === "saved") &&
-              (fileStatus === "success" ||
-                selectedFiles.length === 0 ||
-                selectedFiles.every((f) => f.submittedFile)) ? (
+              {(
+                (metadataSubmitStatus === "submitted" ||
+                  metadataSubmitStatus === "saved") &&
+                (fileStatus === "success" ||
+                  selectedFiles.length === 0 ||
+                  selectedFiles.every((f) => f.submittedFile))
+              ) ?
                 <CheckIcon sx={iconSx} />
-              ) : (metadataStatus === "error" ||
+              : (
+                (metadataStatus === "error" ||
                   fileStatus === "error" ||
                   isErrorMeta) &&
                 !(
                   metadataSubmitStatus === "submitting" ||
                   fileStatus === "submitting" ||
                   isLoadingFiles
-                ) ? (
+                )
+              ) ?
                 <ErrorOutlineOutlinedIcon sx={iconSx} />
-              ) : (
-                <SendIcon sx={iconSx} />
-              )}
+              : <SendIcon sx={iconSx} />}
             </Box>
             {(fileStatus === "submitting" ||
               isLoadingFiles ||
@@ -391,7 +403,11 @@ const Submit = ({
             size="large"
             data-testid="submit-form"
           >
-            {fileWarning ? t("submitAnyway") : t("submit")}
+            {fileWarning ?
+              t("submitAnyway")
+            : formAction.action === "resubmit" ?
+              t("resubmit")
+            : t("submit")}
           </Button>
         </Stack>
       </Stack>

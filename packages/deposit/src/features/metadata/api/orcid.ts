@@ -19,22 +19,22 @@ export const orcidApi = createApi({
       },
       transformResponse: (response: OrcidResponse, _meta, arg) => {
         // Return an empty array when no results, which is what the Autocomplete field expects
-        return response["num-found"] > 0
-          ? {
+        return response["num-found"] > 0 ?
+            {
               arg: arg,
               response: response["expanded-result"].map((item) => ({
                 label: `${item["given-names"]} ${item["family-names"]}`,
                 value: `https://orcid.org/${item["orcid-id"]}`,
                 extraLabel: "institutions",
                 extraContent:
-                  item["institution-name"].length > 0
-                    ? item["institution-name"].map(
-                        (o, i) =>
-                          `${o}${
-                            i < item["institution-name"].length - 1 ? ", " : ""
-                          }`,
-                      )
-                    : "",
+                  item["institution-name"].length > 0 ?
+                    item["institution-name"].map(
+                      (o, i) =>
+                        `${o}${
+                          i < item["institution-name"].length - 1 ? ", " : ""
+                        }`,
+                    )
+                  : "",
                 idLabel: "ORCID ID",
                 id: item["orcid-id"],
               })),
