@@ -34,9 +34,7 @@ export function RdaSearch({
         fullTextHighlight={config.fullTextHighlight}
         onClickResult={(result: Result) => navigate(`/record/${result.id}`)}
         ResultBodyComponent={Rda2Result}
-        url={`${
-          import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT
-        }/dans-rda2/_search`}
+        endpoints={JSON.parse(import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINTS)}
       >
         <DateChartFacet
           config={{
