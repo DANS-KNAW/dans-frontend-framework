@@ -41,8 +41,9 @@ const axiosBaseQuery =
         onUploadProgress: (progressEvent: AxiosProgressEvent) => {
           if (isFile) {
             // Calculate progress percentage and set state in fileSlice
-            const percentCompleted = progressEvent.total
-              ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
+            const percentCompleted =
+              progressEvent.total ?
+                Math.round((progressEvent.loaded * 100) / progressEvent.total)
               : 0;
             store.dispatch(
               setFilesSubmitStatus({
@@ -76,7 +77,7 @@ const axiosBaseQuery =
       else if (result.data) {
         store.dispatch(
           setMetadataSubmitStatus(
-            actionType === "submit" ? "submitted" : "saved",
+            actionType === "save" ? "saved" : "submitted",
           ),
         );
       }
@@ -118,7 +119,7 @@ export const submitApi = createApi({
         _extraOptions,
         fetchWithBQ,
       ) {
-        console.log("submitting metadata...");
+        console.log("Submit metadata:");
         console.log(data);
 
         // Format the headers
@@ -137,21 +138,26 @@ export const submitApi = createApi({
             })),
           ),
           title: headerData.title,
-        }
+        };
 
-        console.log("submitting with headers...");
+        console.log("Submit req headers:");
         console.log(headers);
 
         // First post the metadata
+        const submitUrl =
+          actionType === "resubmit" ?
+            `resubmit/${data.id}`
+          : `dataset/${actionType === "save" ? "DRAFT" : "PUBLISH"}`;
+
         const metadataResult = await fetchWithBQ({
-          url: `dataset/${actionType === "save" ? "DRAFT" : "PUBLISH"}`,
+          url: submitUrl,
           method: "POST",
           data: data,
           headers: headers,
           actionType: actionType,
         });
 
-        console.log("metadata result...");
+        console.log("Metadata server response:");
         console.log(metadataResult);
 
         if (metadataResult.error) {
@@ -170,8 +176,8 @@ export const submitApi = createApi({
         _extraOptions,
         fetchWithBQ,
       ) {
-        console.log("submitting files...");
-        
+        console.log("Submitting files");
+
         const filesResults =
           Array.isArray(data) &&
           (await Promise.all(
@@ -180,15 +186,15 @@ export const submitApi = createApi({
                 url: "file",
                 method: "POST",
                 data: file,
-                headers: { 
+                headers: {
                   Authorization: `Bearer ${headerData.submitKey}`,
                   "auth-env-name": headerData.target.envName,
-                }
+                },
               }),
             ),
           ));
 
-        console.log("files result...");
+        console.log("Files server response:");
         console.log(filesResults);
 
         const filesErrors =
@@ -199,9 +205,15 @@ export const submitApi = createApi({
 
         if (actionType === "save") {
           // show notice and enable form again after successful save
-          enqueueSnackbar(i18n.t("saveSuccess", { ns: "submit", dateTime: moment().format("D-M-YYYY @ HH:mm") }), {
-            variant: "success",
-          });
+          enqueueSnackbar(
+            i18n.t("saveSuccess", {
+              ns: "submit",
+              dateTime: moment().format("D-M-YYYY @ HH:mm"),
+            }),
+            {
+              variant: "success",
+            },
+          );
           store.dispatch(setFormDisabled(false));
         }
 

@@ -29,7 +29,12 @@ export interface ValidateTarget {
 
 export type ReleaseVersion = "DRAFT" | "PUBLISHED" | "PUBLISH";
 
-type ActiveStatus = "initial" | "processing" | "submitted" | "finalizing" | "progress";
+type ActiveStatus =
+  | "initial"
+  | "processing"
+  | "submitted"
+  | "finalizing"
+  | "progress";
 type ErrorStatus = "rejected" | "failed" | "error";
 type SuccessStatus = "finish" | "accepted" | "success";
 export type IngestStatus = ActiveStatus | ErrorStatus | SuccessStatus;
@@ -61,3 +66,13 @@ export type AuthProperty =
   | "voperson_external_affiliation"
   | "family_name"
   | "given_name";
+
+export interface FormAction {
+  id?: string;
+  action?: "load" | "copy" | "resubmit" | "view";
+  actionDone?: boolean;
+}
+
+export interface UserFormAction {
+  formAction: FormAction;
+}

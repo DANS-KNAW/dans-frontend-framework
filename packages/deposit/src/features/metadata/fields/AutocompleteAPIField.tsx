@@ -37,7 +37,7 @@ import {
   useFetchRdaWorkingGroupQuery,
   useFetchRdaPathwayQuery,
   useFetchRdaDomainQuery,
-  useFetchRdaInterestGroupQuery
+  useFetchRdaInterestGroupQuery,
 } from "../api/rdaApi";
 
 /*
@@ -101,8 +101,8 @@ export const GeonamesField = ({
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   // Fetch data on input change
   const { data, isFetching, isLoading } =
-    useFetchGeonamesFreeTextQuery<QueryReturnType>(debouncedInputValue, { 
-      skip: debouncedInputValue === "" 
+    useFetchGeonamesFreeTextQuery<QueryReturnType>(debouncedInputValue, {
+      skip: debouncedInputValue === "",
     });
 
   return (
@@ -218,7 +218,6 @@ export const SshLicencesField = ({
   );
 };
 
-
 export const LicensesField = ({
   field,
   sectionIndex,
@@ -243,8 +242,10 @@ export const LicensesField = ({
 export const GorcField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
   // Fetch data if field is opened
   const [touched, setTouched] = useState(false);
-  const { data, isFetching, isLoading } =
-    useFetchGorcQuery<QueryReturnType>(null, { skip: !touched });
+  const { data, isFetching, isLoading } = useFetchGorcQuery<QueryReturnType>(
+    null,
+    { skip: !touched },
+  );
   const newField = {
     ...field,
     options: data && data.response ? data.response : [],
@@ -360,7 +361,7 @@ export const SheetsField = ({
   const [touched, setTouched] = useState(false);
   const { data, isFetching, isLoading } = useFetchSheetsQuery<QueryReturnType>(
     field.sheetOptions,
-    { skip: !touched }
+    { skip: !touched },
   );
   const newField = {
     ...field,
@@ -413,7 +414,7 @@ export const MultiApiField = ({
           }}
           value={field.multiApiValue}
           disabled={formDisabled}
-          inputProps={{'data-testid': `selectapi-${field.name}-${field.id}`}}
+          inputProps={{ "data-testid": `selectapi-${field.name}-${field.id}` }}
         >
           {Array.isArray(field.options) &&
             (field.options as TypeaheadAPI[]).map((option) => (
@@ -478,8 +479,9 @@ const AutocompleteAPIField = ({
   const status = getFieldStatus(field);
   const { t, i18n } = useTranslation("metadata");
   const apiValue = (
-    Array.isArray(field.options) ? field.multiApiValue : field.options
-  ) as TypeaheadAPI;
+    Array.isArray(field.options) ?
+      field.multiApiValue
+    : field.options) as TypeaheadAPI;
   const formDisabled = useAppSelector(getFormDisabled);
 
   return (
@@ -490,12 +492,14 @@ const AutocompleteAPIField = ({
         includeInputInList
         id={`${field.name}-${field.id}`}
         options={
-          inputValue &&
-          debouncedInputValue === inputValue &&
-          data &&
-          data.arg === debouncedInputValue
-            ? data.response
-            : []
+          (
+            inputValue &&
+            debouncedInputValue === inputValue &&
+            data &&
+            data.arg === debouncedInputValue
+          ) ?
+            data.response
+          : []
         }
         value={field.value || (field.multiselect ? [] : null)}
         inputValue={
@@ -518,19 +522,19 @@ const AutocompleteAPIField = ({
             InputProps={{
               ...params.InputProps,
               startAdornment:
-                !field.multiselect &&
-                field.value &&
-                !Array.isArray(field.value) &&
-                field.value.value &&
-                field.value.value.startsWith("http") ? (
+                (
+                  !field.multiselect &&
+                  field.value &&
+                  !Array.isArray(field.value) &&
+                  field.value.value &&
+                  field.value.value.startsWith("http")
+                ) ?
                   <InfoLink link={field.value.value} apiValue={apiValue} />
-                ) : (
-                  params.InputProps.startAdornment
-                ),
+                : params.InputProps.startAdornment,
             }}
             inputProps={{
               ...params.inputProps,
-              'data-testid': `${field.name}-${field.id}`,
+              "data-testid": `${field.name}-${field.id}`,
             }}
           />
         )}
@@ -560,22 +564,24 @@ const AutocompleteAPIField = ({
           // So we need to convert that string to an OptionsType
           const setValue =
             // check if it's a multiselect field with a freetext input and value is selected using enter
-            Array.isArray(newValue) &&
-            field.allowFreeText &&
-            typeof newValue[newValue.length - 1] === "string"
-              ? [
-                  ...newValue.slice(0, -1),
-                  {
-                    value: newValue[newValue.length - 1],
-                    freetext: true,
-                    label: newValue[newValue.length - 1],
-                  },
-                ]
-              : // the same for non-multiselect
-                typeof newValue === "string"
-                ? { label: newValue, value: newValue, freetext: true }
-                : // otherwise just return the new value
-                  newValue;
+            (
+              Array.isArray(newValue) &&
+              field.allowFreeText &&
+              typeof newValue[newValue.length - 1] === "string"
+            ) ?
+              [
+                ...newValue.slice(0, -1),
+                {
+                  value: newValue[newValue.length - 1],
+                  freetext: true,
+                  label: newValue[newValue.length - 1],
+                },
+              ]
+              // the same for non-multiselect
+            : typeof newValue === "string" ?
+              { label: newValue, value: newValue, freetext: true }
+              // otherwise just return the new value
+            : newValue;
 
           // Set the field
           dispatch(
@@ -609,22 +615,22 @@ const AutocompleteAPIField = ({
           field.allowFreeText
         }
         loadingText={
-          field.allowFreeText &&
-          !isLoading &&
-          !isFetching &&
-          debouncedInputValue === inputValue ? (
+          (
+            field.allowFreeText &&
+            !isLoading &&
+            !isFetching &&
+            debouncedInputValue === inputValue
+          ) ?
             // for freesolo, display the dropdown message when not searching
             t("startTyping", { api: t(apiValue) })
-          ) : (
             // otherwise the loading indicator
-            <Stack
+          : <Stack
               direction="row"
               justifyContent="space-between"
               alignItems="end"
             >
               {t("loading")} <CircularProgress size={18} />
             </Stack>
-          )
         }
         renderOption={(props, option) => (
           <li {...props} key={option.value} style={{ flexWrap: "wrap" }}>

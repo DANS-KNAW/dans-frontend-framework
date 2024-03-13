@@ -46,15 +46,25 @@ export const findById = (id: string, fields: Field[]): Field | undefined => {
 
 // Find array of dependant id's based on a specific id, for conditional fields
 // Bit ugly
-export const findConditionalChanges = (id: string, fields: Field[]): string[] | undefined => {
+export const findConditionalChanges = (
+  id: string,
+  fields: Field[],
+): string[] | undefined => {
   for (let item of fields) {
     if (item.id === id && item.makesRequired) {
-      return item.makesRequired.map( name => fields.map( f => f.name === name && f.id ) ).flat().filter(Boolean) as string[];
+      return item.makesRequired
+        .map((name) => fields.map((f) => f.name === name && f.id))
+        .flat()
+        .filter(Boolean) as string[];
     }
     if (item.fields && item.type === "group") {
-      let result = item.fields.map( 
-        fieldGroup => Array.isArray(fieldGroup) && findConditionalChanges(id, fieldGroup)
-      ).flat().filter(Boolean) as string[];
+      let result = item.fields
+        .map(
+          (fieldGroup) =>
+            Array.isArray(fieldGroup) && findConditionalChanges(id, fieldGroup),
+        )
+        .flat()
+        .filter(Boolean) as string[];
       if (result) {
         return result;
       }
@@ -66,8 +76,8 @@ export const findConditionalChanges = (id: string, fields: Field[]): string[] | 
 // Get the status of a single field
 export const getFieldStatus = (field: InputField): SectionStatus => {
   const fieldEmpty =
-    !field.value || 
-    (typeof field.value === "string" && !field.value.trim()) || 
+    !field.value ||
+    (typeof field.value === "string" && !field.value.trim()) ||
     (Array.isArray(field.value) && field.value.length === 0);
   if (field.noIndicator && !field.required && fieldEmpty) {
     return "neutral";
@@ -85,11 +95,11 @@ export const getFieldStatus = (field: InputField): SectionStatus => {
 
 // Get the status (color of indicator) for a specific section, based on an array of section statusses
 export const getSectionStatus = (section: SectionStatus[]): SectionStatus => {
-  return section.indexOf("error") !== -1
-    ? "error"
-    : section.indexOf("warning") !== -1
-      ? "warning"
-      : "success";
+  return (
+    section.indexOf("error") !== -1 ? "error"
+    : section.indexOf("warning") !== -1 ? "warning"
+    : "success"
+  );
 };
 
 // Check if a field conforms to validation type specified
@@ -132,15 +142,19 @@ export const formatInitialState = (form: InitialSectionType[]) => {
     fields: section.fields.map((field) => {
       if (field.type === "group" && field.fields) {
         const newFieldGroup = field.fields.map((f) =>
-          !Array.isArray(f) && (f.type === "text" || f.type === "number" || f.type === "date") && f.repeatable
-            ? {
-                id: uuidv4(),
-                type: "repeatSingleField",
-                name: f.name,
-                private: f.private,
-                fields: [{ ...f, id: uuidv4(), touched: false }],
-              }
-            : { ...f, id: uuidv4() },
+          (
+            !Array.isArray(f) &&
+            (f.type === "text" || f.type === "number" || f.type === "date") &&
+            f.repeatable
+          ) ?
+            {
+              id: uuidv4(),
+              type: "repeatSingleField",
+              name: f.name,
+              private: f.private,
+              fields: [{ ...f, id: uuidv4(), touched: false }],
+            }
+          : { ...f, id: uuidv4() },
         );
         return {
           ...field,

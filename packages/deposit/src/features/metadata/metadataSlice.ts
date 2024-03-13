@@ -36,6 +36,7 @@ const initialState: InitialStateType = {
   form: [],
   panel: "",
   tab: 0,
+  touched: false,
 };
 
 export const metadataSlice = createSlice({
@@ -55,6 +56,7 @@ export const metadataSlice = createSlice({
         // otherwise initialize a brand new form
         state.id = uuidv4();
         state.form = formatInitialState(action.payload as InitialSectionType[]);
+        state.touched = false;
         // open up the first panel by default
         state.panel = (action.payload as InitialSectionType[])[0].id;
         // and set initial validation status
@@ -69,6 +71,10 @@ export const metadataSlice = createSlice({
       const section = state.form[action.payload.sectionIndex];
       const field = findById(action.payload.id, section.fields);
 
+      if (!state.touched && field && !field.autofill) {
+        state.touched = true;
+      }
+
       // field is found, lets set it
       if (field) {
         field.value = action.payload.value;
@@ -76,17 +82,20 @@ export const metadataSlice = createSlice({
 
         // For setting required state of 'conditional' fields, we need to find the parent array
         if (field.makesRequired) {
-          const requiredIds = field.makesRequiredIds || findConditionalChanges(action.payload.id, section.fields);
-          if (!field.makesRequiredIds) { 
+          const requiredIds =
+            field.makesRequiredIds ||
+            findConditionalChanges(action.payload.id, section.fields);
+          if (!field.makesRequiredIds) {
             field.makesRequiredIds = requiredIds;
           }
           // change the conditional fields required state
-          requiredIds && requiredIds.map( id => {
-            const changeField = findById(id, section.fields);
-            if (changeField) {
-              changeField.required = action.payload.value ? true : undefined
-            }
-          });
+          requiredIds &&
+            requiredIds.map((id) => {
+              const changeField = findById(id, section.fields);
+              if (changeField) {
+                changeField.required = action.payload.value ? true : undefined;
+              }
+            });
         }
 
         // After every input, we need to update field valid status and section status as well.
@@ -127,42 +136,42 @@ export const metadataSlice = createSlice({
       const field = findById(action.payload.groupedFieldId, section.fields);
       if (field) {
         const newField =
-          action.payload.type === "single"
-            ? // single repeatable field is just a copy with a new id, value, valid, touched state
-              {
-                ...(field as RepeatTextFieldType).fields[0],
-                id: uuidv4(),
-                value: "",
-                valid: "",
-                touched: false,
-              }
-            : // grouped fields a bit more complicated, since grouped fields can also contain single repeatable fields
-              (field as RepeatGroupedFieldType).fields[0].map((f) =>
-                f.type === "repeatSingleField"
-                  ? {
-                      ...f,
-                      id: uuidv4(),
-                      fields: [
-                        {
-                          ...f.fields[0],
-                          id: uuidv4(),
-                          value: "",
-                          valid: "",
-                          touched: false,
-                        },
-                      ],
-                    }
-                  : {
-                      // Omit the makesRequiredIds property
-                      ...((({ makesRequiredIds, ...rest }) => rest)(f)),
-                      // reset what needs resetting
+          action.payload.type === "single" ?
+            // single repeatable field is just a copy with a new id, value, valid, touched state
+            {
+              ...(field as RepeatTextFieldType).fields[0],
+              id: uuidv4(),
+              value: "",
+              valid: "",
+              touched: false,
+            }
+            // grouped fields a bit more complicated, since grouped fields can also contain single repeatable fields
+          : (field as RepeatGroupedFieldType).fields[0].map((f) =>
+              f.type === "repeatSingleField" ?
+                {
+                  ...f,
+                  id: uuidv4(),
+                  fields: [
+                    {
+                      ...f.fields[0],
                       id: uuidv4(),
                       value: "",
                       valid: "",
                       touched: false,
-                      required: f.noIndicator ? undefined : f.required,
                     },
-              );
+                  ],
+                }
+              : {
+                  // Omit the makesRequiredIds property
+                  ...(({ makesRequiredIds, ...rest }) => rest)(f),
+                  // reset what needs resetting
+                  id: uuidv4(),
+                  value: "",
+                  valid: "",
+                  touched: false,
+                  required: f.noIndicator ? undefined : f.required,
+                },
+            );
 
         field.fields = [
           ...(field as RepeatGroupedFieldType | RepeatTextFieldType).fields,
@@ -213,15 +222,14 @@ export const metadataSlice = createSlice({
               // grouped field, can have either a fields key with a single array as value, or an array of arrays
               // note the check for a single repeatable field inside a grouped or repeatable grouped field
               return field.fields.flatMap((f) =>
-                Array.isArray(f)
-                  ? f.flatMap((inner) =>
-                      inner.fields
-                        ? inner.fields.flatMap((f) => getFieldStatus(f))
-                        : getFieldStatus(inner),
-                    )
-                  : f.fields
-                    ? f.fields.flatMap((f) => getFieldStatus(f))
-                    : getFieldStatus(f),
+                Array.isArray(f) ?
+                  f.flatMap((inner) =>
+                    inner.fields ?
+                      inner.fields.flatMap((f) => getFieldStatus(f))
+                    : getFieldStatus(inner),
+                  )
+                : f.fields ? f.fields.flatMap((f) => getFieldStatus(f))
+                : getFieldStatus(f),
               );
             } else {
               return getFieldStatus(field);
@@ -260,5 +268,6 @@ export const getMetadataStatus = (state: RootState) => {
   const statusArray = state.metadata.form.map((section) => section.status);
   return getSectionStatus(statusArray);
 };
+export const getTouchedStatus = (state: RootState) => state.metadata.touched;
 
 export default metadataSlice.reducer;

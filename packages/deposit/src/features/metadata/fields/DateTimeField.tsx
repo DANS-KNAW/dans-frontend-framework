@@ -34,7 +34,9 @@ const DateTimeField = ({
   return (
     <Stack direction="row" alignItems="start">
       {field.formatOptions && (
-        <FormControl sx={{ minWidth: 110, mr: 1, mt: currentField > 0 ? 1 : 0 }}>
+        <FormControl
+          sx={{ minWidth: 110, mr: 1, mt: currentField > 0 ? 1 : 0 }}
+        >
           <InputLabel>{t("selectDateType")}</InputLabel>
           <Select
             label={t("selectDateType")}
@@ -59,7 +61,7 @@ const DateTimeField = ({
             }}
             value={field.format}
             disabled={formDisabled}
-            inputProps={{'data-testid': `datetype-${field.name}-${field.id}`}}
+            inputProps={{ "data-testid": `datetype-${field.name}-${field.id}` }}
           >
             {field.formatOptions.map((option) => (
               <MenuItem key={option} value={option}>
@@ -79,14 +81,14 @@ const DateTimeField = ({
         value={(field.value && moment(field.value, field.format)) || null}
         disabled={field.disabled || formDisabled}
         minDate={
-          field.minDate
-            ? moment(field.minDate, field.format)
-            : moment().subtract(273790, "year")
+          field.minDate ?
+            moment(field.minDate, field.format)
+          : moment().subtract(273790, "year")
         }
         maxDate={
-          field.maxDate
-            ? moment(field.maxDate, field.format)
-            : moment().add(100, "year")
+          field.maxDate ?
+            moment(field.maxDate, field.format)
+          : moment().add(100, "year")
         }
         onChange={(value: Moment | null, context) => {
           // Serialize the date value we get from the component so we can store it using Redux
@@ -116,7 +118,7 @@ const DateTimeField = ({
             </InputAdornment>
           ),
         }}
-        inputProps={{'data-testid': `${field.name}-${field.id}`}}
+        inputProps={{ "data-testid": `${field.name}-${field.id}` }}
         slotProps={{
           textField: { error: status === "error" && field.touched },
         }}

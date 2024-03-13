@@ -7,10 +7,10 @@ The Deposit component consists of the metadata form and a file upload section.
     <Deposit config=
       {
         // an array of form sections, see below
-        form: [{...}], 
+        form: [{...}],
 
         // pointer to the field in the 'sections' array that contains the form title, which is used in a users submissions overview
-        formTitle: "[1].fields[0]", 
+        formTitle: "[1].fields[0]",
 
         // Target object, the destination of the submission. Config usually read from .env file,
         // because of differences in demo/staging/production environment
@@ -23,23 +23,23 @@ The Deposit component consists of the metadata form and a file upload section.
         targetCredentials: [
           {
             // user readable name for the target repository, e.g. 'Dataverse'
-            name: '', 
+            name: '',
 
-            // the destination of the submission, as configured in the submission processing server, 
+            // the destination of the submission, as configured in the submission processing server,
             // e.g. ssh.datastations.nl. Usually read from .env file.
-            repo: '', 
+            repo: '',
 
             // type of authentication that the target repository requires. Depends on config of submission
             //  processing server, usually API_KEY.
-            auth: '', 
+            auth: '',
 
             // key that the app needs to pull from the keycloak user profile
-            authKey: '', 
+            authKey: '',
 
             // URL where user can get their API key for this target repo, e.g. for Dataverse
             // https://ssh.datastations.nl/dataverseuser.xhtml?selectTab=apiTokenTab.
             // Usually read from .env file.
-            keyUrl: '' 
+            keyUrl: ''
 
             // URL that the app should check this key against, e.g. for Dataverse
             // https://ssh.datastations.nl/api/users/token. Currently implemented for Dataverse and Zenodo.
@@ -49,10 +49,10 @@ The Deposit component consists of the metadata form and a file upload section.
           }
         ],
 
-        // Legacy/redundant with Keycloak: an optional string that gets passed along 
+        // Legacy/redundant with Keycloak: an optional string that gets passed along
         // in the header of the form submission: 'Bearer <submitKey>'. Could be used if
         // skipValidation is true.
-        submitKey: '', 
+        submitKey: '',
 
         // if true, a form can always be submitted, handy for testing purposes
         skipValidation: false,
@@ -121,7 +121,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
           // Textfield only, to validate input. See ValidationType in types/Metadata.ts
           validation: 'email',
 
-          // Textfield only. Optionally provide this value if you want to fill a textfield based on user authentication object. 
+          // Textfield only. Optionally provide this value if you want to fill a textfield based on user authentication object.
           // See AuthProperty in types/Metadata.ts for options.
           autofill: 'name',
 
@@ -184,7 +184,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
           // Group field only. An array of inputfields (text, autocomplete, etc, as above).
           fields: [{...}],
 
-          // Optional selector that causes other fields, indicated by their name in an array, 
+          // Optional selector that causes other fields, indicated by their name in an array,
           // and not required on their own, to change to a required status if the current field is filled in.
           makesRequired: ["name_of_field_to_change_to_required"],
         },

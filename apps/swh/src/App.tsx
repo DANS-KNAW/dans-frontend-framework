@@ -72,13 +72,11 @@ const App = () => {
                     key={page.id}
                     path={page.slug}
                     element={
-                      page.template === "deposit" ? (
+                      page.template === "deposit" ?
                         <AuthRoute>
                           <Deposit config={form} page={page} />
                         </AuthRoute>
-                      ) : (
-                        <Generic {...page} />
-                      )
+                      : <Generic {...page} />
                     }
                   />
                 );

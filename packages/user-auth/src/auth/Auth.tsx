@@ -56,11 +56,11 @@ export const SignInCallback = () => {
         >
           <CircularProgress />
           <Typography sx={{ ml: 2 }}>
-            {auth.activeNavigator === "signinSilent"
-              ? t("signingIn")
-              : auth.activeNavigator === "signoutRedirect"
-                ? t("signingOut")
-                : t("isLoading")}
+            {auth.activeNavigator === "signinSilent" ?
+              t("signingIn")
+            : auth.activeNavigator === "signoutRedirect" ?
+              t("signingOut")
+            : t("isLoading")}
           </Typography>
         </Grid>
       </Container>

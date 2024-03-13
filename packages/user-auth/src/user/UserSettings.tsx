@@ -62,8 +62,6 @@ export const UserSettings = ({
     skip: !target || !profileData || skipValidate,
   });
 
-  console.log(apiKeyError)
-
   return (
     <Container>
       <Grid container>
@@ -204,19 +202,19 @@ const UserSettingsItem = ({ target }: { target: Target }) => {
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              {keyLoading || keyFetching || saveLoading ? (
+              {keyLoading || keyFetching || saveLoading ?
                 <CircularProgress size={20} />
-              ) : apiValue && keySuccess ? (
+              : apiValue && keySuccess ?
                 <CheckIcon color="success" />
-              ) : (keyData && keyData !== "OK") || keyError ? (
+              : (keyData && keyData !== "OK") || keyError ?
                 <Tooltip title={t("keyError")}>
                   <ErrorIcon color="error" />
                 </Tooltip>
-              ) : null}
+              : null}
             </InputAdornment>
           ),
         }}
-        inputProps={{'data-testid': `apikey-${target.authKey}`}}
+        inputProps={{ "data-testid": `apikey-${target.authKey}` }}
       />
     </Stack>
   );

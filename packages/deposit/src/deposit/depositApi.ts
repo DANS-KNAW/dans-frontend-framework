@@ -20,14 +20,15 @@ export const depositApi = createApi({
           ...response,
           md: {
             ...response.md,
-            "file-metadata": response.md["file-metadata"] ?
-              response.md["file-metadata"].map((f) => ({
+            "file-metadata":
+              response.md["file-metadata"] ?
+                response.md["file-metadata"].map((f) => ({
                   ...f,
                   submittedFile: true,
                 }))
-            : []
-          }
-        }
+              : [],
+          },
+        };
         return modifiedResponse;
       },
     }),

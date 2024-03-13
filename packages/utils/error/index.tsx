@@ -16,8 +16,8 @@ import AlertTitle from "@mui/material/AlertTitle";
 export const errorLogger: Middleware = () => (next) => (action) => {
   // RTK Query uses `createAsyncThunk` from redux-toolkit under the hood, so we're able to utilize these matchers!
   if (isRejectedWithValue(action)) {
-    console.warn("We got a rejected action!");
-    console.log(action);
+    console.error("We got a rejected action!");
+    console.error(action);
     // Convert the error to a string, probably is one already, but just in case
     const error = JSON.stringify(
       action.payload.error || action.payload,
@@ -29,7 +29,7 @@ export const errorLogger: Middleware = () => (next) => (action) => {
 };
 
 export const CustomError = forwardRef<HTMLDivElement, CustomContentProps>(
-  ({ id, ...props}, ref) => {
+  ({ id, ...props }, ref) => {
     const { message } = props;
     const { closeSnackbar } = useSnackbar();
 

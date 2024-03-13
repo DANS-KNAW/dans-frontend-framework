@@ -86,37 +86,37 @@ const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
           <AutocompleteField field={field} sectionIndex={sectionIndex} />
         )}
       {field.type === "autocomplete" &&
-        (field.options === "orcid" ? (
+        (field.options === "orcid" ?
           <OrcidField field={field} sectionIndex={sectionIndex} />
-        ) : field.options === "ror" ? (
+        : field.options === "ror" ?
           <RorField field={field} sectionIndex={sectionIndex} />
-        ) : field.options === "gorc" ? (
+        : field.options === "gorc" ?
           <GorcField field={field} sectionIndex={sectionIndex} />
-        ) : field.options === "licenses" ? (
+        : field.options === "licenses" ?
           <LicensesField field={field} sectionIndex={sectionIndex} />
-        ) : field.options === "sshLicences" ? (
+        : field.options === "sshLicences" ?
           <SshLicencesField field={field} sectionIndex={sectionIndex} />
-        ) : field.options === "geonames" ? (
+        : field.options === "geonames" ?
           <GeonamesField field={field} sectionIndex={sectionIndex} />
-        ) : field.options === "getty" ? (
+        : field.options === "getty" ?
           <GettyField field={field} sectionIndex={sectionIndex} />
-        ) : field.options === "sheets" ? (
+        : field.options === "sheets" ?
           <SheetsField field={field} sectionIndex={sectionIndex} />
-        ) : field.options === "elsst" || field.options === "narcis" ? (
+        : field.options === "elsst" || field.options === "narcis" ?
           <DatastationsField field={field} sectionIndex={sectionIndex} />
-        ) : field.options === "dansFormats" ? (
+        : field.options === "dansFormats" ?
           <DansFormatsField field={field} sectionIndex={sectionIndex} />
-        ) : field.options === "rdaworkinggroups" ? (
+        : field.options === "rdaworkinggroups" ?
           <RdaWorkingGroupsField field={field} sectionIndex={sectionIndex} />
-        ) : field.options === "pathways" ? (
+        : field.options === "pathways" ?
           <RdaPathwaysField field={field} sectionIndex={sectionIndex} />
-        ) : field.options === "domains" ? (
+        : field.options === "domains" ?
           <RdaDomainsField field={field} sectionIndex={sectionIndex} />
-        ) : field.options === "interest groups" ? (
+        : field.options === "interest groups" ?
           <RdaInterestGroupsField field={field} sectionIndex={sectionIndex} />
-        ) : field.multiApiValue ? (
+        : field.multiApiValue ?
           <MultiApiField field={field} sectionIndex={sectionIndex} />
-        ) : null)}
+        : null)}
       {field.type === "radio" && (
         <RadioField field={field} sectionIndex={sectionIndex} />
       )}
@@ -131,8 +131,9 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
   const { i18n } = useTranslation();
   // Check if group is repeatable. If not, lets wrap that single fieldgroup in an array, so we can use the same map function over it.
   // We use the id of the first field of the group as key for transitions
-  const fieldArray = field.repeatable
-    ? (field.fields as InputField[][])
+  const fieldArray =
+    field.repeatable ?
+      (field.fields as InputField[][])
     : [field.fields as InputField[]];
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
 
@@ -150,9 +151,7 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
           sx={{ pb: 0, pl: 2.25, pr: 2.25 }}
         />
         {fieldArray && (
-          <CardContent 
-            data-testid={`group-${field.name}-${field.id}`}
-          >
+          <CardContent data-testid={`group-${field.name}-${field.id}`}>
             <TransitionGroup>
               {fieldArray.map((groupedField, i) => (
                 <Collapse key={`group-${groupedField[0].id}`}>
@@ -195,18 +194,20 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
             </TransitionGroup>
           </CardContent>
         )}
-        {field.repeatable && metadataSubmitStatus !== "submitted" && metadataSubmitStatus !== "submitting" && (
-          <CardActions sx={{ pl: 3, pr: 3, justifyContent: "right" }}>
-            <Stack direction="row" alignItems="center" justifyContent="end">
-              <AddButtonText
-                sectionIndex={sectionIndex}
-                groupedFieldId={field.id}
-                groupedFieldName={field.name}
-                type="group"
-              />
-            </Stack>
-          </CardActions>
-        )}
+        {field.repeatable &&
+          metadataSubmitStatus !== "submitted" &&
+          metadataSubmitStatus !== "submitting" && (
+            <CardActions sx={{ pl: 3, pr: 3, justifyContent: "right" }}>
+              <Stack direction="row" alignItems="center" justifyContent="end">
+                <AddButtonText
+                  sectionIndex={sectionIndex}
+                  groupedFieldId={field.id}
+                  groupedFieldName={field.name}
+                  type="group"
+                />
+              </Stack>
+            </CardActions>
+          )}
       </Card>
     </Grid>
   );

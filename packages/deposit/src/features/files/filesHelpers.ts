@@ -15,7 +15,10 @@ export function validateFileType(headerString: string) {
   else return "unsupported";
 }
 
-export function findFileGroup(ext?: string, data?: GroupedDataObject[]): string | null {
+export function findFileGroup(
+  ext?: string,
+  data?: GroupedDataObject[],
+): string | null {
   if (!ext || !data) return null;
 
   for (const obj of data) {

@@ -9,7 +9,7 @@ export const fileProcessing = [
     },
     for: ["video", "images"],
   },
-{
+  {
     value: "transcribe_audio",
     label: {
       en: "Generate audio transcription",

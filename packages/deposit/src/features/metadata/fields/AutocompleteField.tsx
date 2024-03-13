@@ -31,9 +31,8 @@ const AutocompleteField = ({
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
 
-  const options = Array.isArray(field.options)
-    ? (field.options as OptionsType[])
-    : [];
+  const options =
+    Array.isArray(field.options) ? (field.options as OptionsType[]) : [];
   const localizedOptions =
     (options.map((option) => ({
       ...option,
@@ -41,7 +40,7 @@ const AutocompleteField = ({
     })) as OptionsType[]) || [];
 
   return (
-    <Stack direction="row" alignItems="start" sx={{width: '100%'}}>
+    <Stack direction="row" alignItems="start" sx={{ width: "100%" }}>
       <Autocomplete
         multiple={field.multiselect}
         fullWidth
@@ -64,24 +63,30 @@ const AutocompleteField = ({
             InputProps={{
               ...params.InputProps,
               startAdornment:
-                !field.multiselect &&
-                field.value &&
-                !Array.isArray(field.value) &&
-                ((field.value.value && field.value.value.startsWith("http")) || field.value.url) ? (
+                (
+                  !field.multiselect &&
+                  field.value &&
+                  !Array.isArray(field.value) &&
+                  ((field.value.value &&
+                    field.value.value.startsWith("http")) ||
+                    field.value.url)
+                ) ?
                   <InfoLink
-                    link={(field.value.value.startsWith("http") && field.value.value) || field.value.url as string}
+                    link={
+                      (field.value.value.startsWith("http") &&
+                        field.value.value) ||
+                      (field.value.url as string)
+                    }
                     checkValue={lookupLanguageString(
                       field.value.label,
                       i18n.language,
                     )}
                   />
-                ) : (
-                  params.InputProps.startAdornment
-                ),
+                : params.InputProps.startAdornment,
             }}
             inputProps={{
               ...params.inputProps,
-              'data-testid': `${field.name}-${field.id}`,
+              "data-testid": `${field.name}-${field.id}`,
             }}
           />
         )}
@@ -109,7 +114,11 @@ const AutocompleteField = ({
         isOptionEqualToValue={(option, value) => option.value === value.value}
         onOpen={onOpen}
         renderOption={(props, option) => (
-          <li {...props} key={option.value} style={{ flexWrap: "wrap" }}>
+          <li
+            {...props}
+            key={`${option.value}-${option.label}`}
+            style={{ flexWrap: "wrap" }}
+          >
             {option.categoryLabel && option.categoryContent && (
               <Typography
                 component="div"
@@ -185,9 +194,9 @@ export const InfoLink = ({
     >
       <Tooltip
         title={
-          apiValue
-            ? t("checkApi", { api: t(apiValue) })
-            : t("checkValue", { value: checkValue })
+          apiValue ?
+            t("checkApi", { api: t(apiValue) })
+          : t("checkValue", { value: checkValue })
         }
       >
         <a
@@ -218,20 +227,23 @@ export const InfoChip = ({
     <Chip
       {...getTagProps({ index })}
       label={
-        option.freetext
-          ? option.value
-          : lookupLanguageString(option.label, i18n.language)
+        option.freetext ?
+          option.value
+        : lookupLanguageString(option.label, i18n.language)
       }
       size="medium"
       icon={
-        (option.value && option.value.startsWith("http")) || option.url ? (
+        (option.value && option.value.startsWith("http")) || option.url ?
           <InfoLink
-            link={(option.value.startsWith("http") && option.value) || option.url as string}
+            link={
+              (option.value.startsWith("http") && option.value) ||
+              (option.url as string)
+            }
             apiValue={apiValue}
             checkValue={lookupLanguageString(option.label, i18n.language)}
             chip={true}
           />
-        ) : undefined
+        : undefined
       }
       disabled={option.mandatory || formDisabled}
     />

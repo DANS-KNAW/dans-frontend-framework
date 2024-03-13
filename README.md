@@ -117,9 +117,9 @@ Deployment is done using Docker containers and a Github Action that listens for 
 
 1.  Make changes to an app.
 2.  The pipeline uses the .env files located in the [IST secrets repo](https://github.com/DANS-KNAW/IST-ohsmart-secrets) when building. So make sure these are up to date.
-2.  Create pull request for main or demo branch and merge into main or demo. Main is used for the production website, so is only to be updated for tried and tested releases from the demo branch.
-3.  After merging the pull request, a fresh Docker image should be created on the [DANS Dockerhub](https://hub.docker.com/u/dansknaw) for each app that's been modified. If not, check Github Actions for errors.
-4.  See the [Deployment repo](https://github.com/DANS-KNAW/ohsmart-deploy) for further steps.
+3.  Create pull request for main or demo branch and merge into main or demo. Main is used for the production website, so is only to be updated for tried and tested releases from the demo branch.
+4.  After merging the pull request, a fresh Docker image should be created on the [DANS Dockerhub](https://hub.docker.com/u/dansknaw) for each app that's been modified. If not, check Github Actions for errors.
+5.  See the [Deployment repo](https://github.com/DANS-KNAW/ohsmart-deploy) for further steps.
 
 ## Authentication with Keycloak
 

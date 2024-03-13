@@ -1,13 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
-import type { 
-  RdaWorkGroupResponse, 
+import type {
+  RdaWorkGroupResponse,
   RdaPathwaysResponse,
   RdaInterestGroupsResponse,
   RdaDomainsResponse,
-  GorcResponse
+  GorcResponse,
 } from "../../../types/Api";
 
-/** 
+/**
  * TODO: This uses a dummy API. API should provide ability to search.
  * Right now it just dumps all data.
  */
@@ -18,9 +18,9 @@ import type {
  * TODO: Should be moved to API level.
  */
 const addParentHierarchy = (data: GorcResponse[], itemId: string): string => {
-  const item = data.find(item => item.id === itemId);
+  const item = data.find((item) => item.id === itemId);
   if (!item || !item.parent_id) {
-    return '';
+    return "";
   } else {
     const parent = addParentHierarchy(data, item.parent_id);
     return parent ? `${parent} > ${item.title}` : item.title;
@@ -34,8 +34,8 @@ export const rdaApi = createApi({
     fetchRdaDomain: build.query({
       query: () => "domains",
       transformResponse: (response: RdaDomainsResponse[]) => {
-        return response.length > 0
-          ? {
+        return response.length > 0 ?
+            {
               response: response.map((item) => ({
                 label: item.title,
                 value: item.id,
@@ -50,8 +50,8 @@ export const rdaApi = createApi({
     fetchRdaInterestGroup: build.query({
       query: () => "interestgroups",
       transformResponse: (response: RdaInterestGroupsResponse[]) => {
-        return response.length > 0
-          ? {
+        return response.length > 0 ?
+            {
               response: response.map((item) => ({
                 label: item.title,
                 value: item.id,
@@ -66,8 +66,8 @@ export const rdaApi = createApi({
     fetchRdaPathway: build.query({
       query: () => "pathways",
       transformResponse: (response: RdaPathwaysResponse[]) => {
-        return response.length > 0
-          ? {
+        return response.length > 0 ?
+            {
               response: response.map((item) => ({
                 label: item.title,
                 value: item.id,
@@ -83,8 +83,8 @@ export const rdaApi = createApi({
     fetchRdaWorkingGroup: build.query({
       query: () => "workinggroups",
       transformResponse: (response: RdaWorkGroupResponse[]) => {
-        return response.length > 0
-          ? {
+        return response.length > 0 ?
+            {
               response: response.map((item) => ({
                 label: item.title,
                 value: `{"node_id":"${item.id}","UUID_WorkingGroup":"${item.parent_id}"}`,
@@ -98,11 +98,10 @@ export const rdaApi = createApi({
     fetchGorc: build.query({
       query: () => "gorc",
       transformResponse: (response: GorcResponse[]) => {
-
         if (response.length > 0) {
-          const updatedResponse = response.map(item => ({
+          const updatedResponse = response.map((item) => ({
             ...item,
-            parent_hierarchy: addParentHierarchy(response, item.id)
+            parent_hierarchy: addParentHierarchy(response, item.id),
           }));
 
           return {
@@ -117,9 +116,7 @@ export const rdaApi = createApi({
               categoryContent: item.parent_hierarchy,
             })),
           };
-
-        }
-        else {
+        } else {
           return [];
         }
       },
@@ -127,7 +124,7 @@ export const rdaApi = createApi({
   }),
 });
 
-export const { 
+export const {
   useFetchRdaDomainQuery,
   useFetchRdaInterestGroupQuery,
   useFetchRdaPathwayQuery,

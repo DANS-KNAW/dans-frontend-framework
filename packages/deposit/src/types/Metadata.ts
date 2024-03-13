@@ -27,6 +27,7 @@ export interface InitialStateType {
   form: SectionType[];
   panel: string;
   tab: number;
+  touched: boolean;
 }
 
 export interface InitialFormType {
@@ -57,5 +58,5 @@ export interface FormConfig {
     convertFiles?: boolean;
     displayRoles?: boolean;
     displayProcesses?: boolean;
-  }
+  };
 }
