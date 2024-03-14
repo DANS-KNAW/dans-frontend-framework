@@ -84,9 +84,11 @@ export async function clickAndFill(page: Page, testIdRegExp: string, value: stri
  * @param mockData file name
  * @param mockUrl partial url
  */
+
 export async function clickAndFillApiDropdown(page: Page, testIdRegExp: string, value: string, mockData: string, mockUrl: string) {
-    await clickAndFill(page, testIdRegExp, value)
-    await loadMockDataDropdown(page, mockData, mockUrl)
+    await clickAndFill(page, testIdRegExp, value);
+    await loadMockDataDropdown(page, mockData, mockUrl);
+    await page.waitForSelector(`[role="option"]`, { timeout: 5000 });
     await page.getByRole('option', { name: value }).click();
 }
 
@@ -191,7 +193,10 @@ async function handleGroupDropdown(page: Page, group: Locator, groupName: string
  * @param mockUrl partial url
  */
 export async function loadMockDataDropdown(page: Page, mockData: GroupField["mockData"], mockUrl: GroupField["mockUrl"]) {
-    const mockJson = require(`./mock-data/${mockData}`)
+    const module = await import(`./mock-data/${mockData}`, {
+        assert: { type: "json" },
+    });
+    const mockJson = module.default;
     await page.route(mockUrl, route => route.fulfill({
         status: 200,
         contentType: 'application/json',

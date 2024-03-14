@@ -13,11 +13,11 @@ export class CoveragePage {
     }
 
     async setKeywords() {
-        await clickAndFillApiDropdown(this.page, 'subject_keywords', 'subjectKeywords', 'country.json', '**/searchJSON?q=*&username=*')
+        await clickAndFillApiDropdown(this.page, 'subject_keywords', 'subjectKeywords', 'country.json', '**/proxy?*')
     }
 
     async setLocation(){
-        await clickAndFillApiDropdown(this.page, 'subject_location', 'The Netherlands', 'country.json', '**/searchJSON?q=*&username=*')
+        await clickAndFillApiDropdown(this.page, 'subject_location', 'The Netherlands (independent political entity) The Netherlands', 'country.json', '**/searchJSON?q=*&username=*')
 
     }
 
