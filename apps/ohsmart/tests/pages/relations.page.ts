@@ -13,7 +13,7 @@ export class RelationsPage {
     }
 
     async setAudience(){
-        await clickAndFillApiDropdown(this.page, 'audience', 'chemistry', 'audience.json', '**/search?query=*')
+        await clickAndFillApiDropdown(this.page, 'audience', 'Chemistry', 'audience.json', '**/search?query=*')
     }
 
     async setRelatedTo(numberOfRelations: number){
