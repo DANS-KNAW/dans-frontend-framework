@@ -72,7 +72,7 @@ export class OralHistorySpecificPage {
     }
 
     async setSectionLessElements() {
-        await clickAndFillApiDropdown(this.page, 'interview_location', 'Kingdom of the Netherlands', 'country.json', '**/searchJSON?q=*&username=*')
+        await clickAndFillApiDropdown(this.page, 'interview_location', 'The Netherlands (independent political entity) The Netherlands', 'country.json', '**/searchJSON?q=*&username=*')
 
         // select and fill Recording format, the regex picks up two elements
         await this.page.getByTestId(RegExp('recording_format')).first().click();
