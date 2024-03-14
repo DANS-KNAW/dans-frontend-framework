@@ -1,13 +1,13 @@
 import { test } from '@playwright/test';
 
-import { AdministrativePage } from '../pages/administrative.page';
-import { CitationPage } from '../pages/citation.page';
-import { OralHistorySpecificPage } from '../pages/oral.history.specific';
-import { CoveragePage } from '../pages/coverage.page';
-import { RelationsPage } from '../pages/relations.page';
-import { RightsPage } from '../pages/rights.page';
+import { AdministrativePage } from './pages/administrative.page';
+import { CitationPage } from './pages/citation.page';
+import { OralHistorySpecificPage } from './pages/oral.history.specific';
+import { CoveragePage } from './pages/coverage.page';
+import { RelationsPage } from './pages/relations.page';
+import { RightsPage } from './pages/rights.page';
 
-import { loginAndGoToForm } from '../utils';
+import { loginAndGoToForm } from './utils';
 
 test('Test all ohsmart tabs/fields', async ({ page }) => {
     loginAndGoToForm(page, 'https://ohsmart.dansdemo.nl', 'demouser@test.com', 'IkBenDemoUser!')
