@@ -95,8 +95,12 @@ export class OralHistorySpecificPage {
  * @returns GroupField
  */
 function generatePersonGroupFields(role: string, additionalFields: string[]): GroupField[] {
+    type AllFields = {
+        [key: string]: { fieldValue: string; isDropdown: boolean; isDateField: boolean; };
+    };
+
     // All possible fields, including optional and required
-    const allFields = {
+    const allFields: AllFields = {
         first_name: { fieldValue: 'first name', isDropdown: false, isDateField: false},
         last_name: { fieldValue: 'last name', isDropdown: false, isDateField: false },
         preferred_name: { fieldValue: 'preferred name', isDropdown: false, isDateField: false },
