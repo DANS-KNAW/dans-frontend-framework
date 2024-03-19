@@ -192,10 +192,13 @@ async function handleGroupDropdown(page: Page, groupName: string, groupField: Gr
  * @param mockUrl partial url
  */
 export async function loadMockDataDropdown(page: Page, mockData: GroupField["mockData"], mockUrl: GroupField["mockUrl"]) {
+    // Dynamically import the mock data JSON module
     const module = await import(`./mock-data/${mockData}`, {
         assert: { type: "json" },
     });
     const mockJson = module.default;
+
+    // If a mock URL is provided, intercept requests to that URL and respond with the mock JSON data
     if (mockUrl) {
         await page.route(mockUrl, route => route.fulfill({
             status: 200,
@@ -203,10 +206,6 @@ export async function loadMockDataDropdown(page: Page, mockData: GroupField["moc
             body: JSON.stringify(mockJson),
         }));
     }
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(mockJson),
-    }));
 }
 
 /**

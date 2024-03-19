@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { clickAndFill, clickAndFillApiDropdown, clickAndFillDropdown, createMany, fillGroup, GroupField, loadMockDataDropdown } from '../utils';
+import { loadMockDataDropdown } from '../utils';
 
 
 export class RightsPage {
