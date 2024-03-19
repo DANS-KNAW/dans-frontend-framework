@@ -1,5 +1,4 @@
 import { Locator, Page } from '@playwright/test';
-import exp from 'constants';
 
 /**
  * Groupfield holds data that makes filling groups easy. See fillGroup for more details.
@@ -136,7 +135,7 @@ export async function fillGroup(page: Page, groupName: string, groupFields: Grou
 
             // handle dropdown menu
             if (groupField.isDropdown) {
-                await handleGroupDropdown(page, group, groupName, groupField, index, field)
+                await handleGroupDropdown(page, groupName, groupField, index, field)
                 continue
             }
 
@@ -167,7 +166,7 @@ export async function fillGroup(page: Page, groupName: string, groupFields: Grou
  * @param page Playwright page
  * @param groupField GroupField interface
  */
-async function handleGroupDropdown(page: Page, group: Locator, groupName: string, groupField: GroupField, index: number, field: Locator) {
+async function handleGroupDropdown(page: Page, groupName: string, groupField: GroupField, index: number, field: Locator) {
 
     // This dropdown loads its options via an API call
     // fill groupname fieldValue and index in this field
