@@ -196,7 +196,13 @@ export async function loadMockDataDropdown(page: Page, mockData: GroupField["moc
         assert: { type: "json" },
     });
     const mockJson = module.default;
-    await page.route(mockUrl, route => route.fulfill({
+    if (mockUrl) {
+        await page.route(mockUrl, route => route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify(mockJson),
+        }));
+    }
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify(mockJson),
