@@ -1,0 +1,22 @@
+{
+    "totalResultsCount": 1,
+    "geonames": [
+        {
+            "adminCode1": "00",
+            "lng": "5.75",
+            "geonameId": 2750405,
+            "toponymName": "Kingdom of the Netherlands",
+            "countryId": "2750405",
+            "fcl": "A",
+            "population": 17231017,
+            "countryCode": "NL",
+            "name": "The Netherlands",
+            "fclName": "country, state, region,...",
+            "countryName": "The Netherlands",
+            "fcodeName": "independent political entity",
+            "adminName1": "",
+            "lat": "52.25",
+            "fcode": "PCLI"
+        }
+    ]
+}
