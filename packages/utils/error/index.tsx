@@ -22,7 +22,10 @@ export const errorLogger: Middleware = () => (next) => (action) => {
     const error = JSON.stringify(
       action.payload.error || action.payload,
     ).replaceAll('"', "");
-    enqueueSnackbar(error, { variant: "customError", persist: true });
+    // Ugly check for not showing snackbar on invalid API key
+    if (action.meta.arg.endpointName !== "validateAllKeys" && action.payload.status === 401) {
+      enqueueSnackbar(error, { variant: "customError", persist: true });
+    }
   }
 
   return next(action);

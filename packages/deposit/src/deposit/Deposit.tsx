@@ -29,11 +29,10 @@ import {
 import { getFiles, resetFiles, addFiles } from "../features/files/filesSlice";
 import { StatusIcon } from "../features/generic/Icons";
 import Submit from "../features/submit/Submit";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-import Link from "@mui/material/Link";
 import { Link as RouterLink } from "react-router-dom";
 import { setData, setFormDisabled } from "./depositSlice";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -181,12 +180,10 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
               // Show a message if keys are missing
               <Alert severity="warning" data-testid="invalid-api-keys">
                 <AlertTitle>{t("missingInfoHeader")}</AlertTitle>
-                <Trans
-                  i18nKey="generic:missingInfoText"
-                  components={[
-                    <Link component={RouterLink} to="/user-settings" />,
-                  ]}
-                />
+                <Typography mb={2}>{t("missingInfoText")}</Typography>
+                <Button variant="contained" component={RouterLink} to="/user-settings">
+                  {t("missingInfoButton")}
+                </Button>
               </Alert>
             )}
 
