@@ -49,10 +49,6 @@ export const fileRoles = [
     label: "Data Dictionary - Other",
   },
   {
-    value: "consent_form",
-    label: "Consent Form",
-  },
-  {
     value: "methodology",
     label: "Methodology",
   },
@@ -61,7 +57,7 @@ export const fileRoles = [
     label: "Report",
   },
   {
-    value: "rublication",
+    value: "publication",
     label: "Publication",
   },
   {

@@ -37,7 +37,6 @@ const section: InitialSectionType = {
         nl: "Locatie(s) besproken in het interview",
       },
       name: "subject_location",
-      required: true,
       multiselect: true,
       description: {
         en: "The location(s) that the interview material deals with",
