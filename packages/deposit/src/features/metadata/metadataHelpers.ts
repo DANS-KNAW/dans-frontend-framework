@@ -10,6 +10,8 @@ import type {
   ValidationType,
 } from "../../types/MetadataFields";
 
+// import { current } from '@reduxjs/toolkit';
+
 // Helper functions for the Metadata form
 
 // some simple validation, not fully implemented
@@ -52,6 +54,7 @@ export const findConditionalChanges = (
 ): string[] | undefined => {
   for (let item of fields) {
     if (item.id === id && item.makesRequired) {
+      console.log('ja')
       return item.makesRequired
         .map((name) => fields.map((f) => f.name === name && f.id))
         .flat()
@@ -65,7 +68,7 @@ export const findConditionalChanges = (
         )
         .flat()
         .filter(Boolean) as string[];
-      if (result) {
+      if (result.length > 0) {
         return result;
       }
     }

@@ -36,6 +36,10 @@ const section: InitialSectionType = {
         nl: "Eén van de volgende specifieke licenties",
       },
       options: "sshLicences",
+      value: {
+        label: "DANS Licence",
+        value: "https://doi.org/10.17026/fp39-0x58",
+      }
     },
     {
       type: "radio",
