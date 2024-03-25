@@ -214,6 +214,7 @@ const section: InitialSectionType = {
           name: "interpreter_first_name",
           private: true,
           noIndicator: true,
+          makesRequired: ["interpreter_consent", "interpreter_last_name"],
         },
         {
           type: "text",
@@ -224,6 +225,7 @@ const section: InitialSectionType = {
           name: "interpreter_last_name",
           private: true,
           noIndicator: true,
+          makesRequired: ["interpreter_consent", "interpreter_first_name"],
         },
         {
           type: "text",
@@ -234,6 +236,7 @@ const section: InitialSectionType = {
           name: "interpreter_function",
           private: true,
           noIndicator: true,
+          makesRequired: ["interpreter_consent", "interpreter_first_name", "interpreter_last_name"],
         },
         {
           type: "text",
@@ -244,6 +247,7 @@ const section: InitialSectionType = {
           name: "interpreter_affiliation",
           private: true,
           noIndicator: true,
+          makesRequired: ["interpreter_consent", "interpreter_first_name", "interpreter_last_name"],
         },
         {
           type: "check",
@@ -288,6 +292,7 @@ const section: InitialSectionType = {
           name: "others_first_name",
           private: true,
           noIndicator: true,
+          makesRequired: ["others_consent", "others_last_name"],
         },
         {
           type: "text",
@@ -298,6 +303,7 @@ const section: InitialSectionType = {
           name: "others_last_name",
           private: true,
           noIndicator: true,
+          makesRequired: ["others_consent", "others_first_name"],
         },
         {
           type: "text",
@@ -308,6 +314,7 @@ const section: InitialSectionType = {
           name: "others_function",
           private: true,
           noIndicator: true,
+          makesRequired: ["others_consent", "others_first_name", "others_last_name"],
         },
         {
           type: "text",
@@ -318,6 +325,7 @@ const section: InitialSectionType = {
           name: "others_affiliation",
           private: true,
           noIndicator: true,
+          makesRequired: ["others_consent", "others_first_name", "others_last_name"],
         },
         {
           type: "check",

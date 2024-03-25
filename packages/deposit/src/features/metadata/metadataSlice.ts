@@ -91,6 +91,7 @@ export const metadataSlice = createSlice({
           // change the conditional fields required state
           requiredIds &&
             requiredIds.map((id) => {
+              console.log(id)
               const changeField = findById(id, section.fields);
               if (changeField) {
                 changeField.required = action.payload.value ? true : undefined;
