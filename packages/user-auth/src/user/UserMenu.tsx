@@ -67,7 +67,7 @@ const SettingsMenu = ({
             </IconButton>
           </Tooltip>
         </Link>
-        )}
+      )}
       <IconButton onClick={handleOpenUserMenu} size="large" color="inherit">
         <AccountCircle />
       </IconButton>
