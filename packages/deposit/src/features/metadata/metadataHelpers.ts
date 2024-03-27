@@ -180,3 +180,24 @@ export const formatInitialState = (form: InitialSectionType[]) => {
   }));
   return newForm as SectionType[];
 };
+
+
+// Debounce function for autosaving on form change
+export const debounce = <F extends (...args: any[]) => any>(
+  func: F,
+  wait: number
+): ((...args: Parameters<F>) => void) => {
+  let timeoutId: ReturnType<typeof setTimeout> | null;
+  
+  return function(this: ThisParameterType<F>, ...args: Parameters<F>) {
+    const context = this;
+    
+    const later = () => {
+      timeoutId = null;
+      func.apply(context, args);
+    };
+    
+    clearTimeout(timeoutId!);
+    timeoutId = setTimeout(later, wait);
+  };
+};
