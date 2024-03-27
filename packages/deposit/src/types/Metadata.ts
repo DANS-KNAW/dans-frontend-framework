@@ -58,5 +58,9 @@ export interface FormConfig {
     convertFiles?: boolean;
     displayRoles?: boolean;
     displayProcesses?: boolean;
+    fileRoles?: {
+      label: string;
+      value: string;
+    }[];
   };
 }

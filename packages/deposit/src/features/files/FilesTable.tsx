@@ -19,7 +19,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { useTranslation } from "react-i18next";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { getFiles, removeFile, setFileMeta } from "./filesSlice";
-import { fileRoles, fileProcessing } from "./filesOptions";
+import { fileProcessing, fileRoles as defaultFileRoles } from "./filesOptions";
 import type {
   SelectedFile,
   FileActionOptionsProps,
@@ -88,9 +88,10 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
   const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation("files");
   const formDisabled = useAppSelector(getFormDisabled);
-
+  const config = useAppSelector(getData);
+  const fileRoles = config.filesUpload?.fileRoles || defaultFileRoles;
   const options = type === "process" ? fileProcessing : fileRoles;
-  const localizedOptions =
+  const localizedOptions = options &&
     (options.map((option) => ({
       ...option,
       label: lookupLanguageString(option.label, i18n.language),

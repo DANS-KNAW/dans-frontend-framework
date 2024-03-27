@@ -1,25 +1,4 @@
-// Defines actions a user can select for file processing and roles
-
-export const fileProcessing = [
-  {
-    value: "create_thumbnail",
-    label: {
-      en: "Create thumbnail",
-      nl: "Genereer thumbnail",
-    },
-    for: ["video", "images"],
-  },
-  {
-    value: "transcribe_audio",
-    label: {
-      en: "Generate audio transcription",
-      nl: "Genereer audiotranscriptie",
-    },
-    for: ["video", "audio"],
-  },
-];
-
-export const fileRoles = [
+export const fileRoleOptions = [
   {
     value: "audio_file",
     label: "Audio file",
@@ -30,7 +9,7 @@ export const fileRoles = [
   },
   {
     value: "data_dictionary_code_book",
-    label: "Data dictionary - code nook",
+    label: "Data dictionary - code book",
   },
   {
     value: "data_dictionary_other",
@@ -42,11 +21,15 @@ export const fileRoles = [
   },
   {
     value: "dissemination_copy",
-    label: "dissemination copy",
+    label: "Dissemination copy",
   },
   {
     value: "image_file",
     label: "Image file",
+  },
+  {
+    value: "interview_questions",
+    label: "Interview questions",
   },
   {
     value: "methodology",
@@ -69,6 +52,10 @@ export const fileRoles = [
     label: "Report",
   },
   {
+    value: "subtitles",
+    label: "Subtitles",
+  },
+  {
     value: "supplementary_file",
     label: "Supplementary file",
   },
@@ -77,8 +64,8 @@ export const fileRoles = [
     label: "Thumbnail",
   },
   {
-    value: "transcript_or_derived_file",
-    label: "Transcript or derived file",
+    value: "transcript",
+    label: "Transcript",
   },
   {
     value: "type_registry_value",
@@ -89,4 +76,3 @@ export const fileRoles = [
     label: "Video file",
   },
 ];
-
