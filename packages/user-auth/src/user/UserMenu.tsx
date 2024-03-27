@@ -3,13 +3,15 @@ import { useState } from "react";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 import { useAuth } from "react-oidc-context";
-import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import Divider from "@mui/material/Divider";
 import { NavLink as RouterLink } from "react-router-dom";
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import OutboxIcon from '@mui/icons-material/Outbox';
+import Tooltip from "@mui/material/Tooltip";
 import { LoginButton, LogoutButton } from "./Buttons";
 
 export const UserMenu = ({
@@ -51,15 +53,23 @@ const SettingsMenu = ({
 
   return (
     <Box sx={{ flexGrow: 0 }}>
-      <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-        <Avatar>
-          {((auth.user?.profile.given_name as string) || "")
-            .charAt(0)
-            .toUpperCase()}
-          {((auth.user?.profile.family_name as string) || "")
-            .charAt(0)
-            .toUpperCase()}
-        </Avatar>
+      {userSubmissions && (
+        <Link
+          component={RouterLink}
+          to="/user-submissions"
+          underline="none"
+          color="inherit"
+          onClick={handleCloseUserMenu}
+        >
+          <Tooltip title={t('userSubmissions')}>
+            <IconButton size="large" color="inherit">
+              <OutboxIcon />
+            </IconButton>
+          </Tooltip>
+        </Link>
+        )}
+      <IconButton onClick={handleOpenUserMenu} size="large" color="inherit">
+        <AccountCircle />
       </IconButton>
       <Menu
         sx={{ mt: "45px" }}
@@ -98,17 +108,7 @@ const SettingsMenu = ({
             <MenuItem>{t("userMenuSettings")}</MenuItem>
           </Link>
         )}
-        {userSubmissions && (
-          <Link
-            component={RouterLink}
-            to="/user-submissions"
-            underline="none"
-            color="inherit"
-            onClick={handleCloseUserMenu}
-          >
-            <MenuItem divider={true}>{t("userMenuSubmissions")}</MenuItem>
-          </Link>
-        )}
+        {userSettings && <Divider />}
         <LogoutButton />
       </Menu>
     </Box>
