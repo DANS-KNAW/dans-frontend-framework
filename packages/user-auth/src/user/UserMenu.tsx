@@ -57,9 +57,7 @@ const SettingsMenu = ({
         <Link
           component={RouterLink}
           to="/user-submissions"
-          underline="none"
           color="inherit"
-          onClick={handleCloseUserMenu}
         >
           <Tooltip title={t('userSubmissions')}>
             <IconButton size="large" color="inherit">
