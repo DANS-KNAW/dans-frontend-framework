@@ -1,5 +1,7 @@
 import type { Target } from "@dans-framework/user-auth";
 import type { AxiosHeaders } from "axios";
+import type { SelectedFile } from "./Files";
+import type { SectionType, FormConfig } from "./Metadata";
 
 export interface SubmitError {
   status?: string;
@@ -53,4 +55,15 @@ export interface SubmitHeaders extends AxiosHeaders {
   "assistant-config-name": string;
   "targets-credentials": string;
   title?: string;
+}
+
+export interface SubmitData {
+  metadata: {
+    form: SectionType[];
+    id: string;
+  };
+  files: SelectedFile[];
+  deposit: {
+    config: Omit<FormConfig, "form">;
+  };
 }
