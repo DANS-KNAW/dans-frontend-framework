@@ -11,11 +11,11 @@ import Typography from "@mui/material/Typography";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import {
   getMetadataStatus,
-  getMetadata,
   resetMetadata,
   setSectionStatus,
-  getSessionId,
   setOpenTab,
+  getMetadata,
+  getTouchedStatus,
 } from "../metadata/metadataSlice";
 import { getFiles, resetFiles } from "../files/filesSlice";
 import { useSubmitDataMutation, useSubmitFilesMutation } from "./submitApi";
@@ -25,13 +25,8 @@ import {
   getFilesSubmitStatus,
   resetFilesSubmitStatus,
   resetMetadataSubmitStatus,
-  setFilesSubmitStatus,
 } from "./submitSlice";
-import {
-  formatFormData,
-  formatFileData,
-  beforeUnloadHandler,
-} from "./submitHelpers";
+import { beforeUnloadHandler } from "./submitHelpers";
 import { useTranslation } from "react-i18next";
 import {
   getData,
@@ -42,6 +37,7 @@ import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
 import { getFormActions, clearFormActions } from "@dans-framework/user-auth";
+import { useDebouncedCallback } from 'use-debounce';
 
 const Submit = ({
   hasTargetCredentials,
@@ -53,10 +49,10 @@ const Submit = ({
   const auth = useAuth();
   const metadataStatus = useAppSelector(getMetadataStatus);
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
-  const metadata = useAppSelector(getMetadata);
   const selectedFiles = useAppSelector(getFiles);
-  const sessionId = useAppSelector(getSessionId);
   const formAction = getFormActions();
+  const metadata = useAppSelector(getMetadata);
+  const isTouched = useAppSelector(getTouchedStatus);
   const [fileWarning, setFileWarning] = useState<boolean>(false);
 
   // get form config
@@ -105,22 +101,8 @@ const Submit = ({
   ] = useSubmitFilesMutation();
 
   // Access token might just be expiring, or user settings just changed
-  // we get the required submit header data as a callback to signinSilent, which refreshes the current user
-  const getHeaderData = () =>
-    auth.signinSilent().then(() => ({
-      // we use the Keycloak access token if no auth key is set manually in the form config
-      submitKey: formConfig.submitKey || auth.user?.access_token,
-      userId: auth.user?.profile.sub,
-      targetCredentials: formConfig.targetCredentials,
-      target: formConfig.target,
-      targetKeys: Object.assign(
-        {},
-        ...formConfig.targetCredentials.map((t) => ({
-          [t.authKey]: auth.user?.profile[t.authKey],
-        })),
-      ),
-      title: eval(`metadata${formConfig.formTitle}`)?.value, // eval...should not pose a risk, as we define the formConfig in the code
-    }));
+  // So we do a callback to signinSilent, which refreshes the current user
+  const getUser = () => auth.signinSilent().then(() => auth.user);
 
   // remove warning when files get added
   useEffect(() => {
@@ -147,54 +129,44 @@ const Submit = ({
       clearFormActions();
     }
 
-    const formattedMetadata = formatFormData(
-      sessionId,
-      metadata,
-      selectedFiles,
-    );
     dispatch(setFormDisabled(true));
     dispatch(setMetadataSubmitStatus("submitting"));
     // add event listener to make sure user doesn't navigate outside of app
     window.addEventListener("beforeunload", beforeUnloadHandler);
 
     // do the actual submit
-    getHeaderData().then((headerData) =>
+    getUser().then((user) =>
       // with fresh headerdata/user info, we can submit the metadata
       submitData({
-        data: formattedMetadata,
-        headerData: headerData,
+        user: user,
         actionType: actionType,
       }).then((result: { data?: any; error?: any }) => {
         if (result.data?.data?.status === "OK") {
           // if metadata has been submitted ok, we start the file submit
-          const filesToUpload = selectedFiles.filter((f) => !f.submittedFile);
-          // formatting the file data can take a while, so in the meantime, we activate a spinner
-          filesToUpload.forEach((f) =>
-            dispatch(
-              setFilesSubmitStatus({
-                id: f.id as string,
-                progress: undefined,
-                status: "submitting",
-              }),
-            ),
-          );
-          // then format and start submitting
-          formatFileData(sessionId, filesToUpload)
-            .then((d) => {
-              submitFiles({
-                data: d,
-                headerData: headerData,
-                actionType: actionType,
-              });
-            })
-            .catch((e) => {
-              console.log(e);
-            });
+          submitFiles({
+            user: user,
+            actionType: actionType,
+          });
         }
       }),
     );
   };
 
+  // Autosave functionality, debounced on metadata change
+  const autoSave = useDebouncedCallback(
+    () => {
+      if (!formDisabled && isTouched) {
+        submitData({ user: auth.user, actionType: "save" });
+      }
+    },
+    5000
+  );
+
+  useEffect(() => {
+    autoSave()
+  }, [metadata]);
+
+  // Reset the entire form to initial state
   const resetForm = () => {
     // reset RTK mutations
     resetSubmittedFiles();
