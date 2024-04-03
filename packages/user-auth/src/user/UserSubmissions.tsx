@@ -6,6 +6,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import Stack from "@mui/material/Stack";
 import { useTranslation } from "react-i18next";
 import Paper from "@mui/material/Paper";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   DataGrid,
   GridColDef,
@@ -24,10 +25,12 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Link from "@mui/material/Link";
 import EditIcon from "@mui/icons-material/Edit";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import ReplayIcon from "@mui/icons-material/Replay";
+// import ReplayIcon from "@mui/icons-material/Replay";
 import PendingIcon from "@mui/icons-material/Pending";
 import ErrorIcon from "@mui/icons-material/Error";
 import PreviewIcon from "@mui/icons-material/Preview";
+import DeleteIcon from '@mui/icons-material/Delete';
+import CloseIcon from '@mui/icons-material/Close';
 import Popover from "@mui/material/Popover";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -155,6 +158,7 @@ const SubmissionList = ({
   const { t, i18n } = useTranslation("user");
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [toDelete, setToDelete] = useState<string>('');
 
   // useMemo to make sure columns don't change
   const columns = useMemo<GridColDef[]>(
@@ -194,7 +198,7 @@ const SubmissionList = ({
                 status={params.row.status}
               />
             ),
-            type !== "draft" && (
+            /*type !== "draft" && (
               // Resubmit a form
               <Tooltip title={t("retryItem")} placement="bottom">
                 <GridActionsCellItem
@@ -211,7 +215,7 @@ const SubmissionList = ({
                   }}
                 />
               </Tooltip>
-            ),
+            ),*/
             <Tooltip title={t("copyItem")} placement="bottom">
               <GridActionsCellItem
                 icon={<ContentCopyIcon />}
@@ -227,17 +231,63 @@ const SubmissionList = ({
                 }}
               />
             </Tooltip>,
+            (type === "draft" || params.row.error) && (
+              // Delete an item, for drafts, maybe for errored submissions? todo
+              <Tooltip title={t(toDelete === params.row.id ? "undeleteItem" : "deleteItem")} placement="bottom">
+                <GridActionsCellItem
+                  icon={toDelete === params.row.id ? <CloseIcon/> : <DeleteIcon />}
+                  label={t(toDelete === params.row.id ? "undeleteItem" : "deleteItem")}
+                  onClick={() => setToDelete(toDelete === params.row.id ? '' : params.row.id)}
+                />
+              </Tooltip>
+            )
           ].filter(Boolean);
         },
         type: "actions",
-        align: "right",
-        width: type === "draft" ? 90 : 125,
+        align: "left",
+        // adjust width for more icons. Add or remove 30 for an icon.
+        width: type === "draft" ? 125 : 125,
       },
       {
         field: "title",
         headerName: t("title"),
         width: 250,
-        renderCell: (params) => (params.value ? params.value : t("noTitle")),
+        renderCell: (params) => (
+          // render a confirm delete button in the title cell
+          <AnimatePresence>
+            {toDelete === params.row.id &&
+              <motion.div
+                layout
+                key="delete"
+                initial={{ x: "-100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "-100%" }}
+              >
+                <Button
+                  size="small"
+                  variant="contained"
+                  sx={{
+                    fontSize: 11,
+                    mr: 1,
+                  }}
+                  color="error"
+                  onClick={ () =>
+                    dispatch(
+                      setFormAction({
+                        id: params.row.id,
+                        action: "delete",
+                      }),
+                    )
+                  }>
+                  {t("confirmDelete")}
+                </Button>
+              </motion.div>
+            }
+            <motion.div layout>
+              {params.value ? params.value : t("noTitle")}
+            </motion.div>
+          </AnimatePresence>
+        ),
       },
       {
         field: "created",
@@ -268,7 +318,7 @@ const SubmissionList = ({
         ]
       : []),
     ],
-    [i18n.language],
+    [i18n.language, toDelete],
   );
 
   const rows =
