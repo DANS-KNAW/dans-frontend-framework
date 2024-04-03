@@ -45,6 +45,9 @@
 	"copyItem": "Copy this dataset for a new submission",
 	"editItem": "Edit this saved dataset",
 	"viewItem": "View this submission",
+	"deleteItem": "Delete this form",
+	"undeleteItem": "Cancel delete",
+	"confirmDelete": "Confirm deletion",
 	"viewItemReadOnly": "As read only form",
 	"viewItemTarget": "On {{name}}"
 }
