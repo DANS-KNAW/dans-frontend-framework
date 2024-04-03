@@ -271,13 +271,9 @@ const SubmissionList = ({
                     mr: 1,
                   }}
                   color="error"
-                  onClick={ () =>
-                    dispatch(
-                      setFormAction({
-                        id: params.row.id,
-                        action: "delete",
-                      }),
-                    )
+                  onClick={ 
+                    // delete call to server
+                    () => console.log('delete')
                   }>
                   {t("confirmDelete")}
                 </Button>
