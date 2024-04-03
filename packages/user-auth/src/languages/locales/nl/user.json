@@ -45,6 +45,9 @@
 	"copyItem": "Kopiëer deze dataset voor een nieuwe submissie",
 	"editItem": "Bewerk deze opgeslagen dataset",
 	"viewItem": "Bekijk deze submissie",
+	"deleteItem": "Verwijder dit formulier",
+	"undeleteItem": "Annuleer verwijderen",
+	"confirmDelete": "Bevestig verwijderen",
 	"viewItemReadOnly": "Als alleen-lezen form",
 	"viewItemTarget": "Op {{name}}"
 }
