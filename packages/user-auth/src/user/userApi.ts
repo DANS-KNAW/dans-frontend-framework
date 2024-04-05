@@ -78,6 +78,10 @@ export const userSubmissionsApi = createApi({
       transformResponse: (response: { assets: SubmissionResponse[] }) => {
         return response.assets;
       },
+      transformErrorResponse: (response) => {
+        console.log(response)
+        return { error: i18n.t("fetchFormError", { ns: "user" }) };
+      },
     }),
   }),
 });
@@ -105,8 +109,15 @@ export const validateKeyApi = createApi({
       },
       transformResponse: (response: { status: string | number }) =>
         response.status,
-      // response for setting the error snackbar, but we might not use this..
-      transformErrorResponse: () => i18n.t("keyError", { ns: "user" }),
+      // response for setting the error snackbar
+      transformErrorResponse: (response) => {
+        console.log(response)
+        // show snackbar only on server fetch error, not for invalid keys
+        if (response.status === 'FETCH_ERROR') {
+          return { error: i18n.t("fetchApiKeyError", { ns: "user" }) };
+        }
+        return;
+      },
     }),
     validateAllKeys: build.query({
       // this will return all targets that have an invalid API key set

@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { errorLogger } from "@dans-framework/utils/error";
 import { userApi, userSubmissionsApi, validateKeyApi } from "../user/userApi";
 import userReducer, {
   resetFormActions,
@@ -16,7 +17,8 @@ export const store = configureStore({
     getDefaultMiddleware()
       .concat(userApi.middleware)
       .concat(userSubmissionsApi.middleware)
-      .concat(validateKeyApi.middleware),
+      .concat(validateKeyApi.middleware)
+      .concat(errorLogger)
 });
 
 export const initUserProfile = ({

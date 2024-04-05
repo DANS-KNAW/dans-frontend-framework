@@ -42,6 +42,7 @@ import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
 import { getFormActions, clearFormActions } from "@dans-framework/user-auth";
+import { enqueueSnackbar } from "notistack";
 
 const Submit = ({
   hasTargetCredentials,
@@ -120,7 +121,11 @@ const Submit = ({
         })),
       ),
       title: eval(`metadata${formConfig.formTitle}`)?.value, // eval...should not pose a risk, as we define the formConfig in the code
-    }));
+    }))
+    .catch( () => {
+      // make sure we display an error when there's an issue signing in/refreshing the user's token
+      enqueueSnackbar("Athentication error", { variant: "customError" });
+    });
 
   // remove warning when files get added
   useEffect(() => {
