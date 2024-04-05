@@ -48,7 +48,7 @@ const Footer = ({ top, bottom }: FooterType) => {
           <Grid container columns={columnsBottom}>
             {bottom.map((item, i) => (
               <Grid xs={2} md={1} key={i}>
-                <FooterContent {...item} />
+                <FooterContent {...item} align={columnsBottom - 1 === i ? 'right' : undefined} bottom={true} />
               </Grid>
             ))}
           </Grid>
@@ -58,7 +58,7 @@ const Footer = ({ top, bottom }: FooterType) => {
   );
 };
 
-const FooterContent = ({ header, links, freetext, image }: FooterContent) => {
+const FooterContent = ({ header, links, freetext, image, align, bottom }: FooterContent) => {
   const { i18n } = useTranslation();
   return (
     <Stack direction="column" alignItems="start">
@@ -69,8 +69,18 @@ const FooterContent = ({ header, links, freetext, image }: FooterContent) => {
       )}
       {image && <img src={image.src} alt={image.alt} />}
       {freetext && (
-        <Box sx={{ a: { color: "primary.main", textDecoration: "none" } }}>
-          {parse(lookupLanguageString(freetext, i18n.language) || "")}
+        <Box sx={{ 
+          a: {
+            color: "primary.main",
+            textDecoration: "none",
+          }, 
+          textAlign: {
+            xs: bottom ? 'center' : 'left',
+            md: align || 'left', 
+            width: '100%',
+          },
+        }}>
+          {parse(lookupLanguageString(freetext, i18n.language) as string)}
         </Box>
       )}
       {links &&

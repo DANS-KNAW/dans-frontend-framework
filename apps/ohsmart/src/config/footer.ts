@@ -125,15 +125,12 @@ const footer = {
   ],
   bottom: [
     {
-      freetext: {
-        en: "© DANS 2022, 2023 using DANS Open Data APIs.",
-        nl: "© DANS 2022, 2023. Gebruikt DANS Open Data API's.",
-      },
+      freetext: `© DANS ${new Date().getFullYear()}`,
     },
     {
       freetext: {
-        en: "Includes Functionality by The Dataverse Project 5.10.1 build 907-b844672",
-        nl: "Gebruikt functionaliteit van The Dataverse Project 5.10.1 build 907-b844672",
+        en: "Includes Functionality by The Dataverse Project",
+        nl: "Gebruikt functionaliteit van The Dataverse Project",
       },
     },
   ],
