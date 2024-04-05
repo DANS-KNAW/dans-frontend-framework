@@ -4,7 +4,7 @@ import type { Page } from "@dans-framework/pages";
 const page: Page = {
   id: "home",
   name: "Home",
-  slug: "",
+  slug: "/",
   template: "generic",
   inMenu: true,
   menuTitle: "Home",

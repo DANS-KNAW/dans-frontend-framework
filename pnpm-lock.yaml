@@ -496,6 +496,9 @@ importers:
       ngeohash:
         specifier: ^0.6.3
         version: 0.6.3
+      notistack:
+        specifier: ^3.0.1
+        version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
       ol:
         specifier: ^7.3.0
         version: 7.5.2
@@ -533,6 +536,9 @@ importers:
       typescript:
         specifier: ^5.0.3
         version: 5.1.6
+      vite:
+        specifier: ^4.4.5
+        version: 4.4.5(@types/node@18.0.6)
 
   packages/theme:
     dependencies:
