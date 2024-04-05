@@ -8,6 +8,7 @@ import {
   useSnackbar,
 } from "notistack";
 import Alert from "@mui/material/Alert";
+import Typography from "@mui/material/Typography";
 import AlertTitle from "@mui/material/AlertTitle";
 
 /**
@@ -18,11 +19,13 @@ export const errorLogger: Middleware = () => (next) => (action) => {
   if (isRejectedWithValue(action)) {
     console.error("We got a rejected action!");
     console.error(action);
-    // Convert the error to a string, probably is one already, but just in case
-    const error = JSON.stringify(
-      action.payload.error || action.payload,
-    ).replaceAll('"', "");
-    enqueueSnackbar(error, { variant: "customError", persist: true });
+    // Set error message, keep it simple for the user
+    const error = action.payload.error || action.payload.data || action.error.message;
+    console.log(error)
+    // Ugly check for not showing snackbar on invalid API key, as called in the Deposit package
+    if (action.meta.arg.endpointName !== "validateAllKeys") {
+      enqueueSnackbar(error, { variant: "customError" });
+    }
   }
 
   return next(action);
@@ -48,8 +51,8 @@ export const CustomError = forwardRef<HTMLDivElement, CustomContentProps>(
           }}
           onClose={handleDismiss}
         >
-          <AlertTitle>Error!</AlertTitle>
-          {message}
+          <AlertTitle>Something went wrong: {message}</AlertTitle>
+          <Typography>This error has been forwarded to our support team.</Typography>
         </Alert>
       </SnackbarContent>
     );

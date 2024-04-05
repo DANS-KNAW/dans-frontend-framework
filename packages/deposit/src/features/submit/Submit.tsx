@@ -37,7 +37,7 @@ import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
 import { getFormActions, clearFormActions } from "@dans-framework/user-auth";
-import { useDebouncedCallback } from 'use-debounce';
+import { enqueueSnackbar } from "notistack";
 
 const Submit = ({
   hasTargetCredentials,
@@ -101,8 +101,26 @@ const Submit = ({
   ] = useSubmitFilesMutation();
 
   // Access token might just be expiring, or user settings just changed
-  // So we do a callback to signinSilent, which refreshes the current user
-  const getUser = () => auth.signinSilent().then(() => auth.user);
+  // we get the required submit header data as a callback to signinSilent, which refreshes the current user
+  const getHeaderData = () =>
+    auth.signinSilent().then(() => ({
+      // we use the Keycloak access token if no auth key is set manually in the form config
+      submitKey: formConfig.submitKey || auth.user?.access_token,
+      userId: auth.user?.profile.sub,
+      targetCredentials: formConfig.targetCredentials,
+      target: formConfig.target,
+      targetKeys: Object.assign(
+        {},
+        ...formConfig.targetCredentials.map((t) => ({
+          [t.authKey]: auth.user?.profile[t.authKey],
+        })),
+      ),
+      title: eval(`metadata${formConfig.formTitle}`)?.value, // eval...should not pose a risk, as we define the formConfig in the code
+    }))
+    .catch( () => {
+      // make sure we display an error when there's an issue signing in/refreshing the user's token
+      enqueueSnackbar("Athentication error", { variant: "customError" });
+    });
 
   // remove warning when files get added
   useEffect(() => {

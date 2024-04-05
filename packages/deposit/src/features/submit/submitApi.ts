@@ -96,7 +96,7 @@ const axiosBaseQuery =
         );
       } else {
         store.dispatch(setMetadataSubmitStatus("error"));
-      }
+      }      
       return {
         error: {
           status: err.response?.status,
@@ -181,6 +181,7 @@ export const submitApi = createApi({
         if (metadataResult.error) {
           // enable form again if there's an error, so user can try and resubmit
           store.dispatch(setFormDisabled(false));
+          console.log(metadataResult.error)
           return { error: metadataResult.error as FetchBaseQueryError };
         }
 
