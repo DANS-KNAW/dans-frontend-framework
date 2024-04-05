@@ -254,35 +254,45 @@ const SubmissionList = ({
         width: 250,
         renderCell: (params) => (
           // render a confirm delete button in the title cell
-          <AnimatePresence>
-            {toDelete === params.row.id &&
-              <motion.div
-                layout
-                key="delete"
-                initial={{ x: "-100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "-100%" }}
-              >
-                <Button
-                  size="small"
-                  variant="contained"
-                  sx={{
-                    fontSize: 11,
-                    mr: 1,
-                  }}
-                  color="error"
-                  onClick={ 
-                    // delete call to server
-                    () => console.log('delete')
-                  }>
-                  {t("confirmDelete")}
-                </Button>
+          <Stack 
+            direction="row" 
+            sx={{
+              overflow: 'hidden', 
+              width: '100%',
+            }} 
+            alignItems="center"
+            title={params.value}
+          >
+            <AnimatePresence>
+              {toDelete === params.row.id &&
+                <motion.div
+                  layout
+                  key="delete"
+                  initial={{ x: "-100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "-100%" }}
+                >
+                  <Button
+                    size="small"
+                    variant="contained"
+                    sx={{
+                      fontSize: 11,
+                      mr: 1,
+                    }}
+                    color="error"
+                    onClick={ 
+                      // delete call to server
+                      () => console.log('delete')
+                    }>
+                    {t("confirmDelete")}
+                  </Button>
+                </motion.div>
+              }
+              <motion.div layout>
+                {params.value ? params.value : t("noTitle")}
               </motion.div>
-            }
-            <motion.div layout>
-              {params.value ? params.value : t("noTitle")}
-            </motion.div>
-          </AnimatePresence>
+            </AnimatePresence>
+          </Stack>
         ),
       },
       {
