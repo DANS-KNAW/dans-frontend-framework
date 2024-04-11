@@ -52,8 +52,6 @@ const DateTimeField = ({
     }
   }, [error]);
 
-  console.log(field.minDate)
-
   return (
     <Stack direction="row" alignItems="start">
       {field.formatOptions && (
