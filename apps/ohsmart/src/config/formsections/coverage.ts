@@ -71,6 +71,7 @@ const section: InitialSectionType = {
             en: "The start of a period the interview covers",
             nl: "Start van een periode waar het interview over gaat",
           },
+          minDateField: "subject_date_time_end", // note that this will only work within the same field group
         },
         {
           type: "date",

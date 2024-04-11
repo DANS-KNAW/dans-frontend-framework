@@ -14,6 +14,7 @@ import type {
   InputField,
   TypeaheadAPI,
   DateTimeFormat,
+  DateFieldType,
 } from "../../types/MetadataFields";
 import type {
   InitialStateType,
@@ -27,6 +28,7 @@ import {
   formatInitialState,
   findById,
   findConditionalChanges,
+  // findFieldInGroup,
 } from "./metadataHelpers";
 import { v4 as uuidv4 } from "uuid";
 
@@ -84,19 +86,30 @@ export const metadataSlice = createSlice({
         if (field.makesRequired) {
           const requiredIds =
             field.makesRequiredIds ||
-            findConditionalChanges(action.payload.id, section.fields);
+            findConditionalChanges(action.payload.id, section.fields, 'makesRequired');
           if (!field.makesRequiredIds) {
             field.makesRequiredIds = requiredIds;
           }
           // change the conditional fields required state
           requiredIds &&
             requiredIds.map((id) => {
-              console.log(id)
               const changeField = findById(id, section.fields);
               if (changeField) {
                 changeField.required = action.payload.value ? true : undefined;
               }
             });
+        }
+
+        // Logic for setting a min and max date, if applicable
+        // TODO: Perhaps create a daterange field, cleaner
+        if (field.minDateField) {
+          const fieldIds = findConditionalChanges(action.payload.id, section.fields, 'minDateField');
+          fieldIds && fieldIds.map(id => {
+            const changeField = findById(id, section.fields);
+            if (changeField) {
+              (changeField as DateFieldType).minDate = action.payload.value as string
+            }
+          })
         }
 
         // After every input, we need to update field valid status and section status as well.
