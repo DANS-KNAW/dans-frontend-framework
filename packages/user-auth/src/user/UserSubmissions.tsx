@@ -232,7 +232,7 @@ const SubmissionList = ({
               />
             </Tooltip>,
             (type === "draft" || params.row.error) && (
-              // Delete an item, for drafts, maybe for errored submissions? todo
+              // Delete an item, for drafts and for errored submissions. todo
               <Tooltip title={t(toDelete === params.row.id ? "undeleteItem" : "deleteItem")} placement="bottom">
                 <GridActionsCellItem
                   icon={toDelete === params.row.id ? <CloseIcon/> : <DeleteIcon />}
@@ -266,8 +266,7 @@ const SubmissionList = ({
             <AnimatePresence>
               {toDelete === params.row.id &&
                 <motion.div
-                  layout
-                  key="delete"
+                  key={`delete-${params.row.id}`}
                   initial={{ x: "-100%" }}
                   animate={{ x: 0 }}
                   exit={{ x: "-100%" }}
@@ -288,7 +287,7 @@ const SubmissionList = ({
                   </Button>
                 </motion.div>
               }
-              <motion.div layout>
+              <motion.div layout key={`title-${params.row.id}`}>
                 {params.value ? params.value : t("noTitle")}
               </motion.div>
             </AnimatePresence>

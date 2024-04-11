@@ -43,6 +43,8 @@ export interface TextFieldType extends BasisFieldType {
   fields?: never;
   multiApiValue?: never;
   options?: never;
+  minDateField?: never;
+  maxDateField?: never;
 }
 
 export interface DateFieldType extends BasisFieldType {
@@ -56,6 +58,8 @@ export interface DateFieldType extends BasisFieldType {
   multiApiValue?: never;
   options?: never;
   autofill?: never;
+  minDateField?: string;
+  maxDateField?: string;
 }
 
 export interface AutocompleteFieldType
@@ -71,6 +75,8 @@ export interface AutocompleteFieldType
   fields?: never;
   format?: never;
   autofill?: never;
+  minDateField?: never;
+  maxDateField?: never;
 }
 
 export interface GroupedFieldType
@@ -85,6 +91,8 @@ export interface GroupedFieldType
   format?: never;
   touched?: never;
   autofill?: never;
+  minDateField?: never;
+  maxDateField?: never;
 }
 
 export interface RepeatGroupedFieldType
@@ -109,6 +117,8 @@ export interface RepeatTextFieldType
   format?: never;
   touched?: never;
   autofill?: never;
+  minDateField?: never;
+  maxDateField?: never;
 }
 
 export interface RadioFieldType
@@ -123,6 +133,8 @@ export interface RadioFieldType
   fields?: never;
   format?: never;
   autofill?: never;
+  minDateField?: never;
+  maxDateField?: never;
 }
 
 export interface CheckFieldType
@@ -137,6 +149,8 @@ export interface CheckFieldType
   fields?: never;
   format?: never;
   autofill?: never;
+  minDateField?: never;
+  maxDateField?: never;
 }
 
 // Date and time formats to be used in a Date field
