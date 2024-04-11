@@ -25,5 +25,7 @@
   "DD-MM-YYYY": "Datum",
   "DD-MM-YYYY HH:mm": "Datum en tijd",
   "freetextLabel": "Niet gevonden in {{api}}",
-  "freetextContent": "Voeg \"{{name}}\" als custom waarde"
+  "freetextContent": "Voeg \"{{name}}\" als custom waarde",
+  "dateInvalid": "Datum/tijd is ongeldig",
+  "dateMin": "Moet na de startdatum/tijd komen"
 }

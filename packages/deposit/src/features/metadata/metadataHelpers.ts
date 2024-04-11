@@ -51,12 +51,13 @@ export const findById = (id: string, fields: Field[]): Field | undefined => {
 export const findConditionalChanges = (
   id: string,
   fields: Field[],
+  searchKey: 'makesRequired' | 'minDateField',
 ): string[] | undefined => {
   for (let item of fields) {
-    if (item.id === id && item.makesRequired) {
-      console.log('ja')
-      return item.makesRequired
-        .map((name) => fields.map((f) => f.name === name && f.id))
+    if (item.id === id && item[searchKey]) {
+      const toFind = (Array.isArray(item[searchKey]) ? item[searchKey] : [item[searchKey]]) as string[];
+      return toFind 
+        .map((name: string) => fields.map((f) => f.name === name && f.id))
         .flat()
         .filter(Boolean) as string[];
     }
@@ -64,7 +65,7 @@ export const findConditionalChanges = (
       let result = item.fields
         .map(
           (fieldGroup) =>
-            Array.isArray(fieldGroup) && findConditionalChanges(id, fieldGroup),
+            Array.isArray(fieldGroup) && findConditionalChanges(id, fieldGroup, searchKey),
         )
         .flat()
         .filter(Boolean) as string[];
