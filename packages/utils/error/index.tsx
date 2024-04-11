@@ -26,6 +26,16 @@ export const errorLogger: Middleware = () => (next) => (action) => {
     if (action.meta.arg.endpointName !== "validateAllKeys") {
       enqueueSnackbar(error, { variant: "customError" });
     }
+    // Set conditions for when to post a ticket to freshdesk, if freshdesk is enabled
+    if (
+      // freshdesk enabled?
+      import.meta.env.VITE_FRESHDESK_API_KEY &&
+      import.meta.env.VITE_FRESHDESK_URL &&
+      // some conditions when not to create a ticket
+      action.meta.arg.endpointName !== "validateAllKeys"
+    ) {
+      sendTicket(action);
+    }
   }
 
   return next(action);
@@ -63,4 +73,34 @@ declare module "notistack" {
   interface VariantOverrides {
     customError: true;
   }
+}
+
+// Freshdesk ticketing system
+const sendTicket = async (data: any) => {
+  const encodedCredentials = btoa(`${import.meta.env.VITE_FRESHDESK_API_KEY}:X`);
+  const response = await fetch(
+    `${import.meta.env.VITE_FRESHDESK_URL}/api/v2/tickets`,
+    { 
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${encodedCredentials}`,
+      },
+      body: JSON.stringify({
+        subject: "Frontend framework form error",
+        description: data,
+      })
+    }
+  );
+
+  if (!response.ok) {
+    console.error('Error submitting freshdesk ticket');
+    console.error(response);
+    return;
+  }
+
+  const json = await response.json();
+
+  console.log('Freshdesk ticket submitted');
+  console.log(json);
 }
