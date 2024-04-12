@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { DatastationsResponse } from "../../../types/Api";
 import type { Datastations } from "../../../types/MetadataFields";
+import i18n from '../../../languages/i18n';
 
 // map short vocab terms to their API vocab counterparts
 const vocabMap: Record<Datastations, string> = {
@@ -39,6 +40,7 @@ export const datastationsApi = createApi({
             }
           : [];
       },
+      transformErrorResponse: (_response, _meta, arg) => ({ error: i18n.t('metadata:apiFetchError', {api: arg.vocabulary.toUpperCase()}) }),
     }),
   }),
 });

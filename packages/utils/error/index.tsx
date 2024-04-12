@@ -80,7 +80,7 @@ export const CustomError = forwardRef<HTMLDivElement, CustomErrorProps>(
           }}
           onClose={handleDismiss}
         >
-          <AlertTitle>Something went wrong: {message}</AlertTitle>
+          <AlertTitle>Error: {message}</AlertTitle>
           {ticket && <Typography>This error has been forwarded to our support team.</Typography>}
         </Alert>
       </SnackbarContent>

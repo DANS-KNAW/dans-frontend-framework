@@ -182,7 +182,17 @@ export const submitApi = createApi({
           // enable form again if there's an error, so user can try and resubmit
           store.dispatch(setFormDisabled(false));
           console.log(metadataResult.error)
-          return { error: metadataResult.error as FetchBaseQueryError };
+          return { 
+            error: {
+              ...metadataResult.error as FetchBaseQueryError,
+              data: i18n.t(
+                actionType === "save" ? "saveErrorNotification" : "submitErrorNotification", {
+                  ns: "submit",
+                  error: (metadataResult.error as FetchBaseQueryError).data,
+                }
+              )
+            }
+          };
         }
 
         return { data: metadataResult };
@@ -234,7 +244,18 @@ export const submitApi = createApi({
           filesResults &&
           filesResults.filter((res: any) => res.error as FetchBaseQueryError);
         if (Array.isArray(filesErrors) && filesErrors.length > 0)
-          return { error: filesErrors };
+          return { 
+            error: {
+              // lets just take the first error message
+              ...filesErrors[0].error as FetchBaseQueryError,
+              data: i18n.t(
+                actionType === "save" ? "saveFileErrorNotification" : "submitFileErrorNotification", {
+                  ns: "submit",
+                  error: (filesErrors[0].error as FetchBaseQueryError).data,
+                }
+              )
+            }
+          };
 
         if (actionType === "save") {
           // show notice and enable form again after successful save
