@@ -10,6 +10,8 @@ import type { Target } from "@dans-framework/user-auth";
 import moment from "moment";
 import { enqueueSnackbar } from "notistack";
 import i18n from "../../languages/i18n";
+import { formatFormData, formatFileData } from "./submitHelpers";
+import type { SubmitData } from "../../types/Submit";
 
 // We use Axios to enable file upload progress monitoring
 const axiosBaseQuery =
@@ -114,30 +116,46 @@ export const submitApi = createApi({
       // Custom query for chaining Post functions
       // submitKey is the current users Keycloak token
       async queryFn(
-        { data, headerData, actionType },
-        _queryApi,
+        { user, actionType },
+        queryApi,
         _extraOptions,
         fetchWithBQ,
       ) {
+        const { metadata, deposit, files } = queryApi.getState() as SubmitData;
+        const data = formatFormData(
+          metadata.id,
+          metadata.form,
+          files,
+        );
+        
         console.log("Submit metadata:");
-        console.log(data);
+
+        // Some logic to help find the title value
+        const parsedPath = deposit.config.formTitle.split(/[\[\]\.]/)
+          .filter(Boolean)
+          .map((part: string) => isNaN(parseInt(part)) ? part : parseInt(part));
 
         // Format the headers
         const headers = {
-          Authorization: `Bearer ${headerData.submitKey}`,
-          "user-id": headerData.userId,
-          "auth-env-name": headerData.target.envName,
-          "assistant-config-name": headerData.target.configName,
+          Authorization: `Bearer ${deposit.config.submitKey || user?.access_token}`,
+          "user-id": user?.profile.sub,
+          "auth-env-name": deposit.config.target?.envName,
+          "assistant-config-name": deposit.config.target?.configName,
           "targets-credentials": JSON.stringify(
-            headerData.targetCredentials.map((t: Target) => ({
+            deposit.config.targetCredentials.map((t: Target) => ({
               "target-repo-name": t.repo,
               credentials: {
                 username: t.auth,
-                password: headerData.targetKeys[t.authKey],
+                password: Object.assign(
+                  {},
+                  ...deposit.config.targetCredentials.map((t) => ({
+                    [t.authKey]: user?.profile[t.authKey],
+                  })),
+                )[t.authKey],
               },
             })),
           ),
-          title: headerData.title,
+          title: parsedPath.reduce((acc: any, key: string | number) => acc[key], metadata.form)?.value,
         };
 
         console.log("Submit req headers:");
@@ -172,11 +190,25 @@ export const submitApi = createApi({
     }),
     submitFiles: build.mutation({
       async queryFn(
-        { data, headerData, actionType },
-        _queryApi,
+        { user, actionType },
+        queryApi,
         _extraOptions,
         fetchWithBQ,
       ) {
+        const { metadata, deposit, files } = queryApi.getState() as SubmitData;
+        const filesToUpload = files.filter((f) => !f.submittedFile);
+        // formatting the file data can take a while, so in the meantime, we activate a spinner
+        filesToUpload.forEach((f) =>
+          store.dispatch(
+            setFilesSubmitStatus({
+              id: f.id as string,
+              progress: undefined,
+              status: "submitting",
+            }),
+          ),
+        );
+        // then format and start submitting
+        const data = await formatFileData(metadata.id, filesToUpload);
         console.log("Submitting files");
 
         const filesResults =
@@ -188,8 +220,8 @@ export const submitApi = createApi({
                 method: "POST",
                 data: file,
                 headers: {
-                  Authorization: `Bearer ${headerData.submitKey}`,
-                  "auth-env-name": headerData.target.envName,
+                  Authorization: `Bearer ${deposit.config.submitKey || user?.access_token}`,
+                  "auth-env-name": deposit.config.target?.envName,
                 },
               }),
             ),
