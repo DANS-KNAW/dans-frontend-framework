@@ -31,5 +31,7 @@
   "DD-MM-YYYY": "Date",
   "DD-MM-YYYY HH:mm": "Date and time",
   "freetextLabel": "Not found in {{api}}",
-  "freetextContent": "Add \"{{name}}\" as custom value"
+  "freetextContent": "Add \"{{name}}\" as custom value",
+  "dateInvalid": "Date/time is invalid",
+  "dateMin": "Must be later than starting date/time"
 }

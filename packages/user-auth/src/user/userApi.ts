@@ -5,8 +5,10 @@ import type { SubmissionResponse, AuthKeys } from "../types";
 import i18n from "../languages/i18n";
 import { enqueueSnackbar } from "notistack";
 
-function getUser(provider: string, id: string) {
-  const oidcStorage = sessionStorage.getItem(`oidc.user:${provider}:${id}`);
+const getUser = () => {
+  const oidcStorage = sessionStorage.getItem(
+    `oidc.user:${import.meta.env.VITE_OIDC_AUTHORITY}:${import.meta.env.VITE_OIDC_CLIENT_ID}`
+  );
   if (!oidcStorage) {
     return null;
   }
@@ -21,8 +23,8 @@ export const userApi = createApi({
   endpoints: (build) => ({
     fetchUserProfile: build.query({
       // Note: may not be needed, could possibly user auth.user. TODO?
-      query: (id) => {
-        const user = getUser(import.meta.env.VITE_OIDC_AUTHORITY, id);
+      query: () => {
+        const user = getUser();
         const token = user?.access_token;
         return {
           url: "account",
@@ -35,8 +37,8 @@ export const userApi = createApi({
       providesTags: ["User"],
     }),
     saveUserData: build.mutation({
-      query: ({ id, content }) => {
-        const user = getUser(import.meta.env.VITE_OIDC_AUTHORITY, id);
+      query: ({ content }) => {
+        const user = getUser();
         const token = user?.access_token;
         return {
           url: "account",
@@ -78,6 +80,10 @@ export const userSubmissionsApi = createApi({
       transformResponse: (response: { assets: SubmissionResponse[] }) => {
         return response.assets;
       },
+      transformErrorResponse: (response) => {
+        console.log(response)
+        return { error: i18n.t("fetchFormError", { ns: "user" }) };
+      },
     }),
   }),
 });
@@ -105,8 +111,15 @@ export const validateKeyApi = createApi({
       },
       transformResponse: (response: { status: string | number }) =>
         response.status,
-      // response for setting the error snackbar, but we might not use this..
-      transformErrorResponse: () => i18n.t("keyError", { ns: "user" }),
+      // response for setting the error snackbar
+      transformErrorResponse: (response) => {
+        console.log(response)
+        // show snackbar only on server fetch error, not for invalid keys
+        if (response.status === 'FETCH_ERROR') {
+          return { error: i18n.t("fetchApiKeyError", { ns: "user" }) };
+        }
+        return;
+      },
     }),
     validateAllKeys: build.query({
       // this will return all targets that have an invalid API key set

@@ -84,7 +84,8 @@ const MenuBar = ({
                           underline="none"
                           color="inherit"
                           component={RouterLink}
-                          to={page.slug}
+                          to={(page.slug || page.link) as string}
+                          target={page.newTab ? "_blank" : "_self"}
                         >
                           {lookupLanguageString(page.menuTitle, i18n.language)}
                         </Link>
@@ -128,7 +129,8 @@ const MenuBar = ({
                       onClick={handleCloseNavMenu}
                       sx={{ my: 2, display: "block", color: "inherit" }}
                       component={RouterLink}
-                      to={page.slug}
+                      to={(page.slug || page.link) as string}
+                      target={page.newTab ? "_blank" : "_self"}
                     >
                       {lookupLanguageString(page.menuTitle, i18n.language)}
                     </Button>

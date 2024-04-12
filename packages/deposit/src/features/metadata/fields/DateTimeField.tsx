@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import Stack from "@mui/material/Stack";
 import { DateTimeField as MUIDateTimeField } from "@mui/x-date-pickers/DateTimeField";
 import moment, { Moment } from "moment";
@@ -15,6 +16,7 @@ import { getFieldStatus } from "../metadataHelpers";
 import type { DateFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled } from "../../../deposit/depositSlice";
+import type { DateValidationError } from '@mui/x-date-pickers/models';
 
 // Date and time selection component
 // Allows a user to select input type (date and time, date, month and year, year) if specified in config
@@ -30,6 +32,25 @@ const DateTimeField = ({
   const status = getFieldStatus(field);
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
+
+  const [error, setError] = useState<DateValidationError | null>(null);
+
+  const errorMessage = useMemo(() => {
+    switch (error) {
+      case 'maxDate':
+      case 'minDate': {
+        return t("dateMin");
+      }
+
+      case 'invalidDate': {
+        return t("dateInvalid");
+      }
+
+      default: {
+        return '';
+      }
+    }
+  }, [error]);
 
   return (
     <Stack direction="row" alignItems="start">
@@ -102,6 +123,7 @@ const DateTimeField = ({
             }),
           );
         }}
+        onError={(newError) => setError(newError as DateValidationError)}
         sx={{
           mt: groupedFieldId && currentField !== 0 ? 1 : 0,
         }}
@@ -120,7 +142,10 @@ const DateTimeField = ({
         }}
         inputProps={{ "data-testid": `${field.name}-${field.id}` }}
         slotProps={{
-          textField: { error: status === "error" && field.touched },
+          textField: { 
+            error: (status === "error" && field.touched) || error ? true : false,
+            helperText: errorMessage,
+          },
         }}
       />
       {groupedFieldId &&

@@ -16,6 +16,8 @@
 	"apiKeyHeader": "{{type}} API key",
 	"apiKeyLabel": "Your personal {{type}} API key",
 	"keyError": "This API key is invalid",
+	"fetchFormError": "Network error, couldn't fetch your forms",
+	"fetchApiKeyError": "Could not connect to the API key server",
 	"keySaved": "Your API key has been saved",
 	"goToDeposit": "Deposit your data",
 	"userSubmissionsDrafts": "Saved forms",
@@ -45,6 +47,9 @@
 	"copyItem": "Copy this dataset for a new submission",
 	"editItem": "Edit this saved dataset",
 	"viewItem": "View this submission",
+	"deleteItem": "Delete this form",
+	"undeleteItem": "Cancel delete",
+	"confirmDelete": "Confirm deletion",
 	"viewItemReadOnly": "As read only form",
 	"viewItemTarget": "On {{name}}"
 }

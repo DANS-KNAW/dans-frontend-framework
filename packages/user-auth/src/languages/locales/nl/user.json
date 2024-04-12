@@ -16,6 +16,8 @@
 	"apiKeyHeader": "{{type}} API sleutel",
 	"apiKeyLabel": "Je persoonlijke {{type}} API sleutel",
 	"keyError": "Deze API sleutel is ongeldig",
+	"fetchFormError": "Netwerkfout, kan je formulieren niet laden",
+	"fetchApiKeyError": "Kan niet verbinden met de API sleutel server",
 	"keySaved": "Je API sleutel is opgeslagen",
 	"goToDeposit": "Naar data indienen",
 	"userSubmissionsDrafts": "Opgeslagen formulieren",
@@ -45,6 +47,9 @@
 	"copyItem": "Kopiëer deze dataset voor een nieuwe submissie",
 	"editItem": "Bewerk deze opgeslagen dataset",
 	"viewItem": "Bekijk deze submissie",
+	"deleteItem": "Verwijder dit formulier",
+	"undeleteItem": "Annuleer verwijderen",
+	"confirmDelete": "Bevestig verwijderen",
 	"viewItemReadOnly": "Als alleen-lezen form",
 	"viewItemTarget": "Op {{name}}"
 }

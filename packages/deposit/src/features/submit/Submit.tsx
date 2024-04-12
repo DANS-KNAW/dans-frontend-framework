@@ -38,6 +38,7 @@ import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
 import { getFormActions, clearFormActions } from "@dans-framework/user-auth";
 import { useDebouncedCallback } from 'use-debounce';
+import { enqueueSnackbar } from "notistack";
 
 const Submit = ({
   hasTargetCredentials,
@@ -102,7 +103,12 @@ const Submit = ({
 
   // Access token might just be expiring, or user settings just changed
   // So we do a callback to signinSilent, which refreshes the current user
-  const getUser = () => auth.signinSilent().then(() => auth.user);
+  const getUser = () => auth.signinSilent()
+    .then(() => auth.user)
+    .catch( () => {
+      // make sure we display an error when there's an issue signing in/refreshing the user's token
+      enqueueSnackbar("Athentication error", { variant: "customError" });
+    });
 
   // remove warning when files get added
   useEffect(() => {
