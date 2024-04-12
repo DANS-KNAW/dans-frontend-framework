@@ -38,15 +38,12 @@ export const UserSettings = ({
 }) => {
   const { t } = useTranslation("user");
   const siteTitle = useSiteTitle();
-  const auth = useAuth();
 
   useEffect(() => {
     setSiteTitle(siteTitle, t("userSettings"));
   }, [siteTitle, name]);
 
-  const { data: profileData } = useFetchUserProfileQuery(
-    auth.settings.client_id,
-  );
+  const { data: profileData } = useFetchUserProfileQuery(null);
 
   // Check if all API keys are valid, to enable/disable button, but make sure they're in the users profile first
   const validateTargets = target.map((t) => ({
@@ -150,7 +147,6 @@ const UserSettingsItem = ({ target }: { target: Target }) => {
           profileData.attributes[target.authKey][0] !== apiValue))
     ) {
       saveData({
-        id: auth.user?.profile.aud,
         content: {
           // need to pass along the entire account object to Keycloak
           ...profileData,
