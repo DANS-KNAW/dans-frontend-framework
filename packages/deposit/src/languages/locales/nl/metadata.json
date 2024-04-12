@@ -27,5 +27,6 @@
   "freetextLabel": "Niet gevonden in {{api}}",
   "freetextContent": "Voeg \"{{name}}\" als custom waarde",
   "dateInvalid": "Datum/tijd is ongeldig",
-  "dateMin": "Moet na de startdatum/tijd komen"
+  "dateMin": "Moet na de startdatum/tijd komen",
+  "apiFetchError": "Kan geen data ophalen van {{api}}"
 }

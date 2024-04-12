@@ -13,5 +13,9 @@
   "resubmit": "Resubmit data",
   "submitAnyway": "Submit without files",
   "errorRetry": "Please try again or contact an administrator",
-  "save": "Save"
+  "save": "Save",
+  "saveErrorNotification": "Failed to save metadata - {{error}}",
+  "submitErrorNotification": "Failed to submit metadata - {{error}}",
+  "saveFileErrorNotification": "Failed to save files - {{error}}",
+  "submitFileErrorNotification": "Failed to submit files - {{error}}"
 }

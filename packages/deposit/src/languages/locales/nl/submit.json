@@ -13,5 +13,9 @@
   "resubmit": "Hersubmit data",
   "submitAnyway": "Verstuur zonder bestanden",
   "errorRetry": "Probeer het nog eens of neem contact met ons op",
-  "save": "Opslaan"
+  "save": "Opslaan",
+  "saveErrorNotification": "Kan niet opslaan - {{error}}",
+  "submitErrorNotification": "Kan niet submitten - {{error}}",
+  "saveFileErrorNotification": "Kan bestanden niet opslaan - {{error}}",
+  "submitFileErrorNotification": "Kan bestanden niet submitten - {{error}}"
 }
