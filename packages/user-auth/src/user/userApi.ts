@@ -5,8 +5,10 @@ import type { SubmissionResponse, AuthKeys } from "../types";
 import i18n from "../languages/i18n";
 import { enqueueSnackbar } from "notistack";
 
-function getUser(provider: string, id: string) {
-  const oidcStorage = sessionStorage.getItem(`oidc.user:${provider}:${id}`);
+const getUser = () => {
+  const oidcStorage = sessionStorage.getItem(
+    `oidc.user:${import.meta.env.VITE_OIDC_AUTHORITY}:${import.meta.env.VITE_OIDC_CLIENT_ID}`
+  );
   if (!oidcStorage) {
     return null;
   }
@@ -21,8 +23,8 @@ export const userApi = createApi({
   endpoints: (build) => ({
     fetchUserProfile: build.query({
       // Note: may not be needed, could possibly user auth.user. TODO?
-      query: (id) => {
-        const user = getUser(import.meta.env.VITE_OIDC_AUTHORITY, id);
+      query: () => {
+        const user = getUser();
         const token = user?.access_token;
         return {
           url: "account",
@@ -35,8 +37,8 @@ export const userApi = createApi({
       providesTags: ["User"],
     }),
     saveUserData: build.mutation({
-      query: ({ id, content }) => {
-        const user = getUser(import.meta.env.VITE_OIDC_AUTHORITY, id);
+      query: ({ content }) => {
+        const user = getUser();
         const token = user?.access_token;
         return {
           url: "account",
