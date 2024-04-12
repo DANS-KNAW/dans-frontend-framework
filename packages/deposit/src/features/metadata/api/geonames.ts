@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { GeonamesResponse } from "../../../types/Api";
+import i18n from '../../../languages/i18n';
 
 export const geonamesApi = createApi({
   reducerPath: "geonames",
@@ -27,6 +28,7 @@ export const geonamesApi = createApi({
             }
           : [];
       },
+      transformErrorResponse: () => ({ error: i18n.t('metadata:apiFetchError', {api: 'Geonames'}) }),
     }),
   }),
 });

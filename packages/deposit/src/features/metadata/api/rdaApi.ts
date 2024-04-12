@@ -6,6 +6,7 @@ import type {
   RdaDomainsResponse,
   GorcResponse,
 } from "../../../types/Api";
+import i18n from '../../../languages/i18n';
 
 /**
  * TODO: This uses a dummy API. API should provide ability to search.
@@ -46,6 +47,7 @@ export const rdaApi = createApi({
             }
           : [];
       },
+      transformErrorResponse: () => ({ error: i18n.t('metadata:apiFetchError', {api: 'RDA Domains'}) }),
     }),
     fetchRdaInterestGroup: build.query({
       query: () => "interestgroups",
@@ -79,6 +81,7 @@ export const rdaApi = createApi({
             }
           : [];
       },
+      transformErrorResponse: () => ({ error: i18n.t('metadata:apiFetchError', {api: 'RDA Pathways'}) }),
     }),
     fetchRdaWorkingGroup: build.query({
       query: () => "workinggroups",
@@ -94,6 +97,7 @@ export const rdaApi = createApi({
             }
           : [];
       },
+      transformErrorResponse: () => ({ error: i18n.t('metadata:apiFetchError', {api: 'RDA Working Groups'}) }),
     }),
     fetchGorc: build.query({
       query: () => "gorc",
@@ -120,6 +124,7 @@ export const rdaApi = createApi({
           return [];
         }
       },
+      transformErrorResponse: () => ({ error: i18n.t('metadata:apiFetchError', {api: 'GORC'}) }),
     }),
   }),
 });
