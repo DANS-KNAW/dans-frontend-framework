@@ -161,7 +161,7 @@ export type DateTimeFormat =
   | "YYYY";
 
 // API's that can be used by Autocomplete fields
-export type Datastations = "elsst" | "narcis";
+export type Datastations = "elsst" | "narcis" | "dansCollections";
 export type TypeaheadAPI =
   | "orcid"
   | "ror"
