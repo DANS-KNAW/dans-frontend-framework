@@ -17,7 +17,7 @@ import {
 import Box from "@mui/material/Box";
 import moment from "moment";
 import { useSiteTitle, setSiteTitle } from "@dans-framework/utils";
-import { useFetchUserSubmissionsQuery } from "./userApi";
+import { useFetchUserSubmissionsQuery, useDeleteSubmissionMutation } from "./userApi";
 import { useAuth } from "react-oidc-context";
 import type { SubmissionResponse, TargetOutput, DepositStatus } from "../types";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -158,7 +158,9 @@ const SubmissionList = ({
   const { t, i18n } = useTranslation("user");
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const auth = useAuth();
   const [toDelete, setToDelete] = useState<string>('');
+  const [deleteSubmission] = useDeleteSubmissionMutation();
 
   // useMemo to make sure columns don't change
   const columns = useMemo<GridColDef[]>(
@@ -281,7 +283,7 @@ const SubmissionList = ({
                     color="error"
                     onClick={ 
                       // delete call to server
-                      () => console.log('delete')
+                      () => deleteSubmission({id: params.row.id, user: auth.user})
                     }>
                     {t("confirmDelete")}
                   </Button>
@@ -323,7 +325,7 @@ const SubmissionList = ({
         ]
       : []),
     ],
-    [i18n.language, toDelete],
+    [i18n.language, toDelete, auth.user],
   );
 
   const rows =
@@ -331,7 +333,7 @@ const SubmissionList = ({
     data.map((d) => ({
       // Todo: API needs work and standardisation, also see types.
       error: d["targets"].some(
-        // Only if the error is rejected (input data related error), we offer the option to edit & resubmit
+        // Only if the error is rejected (input data related error), we offer the option to edit & resubmit & delete
         (t) => t["deposit-status"] === "rejected",
       ),
       processing: d["targets"].some(
