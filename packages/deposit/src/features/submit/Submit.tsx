@@ -165,7 +165,7 @@ const Submit = ({
         submitData({ user: auth.user, actionType: "save" });
       }
     },
-    5000
+    2000
   );
 
   useEffect(() => {

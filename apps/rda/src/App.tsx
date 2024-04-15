@@ -34,15 +34,7 @@ const App = () => {
     switch (page.template) {
       case "dashboard":
         return (
-          <RdaSearch
-            dashboard={{
-              areas: [
-                "indi date date date date",
-                "indi rights rights lang lang",
-                "pw pw wf restype reltype",
-              ],
-            }}
-          />
+          <RdaSearch dashboard />
         );
       case "search":
         return <RdaSearch />;

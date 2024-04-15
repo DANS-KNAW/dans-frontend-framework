@@ -17,6 +17,7 @@
 	"apiKeyLabel": "Je persoonlijke {{type}} API sleutel",
 	"keyError": "Deze API sleutel is ongeldig",
 	"fetchFormError": "Netwerkfout, kan je formulieren niet laden",
+	"deleteFormError": "Kan data verwijderen",
 	"fetchApiKeyError": "Kan niet verbinden met de API sleutel server",
 	"keySaved": "Je API sleutel is opgeslagen",
 	"goToDeposit": "Naar data indienen",

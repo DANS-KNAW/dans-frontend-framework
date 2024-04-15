@@ -67,6 +67,7 @@ export const userSubmissionsApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_PACKAGING_TARGET }),
   // Make sure data isn't stale and always contains freshly submitted forms
   keepUnusedDataFor: 0.1,
+  tagTypes: ['Submissions'],
   endpoints: (build) => ({
     fetchUserSubmissions: build.query({
       query: (userId) => {
@@ -84,6 +85,23 @@ export const userSubmissionsApi = createApi({
         console.log(response)
         return { error: i18n.t("fetchFormError", { ns: "user" }) };
       },
+    }),
+    deleteSubmission: build.mutation({
+      query: ({id, user}) => {
+        return {
+          url: `inbox/dataset/${id}`,
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${user.access_token}`,
+            Accept: "application/json",
+          },
+        };
+      },
+      transformErrorResponse: (response) => {
+        console.log(response)
+        return { error: i18n.t("deleteFormError", { ns: "user" }) };
+      },
+      invalidatesTags: ['Submissions'],
     }),
   }),
 });
@@ -149,4 +167,4 @@ export const { useValidateKeyQuery, useValidateAllKeysQuery } = validateKeyApi;
 
 export const { useFetchUserProfileQuery, useSaveUserDataMutation } = userApi;
 
-export const { useFetchUserSubmissionsQuery } = userSubmissionsApi;
+export const { useFetchUserSubmissionsQuery, useDeleteSubmissionMutation } = userSubmissionsApi;
