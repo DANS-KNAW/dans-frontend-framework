@@ -10,6 +10,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import Metadata from "../features/metadata/Metadata";
 import Files from "../features/files/Files";
 import Collapse from "@mui/material/Collapse";
+import Paper from '@mui/material/Paper';
 import type { TabPanelProps, TabHeaderProps } from "../types/Deposit";
 import type { FormConfig } from "../types/Metadata";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
@@ -190,6 +191,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
               </Alert>
             )}
 
+            {/* Shows user a message about current form state */}
             <Collapse in={dataMessage}>
               <Alert
                 severity={formAction.action === "resubmit" ? "error" : "info"}
@@ -272,29 +274,47 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
               </Alert>
             </Collapse>
 
-            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-              <TabHeader
-                value={openTab}
-                handleChange={(_e, val) => dispatch(setOpenTab(val))}
-              />
+            {/* The form. Show an overlay if there's no API key filled in */}
+            <Box sx={{position: 'relative'}}>
+              {!hasTargetCredentials && process.env.NODE_ENV !== 'development' && (
+                <Box sx={{
+                  position: 'absolute',
+                  top: 0, left: 0, right: 0, bottom: 0,
+                  zIndex: 10,
+                  background: 'rgba(245,245,245,0.8)',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                  <Paper elevation={15}>
+                    <Alert severity="warning" data-testid="invalid-api-keys" sx={{p: 3}}>
+                      <AlertTitle>{t("missingInfoHeader")}</AlertTitle>
+                      <Typography mb={2}>{t("missingInfoText")}</Typography>
+                      <Button variant="contained" component={RouterLink} to="/user-settings">
+                        {t("missingInfoButton")}
+                      </Button>
+                    </Alert>
+                  </Paper>
+                </Box>
+              )}
+
+              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                <TabHeader
+                  value={openTab}
+                  handleChange={(_e, val) => dispatch(setOpenTab(val))}
+                />
+              </Box>
+              <AnimatePresence initial={false}>
+                <TabPanel value={openTab} index={0} key="tab1">
+                  <Metadata />
+                </TabPanel>
+                <TabPanel value={openTab} index={1} key="tab2">
+                  <Files />
+                </TabPanel>
+              </AnimatePresence>
+              <Submit hasTargetCredentials={hasTargetCredentials} />
             </Box>
-            <AnimatePresence initial={false}>
-              <TabPanel value={openTab} index={0} key="tab1">
-                <Metadata />
-              </TabPanel>
-              <TabPanel value={openTab} index={1} key="tab2">
-                <Files />
-              </TabPanel>
-            </AnimatePresence>
-          </Grid>
-          <Grid
-            xs={12}
-            mt={4}
-            display="flex"
-            justifyContent="end"
-            alignItems="center"
-          >
-            <Submit hasTargetCredentials={hasTargetCredentials} />
+
           </Grid>
         </Grid>
       </Container>

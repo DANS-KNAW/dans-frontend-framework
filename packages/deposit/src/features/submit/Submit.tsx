@@ -218,7 +218,7 @@ const Submit = ({
   };
 
   return (
-    <Stack direction="column" alignItems="flex-end">
+    <Stack direction="column" alignItems="flex-end" mt={4}>
       <AnimatePresence>
         {fileWarning && (
           <motion.div

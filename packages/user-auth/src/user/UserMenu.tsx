@@ -10,7 +10,7 @@ import Menu from "@mui/material/Menu";
 import Divider from "@mui/material/Divider";
 import { NavLink as RouterLink } from "react-router-dom";
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import OutboxIcon from '@mui/icons-material/Outbox';
+import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
 import Tooltip from "@mui/material/Tooltip";
 import { LoginButton, LogoutButton } from "./Buttons";
 
@@ -61,7 +61,7 @@ const SettingsMenu = ({
         >
           <Tooltip title={t('userSubmissions')}>
             <IconButton size="large" color="inherit">
-              <OutboxIcon />
+              <CollectionsBookmarkIcon />
             </IconButton>
           </Tooltip>
         </Link>
