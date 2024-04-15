@@ -64,16 +64,6 @@ const section: InitialSectionType = {
       allowFreeText: true,
     },
     {
-      type: "text",
-      label: {
-        en: "Depositor",
-        nl: "Indiener",
-      },
-      name: "depositor",
-      disabled: true,
-      autofill: "email",
-    },
-    {
       type: "group",
       label: {
         en: "Author",
