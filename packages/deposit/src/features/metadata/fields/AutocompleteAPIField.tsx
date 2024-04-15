@@ -446,6 +446,7 @@ export const MultiApiField = ({
         <DansFormatsField field={field} sectionIndex={sectionIndex} />
       )}
       {(field.multiApiValue === "elsst" ||
+        field.multiApiValue === "dansCollections" ||
         field.multiApiValue === "narcis") && (
         <DatastationsField field={field} sectionIndex={sectionIndex} />
       )}

@@ -39,6 +39,27 @@ const section: InitialSectionType = {
       options: "narcis",
     },
     {
+      type: "autocomplete",
+      label: {
+        en: "Collections",
+        nl: "Collecties",
+      },
+      name: "collections",
+      multiselect: true,
+      required: true,
+      description: {
+        en: "Something here",
+        nl: "Iets hier",
+      },
+      options: "dansCollections",
+      value: [{
+        mandatory: true,
+        "label": "Oral History",
+        "value": "https://vocabularies.dans.knaw.nl/collections/ssh/cfa04ed6-4cd0-4651-80cb-ed4ca8fa14f3",
+        "id": "ssh/cfa04ed6-4cd0-4651-80cb-ed4ca8fa14f3"
+      }],
+    },
+    {
       type: "group",
       label: {
         en: "Related to",
