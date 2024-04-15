@@ -12,6 +12,8 @@
     "build:ohsmart": "turbo build --filter=@dans-framework/ohsmart",
     "dev:rda": "turbo dev --filter=@dans-framework/rda",
     "build:rda": "turbo build --filter=@dans-framework/rda",
+    "dev:fc4e": "turbo dev --filter=@dans-framework/fc4e",
+    "build:fc4e": "turbo build --filter=@dans-framework/fc4e",
     "dev:swh": "turbo dev --filter=@dans-framework/swh",
     "build:swh": "turbo build --filter=@dans-framework/swh"
   },
