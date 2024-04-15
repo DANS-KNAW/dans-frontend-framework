@@ -7,6 +7,7 @@ import i18n from '../../../languages/i18n';
 const vocabMap: Record<Datastations, string> = {
   elsst: "ELSST_R3",
   narcis: "NARCIS",
+  dansCollections: "DansCollections",
 };
 
 export const datastationsApi = createApi({
@@ -17,9 +18,10 @@ export const datastationsApi = createApi({
   endpoints: (build) => ({
     fetchDatastationsTerm: build.query({
       query: (content) => ({
+        // note that the DANS Collections API has no EN content, so lets always retrieve NL for now
         url: `${vocabMap[content.vocabulary as Datastations]}/search?query=${
           content.query
-        }*&unique=true&lang=${content.lang}`,
+        }*&unique=true&lang=${content.vocabulary === 'dansCollections' ? 'nl' : content.lang}`,
         headers: { Accept: "application/json" },
       }),
       transformResponse: (response: DatastationsResponse, _meta, arg) => {
