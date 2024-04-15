@@ -20,12 +20,12 @@ const config: Partial<RDTSearchUIProps> = {
   },
 };
 
-export function RdaSearch({
-  dashboard,
-}: {
-  dashboard?: RDTSearchUIProps["dashboard"];
-}) {
+export function RdaSearch({dashboard}: {dashboard?: boolean}) {
   const navigate = useNavigate();
+  /* 
+   * Note that for the dashboard config, we use cols and rows, based on an 8 col grid. 
+   * The config is for larger screens. For mobile, we use half width and full width cols.
+  */
   return (
     <Container sx={{ pt: 4 }}>
       <FacetedSearch
@@ -36,34 +36,24 @@ export function RdaSearch({
         ResultBodyComponent={Rda2Result}
         endpoints={JSON.parse(import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINTS)}
       >
-        <DateChartFacet
-          config={{
-            id: "date",
-            field: "dc_date",
-            title: "Year",
-            interval: "year",
-          }}
-        />
-        <ListFacet
-          config={{
-            id: "wf",
-            field: "workflows.keyword",
-            title: "Workflows",
-          }}
-        />
-        <ListFacet
-          config={{
-            id: "pw",
-            field: "pathways.keyword",
-            title: "Pathways",
-          }}
-        />
         <ListFacet
           config={{
             id: "indi",
             field: "individuals.keyword",
             title: "Individuals",
             size: 10,
+            cols: 2,
+            rows: 2,
+          }}
+        />
+        <DateChartFacet
+          config={{
+            id: "date",
+            field: "dc_date",
+            title: "Year",
+            interval: "year",
+            cols: 6,
+            rows: 1,
           }}
         />
         <PieChartFacet
@@ -71,6 +61,8 @@ export function RdaSearch({
             id: "rights",
             field: "resource_rights_types.keyword",
             title: "Rights",
+            cols: 3,
+            rows: 1,
           }}
         />
         <PieChartFacet
@@ -78,13 +70,35 @@ export function RdaSearch({
             id: "lang",
             field: "dc_language.keyword",
             title: "Language",
+            cols: 3,
+            rows: 1,
           }}
         />
+        <ListFacet
+          config={{
+            id: "wf",
+            field: "workflows.keyword",
+            title: "Workflows",
+            cols: 2,
+            rows: 1,
+          }}
+        />
+        <ListFacet
+          config={{
+            id: "pw",
+            field: "pathways.keyword",
+            title: "Pathways",
+            cols: 2,
+            rows: 1,
+          }}
+        />        
         <ListFacet
           config={{
             id: "restype",
             field: "resource_type.keyword",
             title: "Resource type",
+            cols: 2,
+            rows: 1,
           }}
         />
         <ListFacet
@@ -92,6 +106,8 @@ export function RdaSearch({
             id: "reltype",
             field: "relation_types.keyword",
             title: "Relation types",
+            cols: 2,
+            rows: 1,
           }}
         />
       </FacetedSearch>

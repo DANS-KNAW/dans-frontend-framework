@@ -17,6 +17,7 @@
 	"apiKeyLabel": "Your personal {{type}} API key",
 	"keyError": "This API key is invalid",
 	"fetchFormError": "Network error, couldn't fetch your forms",
+	"deleteFormError": "Couldn't delete data",
 	"fetchApiKeyError": "Could not connect to the API key server",
 	"keySaved": "Your API key has been saved",
 	"goToDeposit": "Deposit your data",
