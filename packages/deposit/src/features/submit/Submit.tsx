@@ -181,7 +181,7 @@ const Submit = ({
   );
 
   useEffect(() => {
-    autoSave()
+    !import.meta.env.VITE_DISABLE_AUTOSAVE && autoSave()
   }, [metadata]);
 
   // Reset the entire form to initial state

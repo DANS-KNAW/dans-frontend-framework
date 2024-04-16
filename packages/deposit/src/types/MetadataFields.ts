@@ -29,8 +29,12 @@ interface BasisFieldType {
   required?: boolean; // Form won't submit if this field has not been filled in
   private?: boolean; // gets sent to a separate non-public metadata file
   noIndicator?: boolean; // gives a non-required field a neutral status indicator
-  makesRequired?: string[]; // list of field names this field controls conditionally
-  makesRequiredIds?: string[]; // filled programmatically with uuid's
+  toggleRequired?: string[]; // list of field names this field controls required state of conditionally
+  toggleRequiredIds?: string[]; // filled programmatically with uuid's
+  togglePrivate?: string[]; // list of field names this field controls private state of conditionally
+  togglePrivateIds?: string[]; // filled programmatically with uuid's
+  toggleTitleGeneration?: boolean; // determines if this field can toggle the forms auto title generation functionality
+  fullWidth?: boolean; // set field to be 100% width instead of default 50%
 }
 
 export interface TextFieldType extends BasisFieldType {
@@ -45,6 +49,7 @@ export interface TextFieldType extends BasisFieldType {
   options?: never;
   minDateField?: never;
   maxDateField?: never;
+  autoGenerateCondition?: string;
 }
 
 export interface DateFieldType extends BasisFieldType {
