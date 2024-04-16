@@ -31,13 +31,13 @@ export const validateData = (type: ValidationType, value: string): boolean => {
 // Recursive function that finds and returns a single field or nothing if not found
 // id: field's ID
 // fields: an array of fields
-export const findById = (id: string, fields: Field[]): Field | undefined => {
+export const findByIdOrName = (id: string, fields: Field[], type: 'id' | 'name' = 'id'): Field | undefined => {
   for (let item of fields) {
-    if (item.id === id) {
+    if (item[type] === id) {
       return item;
     }
     if (item.fields) {
-      let result = findById(id, item.fields.flat());
+      let result = findByIdOrName(id, item.fields.flat(), type);
       if (result) {
         return result;
       }
@@ -47,11 +47,11 @@ export const findById = (id: string, fields: Field[]): Field | undefined => {
 };
 
 // Find array of dependant id's based on a specific id, for conditional fields
-// Bit ugly
+// ugly, todo clean up
 export const findConditionalChanges = (
   id: string,
   fields: Field[],
-  searchKey: 'makesRequired' | 'minDateField',
+  searchKey: 'toggleRequired' | 'minDateField' | 'togglePrivate',
 ): string[] | undefined => {
   for (let item of fields) {
     if (item.id === id && item[searchKey]) {
@@ -64,8 +64,22 @@ export const findConditionalChanges = (
     if (item.fields && item.type === "group") {
       let result = item.fields
         .map(
-          (fieldGroup) =>
-            Array.isArray(fieldGroup) && findConditionalChanges(id, fieldGroup, searchKey),
+          (field) => {
+            if (Array.isArray(field)) {
+              // for a repeatable field, this needs to be recursive
+              return findConditionalChanges(id, field, searchKey);
+            } else {
+              // otherwise find the field ids directly
+              if (field.id === id && field[searchKey]) {
+                const toFind = (Array.isArray(field[searchKey]) ? field[searchKey] : [field[searchKey]]) as string[];
+                return toFind 
+                  .map((name: string) => item.fields && (item.fields as Field[]).map((f) => f.name === name && f.id))
+                  .flat()
+                  .filter(Boolean) as string[];
+              }
+            }
+            return false
+          }
         )
         .flat()
         .filter(Boolean) as string[];
@@ -76,6 +90,47 @@ export const findConditionalChanges = (
   }
   return;
 };
+
+// helper function to determine if const has any value
+export const isEmpty = (value: string | object | any[] | null): boolean => {
+    return value === null ||
+           value === undefined ||
+           (typeof value === 'string' && value.trim() === '') ||
+           (Array.isArray(value) && value.length === 0) ||
+           (typeof value === 'object' && Object.keys(value).length === 0);
+}
+
+// Function to toggle conditional state of fields,
+// like required or private
+export const changeConditionalState = (
+  fieldId: string,
+  sectionFields: Field[],
+  value: any,
+  field: Field, 
+  key: 'toggleRequired' | 'togglePrivate', 
+  idKey: 'toggleRequiredIds' | 'togglePrivateIds', 
+  togglekey: 'required' | 'private',
+) => {
+  const idsToChange =
+    field[idKey] ||
+    findConditionalChanges(fieldId, sectionFields, key);
+
+  if (!field[idKey]) {
+    field[idKey] = idsToChange;
+  }
+
+  // change the conditional fields required state
+  idsToChange &&
+    idsToChange.map((id) => {
+      const changeField = findByIdOrName(id, sectionFields);
+      if (changeField && togglekey === 'required') {
+        changeField[togglekey] = !isEmpty(value) ? true : undefined;
+      }
+      if (changeField && togglekey === 'private') {
+        changeField[togglekey] = isEmpty(value) ? true : false;
+      }
+    });
+}
 
 // Get the status of a single field
 export const getFieldStatus = (field: InputField): SectionStatus => {

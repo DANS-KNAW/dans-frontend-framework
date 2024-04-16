@@ -129,6 +129,7 @@ export const submitApi = createApi({
         );
         
         console.log("Submit metadata:");
+        console.log(data);
 
         // Some logic to help find the title value
         const parsedPath = deposit.config.formTitle.split(/[\[\]\.]/)

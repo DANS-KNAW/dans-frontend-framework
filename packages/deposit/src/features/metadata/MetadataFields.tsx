@@ -47,7 +47,7 @@ import { useTranslation } from "react-i18next";
 // Loads the field specified in the type key
 const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
   return (
-    <Grid xs={12} md={6}>
+    <Grid xs={12} md={field.fullWidth ? 12 : 6}>
       {(field.type === "text" || field.type === "number") && (
         <TextField field={field} sectionIndex={sectionIndex} />
       )}
