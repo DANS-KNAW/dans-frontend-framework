@@ -12,17 +12,23 @@ import { fileRoleOptions } from "./fileOptions";
 // For now, see types/Metadata.ts to check the types of input fields you can use
 
 const sections = [
-  administrative,
-  citation,
   oralHistorySpecific,
+  citation,
   coverage,
   relations,
+  administrative,
   rights,
 ];
 
 const form: FormConfig = {
   form: sections as InitialSectionType[],
-  formTitle: "[1].fields[0]", // pointer to the field in the 'sections' array that contains form title, which is used in a users submissions overview
+  // pointer to the field in the 'sections' array that contains form title, which is used in a users submissions overview
+  formTitle: "[1].fields[0]", 
+  // optional title generation
+  generatedTitle: {
+    en: "Interview with {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} on {{interview_date_time_start}}",
+    nl: "Interview met {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} op {{interview_date_time_start}}",
+  },
   target: {
     envName: import.meta.env.VITE_ENV_NAME,
     configName: import.meta.env.VITE_CONFIG_NAME,

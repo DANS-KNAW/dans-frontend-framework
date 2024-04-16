@@ -186,7 +186,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
 
           // Optional selector that causes other fields, indicated by their name in an array,
           // and not required on their own, to change to a required status if the current field is filled in.
-          makesRequired: ["name_of_field_to_change_to_required"],
+          toggleRequired: ["name_of_field_to_change_to_required"],
         },
       ]
     }

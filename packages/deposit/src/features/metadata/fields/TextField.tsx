@@ -2,16 +2,17 @@ import { useEffect } from "react";
 import { useAuth } from "react-oidc-context";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
 import { AddButton, DeleteButton } from "../MetadataButtons";
-import { setField } from "../metadataSlice";
-import { getFieldStatus } from "../metadataHelpers";
+import { setField, getMetadata, getAllowTitleGeneration } from "../metadataSlice";
+import { getFieldStatus, findByIdOrName } from "../metadataHelpers";
 import type { TextFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
-import { getFormDisabled } from "../../../deposit/depositSlice";
+import { getFormDisabled, getData } from "../../../deposit/depositSlice";
 
 const SingleTextField = ({
   field,
@@ -25,6 +26,9 @@ const SingleTextField = ({
   const status = getFieldStatus(field);
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
+  const allowTitleGeneration = useAppSelector(getAllowTitleGeneration);
+  const formConfig = useAppSelector(getData);
+  const metadata = useAppSelector(getMetadata);
 
   useEffect(() => {
     // if requested, auto fill user data from oidc, if field has no (manually) set value
@@ -39,8 +43,38 @@ const SingleTextField = ({
     }
   }, [dispatch, field.autofill, field.id, sectionIndex, auth.user]);
 
+  const generateTitle = () => {
+    const titleString = lookupLanguageString(formConfig.generatedTitle, i18n.language);
+    // split string into segments to replace
+    const segments = titleString ? titleString.split(/({{.*?}})/) : [];
+    const generatedTitle = segments.map(segment => {
+      const match = segment.match(/{{(.*?)}}/);
+      if (match) {
+        const field = metadata.map( section => findByIdOrName(match[1], section.fields, 'name' ) ).filter(Boolean)[0]
+        return field && field.value ? (
+          field.type === 'autocomplete' ?
+          (
+            Array.isArray(field.value) ?
+            field.value.map( v => v.label ).join(' '):
+            field.value.label 
+          ) :
+          field.value
+          ) : ""
+      }
+      return segment;
+    }).join("");
+    
+    dispatch(
+      setField({
+        sectionIndex: sectionIndex,
+        id: field.id,
+        value: generatedTitle,
+      }),
+    );
+  }
+
   return (
-    <Stack direction="row" alignItems="start">
+    <Stack direction="row" alignItems="center">
       <TextField
         fullWidth
         error={status === "error" && field.touched}
@@ -85,6 +119,12 @@ const SingleTextField = ({
         }}
         inputProps={{ "data-testid": `${field.name}-${field.id}` }}
       />
+      {field.autoGenerateCondition && allowTitleGeneration &&
+        // specific for auto generation of title field
+        <Button onClick={() => generateTitle()} sx={{ml: 1}}>
+          {t('generate')}
+        </Button>
+      }
       {groupedFieldId &&
         !formDisabled && [
           totalFields > 1 && (
@@ -93,7 +133,7 @@ const SingleTextField = ({
               sectionIndex={sectionIndex}
               groupedFieldId={groupedFieldId}
               deleteFieldIndex={currentField}
-              mt={currentField === 0 ? 1.75 : 2.75}
+              mt={currentField === 0 ? 0 : 0.75}
               deleteGroupId={field.id}
               groupedFieldName={field.name}
             />
@@ -105,7 +145,7 @@ const SingleTextField = ({
               groupedFieldId={groupedFieldId}
               groupedFieldName={field.name}
               type="single"
-              mt={currentField === 0 ? 1.75 : 2.75}
+              mt={currentField === 0 ? 0 : 0.75}
             />
           ),
         ]}

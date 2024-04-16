@@ -40,6 +40,26 @@ const section: InitialSectionType = {
           private: true,
         },
         {
+          type: "check",
+          name: "interviewee_public",
+          description: {
+            en: "First and last name of interviewee will be publically viewable if checked",
+            nl: "Voor- en achternaam van de geinterviewde zijn publiek als dit is aangevinkt",
+          },
+          options: [
+            {
+              value: "interviewee_public_data",
+              label: {
+                en: "First and last name are public data",
+                nl: "Voor- en achternaam zijn publiek",
+              },
+            },
+          ],
+          togglePrivate: ["interviewee_first_name", "interviewee_last_name"],
+          toggleTitleGeneration: true,
+          fullWidth: true,
+        },
+        {
           type: "text",
           label: {
             en: "Preferred name",
@@ -214,7 +234,7 @@ const section: InitialSectionType = {
           name: "interpreter_first_name",
           private: true,
           noIndicator: true,
-          makesRequired: ["interpreter_consent", "interpreter_last_name"],
+          toggleRequired: ["interpreter_consent", "interpreter_last_name"],
         },
         {
           type: "text",
@@ -225,7 +245,7 @@ const section: InitialSectionType = {
           name: "interpreter_last_name",
           private: true,
           noIndicator: true,
-          makesRequired: ["interpreter_consent", "interpreter_first_name"],
+          toggleRequired: ["interpreter_consent", "interpreter_first_name"],
         },
         {
           type: "text",
@@ -236,7 +256,7 @@ const section: InitialSectionType = {
           name: "interpreter_function",
           private: true,
           noIndicator: true,
-          makesRequired: ["interpreter_consent", "interpreter_first_name", "interpreter_last_name"],
+          toggleRequired: ["interpreter_consent", "interpreter_first_name", "interpreter_last_name"],
         },
         {
           type: "text",
@@ -247,7 +267,7 @@ const section: InitialSectionType = {
           name: "interpreter_affiliation",
           private: true,
           noIndicator: true,
-          makesRequired: ["interpreter_consent", "interpreter_first_name", "interpreter_last_name"],
+          toggleRequired: ["interpreter_consent", "interpreter_first_name", "interpreter_last_name"],
         },
         {
           type: "check",
@@ -292,7 +312,7 @@ const section: InitialSectionType = {
           name: "others_first_name",
           private: true,
           noIndicator: true,
-          makesRequired: ["others_consent", "others_last_name"],
+          toggleRequired: ["others_consent", "others_last_name"],
         },
         {
           type: "text",
@@ -303,7 +323,7 @@ const section: InitialSectionType = {
           name: "others_last_name",
           private: true,
           noIndicator: true,
-          makesRequired: ["others_consent", "others_first_name"],
+          toggleRequired: ["others_consent", "others_first_name"],
         },
         {
           type: "text",
@@ -314,7 +334,7 @@ const section: InitialSectionType = {
           name: "others_function",
           private: true,
           noIndicator: true,
-          makesRequired: ["others_consent", "others_first_name", "others_last_name"],
+          toggleRequired: ["others_consent", "others_first_name", "others_last_name"],
         },
         {
           type: "text",
@@ -325,7 +345,7 @@ const section: InitialSectionType = {
           name: "others_affiliation",
           private: true,
           noIndicator: true,
-          makesRequired: ["others_consent", "others_first_name", "others_last_name"],
+          toggleRequired: ["others_consent", "others_first_name", "others_last_name"],
         },
         {
           type: "check",

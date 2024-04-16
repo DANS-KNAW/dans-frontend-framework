@@ -26,8 +26,10 @@ import {
   getFieldStatus,
   getSectionStatus,
   formatInitialState,
-  findById,
+  findByIdOrName,
   findConditionalChanges,
+  changeConditionalState,
+  isEmpty,
   // findFieldInGroup,
 } from "./metadataHelpers";
 import { v4 as uuidv4 } from "uuid";
@@ -71,7 +73,7 @@ export const metadataSlice = createSlice({
     // keep track of form state
     setField: (state, action: PayloadAction<SetFieldPayload>) => {
       const section = state.form[action.payload.sectionIndex];
-      const field = findById(action.payload.id, section.fields);
+      const field = findByIdOrName(action.payload.id, section.fields);
 
       if (!state.touched && field && !field.autofill) {
         state.touched = true;
@@ -82,22 +84,36 @@ export const metadataSlice = createSlice({
         field.value = action.payload.value;
         field.touched = true;
 
-        // For setting required state of 'conditional' fields, we need to find the parent array
-        if (field.makesRequired) {
-          const requiredIds =
-            field.makesRequiredIds ||
-            findConditionalChanges(action.payload.id, section.fields, 'makesRequired');
-          if (!field.makesRequiredIds) {
-            field.makesRequiredIds = requiredIds;
-          }
-          // change the conditional fields required state
-          requiredIds &&
-            requiredIds.map((id) => {
-              const changeField = findById(id, section.fields);
-              if (changeField) {
-                changeField.required = action.payload.value ? true : undefined;
-              }
-            });
+        // For setting required state of 'conditional' fields, 
+        // we need to find the parent array and change the fields inside
+        if (field.toggleRequired) {
+          changeConditionalState(
+            action.payload.id,
+            section.fields,
+            action.payload.value,
+            field, 
+            'toggleRequired', 
+            'toggleRequiredIds', 
+            'required'
+          );
+        }
+
+        // Same for private state of 'conditional' fields
+        if (field.togglePrivate) {
+          changeConditionalState(
+            action.payload.id,
+            section.fields,
+            action.payload.value,
+            field, 
+            'togglePrivate', 
+            'togglePrivateIds', 
+            'private'
+          );
+        }
+
+        if (field.toggleTitleGeneration) {
+          // set flag if auto title generation is allowed
+          state.allowTitleGeneration = !isEmpty(action.payload.value)
         }
 
         // Logic for setting a min and max date, if applicable
@@ -105,7 +121,7 @@ export const metadataSlice = createSlice({
         if (field.minDateField) {
           const fieldIds = findConditionalChanges(action.payload.id, section.fields, 'minDateField');
           fieldIds && fieldIds.map(id => {
-            const changeField = findById(id, section.fields);
+            const changeField = findByIdOrName(id, section.fields);
             if (changeField) {
               (changeField as DateFieldType).minDate = action.payload.value as string
             }
@@ -132,14 +148,14 @@ export const metadataSlice = createSlice({
     },
     setMultiApiField: (state, action: PayloadAction<SetFieldPayload>) => {
       const section = state.form[action.payload.sectionIndex];
-      const field = findById(action.payload.id, section.fields);
+      const field = findByIdOrName(action.payload.id, section.fields);
       if (field) {
         field.multiApiValue = action.payload.value as TypeaheadAPI;
       }
     },
     setDateTypeField: (state, action: PayloadAction<SetFieldPayload>) => {
       const section = state.form[action.payload.sectionIndex];
-      const field = findById(action.payload.id, section.fields);
+      const field = findByIdOrName(action.payload.id, section.fields);
       if (field) {
         field.format = action.payload.value as DateTimeFormat;
       }
@@ -147,7 +163,7 @@ export const metadataSlice = createSlice({
     // functionality for adding new single (repeatable) fields/field groups
     addField: (state, action: PayloadAction<AddFieldPayload>) => {
       const section = state.form[action.payload.sectionIndex];
-      const field = findById(action.payload.groupedFieldId, section.fields);
+      const field = findByIdOrName(action.payload.groupedFieldId, section.fields);
       if (field) {
         const newField =
           action.payload.type === "single" ?
@@ -176,8 +192,8 @@ export const metadataSlice = createSlice({
                   ],
                 }
               : {
-                  // Omit the makesRequiredIds property
-                  ...(({ makesRequiredIds, ...rest }) => rest)(f),
+                  // Omit the toggleRequiredIds property
+                  ...(({ toggleRequiredIds, ...rest }) => rest)(f),
                   // reset what needs resetting
                   id: uuidv4(),
                   value: "",
@@ -195,7 +211,7 @@ export const metadataSlice = createSlice({
     },
     deleteField: (state, action: PayloadAction<DeleteFieldPayload>) => {
       const section = state.form[action.payload.sectionIndex];
-      const field = findById(action.payload.groupedFieldId, section.fields);
+      const field = findByIdOrName(action.payload.groupedFieldId, section.fields);
       if (field) {
         (field as RepeatTextFieldType | RepeatGroupedFieldType).fields.splice(
           action.payload.deleteField,
@@ -283,5 +299,6 @@ export const getMetadataStatus = (state: RootState) => {
   return getSectionStatus(statusArray);
 };
 export const getTouchedStatus = (state: RootState) => state.metadata.touched;
+export const getAllowTitleGeneration = (state: RootState) => state.metadata.allowTitleGeneration;
 
 export default metadataSlice.reducer;

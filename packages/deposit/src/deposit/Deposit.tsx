@@ -263,7 +263,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
 
             {/* The form. Show an overlay if there's no API key filled in */}
             <Box sx={{position: 'relative'}}>
-              {!hasTargetCredentials && process.env.NODE_ENV !== 'development' && (
+              {!hasTargetCredentials && !import.meta.env.VITE_DISABLE_API_KEY_MESSAGE && (
                 <Box sx={{
                   position: 'absolute',
                   top: 0, left: 0, right: 0, bottom: 0,

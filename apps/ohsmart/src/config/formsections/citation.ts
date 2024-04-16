@@ -19,6 +19,7 @@ const section: InitialSectionType = {
         en: "A descriptive title for the work, to be used in citations",
         nl: "Een beschrijvende titel voor deze data, wordt gebruikt in referenties.",
       },
+      autoGenerateCondition: "interviewee_public_data",
     },
     {
       type: "text",
