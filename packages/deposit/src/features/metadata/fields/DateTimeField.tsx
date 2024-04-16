@@ -37,11 +37,12 @@ const DateTimeField = ({
 
   const errorMessage = useMemo(() => {
     switch (error) {
-      case 'maxDate':
+      case 'maxDate': {
+        return t("dateMax");
+      }
       case 'minDate': {
         return t("dateMin");
       }
-
       case 'invalidDate': {
         return t("dateInvalid");
       }
