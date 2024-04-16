@@ -35,5 +35,6 @@
   "freetextContent": "Add \"{{name}}\" as custom value",
   "dateInvalid": "Date/time is invalid",
   "dateMin": "Must be later than starting date/time",
-  "apiFetchError": "Could not get data from {{api}}"
+  "apiFetchError": "Could not get data from {{api}}",
+  "generate": "Generate"
 }
