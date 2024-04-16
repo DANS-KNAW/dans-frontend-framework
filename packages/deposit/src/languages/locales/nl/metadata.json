@@ -13,7 +13,13 @@
   "checkApi": "Double-check je geselecteerde waarde in de {{api}} database (opent in nieuwe tab)",
   "checkValue": "Lees meer over {{value}} (opent in nieuwe tab)",
   "orcid": "ORCID",
+  "multi-orcid": "Persoon",
   "ror": "RoR",
+  "multi-ror": "Organisatie",
+  "multi-domains": "Domein",
+  "multi-pathways": "Pad",
+  "multi-rdaworkinggroups": "Working Groups",
+  "multi-interest groups": "Interest Groups",
   "getty": "Getty AAT",
   "geonames": "GeoNames",
   "elsst": "ELSST Thesaurus",
@@ -29,5 +35,6 @@
   "freetextContent": "Voeg \"{{name}}\" als custom waarde",
   "dateInvalid": "Datum/tijd is ongeldig",
   "dateMin": "Moet na de startdatum/tijd komen",
-  "apiFetchError": "Kan geen data ophalen van {{api}}"
+  "apiFetchError": "Kan geen data ophalen van {{api}}",
+  "generate": "Genereer"
 }
