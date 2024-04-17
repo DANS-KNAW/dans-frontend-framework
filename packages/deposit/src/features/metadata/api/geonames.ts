@@ -19,9 +19,7 @@ export const geonamesApi = createApi({
             {
               arg: arg,
               response: response.geonames.map((item) => ({
-                label: `${item.name} (${item.fcodeName}) ${
-                  item.countryName ? item.countryName : ""
-                }`,
+                label: `${item.name}${item.countryName ? `, ${item.countryName}` : ""}`,
                 value: `https://www.geonames.org/${item.geonameId}`,
                 coordinates: [item.lat, item.lng],
               })),
