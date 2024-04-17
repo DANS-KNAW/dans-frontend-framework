@@ -10,11 +10,13 @@ const initialState: {
 } = {
   config: {
     targetCredentials: [],
+    formTitle: '',
+    generatedTitle: '',
     target: {},
     submitKey: "",
     skipValidation: false,
-    geonamesApiKey: "",
-    gsheetsApiKey: "",
+    filesUpload: {},
+    allowTitleGeneration: false,
   },
   formDisabled: false,
 };

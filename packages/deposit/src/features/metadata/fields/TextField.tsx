@@ -87,7 +87,7 @@ const SingleTextField = ({
 
   // generate the title, makes sure this updates when title state has been set
   useEffect(() => {
-    if (field.autoGenerateCondition && allowTitleGeneration) {
+    if (field.autoGenerateTitle && allowTitleGeneration) {
       // generate title if it hasn't been do so yet
       !generatedTitle && generateTitle();
       // if there's no value set yet, set title to generated value
@@ -141,7 +141,7 @@ const SingleTextField = ({
         }}
         inputProps={{ "data-testid": `${field.name}-${field.id}` }}
       />
-      {field.autoGenerateCondition && allowTitleGeneration && generatedTitle &&
+      {field.autoGenerateTitle && allowTitleGeneration && generatedTitle &&
         // auto generation of title field if allowed and there's a title available
         <Tooltip title={t('generate')}>
           <IconButton 

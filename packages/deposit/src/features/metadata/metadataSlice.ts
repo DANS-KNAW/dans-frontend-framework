@@ -273,6 +273,9 @@ export const metadataSlice = createSlice({
       // We only need to remove the id. Deposit.tsx will then reinit the form
       state.id = "";
     },
+    setTitleGeneration: (state, action: PayloadAction<boolean>) => {
+      state.allowTitleGeneration = action.payload;
+    }
   },
 });
 
@@ -287,6 +290,7 @@ export const {
   deleteField,
   resetMetadata,
   setDateTypeField,
+  setTitleGeneration,
 } = metadataSlice.actions;
 
 // Select values from state
