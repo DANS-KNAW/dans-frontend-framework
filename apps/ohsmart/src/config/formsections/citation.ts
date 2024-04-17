@@ -29,7 +29,8 @@ const section: InitialSectionType = {
       },
       name: "subtitle",
       repeatable: true,
-      noIndicator: true,
+      // noIndicator: true,
+      required: true,
       description: {
         en: "You can provide a subtitle if you wish",
         nl: "Je kunt een optionele ondertitel opgeven als je wilt",
