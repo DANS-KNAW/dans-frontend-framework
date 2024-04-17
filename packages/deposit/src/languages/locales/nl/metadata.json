@@ -36,5 +36,5 @@
   "dateInvalid": "Datum/tijd is ongeldig",
   "dateMin": "Moet na de startdatum/tijd komen",
   "apiFetchError": "Kan geen data ophalen van {{api}}",
-  "generate": "Genereer"
+  "generate": "Hergenereer titel"
 }

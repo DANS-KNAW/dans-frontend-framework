@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import InputAdornment from "@mui/material/InputAdornment";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
@@ -29,6 +31,7 @@ const SingleTextField = ({
   const allowTitleGeneration = useAppSelector(getAllowTitleGeneration);
   const formConfig = useAppSelector(getData);
   const metadata = useAppSelector(getMetadata);
+  const [generatedTitle, setGeneratedTitle] = useState<string>('');
 
   useEffect(() => {
     // if requested, auto fill user data from oidc, if field has no (manually) set value
@@ -44,14 +47,16 @@ const SingleTextField = ({
   }, [dispatch, field.autofill, field.id, sectionIndex, auth.user]);
 
   // function to generate title from form config string and filled in fields
+  // set to state, so we only have to call this function once
   const generateTitle = () => {
     const titleString = lookupLanguageString(formConfig.generatedTitle, i18n.language);
     // split string into segments to replace
     const segments = titleString ? titleString.split(/({{.*?}})/) : [];
-    const generatedTitle = segments.map(segment => {
+    const title = segments.map(segment => {
       const match = segment.match(/{{(.*?)}}/);
       if (match) {
-        const field = metadata.map( section => findByIdOrName(match[1], section.fields, 'name' ) ).filter(Boolean)[0]
+        const field = metadata.map( section => findByIdOrName(match[1], section.fields, 'name' ) ).filter(Boolean)[0];
+
         return field && field.value ? (
           field.type === 'autocomplete' ?
           (
@@ -60,11 +65,17 @@ const SingleTextField = ({
             field.value.label 
           ) :
           field.value
-          ) : ""
+          ) : null
       }
       return segment;
-    }).join("");
-    
+    });
+
+    if (!title.includes(null)) { 
+      setGeneratedTitle(title.join(""));
+    }
+  }
+
+  const setTitle = () => {
     dispatch(
       setField({
         sectionIndex: sectionIndex,
@@ -74,12 +85,15 @@ const SingleTextField = ({
     );
   }
 
-  // generate the title on first render and there's no title set yet
+  // generate the title, makes sure this updates when title state has been set
   useEffect(() => {
-    if (!field.value && field.autoGenerateCondition && allowTitleGeneration) {
-      generateTitle();
+    if (field.autoGenerateCondition && allowTitleGeneration) {
+      // generate title if it hasn't been do so yet
+      !generatedTitle && generateTitle();
+      // if there's no value set yet, set title to generated value
+      !field.value && setTitle();
     }
-  }, []);
+  }, [generatedTitle]);
 
   return (
     <Stack direction="row" alignItems="center">
@@ -127,11 +141,20 @@ const SingleTextField = ({
         }}
         inputProps={{ "data-testid": `${field.name}-${field.id}` }}
       />
-      {field.autoGenerateCondition && allowTitleGeneration &&
-        // specific for auto generation of title field
-        <Button onClick={() => generateTitle()} sx={{ml: 1}}>
-          {t('generate')}
-        </Button>
+      {field.autoGenerateCondition && allowTitleGeneration && generatedTitle &&
+        // auto generation of title field if allowed and there's a title available
+        <Tooltip title={t('generate')}>
+          <IconButton 
+            onClick={() => setTitle()} 
+            sx={{
+              ml: 0.5,
+              // keep icon centered
+              mt: status === "error" && field.touched ? -3 : 0,
+            }}
+          >
+            <RefreshIcon />
+          </IconButton>
+        </Tooltip>
       }
       {groupedFieldId &&
         !formDisabled && [
@@ -141,7 +164,10 @@ const SingleTextField = ({
               sectionIndex={sectionIndex}
               groupedFieldId={groupedFieldId}
               deleteFieldIndex={currentField}
-              mt={currentField === 0 ? 0 : 0.75}
+              mt={
+                (status === "error" && field.touched ? -3 : 0) + 
+                (currentField === 0 ? 0 : 1)
+              }
               deleteGroupId={field.id}
               groupedFieldName={field.name}
             />
@@ -153,7 +179,10 @@ const SingleTextField = ({
               groupedFieldId={groupedFieldId}
               groupedFieldName={field.name}
               type="single"
-              mt={currentField === 0 ? 0 : 0.75}
+              mt={
+                (status === "error" && field.touched ? -3 : 0) + 
+                (currentField === 0 ? 0 : 1)
+              }
             />
           ),
         ]}
