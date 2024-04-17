@@ -1,6 +1,6 @@
-# DANS helper utilities
+# Helper utilities
 
-### @dans-framework/utils/language
+## @dans-framework/utils/language
 
     import { lookupLanguageString } from '@dans-framework/utils'
 
@@ -11,7 +11,7 @@ Returns a language sensitive string from a languageObject like `{en: '', nl: ''}
       language // current language, usually i18n.language
     )
 
-### @dans-framework/utils/error
+## @dans-framework/utils/error
 
     import { errorLogger } from '@dans-framework/utils'
 
@@ -21,7 +21,7 @@ Helper function to show errors created by RTK as popup notification. Import in a
       getDefaultMiddleware()
       .concat(errorLogger)
 
-### @dans-framework/utils/sitetitle
+## @dans-framework/utils/sitetitle
 
     import { SiteTitleProvider, useSiteTitle } from '@dans-framework/utils'
 

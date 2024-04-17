@@ -1,6 +1,8 @@
-# DANS Deposit component
+# Deposit package
 
-The Deposit component consists of the metadata form and a file upload section.
+The Deposit component is the heart of the form. It consists of the metadata form and a file upload section.
+
+## Form config
 
     import { Deposit } from "@dans-framework/deposit"
 
@@ -81,6 +83,8 @@ The Deposit component consists of the metadata form and a file upload section.
     />
 
 For page object, see [@dans-framework/pages](/packages/pages/README.md).
+
+## Form sections and field objects
 
 Each section is a collapsible accordion in the front-end. A section is formatted like so:
 
@@ -224,7 +228,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       ]
     }
 
-### i18n
+## i18n
 
 Exposes the Deposit components language config. Use this in the main apps language config.
 
