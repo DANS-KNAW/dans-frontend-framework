@@ -1,4 +1,4 @@
-# DANS Authentication package
+# User authentication package
 
 Uses its own Redux store for authentication management. Manages authentication and user settings.
 

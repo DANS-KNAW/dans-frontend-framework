@@ -1,4 +1,4 @@
-# DANS Pages component
+# Pages package
 
 The Pages component makes up the pages of the applications. Only exports a Generic page component at the moment.
 
@@ -45,5 +45,11 @@ The Pages component makes up the pages of the applications. Only exports a Gener
 
         // Optional page logo.
         logo: <image_file>
+
+        // Optional external link. Slug not needed in this case.
+        link: "uri string",
+
+        // Open link in a new tab
+        newTab: true,
       }
     />

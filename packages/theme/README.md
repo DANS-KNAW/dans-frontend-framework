@@ -1,4 +1,4 @@
-# DANS theme wrapper
+# Theme wrapper package
 
 Wraps your apps custom theme with the extra options needed by DANS components:
 
