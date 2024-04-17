@@ -22,9 +22,7 @@ const sections = [
 
 const form: FormConfig = {
   form: sections as InitialSectionType[],
-  // pointer to the field in the 'sections' array that contains form title, which is used in a users submissions overview
   formTitle: "[1].fields[0]", 
-  // optional title generation
   generatedTitle: {
     en: "Interview with {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} on {{interview_date_time_start}}",
     nl: "Interview met {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} op {{interview_date_time_start}}",
@@ -34,7 +32,6 @@ const form: FormConfig = {
     configName: import.meta.env.VITE_CONFIG_NAME,
   },
   targetCredentials: [
-    // Formatted as array, to support multiple submission targets
     {
       name: "Dataverse",
       repo: import.meta.env.VITE_TARGET_1_REPO,
@@ -48,7 +45,7 @@ const form: FormConfig = {
       }
     },
   ],
-  submitKey: import.meta.env.VITE_PACKAGING_KEY, // only if we dont use keycloak
+  submitKey: import.meta.env.VITE_PACKAGING_KEY,
   skipValidation: import.meta.env.DEV,
   filesUpload: {
     fileRoles: fileRoleOptions,

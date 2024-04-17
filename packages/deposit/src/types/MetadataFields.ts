@@ -49,7 +49,7 @@ export interface TextFieldType extends BasisFieldType {
   options?: never;
   minDateField?: never;
   maxDateField?: never;
-  autoGenerateCondition?: string;
+  autoGenerateTitle?: boolean;
 }
 
 export interface DateFieldType extends BasisFieldType {

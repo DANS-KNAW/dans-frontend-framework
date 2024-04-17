@@ -22,6 +22,7 @@ import {
   initForm,
   resetMetadata,
   getTouchedStatus,
+  setTitleGeneration,
 } from "../features/metadata/metadataSlice";
 import {
   resetFilesSubmitStatus,
@@ -104,6 +105,8 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       // Then we create a fresh form if there's no id to load
       if (!sessionId && !formAction.id) {
         dispatch(initForm(config.form));
+        // set title generation to enabled if specified in config
+        config.allowTitleGeneration && dispatch(setTitleGeneration(true));
       }
       // If there's server data available, load that into the form
       // For copying a form, we create a new uuid as sessionId.
