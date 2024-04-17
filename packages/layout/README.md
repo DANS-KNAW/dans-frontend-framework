@@ -1,4 +1,4 @@
-# DANS layout components
+# Layout package
 
 Package that exports several layout components for use in your form application.
 
@@ -53,7 +53,7 @@ A footer item is formatted as follows:
       freetext: 'some text' // Can be a string or language object
     }
 
-### i18n
+## i18n
 
 Exposes the Layout components language config. Use this in the main apps language config.
 
