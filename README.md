@@ -12,7 +12,7 @@ Management of packages is done with PNPM from the **root** folder. Make sure PNP
 
 ## Cloning the Repository
 
-#### Cloning with Submodules
+### Cloning with Submodules
 
 To clone the repository along with its required submodules, use the following command:
 
@@ -22,7 +22,7 @@ git clone --recurse-submodules git@github.com:DANS-KNAW/dans-frontend-framework.
 
 > **Note**: If you're trying to clone a branch that includes a submodule not present in the main branch, make sure to specify the branch using the `-b` flag.
 
-#### Cloning Without Submodules
+### Cloning Without Submodules
 
 If you've already cloned the repository without the submodules, you can initialize and update them later with the following command:
 
@@ -83,7 +83,7 @@ To install a library for a single app/package, e.g. @dans-framework/ohsmart, use
 
 Alternatively, you can edit the package.json file of the appropriate app or package, and run `pnpm i` again from the root.
 
-#### Adding a custom library to your app or package
+### Adding a custom library to your app or package
 
 You can use the `pnpm i` command from above using e.g. `@dans-framework/utils` as package name.
 Alternatively, since all packages are referenced locally, edit the dependencies or devDependencies in the package.json file of the app you're working on by adding a line like this:
@@ -107,7 +107,7 @@ To ensure naming consistency:
 
 Alternatively, you can create the appropriate folder structure and package.json manually.
 
-#### Configuring build/dev scripts of individual packages
+### Configuring build/dev scripts of individual packages
 
 Open up the appropriate package/app folder and edit the **package.json**, **tsconfig.json**, **tsconfig.node.json** and **vite.config.ts** where neccessary.
 
