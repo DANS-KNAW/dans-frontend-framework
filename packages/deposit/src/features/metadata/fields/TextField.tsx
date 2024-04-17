@@ -43,6 +43,7 @@ const SingleTextField = ({
     }
   }, [dispatch, field.autofill, field.id, sectionIndex, auth.user]);
 
+  // function to generate title from form config string and filled in fields
   const generateTitle = () => {
     const titleString = lookupLanguageString(formConfig.generatedTitle, i18n.language);
     // split string into segments to replace
@@ -55,7 +56,7 @@ const SingleTextField = ({
           field.type === 'autocomplete' ?
           (
             Array.isArray(field.value) ?
-            field.value.map( v => v.label ).join(' '):
+            field.value.map( v => v.label ).join(' & '):
             field.value.label 
           ) :
           field.value
@@ -72,6 +73,13 @@ const SingleTextField = ({
       }),
     );
   }
+
+  // generate the title on first render and there's no title set yet
+  useEffect(() => {
+    if (!field.value && field.autoGenerateCondition && allowTitleGeneration) {
+      generateTitle();
+    }
+  }, []);
 
   return (
     <Stack direction="row" alignItems="center">
