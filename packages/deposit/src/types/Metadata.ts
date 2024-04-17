@@ -65,4 +65,5 @@ export interface FormConfig {
     }[];
   };
   generatedTitle?: string | LanguageStrings;
+  allowTitleGeneration?: boolean;
 }
