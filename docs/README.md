@@ -33,26 +33,31 @@ git submodule update --init --recursive
 ## Installation
 
 After cloning, run:
-
-    pnpm i
+```bash
+pnpm i
+```
 
 ## Running the app(s)
-
-    pnpm dev
+```bash
+pnpm dev
+```
 
 To run just a single app, you can add a line to the package.json scripts section like so:
-
-    "dev:ohsmart": "turbo run dev --filter=@dans-framework/ohsmart"
+```json
+"dev:ohsmart": "turbo run dev --filter=@dans-framework/ohsmart"
+```
 
 Then run `pnpm dev:ohsmart` to start.
 
 Or simply run
-
-    pnpm --filter @dans-framework/ohsmart dev
+```bash
+pnpm --filter @dans-framework/ohsmart dev
+```
 
 To run this application on a specific port, run
-
-    pnpm --filter @dans-framework/ohsmart dev --port 3000
+```bash
+pnpm --filter @dans-framework/ohsmart dev --port 3000
+```
 
 ## Testing the app(s)
 
@@ -61,23 +66,27 @@ Front-end testing is done using Playwright. More to follow...
 ## Building the app(s)
 
 For all apps:
-
-    pnpm build
+```bash
+pnpm build
+```
 
 Or for a single app:
-
-    pnpm --filter @dans-framework/ohsmart build
+```bash
+pnpm --filter @dans-framework/ohsmart build
+```
 
 ## Adding a library to an app/package
 
 Add a library to all apps/packages.
-
-    pnpm i <lib_you_want_to_add>
+```bash
+pnpm i <lib_you_want_to_add>
+```
 
 Add the `-D` flag for devDependencies.
 To install a library for a single app/package, e.g. @dans-framework/ohsmart, use the `--filter` flag:
-
-    pnpm i <lib_you_want_to_add> --filter '@dans-framework/ohsmart'
+```bash
+pnpm i <lib_you_want_to_add> --filter '@dans-framework/ohsmart'
+```
 
 Alternatively, you can edit the package.json file of the appropriate app or package, and run `pnpm i` again from the root.
 
@@ -85,9 +94,9 @@ Alternatively, you can edit the package.json file of the appropriate app or pack
 
 You can use the `pnpm i` command from above using e.g. `@dans-framework/utils` as package name.
 Alternatively, since all packages are referenced locally, edit the dependencies or devDependencies in the package.json file of the app you're working on by adding a line like this:
-
-    "@dans-framework/utils": "workspace:*"
-
+```json
+"@dans-framework/utils": "workspace:*"
+```
 and then running `pnpm i` again.
 
 ## Creating a new app or package
