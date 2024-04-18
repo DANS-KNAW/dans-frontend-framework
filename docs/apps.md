@@ -75,7 +75,7 @@ For user authentication, you need to supply the proper OIDC configuration. See t
 ## Languages, i18n and Suspense
 
 The framework uses the i18next library. Define an array of languages your app uses, using their two letter identifiers, e.g. `['en', 'nl']`. Setup an i18n config file and import that in your app. Be sure to add the i18n subcomponent configs to your main app, e.g.
-```ts
+```tsx
 i18n.on('languageChanged', (lng) => {
   i18nLayout.changeLanguage(lng);
   i18nDeposit.changeLanguage(lng);
