@@ -12,13 +12,26 @@ interface RdaRecord {
   dc_description: string;
   dc_language: string;
   dc_type: string;
-  individuals: string[];
+  individuals: {
+    fullname: string;
+  }[];
   page_url: string;
-  pathways: string[];
+  pathways: {
+    uuid_pathway: string;
+    pathway: string;
+    description: string;
+    datasource: string;
+    relation: string;
+  }[];
   pid_lod: string;
   pid_lod_type: string;
   relation_types: string;
-  resource_rights_types: string;
+  rights: {
+    lod_pid: string;
+    description: string;
+    type: string;
+    status: string;
+  }[];
   resource_type: string;
   spec_url: string;
   title: string;
@@ -28,6 +41,7 @@ interface RdaRecord {
   uuid_resource: string;
   workflows: string[];
   workinggroupstring: string;
+  fragment: string;
 }
 
 export function RdaRecord() {
@@ -38,7 +52,7 @@ export function RdaRecord() {
     fetch(
       `${
         import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT
-      }/dans-rda2/_source/${id}`,
+      }/dans-rda2/_source/${id}`
     )
       .then((res) => res.json())
       .then(setRecord);
@@ -120,16 +134,34 @@ function Metadata({ name, value }: { name: string; value: string | string[] }) {
 }
 
 export function MetadataList({ record }: { record: RdaRecord | Result }) {
+  const individuals = record.individuals
+    ? record.individuals.map((i: any) => i.fullname)
+    : [];
+  const workflows = record.workflows
+    ? record.workflows.map((w: any) => w.workflowstate)
+    : [];
+  const rights = record.rights
+    ? record.rights.map((r: any) => r.description)
+    : [];
+  const pathways = record.pathways
+    ? record.pathways.map((p: any) => p.pathway)
+    : [];
+
   return (
     <div>
       {record.dc_language && (
         <Metadata name="Language" value={record.dc_language} />
       )}
-      <Metadata name="Individuals" value={record.individuals} />
-      <Metadata name="Rights" value={record.resource_rights_types} />
-      <Metadata name="Relations" value={record.relation_types} />
-      <Metadata name="Workflows" value={record.workflows} />
-      <Metadata name="Pathways" value={record.pathways} />
+      {record.individuals && (
+        <Metadata name="Individuals" value={individuals} />
+      )}
+      {record.rights && <Metadata name="Rights" value={rights} />}
+      {record.relation_types && (
+        <Metadata name="Relations" value={record.relation_types} />
+      )}
+      {record.workflows && <Metadata name="Workflows" value={workflows} />}
+      {record.pathways && <Metadata name="Pathways" value={pathways} />}
+      {record.fragment && <Metadata name="Fragment" value={record.fragment} />}
     </div>
   );
 }
