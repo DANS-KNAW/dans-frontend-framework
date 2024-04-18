@@ -2,6 +2,9 @@
 
 The DANS front-end framework lets you build apps that help a user submit metadata to archiving services in a standardised way. It presents the user with a highly usable interface that guides them through the steps needed to submit their data in the most complete way as possible.
 
+## Documentation
+Read the [documentation](https://dans-knaw.github.io/dans-frontend-framework/) on how to get started.
+
 ## Features
 
 - Components split up into individually importable packages
@@ -21,7 +24,3 @@ The DANS front-end framework lets you build apps that help a user submit metadat
 - Multiple submission endpoints (via a packaging service)
 - Look and feel based on Material Design, completely themeable
 - Automated ticketing to Freshdesk
-
-## Get started
-See the [docs](/docs/README.md) to get started.
-
