@@ -4,7 +4,7 @@ The Pages component makes up the pages of the applications. Only exports a Gener
 
     import { Generic } from '@dans-framework/pages'
 
-    <Page props=
+    <Generic props=
       {
         // unique identifier
         id: "page_id",
