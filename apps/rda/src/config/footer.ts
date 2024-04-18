@@ -107,9 +107,7 @@ const footer: Footer = {
     },
     {
       header: "RDA Tiger",
-      freetext: {
-        en: "The RDA Tiger Project is supporting the use of this application through engagement with RDA Groups and members.",
-      },
+      freetext: "The RDA Tiger Project is supporting the use of this application through engagement with RDA Groups and members.",
       links: [
         {
           name: "Contact RDA TIGER",
