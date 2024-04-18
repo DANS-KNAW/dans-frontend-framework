@@ -28,13 +28,13 @@ export function Rda2Result(props: ResultBodyProps) {
 
 function ReadMore({ item }: { item: ResultBodyProps["result"] }) {
   const [active, setActive] = useState(false);
+ 
+  const description = item.dc_description || "";
 
-  // No description, return nothing
-  if (item.dc_description === null) return null;
 
   const [visibleText, hiddenText] = [
-    item.dc_description.substring(0, 180),
-    item.dc_description.substring(180),
+    description.substring(0, 180),
+    description.substring(180),
   ];
 
   // There is only one sentence, return it
@@ -46,7 +46,7 @@ function ReadMore({ item }: { item: ResultBodyProps["result"] }) {
     <>
       <Typography mb={2}>
         {`${visibleText}${
-          visibleText.length < item.dc_description.length && !active ?
+          visibleText.length < description.length && !active ?
             "..."
           : hiddenText
         }`}
