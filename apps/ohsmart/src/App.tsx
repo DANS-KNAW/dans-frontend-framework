@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { ThemeWrapper } from "@dans-framework/theme";
 import { LanguageBar, MenuBar, Footer } from "@dans-framework/layout";
 import { Deposit } from "@dans-framework/deposit";
-import { Generic, Page } from "@dans-framework/pages";
+import { Generic, type Page } from "@dans-framework/pages";
 import {
   AuthWrapper,
   AuthRoute,
