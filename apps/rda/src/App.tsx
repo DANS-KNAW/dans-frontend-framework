@@ -27,6 +27,11 @@ import languages from "./config/languages";
 import authProvider from "./config/auth";
 import form from "./config/form";
 
+// TODO: For this to work properly, we need to extract the RDT Context provider
+// from the RDT package and wrap the whole app in it.
+// Otherwise, opening a detailed search result view, or the form,
+// will result in all your search choices being lost
+
 const App = () => {
   const { i18n } = useTranslation();
 
