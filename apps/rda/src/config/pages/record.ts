@@ -8,7 +8,7 @@ const page: Page = {
   inMenu: false,
   menuTitle: {
     en: "Record",
-    nl: "Record",
+    nl: "Dossier",
   },
 };
 
