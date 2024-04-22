@@ -551,7 +551,8 @@ const ViewAction = ({
         {status.map(
           (target, i) =>
             target["output-response"] &&
-            target["output-response"].response.url && (
+            target["output-response"].response.url &&
+            target["deposit-status"] !== 'rejected' && (
               <Link
                 href={target["output-response"].response.url}
                 color="inherit"
