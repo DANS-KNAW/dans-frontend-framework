@@ -94,7 +94,7 @@ export const userSubmissionsApi = createApi({
           headers: {
             Authorization: `Bearer ${user.access_token}`,
             Accept: "application/json",
-            "auth-env-name": import.meta.env.VITE_CONFIG_NAME,
+            "auth-env-name": import.meta.env.VITE_ENV_NAME,
           },
         };
       },
