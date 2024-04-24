@@ -6,6 +6,8 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2";
 
+// TODO: Put this in a separate package, preferably in RDT-Search-UI
+
 interface RdaRecord {
   card_url: string;
   dc_date: string;

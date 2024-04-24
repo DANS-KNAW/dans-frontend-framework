@@ -469,6 +469,9 @@ importers:
 
   packages/rdt-search-ui:
     dependencies:
+      '@dans-framework/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@elastic/elasticsearch':
         specifier: ^8.10.0
         version: 8.10.0
@@ -487,6 +490,12 @@ importers:
       html-react-parser:
         specifier: ^4.2.2
         version: 4.2.2(react@18.2.0)
+      i18next:
+        specifier: ^23.4.1
+        version: 23.4.1
+      i18next-resources-to-backend:
+        specifier: ^1.1.4
+        version: 1.1.4
       lodash.debounce:
         specifier: ^4.0.8
         version: 4.0.8
@@ -505,6 +514,9 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.2.0
+      react-i18next:
+        specifier: ^13.0.3
+        version: 13.0.3(i18next@23.4.1)(react-dom@18.2.0)(react@18.2.0)
       styled-components:
         specifier: ^5.3.10
         version: 5.3.10(@babel/core@7.22.10)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
@@ -3808,7 +3820,7 @@ packages:
       react-native:
         optional: true
     dependencies:
-      '@babel/runtime': 7.22.10
+      '@babel/runtime': 7.23.2
       html-parse-stringify: 3.0.1
       i18next: 23.4.1
       react: 18.2.0

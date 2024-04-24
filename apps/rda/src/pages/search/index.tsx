@@ -40,7 +40,10 @@ export function RdaSearch({ dashboard }: { dashboard?: boolean }) {
           config={{
             id: "indi",
             field: "individuals.fullname.keyword",
-            title: "Individuals",
+            title: {
+              en: "Individuals",
+              nl: "Individuen",
+            },
             size: 25,
             cols: 2,
             rows: 2,
@@ -50,7 +53,10 @@ export function RdaSearch({ dashboard }: { dashboard?: boolean }) {
           config={{
             id: "date",
             field: "dc_date",
-            title: "Year",
+            title: {
+              en: "Year",
+              nl: "Jaar",
+            },
             interval: "year",
             cols: 6,
             rows: 1,
@@ -60,7 +66,10 @@ export function RdaSearch({ dashboard }: { dashboard?: boolean }) {
           config={{
             id: "rights",
             field: "rights.description.keyword",
-            title: "Rights",
+            title: {
+              en: "Rights",
+              nl: "Rechten",
+            },
             cols: 3,
             rows: 1,
           }}
@@ -69,7 +78,10 @@ export function RdaSearch({ dashboard }: { dashboard?: boolean }) {
           config={{
             id: "lang",
             field: "dc_language.keyword",
-            title: "Language",
+            title: {
+              en: "Language",
+              nl: "Taal",
+            },
             cols: 3,
             rows: 1,
           }}
@@ -78,7 +90,10 @@ export function RdaSearch({ dashboard }: { dashboard?: boolean }) {
           config={{
             id: "wf",
             field: "workflows.workflowstate.keyword",
-            title: "Workflows",
+            title: {
+              en: "Workflows",
+              nl: "Workflows",
+            },
             cols: 2,
             rows: 1,
           }}
@@ -87,7 +102,10 @@ export function RdaSearch({ dashboard }: { dashboard?: boolean }) {
           config={{
             id: "uritype",
             field: "uritype.uritype.keyword",
-            title: "Uri Types",
+            title: {
+              en: "URI types",
+              nl: "URI types",
+            },
             cols: 3,
             rows: 1,
           }}
@@ -96,7 +114,10 @@ export function RdaSearch({ dashboard }: { dashboard?: boolean }) {
           config={{
             id: "subjects",
             field: "subjects.keyword",
-            title: "Subjects",
+            title: {
+              en: "Subjects",
+              nl: "Onderwerp",
+            },
             cols: 3,
             rows: 1,
           }}
@@ -105,7 +126,10 @@ export function RdaSearch({ dashboard }: { dashboard?: boolean }) {
           config={{
             id: "pw",
             field: "pathways.pathway.keyword",
-            title: "Pathways",
+            title: {
+              en: "Pathways",
+              nl: "Paden",
+            },
             cols: 2,
             rows: 1,
           }}
@@ -114,7 +138,10 @@ export function RdaSearch({ dashboard }: { dashboard?: boolean }) {
           config={{
             id: "restype",
             field: "dc_type.keyword",
-            title: "Resource type",
+            title: {
+              en: "Resource type",
+              nl: "Brontype",
+            },
             cols: 2,
             rows: 1,
           }}
@@ -123,7 +150,10 @@ export function RdaSearch({ dashboard }: { dashboard?: boolean }) {
           config={{
             id: "reltype",
             field: "relations.relation_type.keyword",
-            title: "Relation types",
+            title: {
+              en: "Relation types",
+              nl: "Relatietype",
+            },
             cols: 2,
             rows: 1,
           }}
@@ -132,7 +162,10 @@ export function RdaSearch({ dashboard }: { dashboard?: boolean }) {
           config={{
             id: "insttype",
             field: "institutions.english_name.keyword",
-            title: "Related Institutions",
+            title: {
+              en: "Related institutions",
+              nl: "Gerelateerde instellingen",
+            },
             cols: 2,
             rows: 1,
           }}
