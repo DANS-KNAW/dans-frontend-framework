@@ -1,12 +1,10 @@
-import { Chip, Container } from "@mui/material";
+import { Chip, Container, List, ListItem, ListItemText } from "@mui/material";
 import type { Result } from "@dans-framework/rdt-search-ui";
 import React from "react";
 import { useParams } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2";
-
-// TODO: Put this in a separate package, preferably in RDT-Search-UI
 
 interface RdaRecord {
   card_url: string;
@@ -24,6 +22,15 @@ interface RdaRecord {
     description: string;
     datasource: string;
     relation: string;
+  }[];
+  interest_groups: {
+    uuid_interestgroup: string;
+    relation: string;
+    title: string;
+    description: string;
+    uuid_domain: string;
+    domains: string;
+    url: string;
   }[];
   pid_lod: string;
   pid_lod_type: string;
@@ -77,7 +84,28 @@ export function RdaRecord() {
           <Typography variant="h3">
             {record.title || <i>Untitled</i>}
           </Typography>
+
           <Typography gutterBottom>{record.dc_description || ""}</Typography>
+
+          {record.fragment && (
+            <>
+              <Typography variant="h5">Fragment</Typography>
+              <Typography gutterBottom>{record.fragment || ""}</Typography>
+            </>
+          )}
+
+          {record.interest_groups && (
+            <>
+              <Typography variant="h5">Interest Groups</Typography>
+              <List>
+                {record.interest_groups.map((ig) => (
+                  <ListItem key={ig.uuid_interestgroup}>
+                    <ListItemText primary={ig.title} />
+                  </ListItem>
+                ))}
+              </List>
+            </>
+          )}
 
           <MetadataList record={record} />
 
@@ -163,7 +191,6 @@ export function MetadataList({ record }: { record: RdaRecord | Result }) {
       )}
       {record.workflows && <Metadata name="Workflows" value={workflows} />}
       {record.pathways && <Metadata name="Pathways" value={pathways} />}
-      {record.fragment && <Metadata name="Fragment" value={record.fragment} />}
     </div>
   );
 }
