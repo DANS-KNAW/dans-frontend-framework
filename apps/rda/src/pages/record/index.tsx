@@ -94,7 +94,7 @@ export function RdaRecord() {
             </>
           )}
 
-          {record.interest_groups && (
+          {record.interest_groups.length > 0 && (
             <>
               <Typography variant="h5">Interest Groups</Typography>
               <List>
