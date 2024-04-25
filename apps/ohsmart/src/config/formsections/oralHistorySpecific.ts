@@ -399,7 +399,7 @@ const section: InitialSectionType = {
       fields: [
         {
           type: "date",
-          format: "DD-MM-YYYY HH:mm",
+          format: "DD-MM-YYYY",
           formatOptions: ["DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
           label: {
             en: "Start time and date",
@@ -411,7 +411,7 @@ const section: InitialSectionType = {
         },
         {
           type: "date",
-          format: "DD-MM-YYYY HH:mm",
+          format: "DD-MM-YYYY",
           formatOptions: ["DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
           label: {
             en: "End time and date",

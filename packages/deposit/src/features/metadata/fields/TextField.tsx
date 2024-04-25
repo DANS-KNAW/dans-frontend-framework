@@ -15,6 +15,7 @@ import { getFieldStatus, findByIdOrName } from "../metadataHelpers";
 import type { TextFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled, getData } from "../../../deposit/depositSlice";
+import moment from "moment";
 
 const SingleTextField = ({
   field,
@@ -61,11 +62,15 @@ const SingleTextField = ({
           field.type === 'autocomplete' ?
           (
             Array.isArray(field.value) ?
-            field.value.map( v => v.label ).join(' & '):
+            field.value.map( v => v.label ).join(' & ') :
             field.value.label 
-          ) :
+          ) : 
+          // if field type is date, just convert it to DD-MM-YYYY for every value
+          // TODO: should any other app than ohsmart want to use this, modify this where necessary
+          field.type === 'date' ?
+          moment(field.value).startOf('day').format('DD-MM-YYYY') :
           field.value
-          ) : null
+        ) : null
       }
       return segment;
     });
