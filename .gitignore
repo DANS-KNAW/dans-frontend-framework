@@ -2,6 +2,7 @@ node_modules
 .turbo
 .env.production
 .env.development
+.github
 
 # Logs
 logs
