@@ -141,7 +141,7 @@ export function RdaRecord() {
           />
 
           {/* <MetadataList record={record} /> */}
-
+          
           <div style={{ margin: "2rem 0" }}>
             {record.page_url && (
               <a href={record.page_url} style={{ marginRight: "1rem" }}>
