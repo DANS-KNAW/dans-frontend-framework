@@ -33,7 +33,7 @@ jobs:
   push:
 
     name: Push to registry.
-    runs-on: ohsmart-production
+    runs-on: ohsmart-demo
     needs: test
     strategy:
       matrix:
