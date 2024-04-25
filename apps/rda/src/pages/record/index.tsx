@@ -1,4 +1,4 @@
-import { Chip, Container, List, ListItem, ListItemText } from "@mui/material";
+import { Chip, Container } from "@mui/material";
 import type { Result } from "@dans-framework/rdt-search-ui";
 import React from "react";
 import { useParams } from "react-router-dom";
@@ -16,14 +16,14 @@ interface RdaRecord {
     fullname: string;
   }[];
   page_url: string;
-  pathways: {
+  pathways?: {
     uuid_pathway: string;
     pathway: string;
     description: string;
     datasource: string;
     relation: string;
   }[];
-  interest_groups: {
+  interest_groups?: {
     uuid_interestgroup: string;
     relation: string;
     title: string;
@@ -31,6 +31,25 @@ interface RdaRecord {
     uuid_domain: string;
     domains: string;
     url: string;
+  }[];
+  working_groups?: {
+    uuid_workinggroup: string;
+    title: string;
+    description: string;
+    uuid_domain: string;
+    domains: string;
+    url: string;
+    relation: string;
+  }[];
+  gorc_elements?: {
+    uuid_element: string;
+    element: string;
+    description: string;
+  }[];
+  gorc_attributes?: {
+    uuid_attribute: string;
+    attribute: string;
+    description: string;
   }[];
   pid_lod: string;
   pid_lod_type: string;
@@ -49,7 +68,6 @@ interface RdaRecord {
   uuid_rda: string;
   uuid_resource: string;
   workflows: string[];
-  workinggroupstring: string;
   fragment: string;
 }
 
@@ -94,20 +112,35 @@ export function RdaRecord() {
             </>
           )}
 
-          {record.interest_groups.length > 0 && (
-            <>
-              <Typography variant="h5">Interest Groups</Typography>
-              <List>
-                {record.interest_groups.map((ig) => (
-                  <ListItem key={ig.uuid_interestgroup}>
-                    <ListItemText primary={ig.title} />
-                  </ListItem>
-                ))}
-              </List>
-            </>
-          )}
+          <Metadata
+            name="Pathways"
+            value={record.pathways?.map((p) => p.pathway) ?? ["-"]}
+            options={{ turnicate: false }}
+          />
+          <Metadata
+            name="Interest Groups"
+            value={record.interest_groups?.map((ig) => ig.title) ?? ["-"]}
+            options={{ turnicate: false }}
+          />
+          <Metadata
+            name="Working Groups"
+            value={record.working_groups?.map((wg) => wg.title) ?? ["-"]}
+            options={{ turnicate: false }}
+          />
+          <Metadata
+            name="GORC Elements"
+            value={record.gorc_elements?.map((gorce) => gorce.element) ?? ["-"]}
+            options={{ turnicate: false }}
+          />
+          <Metadata
+            name="GORC Attributes"
+            value={
+              record.gorc_attributes?.map((gorca) => gorca.attribute) ?? ["-"]
+            }
+            options={{ turnicate: false }}
+          />
 
-          <MetadataList record={record} />
+          {/* <MetadataList record={record} /> */}
 
           <div style={{ margin: "2rem 0" }}>
             {record.page_url && (
@@ -139,10 +172,20 @@ const style = {
   marginBottom: "0.25rem",
 };
 
-function Metadata({ name, value }: { name: string; value: string | string[] }) {
+function Metadata({
+  name,
+  value,
+  options = {
+    turnicate: true,
+  },
+}: {
+  name: string;
+  value: string | string[];
+  options?: { turnicate: boolean };
+}) {
   if (value == null) return null;
 
-  const _value = Array.isArray(value) ? value.join(" / ") : value;
+  const _value = Array.isArray(value) ? value.join(" || ") : value;
 
   return (
     <div style={style}>
@@ -152,9 +195,10 @@ function Metadata({ name, value }: { name: string; value: string | string[] }) {
       <Typography
         variant="body2"
         sx={{
-          overflow: "hidden",
-          whiteSpace: "nowrap",
-          textOverflow: "ellipsis",
+          overflow: options?.turnicate ? "hidden" : "unset",
+          whiteSpace: options?.turnicate ? "nowrap" : "normal",
+          textOverflow: options?.turnicate ? "ellipsis" : "unset",
+          overflowWrap: "break-word",
         }}
       >
         {_value}
