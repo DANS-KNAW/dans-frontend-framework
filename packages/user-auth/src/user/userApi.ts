@@ -78,6 +78,7 @@ export const userSubmissionsApi = createApi({
           },
         };
       },
+      providesTags: ['Submissions'],
       transformResponse: (response: { assets: SubmissionResponse[] }) => {
         return response.assets;
       },
@@ -98,11 +99,11 @@ export const userSubmissionsApi = createApi({
           },
         };
       },
+      invalidatesTags: ['Submissions'],
       transformErrorResponse: (response) => {
         console.log(response)
         return { error: i18n.t("deleteFormError", { ns: "user" }) };
       },
-      invalidatesTags: ['Submissions'],
     }),
   }),
 });

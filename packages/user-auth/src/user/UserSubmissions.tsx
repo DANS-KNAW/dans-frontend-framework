@@ -17,7 +17,7 @@ import {
 import Box from "@mui/material/Box";
 import moment from "moment";
 import { useSiteTitle, setSiteTitle } from "@dans-framework/utils";
-import { useFetchUserSubmissionsQuery, useDeleteSubmissionMutation } from "./userApi";
+import { useFetchUserSubmissionsQuery, useDeleteSubmissionMutation, userSubmissionsApi } from "./userApi";
 import { useAuth } from "react-oidc-context";
 import type { SubmissionResponse, TargetOutput, DepositStatus } from "../types";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -58,19 +58,13 @@ const depositStatus: DepositStatus = {
 };
 
 export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
-  const [skip, setSkip] = useState<boolean>(false);
   const { t } = useTranslation("user");
   const siteTitle = useSiteTitle();
   const auth = useAuth();
+  const dispatch = useAppDispatch();
 
   // Fetch the users submitted/saved forms, every 10 sec, to update submission status
-  const { data, isLoading } = useFetchUserSubmissionsQuery(
-    auth.user?.profile.sub,
-    {
-      pollingInterval: 10000,
-      skip: skip,
-    },
-  );
+  const { data, isLoading } = useFetchUserSubmissionsQuery(auth.user?.profile.sub);
 
   // are there any targets that have been submitted not complete yet?
   const allTargetsComplete =
@@ -98,9 +92,11 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
           ),
       );
 
-  // if all targets are complete, skip further fetching
   useEffect(() => {
-    allTargetsComplete && setSkip(true);
+    // on load, we set an interval once to keep checking for new data if there's still targets being processed
+    const interval = !allTargetsComplete &&
+      setInterval(() => dispatch(userSubmissionsApi.util.invalidateTags(['Submissions'])), 5000);
+    return () => interval ? clearInterval(interval) : undefined;
   }, [allTargetsComplete]);
 
   useEffect(() => {
@@ -161,6 +157,8 @@ const SubmissionList = ({
   const auth = useAuth();
   const [toDelete, setToDelete] = useState<string>('');
   const [deleteSubmission] = useDeleteSubmissionMutation();
+
+  console.log(data)
 
   // useMemo to make sure columns don't change
   const columns = useMemo<GridColDef[]>(
@@ -284,7 +282,8 @@ const SubmissionList = ({
                     onClick={ 
                       // delete call to server
                       () => deleteSubmission({id: params.row.id, user: auth.user})
-                    }>
+                    }
+                  >
                     {t("confirmDelete")}
                   </Button>
                 </motion.div>
