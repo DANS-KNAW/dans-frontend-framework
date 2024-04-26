@@ -9,8 +9,8 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import Divider from "@mui/material/Divider";
 import { NavLink as RouterLink } from "react-router-dom";
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 import Tooltip from "@mui/material/Tooltip";
 import { LoginButton, LogoutButton } from "./Buttons";
 
@@ -54,12 +54,8 @@ const SettingsMenu = ({
   return (
     <Box sx={{ flexGrow: 0 }}>
       {userSubmissions && (
-        <Link
-          component={RouterLink}
-          to="/user-submissions"
-          color="inherit"
-        >
-          <Tooltip title={t('userSubmissions')}>
+        <Link component={RouterLink} to="/user-submissions" color="inherit">
+          <Tooltip title={t("userSubmissions")}>
             <IconButton size="large" color="inherit">
               <CollectionsBookmarkIcon />
             </IconButton>

@@ -91,11 +91,13 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
   const config = useAppSelector(getData);
   const fileRoles = config.filesUpload?.fileRoles || defaultFileRoles;
   const options = type === "process" ? fileProcessing : fileRoles;
-  const localizedOptions = options &&
-    (options.map((option) => ({
-      ...option,
-      label: lookupLanguageString(option.label, i18n.language),
-    })) as FileActions[]) || [];
+  const localizedOptions =
+    (options &&
+      (options.map((option) => ({
+        ...option,
+        label: lookupLanguageString(option.label, i18n.language),
+      })) as FileActions[])) ||
+    [];
 
   // Need to check the type of file and provide valid processing options
   const { data } = useFetchGroupedListQuery(null);

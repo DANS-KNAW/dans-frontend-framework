@@ -10,7 +10,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import Metadata from "../features/metadata/Metadata";
 import Files from "../features/files/Files";
 import Collapse from "@mui/material/Collapse";
-import Paper from '@mui/material/Paper';
+import Paper from "@mui/material/Paper";
 import type { TabPanelProps, TabHeaderProps } from "../types/Deposit";
 import type { FormConfig } from "../types/Metadata";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
@@ -278,28 +278,42 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
             </Collapse>
 
             {/* The form. Show an overlay if there's no API key filled in */}
-            <Box sx={{position: 'relative'}}>
-              {!hasTargetCredentials && !import.meta.env.VITE_DISABLE_API_KEY_MESSAGE && (
-                <Box sx={{
-                  position: 'absolute',
-                  top: 0, left: 0, right: 0, bottom: 0,
-                  zIndex: 10,
-                  background: 'rgba(245,245,245,0.8)',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                  <Paper elevation={15}>
-                    <Alert severity="warning" data-testid="invalid-api-keys" sx={{p: 3}}>
-                      <AlertTitle>{t("missingInfoHeader")}</AlertTitle>
-                      <Typography mb={2}>{t("missingInfoText")}</Typography>
-                      <Button variant="contained" component={RouterLink} to="/user-settings">
-                        {t("missingInfoButton")}
-                      </Button>
-                    </Alert>
-                  </Paper>
-                </Box>
-              )}
+            <Box sx={{ position: "relative" }}>
+              {!hasTargetCredentials &&
+                !import.meta.env.VITE_DISABLE_API_KEY_MESSAGE && (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      zIndex: 10,
+                      background: "rgba(245,245,245,0.8)",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Paper elevation={15}>
+                      <Alert
+                        severity="warning"
+                        data-testid="invalid-api-keys"
+                        sx={{ p: 3 }}
+                      >
+                        <AlertTitle>{t("missingInfoHeader")}</AlertTitle>
+                        <Typography mb={2}>{t("missingInfoText")}</Typography>
+                        <Button
+                          variant="contained"
+                          component={RouterLink}
+                          to="/user-settings"
+                        >
+                          {t("missingInfoButton")}
+                        </Button>
+                      </Alert>
+                    </Paper>
+                  </Box>
+                )}
 
               <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                 <TabHeader
@@ -317,7 +331,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
               </AnimatePresence>
               <Submit hasTargetCredentials={hasTargetCredentials} />
             </Box>
-
           </Grid>
         </Grid>
       </Container>

@@ -79,7 +79,7 @@ export function RdaRecord() {
     fetch(
       `${
         import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT
-      }/dans-rda2/_source/${id}`
+      }/dans-rda2/_source/${id}`,
     )
       .then((res) => res.json())
       .then(setRecord);
@@ -141,7 +141,7 @@ export function RdaRecord() {
           />
 
           {/* <MetadataList record={record} /> */}
-          
+
           <div style={{ margin: "2rem 0" }}>
             {record.page_url && (
               <a href={record.page_url} style={{ marginRight: "1rem" }}>
@@ -208,18 +208,14 @@ function Metadata({
 }
 
 export function MetadataList({ record }: { record: RdaRecord | Result }) {
-  const individuals = record.individuals
-    ? record.individuals.map((i: any) => i.fullname)
-    : [];
-  const workflows = record.workflows
-    ? record.workflows.map((w: any) => w.workflowstate)
-    : [];
-  const rights = record.rights
-    ? record.rights.map((r: any) => r.description)
-    : [];
-  const pathways = record.pathways
-    ? record.pathways.map((p: any) => p.pathway)
-    : [];
+  const individuals =
+    record.individuals ? record.individuals.map((i: any) => i.fullname) : [];
+  const workflows =
+    record.workflows ? record.workflows.map((w: any) => w.workflowstate) : [];
+  const rights =
+    record.rights ? record.rights.map((r: any) => r.description) : [];
+  const pathways =
+    record.pathways ? record.pathways.map((p: any) => p.pathway) : [];
 
   return (
     <div>

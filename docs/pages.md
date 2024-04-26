@@ -1,6 +1,7 @@
 # Pages package
 
 The Pages component makes up the pages of the applications. Only exports a Generic page component at the moment.
+
 ```tsx
 import { Generic } from '@dans-framework/pages'
 

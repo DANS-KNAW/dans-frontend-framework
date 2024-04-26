@@ -37,7 +37,7 @@ import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
 import { getFormActions, clearFormActions } from "@dans-framework/user-auth";
-import { useDebouncedCallback } from 'use-debounce';
+import { useDebouncedCallback } from "use-debounce";
 import { enqueueSnackbar } from "notistack";
 
 const Submit = ({
@@ -103,12 +103,14 @@ const Submit = ({
 
   // Access token might just be expiring, or user settings just changed
   // So we do a callback to signinSilent, which refreshes the current user
-  const getUser = () => auth.signinSilent()
-    .then(() => auth.user)
-    .catch( () => {
-      // make sure we display an error when there's an issue signing in/refreshing the user's token
-      enqueueSnackbar("Athentication error", { variant: "customError" });
-    });
+  const getUser = () =>
+    auth
+      .signinSilent()
+      .then(() => auth.user)
+      .catch(() => {
+        // make sure we display an error when there's an issue signing in/refreshing the user's token
+        enqueueSnackbar("Athentication error", { variant: "customError" });
+      });
 
   // remove warning when files get added
   useEffect(() => {
@@ -159,17 +161,14 @@ const Submit = ({
   };
 
   // Autosave functionality, debounced on metadata change
-  const autoSave = useDebouncedCallback(
-    () => {
-      if (!formDisabled && isTouched) {
-        submitData({ user: auth.user, actionType: "save" });
-      }
-    },
-    2000
-  );
+  const autoSave = useDebouncedCallback(() => {
+    if (!formDisabled && isTouched) {
+      submitData({ user: auth.user, actionType: "save" });
+    }
+  }, 2000);
 
   useEffect(() => {
-    !import.meta.env.VITE_DISABLE_AUTOSAVE && autoSave()
+    !import.meta.env.VITE_DISABLE_AUTOSAVE && autoSave();
   }, [metadata]);
 
   // Reset the entire form to initial state

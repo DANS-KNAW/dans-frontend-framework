@@ -16,7 +16,7 @@ import { getFieldStatus } from "../metadataHelpers";
 import type { DateFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled } from "../../../deposit/depositSlice";
-import type { DateValidationError } from '@mui/x-date-pickers/models';
+import type { DateValidationError } from "@mui/x-date-pickers/models";
 
 // Date and time selection component
 // Allows a user to select input type (date and time, date, month and year, year) if specified in config
@@ -37,18 +37,18 @@ const DateTimeField = ({
 
   const errorMessage = useMemo(() => {
     switch (error) {
-      case 'maxDate': {
+      case "maxDate": {
         return t("dateMax");
       }
-      case 'minDate': {
+      case "minDate": {
         return t("dateMin");
       }
-      case 'invalidDate': {
+      case "invalidDate": {
         return t("dateInvalid");
       }
 
       default: {
-        return '';
+        return "";
       }
     }
   }, [error]);
@@ -143,8 +143,9 @@ const DateTimeField = ({
         }}
         inputProps={{ "data-testid": `${field.name}-${field.id}` }}
         slotProps={{
-          textField: { 
-            error: (status === "error" && field.touched) || error ? true : false,
+          textField: {
+            error:
+              (status === "error" && field.touched) || error ? true : false,
             helperText: errorMessage,
           },
         }}

@@ -65,7 +65,7 @@ import { Deposit } from "@dans-framework/deposit"
         // Usually read from .env file.
         keyCheckUrl: "",
 
-        // Help text that appears where a user enters an API key for this particular target. 
+        // Help text that appears where a user enters an API key for this particular target.
         // Can be a string or language object
         helpText: "",
       }
@@ -89,6 +89,7 @@ For page object, see [@dans-framework/pages](pages.md).
 ## Form sections and field objects
 
 Each section is a collapsible accordion in the front-end. A section is formatted like so:
+
 ```tsx
 {
   // unique identifier for this section
@@ -230,9 +231,11 @@ Each section is a collapsible accordion in the front-end. A section is formatted
   ]
 }
 ```
+
 ## i18n
 
 Exposes the Deposit components language config. Use this in the main apps language config.
+
 ```tsx
-import { i18n as i18nDeposit } from "@dans-framework/deposit"
+import { i18n as i18nDeposit } from "@dans-framework/deposit";
 ```

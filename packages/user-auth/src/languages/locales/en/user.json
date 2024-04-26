@@ -52,5 +52,6 @@
 	"undeleteItem": "Cancel delete",
 	"confirmDelete": "Confirm deletion",
 	"viewItemReadOnly": "As read only form",
-	"viewItemTarget": "On {{name}}"
+	"viewItemTarget": "On {{name}}",
+	"deleteSuccess": "Dataset succesfully deleted from server"
 }

@@ -7,6 +7,7 @@ How to set up a wrapper application for the components of the DANS framework. Im
 Make sure required dependencies are installed in your **package.json**.
 
 Create the appropriate **.env** files. Use the **.env** template below for your **.env.development** and **.env.production** files.
+
 ```
 ## DANS packaging key. Only when Keycloak is not used. Deprecated.
 VITE_PACKAGING_KEY = ''
@@ -58,15 +59,15 @@ VITE_ELASTICSEARCH_API_ENDPOINTS = '[
 
 ## Form configuration
 
-The form should be an array of section objects. A section can be configured as indicated in the [@dans-framework/deposit](deposit.md) package. 
+The form should be an array of section objects. A section can be configured as indicated in the [@dans-framework/deposit](deposit.md) package.
 
 ## Pages
 
-The pages should be an array of page objects. A page can be configured as indicated in the [@dans-framework/pages](pages.md) package. 
+The pages should be an array of page objects. A page can be configured as indicated in the [@dans-framework/pages](pages.md) package.
 
 ## Footer
 
-The footer consists of a top and bottom section. See the [@dans-framework/layout](layout.md) package. 
+The footer consists of a top and bottom section. See the [@dans-framework/layout](layout.md) package.
 
 ## Authentication with Keycloak
 
@@ -75,8 +76,9 @@ For user authentication, you need to supply the proper OIDC configuration. See t
 ## Languages, i18n and Suspense
 
 The framework uses the i18next library. Define an array of languages your app uses, using their two letter identifiers, e.g. `['en', 'nl']`. Setup an i18n config file and import that in your app. Be sure to add the i18n subcomponent configs to your main app, e.g.
+
 ```tsx
-i18n.on('languageChanged', (lng) => {
+i18n.on("languageChanged", (lng) => {
   i18nLayout.changeLanguage(lng);
   i18nDeposit.changeLanguage(lng);
   i18nAuth.changeLanguage(lng);
@@ -96,6 +98,7 @@ Configure a theme file and use this in the ThemeWrapper from [@dans-framework/th
 ## App example
 
 A sample app might look like this:
+
 ```tsx
 import { Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";

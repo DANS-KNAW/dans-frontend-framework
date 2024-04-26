@@ -33,16 +33,19 @@ git submodule update --init --recursive
 ## Installation
 
 After cloning, run:
+
 ```bash
 pnpm i
 ```
 
 ## Running the app(s)
+
 ```bash
 pnpm dev
 ```
 
 To run just a single app, you can add a line to the package.json scripts section like so:
+
 ```json
 "dev:ohsmart": "turbo run dev --filter=@dans-framework/ohsmart"
 ```
@@ -50,11 +53,13 @@ To run just a single app, you can add a line to the package.json scripts section
 Then run `pnpm dev:ohsmart` to start.
 
 Or simply run
+
 ```bash
 pnpm --filter @dans-framework/ohsmart dev
 ```
 
 To run this application on a specific port, run
+
 ```bash
 pnpm --filter @dans-framework/ohsmart dev --port 3000
 ```
@@ -66,11 +71,13 @@ Front-end testing is done using Playwright. More to follow...
 ## Building the app(s)
 
 For all apps:
+
 ```bash
 pnpm build
 ```
 
 Or for a single app:
+
 ```bash
 pnpm --filter @dans-framework/ohsmart build
 ```
@@ -78,12 +85,14 @@ pnpm --filter @dans-framework/ohsmart build
 ## Adding a library to an app/package
 
 Add a library to all apps/packages.
+
 ```bash
 pnpm i <lib_you_want_to_add>
 ```
 
 Add the `-D` flag for devDependencies.
 To install a library for a single app/package, e.g. @dans-framework/ohsmart, use the `--filter` flag:
+
 ```bash
 pnpm i <lib_you_want_to_add> --filter '@dans-framework/ohsmart'
 ```
@@ -94,9 +103,11 @@ Alternatively, you can edit the package.json file of the appropriate app or pack
 
 You can use the `pnpm i` command from above using e.g. `@dans-framework/utils` as package name.
 Alternatively, since all packages are referenced locally, edit the dependencies or devDependencies in the package.json file of the app you're working on by adding a line like this:
+
 ```json
 "@dans-framework/utils": "workspace:*"
 ```
+
 and then running `pnpm i` again.
 
 ## Creating a new app or package

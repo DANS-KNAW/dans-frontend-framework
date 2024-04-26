@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { SshLicenceResponse } from "../../../types/Api";
-import i18n from '../../../languages/i18n';
+import i18n from "../../../languages/i18n";
 
 export const sshLicenceApi = createApi({
   reducerPath: "sshLicences",
@@ -19,7 +19,9 @@ export const sshLicenceApi = createApi({
             }
           : [];
       },
-      transformErrorResponse: () => ({ error: i18n.t('metadata:apiFetchError', {api: 'DANS Licence types'}) }),
+      transformErrorResponse: () => ({
+        error: i18n.t("metadata:apiFetchError", { api: "DANS Licence types" }),
+      }),
     }),
   }),
 });

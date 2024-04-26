@@ -96,7 +96,7 @@ const axiosBaseQuery =
         );
       } else {
         store.dispatch(setMetadataSubmitStatus("error"));
-      }      
+      }
       return {
         error: {
           status: err.response?.status,
@@ -122,23 +122,24 @@ export const submitApi = createApi({
         fetchWithBQ,
       ) {
         const { metadata, deposit, files } = queryApi.getState() as SubmitData;
-        const data = formatFormData(
-          metadata.id,
-          metadata.form,
-          files,
-        );
-        
+        const data = formatFormData(metadata.id, metadata.form, files);
+
         console.log("Submit metadata:");
         console.log(data);
 
         // Some logic to help find the title value
-        const parsedPath = deposit.config.formTitle.split(/[\[\]\.]/)
+        const parsedPath = deposit.config.formTitle
+          .split(/[\[\]\.]/)
           .filter(Boolean)
-          .map((part: string) => isNaN(parseInt(part)) ? part : parseInt(part));
+          .map((part: string) =>
+            isNaN(parseInt(part)) ? part : parseInt(part),
+          );
 
         // Format the headers
         const headers = {
-          Authorization: `Bearer ${deposit.config.submitKey || user?.access_token}`,
+          Authorization: `Bearer ${
+            deposit.config.submitKey || user?.access_token
+          }`,
           "user-id": user?.profile.sub,
           "auth-env-name": deposit.config.target?.envName,
           "assistant-config-name": deposit.config.target?.configName,
@@ -156,7 +157,10 @@ export const submitApi = createApi({
               },
             })),
           ),
-          title: parsedPath.reduce((acc: any, key: string | number) => acc[key], metadata.form)?.value,
+          title: parsedPath.reduce(
+            (acc: any, key: string | number) => acc[key],
+            metadata.form,
+          )?.value,
         };
 
         console.log("Submit req headers:");
@@ -182,17 +186,20 @@ export const submitApi = createApi({
         if (metadataResult.error) {
           // enable form again if there's an error, so user can try and resubmit
           store.dispatch(setFormDisabled(false));
-          console.log(metadataResult.error)
-          return { 
+          console.log(metadataResult.error);
+          return {
             error: {
-              ...metadataResult.error as FetchBaseQueryError,
+              ...(metadataResult.error as FetchBaseQueryError),
               data: i18n.t(
-                actionType === "save" ? "saveErrorNotification" : "submitErrorNotification", {
+                actionType === "save" ?
+                  "saveErrorNotification"
+                : "submitErrorNotification",
+                {
                   ns: "submit",
                   error: (metadataResult.error as FetchBaseQueryError).data,
-                }
-              )
-            }
+                },
+              ),
+            },
           };
         }
 
@@ -231,7 +238,9 @@ export const submitApi = createApi({
                 method: "POST",
                 data: file,
                 headers: {
-                  Authorization: `Bearer ${deposit.config.submitKey || user?.access_token}`,
+                  Authorization: `Bearer ${
+                    deposit.config.submitKey || user?.access_token
+                  }`,
                   "auth-env-name": deposit.config.target?.envName,
                 },
               }),
@@ -245,17 +254,20 @@ export const submitApi = createApi({
           filesResults &&
           filesResults.filter((res: any) => res.error as FetchBaseQueryError);
         if (Array.isArray(filesErrors) && filesErrors.length > 0)
-          return { 
+          return {
             error: {
               // lets just take the first error message
-              ...filesErrors[0].error as FetchBaseQueryError,
+              ...(filesErrors[0].error as FetchBaseQueryError),
               data: i18n.t(
-                actionType === "save" ? "saveFileErrorNotification" : "submitFileErrorNotification", {
+                actionType === "save" ?
+                  "saveFileErrorNotification"
+                : "submitFileErrorNotification",
+                {
                   ns: "submit",
                   error: (filesErrors[0].error as FetchBaseQueryError).data,
-                }
-              )
-            }
+                },
+              ),
+            },
           };
 
         if (actionType === "save") {

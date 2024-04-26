@@ -84,17 +84,17 @@ export const metadataSlice = createSlice({
         field.value = action.payload.value;
         field.touched = true;
 
-        // For setting required state of 'conditional' fields, 
+        // For setting required state of 'conditional' fields,
         // we need to find the parent array and change the fields inside
         if (field.toggleRequired) {
           changeConditionalState(
             action.payload.id,
             section.fields,
             action.payload.value,
-            field, 
-            'toggleRequired', 
-            'toggleRequiredIds', 
-            'required'
+            field,
+            "toggleRequired",
+            "toggleRequiredIds",
+            "required",
           );
         }
 
@@ -104,28 +104,34 @@ export const metadataSlice = createSlice({
             action.payload.id,
             section.fields,
             action.payload.value,
-            field, 
-            'togglePrivate', 
-            'togglePrivateIds', 
-            'private'
+            field,
+            "togglePrivate",
+            "togglePrivateIds",
+            "private",
           );
         }
 
         if (field.toggleTitleGeneration) {
           // set flag if auto title generation is allowed
-          state.allowTitleGeneration = !isEmpty(action.payload.value)
+          state.allowTitleGeneration = !isEmpty(action.payload.value);
         }
 
         // Logic for setting a min and max date, if applicable
         // TODO: Perhaps create a daterange field, cleaner
         if (field.minDateField) {
-          const fieldIds = findConditionalChanges(action.payload.id, section.fields, 'minDateField');
-          fieldIds && fieldIds.map(id => {
-            const changeField = findByIdOrName(id, section.fields);
-            if (changeField) {
-              (changeField as DateFieldType).minDate = action.payload.value as string
-            }
-          })
+          const fieldIds = findConditionalChanges(
+            action.payload.id,
+            section.fields,
+            "minDateField",
+          );
+          fieldIds &&
+            fieldIds.map((id) => {
+              const changeField = findByIdOrName(id, section.fields);
+              if (changeField) {
+                (changeField as DateFieldType).minDate = action.payload
+                  .value as string;
+              }
+            });
         }
 
         // After every input, we need to update field valid status and section status as well.
@@ -163,7 +169,10 @@ export const metadataSlice = createSlice({
     // functionality for adding new single (repeatable) fields/field groups
     addField: (state, action: PayloadAction<AddFieldPayload>) => {
       const section = state.form[action.payload.sectionIndex];
-      const field = findByIdOrName(action.payload.groupedFieldId, section.fields);
+      const field = findByIdOrName(
+        action.payload.groupedFieldId,
+        section.fields,
+      );
       if (field) {
         const newField =
           action.payload.type === "single" ?
@@ -211,7 +220,10 @@ export const metadataSlice = createSlice({
     },
     deleteField: (state, action: PayloadAction<DeleteFieldPayload>) => {
       const section = state.form[action.payload.sectionIndex];
-      const field = findByIdOrName(action.payload.groupedFieldId, section.fields);
+      const field = findByIdOrName(
+        action.payload.groupedFieldId,
+        section.fields,
+      );
       if (field) {
         (field as RepeatTextFieldType | RepeatGroupedFieldType).fields.splice(
           action.payload.deleteField,
@@ -275,7 +287,7 @@ export const metadataSlice = createSlice({
     },
     setTitleGeneration: (state, action: PayloadAction<boolean>) => {
       state.allowTitleGeneration = action.payload;
-    }
+    },
   },
 });
 
@@ -303,6 +315,7 @@ export const getMetadataStatus = (state: RootState) => {
   return getSectionStatus(statusArray);
 };
 export const getTouchedStatus = (state: RootState) => state.metadata.touched;
-export const getAllowTitleGeneration = (state: RootState) => state.metadata.allowTitleGeneration;
+export const getAllowTitleGeneration = (state: RootState) =>
+  state.metadata.allowTitleGeneration;
 
 export default metadataSlice.reducer;

@@ -33,9 +33,7 @@ const App = () => {
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
-        return (
-          <RdaSearch dashboard />
-        );
+        return <RdaSearch dashboard />;
       case "search":
         return <RdaSearch />;
       case "record":

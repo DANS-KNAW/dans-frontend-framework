@@ -2,15 +2,19 @@ import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import RefreshIcon from '@mui/icons-material/Refresh';
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
 import { AddButton, DeleteButton } from "../MetadataButtons";
-import { setField, getMetadata, getAllowTitleGeneration } from "../metadataSlice";
+import {
+  setField,
+  getMetadata,
+  getAllowTitleGeneration,
+} from "../metadataSlice";
 import { getFieldStatus, findByIdOrName } from "../metadataHelpers";
 import type { TextFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
@@ -32,7 +36,7 @@ const SingleTextField = ({
   const allowTitleGeneration = useAppSelector(getAllowTitleGeneration);
   const formConfig = useAppSelector(getData);
   const metadata = useAppSelector(getMetadata);
-  const [generatedTitle, setGeneratedTitle] = useState<string>('');
+  const [generatedTitle, setGeneratedTitle] = useState<string>("");
 
   useEffect(() => {
     // if requested, auto fill user data from oidc, if field has no (manually) set value
@@ -50,35 +54,40 @@ const SingleTextField = ({
   // function to generate title from form config string and filled in fields
   // set to state, so we only have to call this function once
   const generateTitle = () => {
-    const titleString = lookupLanguageString(formConfig.generatedTitle, i18n.language);
+    const titleString = lookupLanguageString(
+      formConfig.generatedTitle,
+      i18n.language,
+    );
     // split string into segments to replace
     const segments = titleString ? titleString.split(/({{.*?}})/) : [];
-    const title = segments.map(segment => {
+    const title = segments.map((segment) => {
       const match = segment.match(/{{(.*?)}}/);
       if (match) {
-        const field = metadata.map( section => findByIdOrName(match[1], section.fields, 'name' ) ).filter(Boolean)[0];
+        const field = metadata
+          .map((section) => findByIdOrName(match[1], section.fields, "name"))
+          .filter(Boolean)[0];
 
-        return field && field.value ? (
-          field.type === 'autocomplete' ?
-          (
-            Array.isArray(field.value) ?
-            field.value.map( v => v.label ).join(' & ') :
-            field.value.label 
-          ) : 
-          // if field type is date, just convert it to DD-MM-YYYY for every value
-          // TODO: should any other app than ohsmart want to use this, modify this where necessary
-          field.type === 'date' ?
-          moment(field.value).startOf('day').format('DD-MM-YYYY') :
-          field.value
-        ) : null
+        return (
+          field && field.value ?
+            field.type === "autocomplete" ?
+              Array.isArray(field.value) ?
+                field.value.map((v) => v.label).join(" & ")
+              : field.value.label
+              // if field type is date, just convert it to DD-MM-YYYY for every value
+              // TODO: should any other app than ohsmart want to use this, modify this where necessary
+            : field.type === "date" ?
+              moment(field.value).startOf("day").format("DD-MM-YYYY")
+            : field.value
+          : null
+        );
       }
       return segment;
     });
 
-    if (!title.includes(null)) { 
+    if (!title.includes(null)) {
       setGeneratedTitle(title.join(""));
     }
-  }
+  };
 
   const setTitle = () => {
     dispatch(
@@ -88,7 +97,7 @@ const SingleTextField = ({
         value: generatedTitle,
       }),
     );
-  }
+  };
 
   // generate the title, makes sure this updates when title state has been set
   useEffect(() => {
@@ -146,11 +155,11 @@ const SingleTextField = ({
         }}
         inputProps={{ "data-testid": `${field.name}-${field.id}` }}
       />
-      {field.autoGenerateTitle && allowTitleGeneration && generatedTitle &&
+      {field.autoGenerateTitle && allowTitleGeneration && generatedTitle && (
         // auto generation of title field if allowed and there's a title available
-        <Tooltip title={t('generate')}>
-          <IconButton 
-            onClick={() => setTitle()} 
+        <Tooltip title={t("generate")}>
+          <IconButton
+            onClick={() => setTitle()}
             sx={{
               ml: 0.5,
               // keep icon centered
@@ -160,7 +169,7 @@ const SingleTextField = ({
             <RefreshIcon />
           </IconButton>
         </Tooltip>
-      }
+      )}
       {groupedFieldId &&
         !formDisabled && [
           totalFields > 1 && (
@@ -170,7 +179,7 @@ const SingleTextField = ({
               groupedFieldId={groupedFieldId}
               deleteFieldIndex={currentField}
               mt={
-                (status === "error" && field.touched ? -3 : 0) + 
+                (status === "error" && field.touched ? -3 : 0) +
                 (currentField === 0 ? 0 : 1)
               }
               deleteGroupId={field.id}
@@ -185,7 +194,7 @@ const SingleTextField = ({
               groupedFieldName={field.name}
               type="single"
               mt={
-                (status === "error" && field.touched ? -3 : 0) + 
+                (status === "error" && field.touched ? -3 : 0) +
                 (currentField === 0 ? 0 : 1)
               }
             />

@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { XMLParser } from "fast-xml-parser";
 import type { GettyResponse, ProxyResponse } from "../../../types/Api";
-import i18n from '../../../languages/i18n';
+import i18n from "../../../languages/i18n";
 
 export const gettyApi = createApi({
   reducerPath: "getty",
@@ -33,7 +33,9 @@ export const gettyApi = createApi({
             }
           : [];
       },
-      transformErrorResponse: () => ({ error: i18n.t('metadata:apiFetchError', {api: 'Getty AAT'}) }),
+      transformErrorResponse: () => ({
+        error: i18n.t("metadata:apiFetchError", { api: "Getty AAT" }),
+      }),
     }),
   }),
 });

@@ -21,8 +21,9 @@ export const errorLogger: Middleware = () => (next) => async (action) => {
     console.error("We got a rejected action!");
     console.error(action);
     // Set error message, keep it simple for the user
-    const error = action.payload.error || action.payload.data || action.error.message;
-    console.log(error)
+    const error =
+      action.payload.error || action.payload.data || action.error.message;
+    console.log(error);
 
     // Set conditions for when to post a ticket to freshdesk, if freshdesk is enabled
     let ticket;
@@ -40,19 +41,18 @@ export const errorLogger: Middleware = () => (next) => async (action) => {
     if (action.meta.arg.endpointName !== "validateAllKeys") {
       enqueueSnackbar(error, { variant: "customError", ticket: ticket });
     }
-
   }
 
   return next(action);
 };
 
-declare module 'notistack' {
-  interface VariantOverrides {  
+declare module "notistack" {
+  interface VariantOverrides {
     // adds `customError` variant and specifies the
     // "extra" props it takes in options of `enqueueSnackbar`
-    customError: {         
-      ticket?: any;  
-    }
+    customError: {
+      ticket?: any;
+    };
   }
 }
 
@@ -81,7 +81,11 @@ export const CustomError = forwardRef<HTMLDivElement, CustomErrorProps>(
           onClose={handleDismiss}
         >
           <AlertTitle>Error: {message}</AlertTitle>
-          {ticket && <Typography>This error has been forwarded to our support team.</Typography>}
+          {ticket && (
+            <Typography>
+              This error has been forwarded to our support team.
+            </Typography>
+          )}
         </Alert>
       </SnackbarContent>
     );
@@ -91,34 +95,38 @@ export const CustomError = forwardRef<HTMLDivElement, CustomErrorProps>(
 // Freshdesk ticketing system
 const getUser = () => {
   const oidcStorage = sessionStorage.getItem(
-    `oidc.user:${import.meta.env.VITE_OIDC_AUTHORITY}:${import.meta.env.VITE_OIDC_CLIENT_ID}`
+    `oidc.user:${import.meta.env.VITE_OIDC_AUTHORITY}:${
+      import.meta.env.VITE_OIDC_CLIENT_ID
+    }`,
   );
   if (!oidcStorage) {
     return null;
   }
   return User.fromStorageString(oidcStorage);
-}
+};
 
 const sendTicket = async (data: any) => {
-  const encodedCredentials = btoa(`${import.meta.env.VITE_FRESHDESK_API_KEY}:X`);
+  const encodedCredentials = btoa(
+    `${import.meta.env.VITE_FRESHDESK_API_KEY}:X`,
+  );
   const user = getUser();
   const response = await fetch(
     `${import.meta.env.VITE_FRESHDESK_URL}/api/v2/tickets`,
-    { 
-      method: 'POST',
+    {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
       },
       body: JSON.stringify({
         subject: "dans-frontend-framework error",
-        type: 'Incident',
+        type: "Incident",
         priority: 2,
         status: 2,
         group_id: parseInt(import.meta.env.VITE_FRESHDESK_GROUP),
         responder_id: parseInt(import.meta.env.VITE_FRESHDESK_AGENT),
         email: user?.profile.email,
-        description: 
+        description:
           `<h6>URL</h6>` +
           `<p>${window.location.href}</p>` +
           `<h6>Error data</h6>` +
@@ -126,23 +134,23 @@ const sendTicket = async (data: any) => {
           `<h6>User data</h6>` +
           `<pre>${JSON.stringify(user, undefined, 2)}</pre>`,
         custom_fields: {
-          cf_responsibility: 'Root Cause Analysis',
-          cf_assigned_to: import.meta.env.VITE_FRESHDESK_ASSIGNED_TO
-        }
-      })
-    }
+          cf_responsibility: "Root Cause Analysis",
+          cf_assigned_to: import.meta.env.VITE_FRESHDESK_ASSIGNED_TO,
+        },
+      }),
+    },
   );
 
   if (!response.ok) {
-    console.error('Error submitting freshdesk ticket');
+    console.error("Error submitting freshdesk ticket");
     console.error(response);
     return;
   }
 
   const json = await response.json();
 
-  console.log('Freshdesk ticket submitted');
+  console.log("Freshdesk ticket submitted");
   console.log(json);
 
   return json;
-}
+};

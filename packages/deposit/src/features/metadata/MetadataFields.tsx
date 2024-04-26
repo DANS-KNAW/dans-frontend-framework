@@ -102,7 +102,11 @@ const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
           <GettyField field={field} sectionIndex={sectionIndex} />
         : field.options === "sheets" ?
           <SheetsField field={field} sectionIndex={sectionIndex} />
-        : field.options === "elsst" || field.options === "narcis" || field.options === "dansCollections" ?
+        : (
+          field.options === "elsst" ||
+          field.options === "narcis" ||
+          field.options === "dansCollections"
+        ) ?
           <DatastationsField field={field} sectionIndex={sectionIndex} />
         : field.options === "dansFormats" ?
           <DansFormatsField field={field} sectionIndex={sectionIndex} />

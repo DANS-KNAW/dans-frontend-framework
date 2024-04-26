@@ -52,5 +52,6 @@
 	"undeleteItem": "Annuleer verwijderen",
 	"confirmDelete": "Bevestig verwijderen",
 	"viewItemReadOnly": "Als alleen-lezen form",
-	"viewItemTarget": "Op {{name}}"
+	"viewItemTarget": "Op {{name}}",
+	"deleteSuccess": "Dataset succesvol verwijderd van server"
 }

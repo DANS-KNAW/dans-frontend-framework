@@ -30,9 +30,8 @@ export function Rda2Result(props: ResultBodyProps) {
 
 function ReadMore({ item }: { item: ResultBodyProps["result"] }) {
   const [active, setActive] = useState(false);
- 
-  const description = item.dc_description || "";
 
+  const description = item.dc_description || "";
 
   const [visibleText, hiddenText] = [
     description.substring(0, 180),

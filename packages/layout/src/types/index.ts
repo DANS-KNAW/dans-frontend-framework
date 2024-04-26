@@ -13,7 +13,7 @@ export interface FooterContent {
     src: string;
     alt: string;
   };
-  align?: 'center' | 'right';
+  align?: "center" | "right";
   bottom?: boolean;
 }
 

@@ -1,4 +1,5 @@
 - Getting started
+
   - [Setup of the framework](README.md)
   - [App configuration](apps.md)
 

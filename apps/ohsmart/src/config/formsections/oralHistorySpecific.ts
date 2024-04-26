@@ -256,7 +256,11 @@ const section: InitialSectionType = {
           name: "interpreter_function",
           private: true,
           noIndicator: true,
-          toggleRequired: ["interpreter_consent", "interpreter_first_name", "interpreter_last_name"],
+          toggleRequired: [
+            "interpreter_consent",
+            "interpreter_first_name",
+            "interpreter_last_name",
+          ],
         },
         {
           type: "text",
@@ -267,7 +271,11 @@ const section: InitialSectionType = {
           name: "interpreter_affiliation",
           private: true,
           noIndicator: true,
-          toggleRequired: ["interpreter_consent", "interpreter_first_name", "interpreter_last_name"],
+          toggleRequired: [
+            "interpreter_consent",
+            "interpreter_first_name",
+            "interpreter_last_name",
+          ],
         },
         {
           type: "check",
@@ -334,7 +342,11 @@ const section: InitialSectionType = {
           name: "others_function",
           private: true,
           noIndicator: true,
-          toggleRequired: ["others_consent", "others_first_name", "others_last_name"],
+          toggleRequired: [
+            "others_consent",
+            "others_first_name",
+            "others_last_name",
+          ],
         },
         {
           type: "text",
@@ -345,7 +357,11 @@ const section: InitialSectionType = {
           name: "others_affiliation",
           private: true,
           noIndicator: true,
-          toggleRequired: ["others_consent", "others_first_name", "others_last_name"],
+          toggleRequired: [
+            "others_consent",
+            "others_first_name",
+            "others_last_name",
+          ],
         },
         {
           type: "check",

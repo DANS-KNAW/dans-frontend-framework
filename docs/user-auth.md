@@ -5,6 +5,7 @@ Uses its own Redux store for authentication management. Manages authentication a
 ## AuthWrapper
 
 User this as a wrapper for your application. Needs props for OIDC authProvider.
+
 ```tsx
 import { AuthWrapper } from '@dans-framework/user-auth'
 
@@ -24,6 +25,7 @@ import { AuthWrapper } from '@dans-framework/user-auth'
 ## AuthRoute
 
 Wrapper for routes that should be accessible only to logged in users
+
 ```tsx
 import { AuthRoute } from '@dans-framework/user-auth'
 
@@ -35,76 +37,89 @@ import { AuthRoute } from '@dans-framework/user-auth'
 ## SignInCallback
 
 Component to be used within a Route. Return location for OIDC login attempts.
-```tsx
-import { SignInCallback } from '@dans-framework/user-auth'
 
-<Route path="signin-callback" element={<SignInCallback />} />
+```tsx
+import { SignInCallback } from "@dans-framework/user-auth";
+
+<Route path="signin-callback" element={<SignInCallback />} />;
 ```
 
 ## UserMenu
 
 Displays the user menu or a login button when a user is not logged in. Used by layout component `<MenuBar />`.
-```tsx
-import { UserMenu } from '@dans-framework/user-auth'
 
-<UserMenu />
+```tsx
+import { UserMenu } from "@dans-framework/user-auth";
+
+<UserMenu />;
 ```
 
 ## LoginButton
 
 Displays a login button which redirects to the OIDC provider.
-```tsx
-import { LoginButton } from '@dans-framework/user-auth'
 
-<LoginButton />
+```tsx
+import { LoginButton } from "@dans-framework/user-auth";
+
+<LoginButton />;
 ```
 
 ## UserSubmissions
 
 TBD. Displays a current users metadata submissions. Needs to be a child of `<AuthRoute />`.
-```tsx
-import { UserSubmissions } from '@dans-framework/user-auth'
 
-<Route path="user-submissions" element={
-  <AuthRoute>
-    <UserSubmissions />
-  </AuthRoute>
-} />
+```tsx
+import { UserSubmissions } from "@dans-framework/user-auth";
+
+<Route
+  path="user-submissions"
+  element={
+    <AuthRoute>
+      <UserSubmissions />
+    </AuthRoute>
+  }
+/>;
 ```
 
 ## UserSettings
 
 Displays a current users settings, like API keys. Needs to be a child of `<AuthRoute />`. Takes `target` as props, usually taken from the targetCredentials object set in the form config: an array of target objects the component uses for form submission authentication. For the targetCredentials object, see [@dans-framework/deposit](deposit.md).
-```tsx
-import { UserSettings } from '@dans-framework/user-auth'
 
-<Route path="user-settings" element={
-  <AuthRoute>
-    <UserSettings target={form.targetCredentials} />
-  </AuthRoute>
-} />
+```tsx
+import { UserSettings } from "@dans-framework/user-auth";
+
+<Route
+  path="user-settings"
+  element={
+    <AuthRoute>
+      <UserSettings target={form.targetCredentials} />
+    </AuthRoute>
+  }
+/>;
 ```
 
 ## fetchUserProfile
 
 Helper function to get the current users profile information. Exposes the Auth library's Redux store.
+
 ```tsx
-import { fetchUserProfile } from '@dans-framework/user-auth'
+import { fetchUserProfile } from "@dans-framework/user-auth";
 
 const { data } = fetchUserProfile({
-    // URL of OIDC provider/authority
-    provider: '',
+  // URL of OIDC provider/authority
+  provider: "",
 
-    // OIDC client id
-    id: ''
+  // OIDC client id
+  id: "",
 });
 ```
 
 ## i18n
 
 Exposes the Auth components language config. Use this in the main apps language config.
+
 ```tsx
-import { i18n as i18nAuth } from '@dans-framework/user-auth'
+import { i18n as i18nAuth } from "@dans-framework/user-auth";
 ```
 
 ## Keycloak authentication

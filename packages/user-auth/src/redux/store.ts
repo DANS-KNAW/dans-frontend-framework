@@ -18,7 +18,7 @@ export const store = configureStore({
       .concat(userApi.middleware)
       .concat(userSubmissionsApi.middleware)
       .concat(validateKeyApi.middleware)
-      .concat(errorLogger)
+      .concat(errorLogger),
 });
 
 export const initUserProfile = ({

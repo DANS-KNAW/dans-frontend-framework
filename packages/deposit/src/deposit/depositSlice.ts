@@ -10,8 +10,8 @@ const initialState: {
 } = {
   config: {
     targetCredentials: [],
-    formTitle: '',
-    generatedTitle: '',
+    formTitle: "",
+    generatedTitle: "",
     target: {},
     submitKey: "",
     skipValidation: false,

@@ -52,12 +52,15 @@ const section: InitialSectionType = {
         nl: "Iets hier",
       },
       options: "dansCollections",
-      value: [{
-        mandatory: true,
-        "label": "Oral History",
-        "value": "https://vocabularies.dans.knaw.nl/collections/ssh/cfa04ed6-4cd0-4651-80cb-ed4ca8fa14f3",
-        "id": "ssh/cfa04ed6-4cd0-4651-80cb-ed4ca8fa14f3"
-      }],
+      value: [
+        {
+          mandatory: true,
+          label: "Oral History",
+          value:
+            "https://vocabularies.dans.knaw.nl/collections/ssh/cfa04ed6-4cd0-4651-80cb-ed4ca8fa14f3",
+          id: "ssh/cfa04ed6-4cd0-4651-80cb-ed4ca8fa14f3",
+        },
+      ],
     },
     {
       type: "group",

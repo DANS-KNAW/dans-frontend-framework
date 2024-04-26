@@ -5,6 +5,7 @@ Package that exports several layout components for use in your form application.
 ## Language bar
 
 Display a language bar with country flags.
+
 ```tsx
 import { LanguageBar } from @dans-framework/layout;
 
@@ -19,6 +20,7 @@ import { LanguageBar } from @dans-framework/layout;
 ## Menu bar
 
 The navigation menu of your app. Takes an array of Page props. See [@dans-framework/pages](pages.md)
+
 ```tsx
 import { MenuBar } from @dans-framework/layout;
 
@@ -28,6 +30,7 @@ import { MenuBar } from @dans-framework/layout;
 ## Footer
 
 The footer menu of your app.
+
 ```tsx
 import { Footer } from @dans-framework/layout
 
@@ -39,6 +42,7 @@ import { Footer } from @dans-framework/layout
 ```
 
 A footer item is formatted as follows:
+
 ```tsx
 {
   // a string or a language object, appears above a footer section
@@ -60,6 +64,7 @@ A footer item is formatted as follows:
 ## i18n
 
 Exposes the Layout components language config. Use this in the main apps language config.
+
 ```tsx
-import { i18n as i18nLayout } from '@dans-framework/layout'
+import { i18n as i18nLayout } from "@dans-framework/layout";
 ```
