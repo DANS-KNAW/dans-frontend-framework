@@ -87,8 +87,7 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
 
   // are there any targets that have been submitted not complete yet?
   const allTargetsComplete =
-    data &&
-    data.length > 0 &&
+    (data &&
     data
       .filter(
         (d) =>
@@ -109,7 +108,9 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
             // Todo: modify API to give more consistent output
             (t) => t["deposit-status"] === null,
           ),
-      );
+      )) || 
+    // or when fetch is complete but there's no data for this user
+    (data === undefined && !isLoading);
 
   useEffect(() => {
     // on load, we set an interval once to keep checking for new data if there's still targets being processed
@@ -375,8 +376,8 @@ const SubmissionList = ({
     data.map((d) => ({
       // Todo: API needs work and standardisation, also see types.
       error: d["targets"].some(
-        // Only if the error is rejected (input data related error), we offer the option to edit & resubmit & delete
-        (t) => t["deposit-status"] === "rejected",
+        // If there's an error, allow deletion
+        (t) => t["deposit-status"] === "rejected" || t["deposit-status"] === "error",
       ),
       processing: d["targets"].some(
         (t) => depositStatus.processing.indexOf(t["deposit-status"]) !== -1,
@@ -386,6 +387,8 @@ const SubmissionList = ({
       title: d["title"],
       ...(type === "published" ? { status: d["targets"] } : null),
     }));
+
+  console.log(data)
 
   return (
     <>
