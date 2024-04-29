@@ -122,18 +122,10 @@ export const submitApi = createApi({
         fetchWithBQ,
       ) {
         const { metadata, deposit, files } = queryApi.getState() as SubmitData;
-        const data = formatFormData(metadata.id, metadata.form, files);
+        const data = formatFormData(metadata.id, metadata.form, files, deposit.config.formTitle);
 
         console.log("Submit metadata:");
         console.log(data);
-
-        // Some logic to help find the title value
-        const parsedPath = deposit.config.formTitle
-          .split(/[\[\]\.]/)
-          .filter(Boolean)
-          .map((part: string) =>
-            isNaN(parseInt(part)) ? part : parseInt(part),
-          );
 
         // Format the headers
         const headers = {
@@ -157,10 +149,6 @@ export const submitApi = createApi({
               },
             })),
           ),
-          title: parsedPath.reduce(
-            (acc: any, key: string | number) => acc[key],
-            metadata.form,
-          )?.value,
         };
 
         console.log("Submit req headers:");
