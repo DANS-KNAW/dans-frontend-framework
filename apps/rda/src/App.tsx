@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
@@ -26,16 +26,19 @@ import siteTitle from "./config/siteTitle";
 import languages from "./config/languages";
 import authProvider from "./config/auth";
 import form from "./config/form";
+import { elasticConfig } from "./config/elasticSearch";
 
 const App = () => {
   const { i18n } = useTranslation();
 
+  const [ endpoint, setEndpoint ] = useState<string>(elasticConfig[0].url);
+
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
-        return <RdaSearch dashboard />;
+        return <RdaSearch dashboard endpoint={endpoint} setEndpoint={setEndpoint} />;
       case "search":
-        return <RdaSearch />;
+        return <RdaSearch endpoint={endpoint} setEndpoint={setEndpoint} />;
       case "record":
         return <RdaRecord />;
       case "deposit":
