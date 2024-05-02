@@ -1,5 +1,5 @@
 import { Chip, Container } from "@mui/material";
-import type { Result } from "@dans-framework/rdt-search-ui";
+import { getCurrentEndpoint, type Result } from "@dans-framework/rdt-search-ui";
 import React from "react";
 import { useParams } from "react-router-dom";
 import Button from "@mui/material/Button";
@@ -74,13 +74,10 @@ interface RdaRecord {
 export function RdaRecord() {
   const { id } = useParams();
   const [record, setRecord] = React.useState<RdaRecord | null>(null);
+  const endpoint = getCurrentEndpoint();
 
   React.useEffect(() => {
-    fetch(
-      `${
-        import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT
-      }/dans-rda2/_source/${id}`,
-    )
+    fetch(`${endpoint}/_source/${id}`)
       .then((res) => res.json())
       .then(setRecord);
   }, [id]);

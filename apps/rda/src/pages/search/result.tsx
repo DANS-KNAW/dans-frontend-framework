@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
-// TODO: Put this in a separate package, preferably in RDT-Search-UI
+/* Custom component for search results */
 
 export function Rda2Result(props: ResultBodyProps) {
   const { result: item } = props;

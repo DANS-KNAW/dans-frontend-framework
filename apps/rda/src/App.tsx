@@ -1,4 +1,4 @@
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
@@ -15,7 +15,6 @@ import {
   SignInCallback,
 } from "@dans-framework/user-auth";
 import logo from "./config/images/logo.png";
-import { RdaSearch } from "./pages/search";
 import { RdaRecord } from "./pages/record";
 
 // Load config variables
@@ -27,18 +26,17 @@ import languages from "./config/languages";
 import authProvider from "./config/auth";
 import form from "./config/form";
 import { elasticConfig } from "./config/elasticSearch";
+import { FacetedWrapper, FacetedSearchProvider } from "@dans-framework/rdt-search-ui";
 
 const App = () => {
   const { i18n } = useTranslation();
 
-  const [ endpoint, setEndpoint ] = useState<string>(elasticConfig[0].url);
-
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
-        return <RdaSearch dashboard endpoint={endpoint} setEndpoint={setEndpoint} />;
+        return <FacetedWrapper dashboard />;
       case "search":
-        return <RdaSearch endpoint={endpoint} setEndpoint={setEndpoint} />;
+        return <FacetedWrapper />;
       case "record":
         return <RdaRecord />;
       case "deposit":
@@ -55,51 +53,53 @@ const App = () => {
   return (
     <AuthWrapper authProvider={authProvider}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
-        <BrowserRouter>
-          {/* Need to pass along root i18n functions to the language bar */}
-          <LanguageBar
-            languages={languages}
-            changeLanguage={i18n.changeLanguage}
-          />
-          <MenuBar pages={pages} logo={logo} />
-          {/* Suspense to make sure languages can load first */}
-          <Suspense
-            fallback={
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
-                <Skeleton height={600} width={900} />
-              </Box>
-            }
-          >
-            <Routes>
-              <Route path="signin-callback" element={<SignInCallback />} />
-              <Route
-                path="user-settings"
-                element={
-                  <AuthRoute>
-                    <UserSettings target={form.targetCredentials} />
-                  </AuthRoute>
-                }
-              />
-              <Route
-                path="user-submissions"
-                element={
-                  <AuthRoute>
-                    <UserSubmissions />
-                  </AuthRoute>
-                }
-              />
-              {(pages as Page[]).map((page) => {
-                return (
-                  <Route
-                    key={page.id}
-                    path={page.slug}
-                    element={createElementByTemplate(page)}
-                  />
-                );
-              })}
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
+        <FacetedSearchProvider config={elasticConfig}>
+          <BrowserRouter>
+            {/* Need to pass along root i18n functions to the language bar */}
+            <LanguageBar
+              languages={languages}
+              changeLanguage={i18n.changeLanguage}
+            />
+            <MenuBar pages={pages} logo={logo} />
+            {/* Suspense to make sure languages can load first */}
+            <Suspense
+              fallback={
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <Skeleton height={600} width={900} />
+                </Box>
+              }
+            >
+              <Routes>
+                <Route path="signin-callback" element={<SignInCallback />} />
+                <Route
+                  path="user-settings"
+                  element={
+                    <AuthRoute>
+                      <UserSettings target={form.targetCredentials} />
+                    </AuthRoute>
+                  }
+                />
+                <Route
+                  path="user-submissions"
+                  element={
+                    <AuthRoute>
+                      <UserSubmissions />
+                    </AuthRoute>
+                  }
+                />
+                {(pages as Page[]).map((page) => {
+                  return (
+                    <Route
+                      key={page.id}
+                      path={page.slug}
+                      element={createElementByTemplate(page)}
+                    />
+                  );
+                })}
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </FacetedSearchProvider>
         <Footer {...footer} />
       </ThemeWrapper>
     </AuthWrapper>
