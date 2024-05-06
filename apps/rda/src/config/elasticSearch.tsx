@@ -38,9 +38,9 @@ export const elasticConfig = [
             en: "Individuals",
             nl: "Individuen",
           },
-          size: 25,
+          size: 10,
           cols: 2,
-          rows: 2,
+          rows: 1,
         }}
       />,
       <DateChartFacet
@@ -56,6 +56,19 @@ export const elasticConfig = [
           rows: 1,
         }}
       />,
+      <ListFacet
+      config={{
+        id: "so",
+        field: "source.keyword",
+        title: {
+          en: "Source",
+          nl: "Bron",
+        },
+        size: 10,
+        cols: 2,
+        rows: 1,
+      }}
+    />,
       <PieChartFacet
         config={{
           id: "rights",
@@ -172,6 +185,7 @@ export const elasticConfig = [
             en: "Resource type",
             nl: "Brontype",
           },
+          size: 15,
           cols: 2,
           rows: 1,
         }}
