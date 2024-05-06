@@ -51,6 +51,17 @@ interface RdaRecord {
     attribute: string;
     description: string;
   }[];
+  disciplines?: {
+    "#": string;
+    uuid: string;
+    list_item: string;
+    description: string;
+    description_source: string;
+    _taxonomy_parent: string;
+    _taxonomy_terms: string;
+    uuid_parent: string;
+    url: string;
+  }[]
   pid_lod: string;
   pid_lod_type: string;
   relation_types: string;
@@ -133,6 +144,13 @@ export function RdaRecord() {
             name="GORC Attributes"
             value={
               record.gorc_attributes?.map((gorca) => gorca.attribute) ?? ["-"]
+            }
+            options={{ turnicate: false }}
+          />
+          <Metadata
+            name="Domains"
+            value={
+              record.disciplines?.map((discipline) => discipline.list_item) ?? ["-"]
             }
             options={{ turnicate: false }}
           />
