@@ -28,7 +28,7 @@ export const elasticConfig = [
     fullTextFields: fieldConfig.fullTextFields,
     fullTextHighlight: fieldConfig.fullTextHighlight,
     resultBodyComponent: Rda2Result,
-    onClickResultPath: 'record',
+    onClickResultPath: "record",
     dashboard: [
       <ListFacet
         config={{
@@ -38,9 +38,9 @@ export const elasticConfig = [
             en: "Individuals",
             nl: "Individuen",
           },
-          size: 25,
+          size: 10,
           cols: 2,
-          rows: 2,
+          rows: 1,
         }}
       />,
       <DateChartFacet
@@ -56,6 +56,19 @@ export const elasticConfig = [
           rows: 1,
         }}
       />,
+      <ListFacet
+      config={{
+        id: "so",
+        field: "source.keyword",
+        title: {
+          en: "Source",
+          nl: "Bron",
+        },
+        size: 10,
+        cols: 2,
+        rows: 1,
+      }}
+    />,
       <PieChartFacet
         config={{
           id: "rights",
@@ -100,10 +113,10 @@ export const elasticConfig = [
             en: "URI types",
             nl: "URI types",
           },
-            cols: 3,
-            rows: 1,
-          }}
-        />,
+          cols: 3,
+          rows: 1,
+        }}
+      />,
       <PieChartFacet
         config={{
           id: "subjects",
@@ -111,6 +124,42 @@ export const elasticConfig = [
           title: {
             en: "Subjects",
             nl: "Onderwerp",
+          },
+          cols: 3,
+          rows: 1,
+        }}
+      />,
+      <ListFacet
+        config={{
+          id: "reltype",
+          field: "relations.relation_type.keyword",
+          title: {
+            en: "Relation types",
+            nl: "Relatietype",
+          },
+          cols: 2,
+          rows: 1,
+        }}
+      />,
+      <PieChartFacet
+        config={{
+          id: "wgs",
+          field: "working_groups.title.keyword",
+          title: {
+            en: "Working groups",
+            nl: "Werkgroepen",
+          },
+          cols: 3,
+          rows: 1,
+        }}
+      />,
+      <PieChartFacet
+        config={{
+          id: "igs",
+          field: "interest_groups.title.keyword",
+          title: {
+            en: "Interest groups",
+            nl: "Interesse groepen",
           },
           cols: 3,
           rows: 1,
@@ -136,17 +185,18 @@ export const elasticConfig = [
             en: "Resource type",
             nl: "Brontype",
           },
+          size: 15,
           cols: 2,
           rows: 1,
         }}
       />,
       <ListFacet
         config={{
-          id: "reltype",
-          field: "relations.relation_type.keyword",
+          id: "disciplines",
+          field: "disciplines.list_item.keyword",
           title: {
-            en: "Relation types",
-            nl: "Relatietype",
+            en: "Domains",
+            nl: "Domeinen",
           },
           cols: 2,
           rows: 1,
@@ -164,6 +214,6 @@ export const elasticConfig = [
           rows: 1,
         }}
       />,
-    ]
+    ],
   },
-]
+];
