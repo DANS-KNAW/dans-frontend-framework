@@ -125,6 +125,7 @@ const getUrl = (url: string, key: string, type: AuthKeys) =>
 export const validateKeyApi = createApi({
   reducerPath: "apiKeys",
   baseQuery: fetchBaseQuery(),
+  refetchOnMountOrArgChange: true,
   endpoints: (build) => ({
     validateKey: build.query({
       query: ({ url, key, type }) => {

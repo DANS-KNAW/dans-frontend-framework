@@ -32,6 +32,7 @@ export const AuthWrapper = ({
 
 export const AuthRoute = ({ children }: { children: ReactNode }) => {
   const auth = useAuth();
+
   if (auth.isAuthenticated) {
     return <>{children}</>;
   }

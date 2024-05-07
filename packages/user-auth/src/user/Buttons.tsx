@@ -10,6 +10,7 @@ export const LoginButton = ({ variant }: { variant?: "contained" }) => {
   const { t } = useTranslation("user");
   const auth = useAuth();
   const location = useLocation();
+          console.log(auth)
 
   return (
     <Button
@@ -28,12 +29,13 @@ export const LoginButton = ({ variant }: { variant?: "contained" }) => {
       }
       onClick={
         // set the signin redirect with the current location in state
-        () =>
+        () => {
           void auth.signinRedirect({ state: location.pathname }).catch(() =>
             enqueueSnackbar("Error redirecting to sign-in server", {
               variant: "customError",
             }),
           )
+        }
       }
     >
       {t("login")}
@@ -47,7 +49,7 @@ export const LogoutButton = () => {
 
   // Remove user
   const logOut = () => {
-    void auth.removeUser();
+    void auth.signoutSilent();
   };
 
   return (

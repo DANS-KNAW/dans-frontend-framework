@@ -344,8 +344,8 @@ const SubmissionList = ({
         headerName: type === "draft" ? t("savedOn") : t("submittedOn"),
         width: 200,
         type: "dateTime",
-        valueGetter: (params) => new Date(params.value),
-        renderCell: (params) => moment(params.value).format("D-M-Y - HH:mm"),
+        valueGetter: (params) => moment.utc(params.value).toDate(),
+        renderCell: (params) => moment(params.value).local().format("D-M-Y - HH:mm"),
       },
       ...(type === "published" ?
         [
@@ -387,8 +387,6 @@ const SubmissionList = ({
       title: d["title"],
       ...(type === "published" ? { status: d["targets"] } : null),
     }));
-
-  console.log(data)
 
   return (
     <>
@@ -615,10 +613,10 @@ const ViewAction = ({
         {status.map(
           (target, i) =>
             target["output-response"] &&
-            target["output-response"].response.url &&
-            target["deposit-status"] !== "rejected" && (
+            target["output-response"].response.identifiers &&
+            target["deposit-status"] === "accepted" && (
               <Link
-                href={target["output-response"].response.url}
+                href={target["output-response"].response.identifiers[0].url}
                 color="inherit"
                 underline="none"
                 target="_blank"
