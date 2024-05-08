@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ReactElement, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -16,6 +16,7 @@ import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 import { UserMenu } from "@dans-framework/user-auth";
 import { useAuth } from "react-oidc-context";
+import { Typography } from "@mui/material";
 
 const MenuBar = ({
   pages,
@@ -90,7 +91,7 @@ const MenuBar = ({
                           {lookupLanguageString(page.menuTitle, i18n.language)}
                         </Link>
                       </MenuItem>
-                    ),
+                    )
                 )}
             </Menu>
             <Link
@@ -104,7 +105,7 @@ const MenuBar = ({
                 display: { xs: "flex", md: "none" },
               }}
             >
-              <img src={logo} />
+              {Logo(logo)}
             </Link>
           </Box>
 
@@ -113,8 +114,13 @@ const MenuBar = ({
             component={RouterLink}
             to="/"
             sx={{ mr: 2, width: 100, display: { xs: "none", md: "flex" } }}
+            style={{
+              textDecoration: "none",
+              display: "flex",
+              justifyContent: "center",
+            }}
           >
-            <img src={logo} />
+            {Logo(logo)}
           </Link>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages &&
@@ -134,7 +140,7 @@ const MenuBar = ({
                     >
                       {lookupLanguageString(page.menuTitle, i18n.language)}
                     </Button>
-                  ),
+                  )
               )}
           </Box>
 
@@ -146,6 +152,40 @@ const MenuBar = ({
       </Container>
     </AppBar>
   );
+};
+
+/**
+ * Renders the logo based on the provided input.
+ * If the input is a string, it checks if it is a valid image URL and renders an image if true,
+ * otherwise renders the input as plain text.
+ * If the input is a React element, it renders it directly.
+ *
+ * @param logo - The logo to be rendered. It can be a string or a React element.
+ * @returns The rendered logo.
+ */
+const Logo = (logo: string | ReactElement) => {
+  if (typeof logo === "string") {
+    // Regular expression to detect image URLs
+    const imagePattern = /\.(jpeg|jpg|gif|png|svg)$/i;
+    if (imagePattern.test(logo)) {
+      return <img src={logo} alt="Logo" />;
+    } else {
+      // Render plain text
+      return (
+        <Typography
+          variant="h2"
+          style={{
+            fontWeight: "bold",
+            marginBottom: "0",
+          }}
+        >
+          {logo}
+        </Typography>
+      );
+    }
+  }
+  // Directly render if it's a React element
+  return <>{logo}</>;
 };
 
 export default MenuBar;
