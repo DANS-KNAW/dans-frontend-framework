@@ -30,7 +30,6 @@ import {
 
 const App = () => {
   const { i18n } = useTranslation();
-
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
