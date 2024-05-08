@@ -613,7 +613,7 @@ const ViewAction = ({
         {status.map(
           (target, i) =>
             target["output-response"] &&
-            target["output-response"].response.identifiers &&
+            target["output-response"].response?.identifiers &&
             target["deposit-status"] === "accepted" && (
               <Link
                 href={target["output-response"].response.identifiers[0].url}
