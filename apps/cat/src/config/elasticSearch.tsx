@@ -34,7 +34,7 @@ export const elasticConfig = [
           id: "scale",
           field: "scalability.keyword",
           title: {
-            en: "Salability",
+            en: "Scalability",
             nl: "Schaalbaarheid",
           },
           size: 10,
