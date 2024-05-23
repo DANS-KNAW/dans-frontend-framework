@@ -9,7 +9,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
-import { AddButton, DeleteButton } from "../MetadataButtons";
+import { AddDeleteControls } from "../MetadataButtons";
 import {
   setField,
   getMetadata,
@@ -170,36 +170,13 @@ const SingleTextField = ({
           </IconButton>
         </Tooltip>
       )}
-      {groupedFieldId &&
-        !formDisabled && [
-          totalFields > 1 && (
-            <DeleteButton
-              key="delete"
-              sectionIndex={sectionIndex}
-              groupedFieldId={groupedFieldId}
-              deleteFieldIndex={currentField}
-              mt={
-                (status === "error" && field.touched ? -3 : 0) +
-                (currentField === 0 ? 0 : 1)
-              }
-              deleteGroupId={field.id}
-              groupedFieldName={field.name}
-            />
-          ),
-          currentField + 1 === totalFields && (
-            <AddButton
-              key="add"
-              sectionIndex={sectionIndex}
-              groupedFieldId={groupedFieldId}
-              groupedFieldName={field.name}
-              type="single"
-              mt={
-                (status === "error" && field.touched ? -3 : 0) +
-                (currentField === 0 ? 0 : 1)
-              }
-            />
-          ),
-        ]}
+      <AddDeleteControls 
+        groupedFieldId={groupedFieldId}
+        totalFields={totalFields}
+        sectionIndex={sectionIndex}
+        currentField={currentField}
+        field={field}
+      />
     </Stack>
   );
 };

@@ -128,8 +128,7 @@ export const metadataSlice = createSlice({
             fieldIds.map((id) => {
               const changeField = findByIdOrName(id, section.fields);
               if (changeField) {
-                (changeField as DateFieldType).minDate = action.payload
-                  .value as string;
+                (changeField as DateFieldType).minDate = action.payload.value as string;
               }
             });
         }

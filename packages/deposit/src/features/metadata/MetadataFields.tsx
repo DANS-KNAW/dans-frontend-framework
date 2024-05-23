@@ -35,7 +35,7 @@ import {
 } from "./fields/AutocompleteAPIField";
 import AutocompleteField from "./fields/AutocompleteField";
 import TextField from "./fields/TextField";
-import DateTimeField from "./fields/DateTimeField";
+import { DateTimeField, DateRangeField } from "./fields/DateTimeField";
 import { RadioField, CheckField } from "./fields/RadioCheckField";
 import { TransitionGroup } from "react-transition-group";
 import { lookupLanguageString } from "@dans-framework/utils";
@@ -53,6 +53,9 @@ const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
       )}
       {field.type === "date" && (
         <DateTimeField field={field} sectionIndex={sectionIndex} />
+      )}
+      {field.type === "daterange" && (
+        <DateRangeField field={field} sectionIndex={sectionIndex} />
       )}
       {field.type === "repeatSingleField" && (
         <TransitionGroup id={`group-${field.name}-${field.id}`}>

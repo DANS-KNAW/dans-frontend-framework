@@ -53,7 +53,7 @@ export interface TextFieldType extends BasisFieldType {
 }
 
 export interface DateFieldType extends BasisFieldType {
-  type: "date";
+  type: "date" | "daterange";
   format: DateTimeFormat;
   formatOptions?: DateTimeFormat[];
   minDate?: string;

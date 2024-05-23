@@ -87,6 +87,21 @@ const section: InitialSectionType = {
             nl: "Eind van een periode waar het interview over gaat",
           },
         },
+        {
+          type: "daterange",
+          format: "YYYY",
+          formatOptions: ["YYYY", "MM-YYYY", "DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
+          label: {
+            en: "Interview period",
+            nl: "Interviewperiode",
+          },
+          name: "subject_date_time",
+          description: {
+            en: "Start and end of a period the interview covers",
+            nl: "Begin en eind van een periode waar het interview over gaat",
+          },
+          fullWidth: true,
+        },
       ],
     },
   ],

@@ -4,8 +4,9 @@ import IconButton from "@mui/material/IconButton";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { useTranslation } from "react-i18next";
-import { useAppDispatch } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { addField, deleteField } from "./metadataSlice";
+import { getFormDisabled } from "../../deposit/depositSlice";
 import type {
   AddFieldButtonProps,
   DeleteFieldButtonProps,
@@ -108,3 +109,45 @@ export const AddButtonText = ({
     </Button>
   );
 };
+
+export const AddDeleteControls = ({ groupedFieldId, totalFields, sectionIndex, currentField, field }: {
+  groupedFieldId?: string;
+  totalFields: number;
+  sectionIndex: number;
+  currentField: number;
+  field: any;
+}) => {
+  const formDisabled = useAppSelector(getFormDisabled);
+
+  return (
+    (groupedFieldId && !formDisabled) ? [
+      totalFields > 1 && (
+        <DeleteButton
+          key="delete"
+          sectionIndex={sectionIndex}
+          groupedFieldId={groupedFieldId}
+          deleteFieldIndex={currentField}
+          mt={
+            (status === "error" && field.touched ? -3 : 0) +
+            (currentField === 0 ? 0 : 1)
+          }
+          deleteGroupId={field.id}
+          groupedFieldName={field.name}
+        />
+      ),
+      currentField + 1 === totalFields && (
+        <AddButton
+          key="add"
+          sectionIndex={sectionIndex}
+          groupedFieldId={groupedFieldId}
+          type="single"
+          mt={
+            (status === "error" && field.touched ? -3 : 0) +
+            (currentField === 0 ? 0 : 1)
+          }
+          groupedFieldName={field.name}
+        />
+      ),
+    ] : null
+  )
+}
