@@ -138,12 +138,14 @@ export const metadataSlice = createSlice({
         if (
           getValid(
             action.payload.value as string,
+            field.type,
             field.validation as ValidationType,
           ) !== field.valid
         ) {
           // set the field
           field.valid = getValid(
             action.payload.value as string,
+            field.type,
             field.validation as ValidationType,
           );
           // then set the section/accordion

@@ -9,6 +9,7 @@ import type {
   Field,
   ValidationType,
 } from "../../types/MetadataFields";
+import moment from "moment";
 
 // import { current } from '@reduxjs/toolkit';
 
@@ -152,7 +153,9 @@ export const getFieldStatus = (field: InputField): SectionStatus => {
   const fieldEmpty =
     !field.value ||
     (typeof field.value === "string" && !field.value.trim()) ||
-    (Array.isArray(field.value) && field.value.length === 0);
+    (Array.isArray(field.value) && field.value.length === 0 );
+    // todo: fix daterange
+
   if (field.noIndicator && !field.required && fieldEmpty) {
     return "neutral";
   } else if (!field.required && fieldEmpty) {
@@ -179,11 +182,16 @@ export const getSectionStatus = (section: SectionStatus[]): SectionStatus => {
 // Check if a field conforms to validation type specified
 export const getValid = (
   value: string,
+  type: string,
   validation?: ValidationType,
 ): boolean => {
   if (validation) {
     return validateData(validation, value);
-  } else if (value && value.length !== 0) {
+  } else if (
+    ( value && value.length !== 0 && type !== 'daterange' ) || 
+    // todo: fix this
+    ( type === 'daterange' && value && moment(value[0]).isBefore(moment(value[1])) )
+  ) {
     return true;
   }
   return false;

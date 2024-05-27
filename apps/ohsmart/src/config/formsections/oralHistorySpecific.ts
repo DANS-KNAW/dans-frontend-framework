@@ -423,7 +423,6 @@ const section: InitialSectionType = {
           },
           name: "interview_date_time_start",
           required: true,
-          minDateField: "interview_date_time_end", // note that this will only work within the same field group
         },
         {
           type: "date",

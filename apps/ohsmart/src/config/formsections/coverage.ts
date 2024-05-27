@@ -58,36 +58,6 @@ const section: InitialSectionType = {
       },
       fields: [
         {
-          type: "date",
-          format: "YYYY",
-          formatOptions: ["YYYY", "MM-YYYY", "DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
-          label: {
-            en: "Start of period",
-            nl: "Begin van periode",
-          },
-          name: "subject_date_time_start",
-          required: true,
-          description: {
-            en: "The start of a period the interview covers",
-            nl: "Start van een periode waar het interview over gaat",
-          },
-          minDateField: "subject_date_time_end", // note that this will only work within the same field group
-        },
-        {
-          type: "date",
-          format: "YYYY",
-          formatOptions: ["YYYY", "MM-YYYY", "DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
-          label: {
-            en: "End of period",
-            nl: "Eind van periode",
-          },
-          name: "subject_date_time_end",
-          description: {
-            en: "The end of a period the interview covers",
-            nl: "Eind van een periode waar het interview over gaat",
-          },
-        },
-        {
           type: "daterange",
           format: "YYYY",
           formatOptions: ["YYYY", "MM-YYYY", "DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
@@ -100,6 +70,8 @@ const section: InitialSectionType = {
             en: "Start and end of a period the interview covers",
             nl: "Begin en eind van een periode waar het interview over gaat",
           },
+          required: true,
+          endDateRequired: false, // needed if we only require a start date
           fullWidth: true,
         },
       ],
