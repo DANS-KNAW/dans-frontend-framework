@@ -26,7 +26,7 @@
   "narcis": "NARCIS Classification of Scientific Disciplines",
   "dansCollections": "DANS Collections Thesaurus",
   "sheets": "Google Sheets",
-  "selectDateType": "Select",
+  "selectDateType": "Date type",
   "YYYY": "Year",
   "MM-YYYY": "Month and year",
   "DD-MM-YYYY": "Date",
@@ -34,7 +34,13 @@
   "freetextLabel": "Not found in {{api}}",
   "freetextContent": "Add \"{{name}}\" as custom value",
   "dateInvalid": "Date/time is invalid",
-  "dateMin": "Must be later than starting date/time",
+  "dateMin": "Date too far in the past",
+  "dateMax": "Date too far in the future",
+  "dateRange": "{{label}}: {{startEnd}}",
+  "dateStart": "Start",
+  "dateEnd": "End",
+  "dateMinRange": "Date must be after starting date, or date too far in the past",
+  "dateMaxRange": "Date must be before end date, or date too far in the future",
   "apiFetchError": "Could not get data from {{api}}",
   "generate": "Regenerate title"
 }

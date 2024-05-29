@@ -9,6 +9,7 @@ import type {
   Field,
   ValidationType,
 } from "../../types/MetadataFields";
+import moment from "moment";
 
 // import { current } from '@reduxjs/toolkit';
 
@@ -148,18 +149,25 @@ export const changeConditionalState = (
 };
 
 // Get the status of a single field
+// Some specific checking for dateranges needed
 export const getFieldStatus = (field: InputField): SectionStatus => {
   const fieldEmpty =
     !field.value ||
     (typeof field.value === "string" && !field.value.trim()) ||
-    (Array.isArray(field.value) && field.value.length === 0);
+    (Array.isArray(field.value) && field.value.length === 0 ) ||
+    (field.type === 'daterange' && Array.isArray(field.value) && field.value.every(v => v === null || v === ""));
+
   if (field.noIndicator && !field.required && fieldEmpty) {
     return "neutral";
-  } else if (!field.required && fieldEmpty) {
+  } else if (
+    (!field.required && fieldEmpty) ||
+    (field.type === 'daterange' && field.optionalEndDate && Array.isArray(field.value) && !field.value[1] && field.valid)
+  ) {
     return "warning";
   } else if (
     (field.required && fieldEmpty) ||
-    (!fieldEmpty && field.validation && !field.valid)
+    (!fieldEmpty && field.validation && !field.valid) ||
+    (field.type === 'daterange' && !fieldEmpty && !field.valid)
   ) {
     return "error";
   } else {
@@ -179,11 +187,19 @@ export const getSectionStatus = (section: SectionStatus[]): SectionStatus => {
 // Check if a field conforms to validation type specified
 export const getValid = (
   value: string,
-  validation?: ValidationType,
+  field: Field,
 ): boolean => {
-  if (validation) {
-    return validateData(validation, value);
-  } else if (value && value.length !== 0) {
+  if (field.validation) {
+    return validateData(field.validation, value);
+  } else if (
+    ( value && value.length !== 0 && field.type !== 'daterange' ) || 
+    // special check for date range: start date must be before or equal to end date,
+    // or if end date not required, end date can be empty
+    (field.type === 'daterange' && value && (
+      moment(value[0]).isSameOrBefore(moment(value[1])) ||
+      (field.optionalEndDate && value[0] && !value[1]) 
+    ))
+  ) {
     return true;
   }
   return false;

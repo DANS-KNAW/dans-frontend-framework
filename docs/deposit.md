@@ -108,6 +108,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       // * autocomplete - this is a selectbox with either a pre-defined list or typeahead service coupled
       // * text - plain textbox
       // * date - date/time selector
+      // * daterange - a date range selector
       // * number - numbers only
       // * group - a field group, this group contains another fields array
       // * radio - a radio button selection field (one option is always selected)
@@ -124,6 +125,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       required: true,
 
       // Optionally set field to not display a "recommended you fill this in" status. Field cannot be required obviously.
+      // Disabled for daterange field types.
       noIndicator: true,
 
       // Optional field description, can be a string or a language object. Appears in tooltip or under label in case of group field
@@ -144,7 +146,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       // Text field only, enable this if you want a larger textarea
       multiline: true,
 
-      // Sets field with to 100% instead of default 50%
+      // Sets field with to 100% instead of default 50%, recommended for daterange
       fullWidth: true,
 
       // Textfield only, to validate input. See ValidationType in types/Metadata.ts
@@ -154,15 +156,19 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       // See AuthProperty in types/Metadata.ts for options.
       autofill: "name",
 
-      // Date field only. Specify the format you want to use. See DateTimeFormat in types/Metadata.ts.
+      // Date and daterange field only. Specify the format you want to use. See DateTimeFormat in types/Metadata.ts.
       format: "DD-MM-YYYY HH:mm",
 
-      // Date field only. Provide an optional list of date format options the user can choose from.
+      // Date and daterange field only. Provide an optional list of date format options the user can choose from.
       formatOptions: ["YYYY", "MM-YYYY", "DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
 
-      // Date field only. Specify an optional minimum and/or maximum input date, in the format you"ve provided.
+      // Date and daterange field only. Specify an optional minimum and/or maximum input date, in the format you've provided.
       minDate: "01-01-2020 12:00",
       maxDate: "01-01-2024 12:00",
+
+      // Daterange only, set end date as optional
+      // By default, an end date is required for a date range, when a starting date has been filled in
+      optionalEndDate: true,
 
       // Number field only, specify min and/or max number
       minValue: "10",

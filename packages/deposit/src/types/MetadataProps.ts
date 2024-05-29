@@ -11,6 +11,7 @@ import type {
   AutocompleteAPIFieldData,
   TypeaheadAPI,
   OptionsType,
+  DateRangeFieldType,
 } from "./MetadataFields";
 import type { AutocompleteRenderGetTagProps } from "@mui/material";
 
@@ -36,6 +37,10 @@ export interface DateFieldProps extends Omit<SingleFieldProps, "field"> {
   groupedFieldId?: string;
   currentField?: number;
   totalFields?: number;
+}
+
+export interface DateRangeFieldProps extends Omit<DateFieldProps, "field"> {
+  field: DateRangeFieldType;
 }
 
 export interface RadioFieldProps extends Omit<SingleFieldProps, "field"> {

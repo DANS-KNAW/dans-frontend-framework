@@ -5,6 +5,7 @@ import type { AuthProperty } from "@dans-framework/user-auth";
 export type InputField =
   | TextFieldType
   | DateFieldType
+  | DateRangeFieldType
   | AutocompleteFieldType
   | RadioFieldType
   | CheckFieldType
@@ -65,6 +66,12 @@ export interface DateFieldType extends BasisFieldType {
   autofill?: never;
   minDateField?: string;
   maxDateField?: string;
+}
+
+export interface DateRangeFieldType extends Omit<DateFieldType, "type" | "value"> {
+  type: "daterange";
+  value?: (string | null)[];
+  optionalEndDate?: boolean;
 }
 
 export interface AutocompleteFieldType

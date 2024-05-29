@@ -5,16 +5,15 @@ import type {
   AddFieldPayload,
   DeleteFieldPayload,
   SectionStatusPayload,
+  FieldValue,
 } from "../../types/MetadataPayloads";
 import type {
   RepeatTextFieldType,
   RepeatGroupedFieldType,
   TextFieldType,
-  ValidationType,
   InputField,
   TypeaheadAPI,
   DateTimeFormat,
-  DateFieldType,
 } from "../../types/MetadataFields";
 import type {
   InitialStateType,
@@ -27,7 +26,6 @@ import {
   getSectionStatus,
   formatInitialState,
   findByIdOrName,
-  findConditionalChanges,
   changeConditionalState,
   isEmpty,
   // findFieldInGroup,
@@ -81,7 +79,7 @@ export const metadataSlice = createSlice({
 
       // field is found, lets set it
       if (field) {
-        field.value = action.payload.value;
+        field.value = action.payload.value as FieldValue;
         field.touched = true;
 
         // For setting required state of 'conditional' fields,
@@ -113,43 +111,16 @@ export const metadataSlice = createSlice({
 
         if (field.toggleTitleGeneration) {
           // set flag if auto title generation is allowed
-          state.allowTitleGeneration = !isEmpty(action.payload.value);
-        }
-
-        // Logic for setting a min and max date, if applicable
-        // TODO: Perhaps create a daterange field, cleaner
-        if (field.minDateField) {
-          const fieldIds = findConditionalChanges(
-            action.payload.id,
-            section.fields,
-            "minDateField",
-          );
-          fieldIds &&
-            fieldIds.map((id) => {
-              const changeField = findByIdOrName(id, section.fields);
-              if (changeField) {
-                (changeField as DateFieldType).minDate = action.payload
-                  .value as string;
-              }
-            });
+          state.allowTitleGeneration = !isEmpty(action.payload.value as FieldValue);
         }
 
         // After every input, we need to update field valid status and section status as well.
-        // Only needed when the new status differs from the old one.
-        if (
-          getValid(
-            action.payload.value as string,
-            field.validation as ValidationType,
-          ) !== field.valid
-        ) {
-          // set the field
-          field.valid = getValid(
-            action.payload.value as string,
-            field.validation as ValidationType,
-          );
-          // then set the section/accordion
-          metadataSlice.caseReducers.setSectionStatus(state, action);
-        }
+        field.valid = getValid(
+          action.payload.value as string,
+          field
+        );
+        // then set the section/accordion
+        metadataSlice.caseReducers.setSectionStatus(state, action);
       }
     },
     setMultiApiField: (state, action: PayloadAction<SetFieldPayload>) => {
@@ -164,6 +135,13 @@ export const metadataSlice = createSlice({
       const field = findByIdOrName(action.payload.id, section.fields);
       if (field) {
         field.format = action.payload.value as DateTimeFormat;
+      }
+    },
+    setFieldValid: (state, action: PayloadAction<SetFieldPayload>) => {
+      const section = state.form[action.payload.sectionIndex];
+      const field = findByIdOrName(action.payload.id, section.fields);
+      if (field) {
+        field.valid = action.payload.value as boolean;
       }
     },
     // functionality for adding new single (repeatable) fields/field groups
@@ -294,6 +272,7 @@ export const metadataSlice = createSlice({
 export const {
   initForm,
   setField,
+  setFieldValid,
   setMultiApiField,
   setOpenPanel,
   setOpenTab,

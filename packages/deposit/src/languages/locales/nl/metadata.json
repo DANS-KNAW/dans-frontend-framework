@@ -26,7 +26,7 @@
   "narcis": "NARCIS Classification of Scientific Disciplines",
   "dansCollections": "DANS Collections Thesaurus",
   "sheets": "Google Sheets",
-  "selectDateType": "Kies",
+  "selectDateType": "Datumtype",
   "YYYY": "Jaar",
   "MM-YYYY": "Maand en jaar",
   "DD-MM-YYYY": "Datum",
@@ -35,6 +35,10 @@
   "freetextContent": "Voeg \"{{name}}\" als custom waarde",
   "dateInvalid": "Datum/tijd is ongeldig",
   "dateMin": "Moet na de startdatum/tijd komen",
+  "dateMax": "Datum te ver in de toekomst",
+  "dateRange": "{{label}}: {{startEnd}}",
+  "dateStart": "Begin",
+  "dateEnd": "Eind",
   "apiFetchError": "Kan geen data ophalen van {{api}}",
   "generate": "Hergenereer titel"
 }
