@@ -5,16 +5,18 @@ import type {
 } from "./MetadataFields";
 
 // Payloads and types for redux slices
-export interface SetFieldPayload {
-  sectionIndex: number;
-  id: string;
-  value:
+export type FieldValue = 
     | string
     | string[]
     | OptionsType
     | OptionsType[]
     | null
     | ValidationType;
+
+export interface SetFieldPayload {
+  sectionIndex: number;
+  id: string;
+  value: FieldValue | boolean;
   typeaheadApi?: TypeaheadAPI;
 }
 

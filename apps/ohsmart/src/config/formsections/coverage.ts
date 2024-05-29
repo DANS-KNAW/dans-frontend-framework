@@ -70,8 +70,8 @@ const section: InitialSectionType = {
             en: "Start and end of a period the interview covers",
             nl: "Begin en eind van een periode waar het interview over gaat",
           },
-          required: true,
-          endDateRequired: false, // needed if we only require a start date
+          // required: true,
+          optionalEndDate: true, // needed if we only require a start date
           fullWidth: true,
         },
       ],

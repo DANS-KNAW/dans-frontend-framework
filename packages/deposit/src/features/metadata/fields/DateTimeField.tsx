@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
 import { AddDeleteControls } from "../MetadataButtons";
-import { setField, setDateTypeField } from "../metadataSlice";
+import { setField, setDateTypeField, setFieldValid } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
 import type { DateFieldProps, DateRangeFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
@@ -152,7 +152,8 @@ export const DateRangeField = ({
   }
 
   // Dispatch form action when range is changed
-  // Also perform check if the required dates have been filled
+  // Don't dispatch when range is still null, to keep initial
+  // 'touched' status of field
   useEffect(() => {
     !range.every(el => el === null) && dispatch(
       setField({
@@ -162,9 +163,6 @@ export const DateRangeField = ({
       }),
     );
   }, [range]);
-
-  console.log(range)
-  console.log(field.valid)
 
   // and reset when format is changed
   useEffect(() => {
@@ -190,6 +188,7 @@ export const DateRangeField = ({
         index={0}
         setRange={setStart}
         maxDate={range[1] || undefined}
+        sectionIndex={sectionIndex}
       />
 
       <RangeFieldWrapper
@@ -200,6 +199,7 @@ export const DateRangeField = ({
         index={1}
         setRange={setEnd}
         minDate={range[0] || undefined}
+        sectionIndex={sectionIndex}
       />
 
       <AddDeleteControls 
@@ -218,6 +218,7 @@ const RangeFieldWrapper = ({
   range, 
   setRange, 
   index, 
+  sectionIndex,
   groupedFieldId, 
   currentField,
   minDate,
@@ -227,6 +228,7 @@ const RangeFieldWrapper = ({
   range: (string | null)[];
   setRange: (v: string) => void;
   index: number;
+  sectionIndex: number;
   groupedFieldId?: string;
   currentField?: number;
   minDate?: string;
@@ -235,10 +237,12 @@ const RangeFieldWrapper = ({
   const { t, i18n } = useTranslation("metadata");
   const [error, setError] = useState<DateValidationError | null>(null);
   const formDisabled = useAppSelector(getFormDisabled);
+  // Need to set this separately, as the field has a global status for the entire range,
+  // but also needs a split status for user interaction, per start/end of range
   const status = 
-    (!field.required && !range[0]) || (!field.endDateRequired && index === 1 && !range[1]) ?
+    (!field.required && !range[0]) || (field.optionalEndDate && index === 1 && !range[1]) ?
     "warning" :
-    (field.required && !range[0]) || (field.endDateRequired && !range[1]) || error ?
+    (field.required && !range[0]) || (!field.optionalEndDate && !range[1]) || error ?
     "error" :
     "success";
 
@@ -259,6 +263,15 @@ const RangeFieldWrapper = ({
     }
   }, [error]);
 
+  // Set global field valid status based on user interaction, valid if warning/success
+  useEffect(() => {
+    setFieldValid({
+      sectionIndex: sectionIndex,
+      id: field.id,
+      value: status !== "error",
+    });
+  }, [status])
+
   return (
     <MUIDateTimeField
       fullWidth
@@ -270,7 +283,7 @@ const RangeFieldWrapper = ({
           startEnd: t(index === 0 ? 'dateStart' : 'dateEnd')
         })
       }
-      required={field.required || (field.endDateRequired && index === 1)}
+      required={(field.required && index === 0) || (!field.optionalEndDate && index === 1)}
       value={(range[index] && moment(range[index], field.format)) || null}
       disabled={field.disabled || formDisabled}
       minDate={

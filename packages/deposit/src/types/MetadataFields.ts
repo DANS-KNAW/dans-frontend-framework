@@ -71,7 +71,7 @@ export interface DateFieldType extends BasisFieldType {
 export interface DateRangeFieldType extends Omit<DateFieldType, "type" | "value"> {
   type: "daterange";
   value?: (string | null)[];
-  endDateRequired?: boolean;
+  optionalEndDate?: boolean;
 }
 
 export interface AutocompleteFieldType

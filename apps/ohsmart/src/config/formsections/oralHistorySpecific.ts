@@ -414,26 +414,17 @@ const section: InitialSectionType = {
       },
       fields: [
         {
-          type: "date",
+          type: "daterange",
           format: "DD-MM-YYYY",
           formatOptions: ["DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
           label: {
-            en: "Start time and date",
-            nl: "Starttijd en -datum",
+            en: "Time and date",
+            nl: "Tijd en datum",
           },
-          name: "interview_date_time_start",
+          name: "interview_date_time",
           required: true,
-        },
-        {
-          type: "date",
-          format: "DD-MM-YYYY",
-          formatOptions: ["DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
-          label: {
-            en: "End time and date",
-            nl: "Eindtijd en -datum",
-          },
-          name: "interview_date_time_end",
-          noIndicator: true,
+          optionalEndDate: true, // if we only require a start date
+          fullWidth: true,
         },
       ],
     },
