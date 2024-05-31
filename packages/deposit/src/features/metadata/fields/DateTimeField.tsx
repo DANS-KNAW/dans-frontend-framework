@@ -16,7 +16,7 @@ import { getFieldStatus } from "../metadataHelpers";
 import type { DateFieldProps, DateRangeFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled } from "../../../deposit/depositSlice";
-import type { DateValidationError } from "@mui/x-date-pickers/models";
+import type { DateValidationError, TimeValidationError } from "@mui/x-date-pickers/models";
 import type { DateFieldType, DateRangeFieldType } from "../../../types/MetadataFields";
 
 // Date and time selection component
@@ -31,16 +31,18 @@ export const DateTimeField = ({
 }: DateFieldProps) => {
 
   const { t, i18n } = useTranslation("metadata");
-  const [error, setError] = useState<DateValidationError | null>(null);
+  const [error, setError] = useState<DateValidationError | TimeValidationError | null>(null);
   const formDisabled = useAppSelector(getFormDisabled);
   const status = getFieldStatus(field);
   const dispatch = useAppDispatch();
 
   const errorMessage = useMemo(() => {
     switch (error) {
-      case "maxDate": {
+      case "maxDate":
+      case "maxTime": {
         return t("dateMax");
       }
+      case "minTime": 
       case "minDate": {
         return t("dateMin");
       }
@@ -92,7 +94,7 @@ export const DateTimeField = ({
             }),
           );
         }}
-        onError={(newError) => setError(newError as DateValidationError)}
+        onError={(newError) => setError(newError as DateValidationError | TimeValidationError)}
         sx={{
           mt: groupedFieldId && currentField !== 0 ? 1 : 0,
         }}
@@ -130,6 +132,9 @@ export const DateTimeField = ({
   );
 };
 
+// Date range field, allows user to select start and end date
+// Always checks if end date is later than start date
+// End date can be optional
 
 export const DateRangeField = ({
   field,
@@ -163,6 +168,8 @@ export const DateRangeField = ({
       }),
     );
   }, [range]);
+
+  console.log(range)
 
   // and reset when format is changed
   useEffect(() => {
@@ -235,12 +242,12 @@ const RangeFieldWrapper = ({
   maxDate?: string;
 }) => {
   const { t, i18n } = useTranslation("metadata");
-  const [error, setError] = useState<DateValidationError | null>(null);
+  const [error, setError] = useState<DateValidationError | TimeValidationError | null>(null);
   const formDisabled = useAppSelector(getFormDisabled);
   // Need to set this separately, as the field has a global status for the entire range,
   // but also needs a split status for user interaction, per start/end of range
   const status = 
-    (!field.required && !range[0]) || (field.optionalEndDate && index === 1 && !range[1]) ?
+    ((!field.required && !range[0]) || (field.optionalEndDate && index === 1 && !range[1])) && !error ?
     "warning" :
     (field.required && !range[0]) || (!field.optionalEndDate && !range[1]) || error ?
     "error" :
@@ -248,10 +255,12 @@ const RangeFieldWrapper = ({
 
   const errorMessage = useMemo(() => {
     switch (error) {
-      case "maxDate": {
+      case "maxDate":
+      case "maxTime": {
         return t("dateMaxRange");
       }
-      case "minDate": {
+      case "minDate":
+      case "minTime": {
         return t("dateMinRange");
       }
       case "invalidDate": {
@@ -286,14 +295,14 @@ const RangeFieldWrapper = ({
       required={(field.required && index === 0) || (!field.optionalEndDate && index === 1)}
       value={(range[index] && moment(range[index], field.format)) || null}
       disabled={field.disabled || formDisabled}
-      minDate={
+      minDateTime={
         minDate ?
         moment(minDate, field.format) :
         field.minDate ?
         moment(field.minDate, field.format) :
         moment().subtract(273790, "year")
       }
-      maxDate={
+      maxDateTime={
         maxDate ?
         moment(maxDate, field.format) :
         field.maxDate ?
@@ -301,11 +310,11 @@ const RangeFieldWrapper = ({
         moment().add(100, "year")
       }
       onChange={(value: Moment | null) => {
-        const formattedValue = value ? value.format(field.format) : "";
+        const formattedValue = value && value.isValid() ? value.format(field.format) : "";
         setRange(formattedValue);
       }}
       onError={(newError) => {
-        setError(newError as DateValidationError)
+        setError(newError)
       }}
       sx={{
         mt: groupedFieldId && currentField !== 0 ? 1 : 0,
