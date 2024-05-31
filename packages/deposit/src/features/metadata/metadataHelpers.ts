@@ -161,6 +161,7 @@ export const getFieldStatus = (field: InputField): SectionStatus => {
     return "neutral";
   } else if (
     (!field.required && fieldEmpty) ||
+    // daterange should also give a warning state if end date is optional and not filled in
     (field.type === 'daterange' && field.optionalEndDate && Array.isArray(field.value) && !field.value[1] && field.valid)
   ) {
     return "warning";
