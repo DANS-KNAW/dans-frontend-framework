@@ -15,7 +15,9 @@
     "dev:rda": "turbo dev --filter=@dans-framework/rda",
     "build:rda": "turbo build --filter=@dans-framework/rda",
     "dev:swh": "turbo dev --filter=@dans-framework/swh",
-    "build:swh": "turbo build --filter=@dans-framework/swh"
+    "build:swh": "turbo build --filter=@dans-framework/swh",
+    "dev:4tu": "turbo dev --filter=@dans-framework/4tu",
+    "build:4tu": "turbo build --filter=@dans-framework/4tu"
   },
   "keywords": [],
   "author": "",

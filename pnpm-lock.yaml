@@ -30,6 +30,70 @@ importers:
         specifier: ^5.1.6
         version: 5.1.6
 
+  apps/4tu:
+    dependencies:
+      '@dans-framework/deposit':
+        specifier: workspace:*
+        version: link:../../packages/deposit
+      '@dans-framework/layout':
+        specifier: workspace:*
+        version: link:../../packages/layout
+      '@dans-framework/pages':
+        specifier: workspace:*
+        version: link:../../packages/pages
+      '@dans-framework/theme':
+        specifier: workspace:*
+        version: link:../../packages/theme
+      '@dans-framework/user-auth':
+        specifier: workspace:*
+        version: link:../../packages/user-auth
+      '@dans-framework/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      '@fontsource/roboto':
+        specifier: ^5.0.7
+        version: 5.0.7
+      '@mui/material':
+        specifier: ^5.14.3
+        version: 5.14.3(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      react-router-dom:
+        specifier: ^6.14.2
+        version: 6.14.2(react-dom@18.2.0)(react@18.2.0)
+      web-vitals:
+        specifier: ^3.4.0
+        version: 3.4.0
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.27
+        version: 20.11.30
+      '@types/react':
+        specifier: ^18.2.15
+        version: 18.2.15
+      '@types/react-dom':
+        specifier: ^18.2.7
+        version: 18.2.7
+      '@vitejs/plugin-react':
+        specifier: ^4.0.3
+        version: 4.0.3(vite@4.4.5)
+      eslint-plugin-react-hooks:
+        specifier: ^4.6.0
+        version: 4.6.0(eslint@8.54.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.3
+        version: 0.4.3(eslint@8.54.0)
+      vite:
+        specifier: ^4.4.5
+        version: 4.4.5(@types/node@20.11.30)
+      vite-plugin-checker:
+        specifier: ^0.6.2
+        version: 0.6.2(eslint@8.54.0)(typescript@5.1.6)(vite@4.4.5)
+
   apps/cat:
     dependencies:
       '@dans-framework/deposit':
@@ -551,9 +615,6 @@ importers:
 
   packages/rdt-search-ui:
     dependencies:
-      '@dans-framework/utils':
-        specifier: workspace:*
-        version: link:../utils
       '@elastic/elasticsearch':
         specifier: ^8.10.0
         version: 8.10.0
@@ -569,18 +630,9 @@ importers:
       echarts:
         specifier: ^5.4.2
         version: 5.4.3
-      framer-motion:
-        specifier: ^10.15.0
-        version: 10.15.0(react-dom@18.2.0)(react@18.2.0)
       html-react-parser:
         specifier: ^4.2.2
         version: 4.2.2(react@18.2.0)
-      i18next:
-        specifier: ^23.4.1
-        version: 23.4.1
-      i18next-resources-to-backend:
-        specifier: ^1.1.4
-        version: 1.1.4
       lodash.debounce:
         specifier: ^4.0.8
         version: 4.0.8
@@ -590,21 +642,12 @@ importers:
       ngeohash:
         specifier: ^0.6.3
         version: 0.6.3
-      notistack:
-        specifier: ^3.0.1
-        version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
       ol:
         specifier: ^7.3.0
         version: 7.5.2
       react:
         specifier: ^18.2.0
         version: 18.2.0
-      react-i18next:
-        specifier: ^13.0.3
-        version: 13.0.3(i18next@23.4.1)(react-dom@18.2.0)(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.14.2
-        version: 6.14.2(react-dom@18.2.0)(react@18.2.0)
       styled-components:
         specifier: ^5.3.10
         version: 5.3.10(@babel/core@7.22.10)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
@@ -636,9 +679,6 @@ importers:
       typescript:
         specifier: ^5.0.3
         version: 5.1.6
-      vite:
-        specifier: ^4.4.5
-        version: 4.4.5(@types/node@18.0.6)
 
   packages/theme:
     dependencies:
@@ -2346,7 +2386,7 @@ packages:
       '@babel/plugin-transform-react-jsx-self': 7.22.5(@babel/core@7.22.10)
       '@babel/plugin-transform-react-jsx-source': 7.22.5(@babel/core@7.22.10)
       react-refresh: 0.14.0
-      vite: 4.4.5(@types/node@18.0.6)
+      vite: 4.4.5(@types/node@20.11.30)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -4453,7 +4493,7 @@ packages:
       strip-ansi: 6.0.1
       tiny-invariant: 1.3.1
       typescript: 5.1.6
-      vite: 4.4.5(@types/node@18.0.6)
+      vite: 4.4.5(@types/node@20.11.30)
       vscode-languageclient: 7.0.0
       vscode-languageserver: 7.0.0
       vscode-languageserver-textdocument: 1.0.8
