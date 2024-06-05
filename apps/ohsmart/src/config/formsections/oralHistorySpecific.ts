@@ -56,7 +56,6 @@ const section: InitialSectionType = {
             },
           ],
           togglePrivate: ["interviewee_first_name", "interviewee_last_name"],
-          toggleTitleGeneration: true,
           fullWidth: true,
         },
         {
@@ -421,7 +420,7 @@ const section: InitialSectionType = {
             en: "Time and date",
             nl: "Tijd en datum",
           },
-          name: "interview_date_time",
+          name: "interview_date_time_range",
           required: true,
           optionalEndDate: true, // if we only require a start date
           fullWidth: true,

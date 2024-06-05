@@ -9,26 +9,12 @@ import { Deposit } from "@dans-framework/deposit"
 
 <Deposit config=
   {
-    // an array of form sections, see below
+    // An array of form sections, see below
     form: [{...}],
 
-    // pointer to the field in the "sections" array that contains the form title, which is used in a users submissions overview
-    formTitle: "[1].fields[0]",
-
-    // Optional string from which the title automatically gets generated.
-    // Value can be a string or language object, eg. {en: "", nl: "", ...etc}.
-    // Supply the input field names between {{...}} to have their content automatically inserted into the title string.
-    // Need to use the autoGenerateTitle key on the field object that represents the title, see fields below.
-    generatedTitle: {
-      en: "Interview with {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} on {{interview_date_time_start}}",
-      nl: "Interview met {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} op {{interview_date_time_start}}",
-    },
-
-    // Optionally set this flag to allow title generation unconditionally.
-    // Otherwise use the toggleTitleGeneration key in a field object to allow title generation conditionally.
-    // See below under field options.
-    // Note that the fields indicated above between {{...}} always need to have a value filled in to allow title generation.
-    allowTitleGeneration: true,
+    // Pointer to the field in the "sections" array that contains the form title, which is used in a users submissions overview
+    // Must be a unique value, so no repeatable fields
+    formTitle: "field_name",
 
     // Target object, the destination of the submission. Config usually read from .env file,
     // because of differences in demo/staging/production environment
@@ -227,12 +213,9 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       // to toggle their private status if the current field is filled in.
       togglePrivate: ["name_of_field_to_change"],
 
-      // Sets a flag that allows title generation if this field has a value
-      toggleTitleGeneration: true,
-
-      // Optionally indicate that this is the title field, in which the automatically
-      // generated title can be entered. Can only be used on a text field type.
-      autoGenerateTitle: true,
+      // Auto generate the value of this field, based on a specific string. Only for text fields.
+      // Value must be a string, or a language string object
+      autoGenerateValue: "{{some_field_name}} has a value, and {{some_other_field}} also has one",
     },
   ]
 }

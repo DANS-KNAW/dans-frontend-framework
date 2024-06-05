@@ -10,15 +10,11 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
 import { AddDeleteControls } from "../MetadataButtons";
-import {
-  setField,
-  getMetadata,
-  getAllowTitleGeneration,
-} from "../metadataSlice";
+import { setField, getMetadata } from "../metadataSlice";
 import { getFieldStatus, findByIdOrName } from "../metadataHelpers";
 import type { TextFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
-import { getFormDisabled, getData } from "../../../deposit/depositSlice";
+import { getFormDisabled } from "../../../deposit/depositSlice";
 import moment from "moment";
 
 const SingleTextField = ({
@@ -33,10 +29,8 @@ const SingleTextField = ({
   const status = getFieldStatus(field);
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
-  const allowTitleGeneration = useAppSelector(getAllowTitleGeneration);
-  const formConfig = useAppSelector(getData);
   const metadata = useAppSelector(getMetadata);
-  const [generatedTitle, setGeneratedTitle] = useState<string>("");
+  const [generatedValue, setGeneratedValue] = useState<string>("");
 
   useEffect(() => {
     // if requested, auto fill user data from oidc, if field has no (manually) set value
@@ -51,16 +45,16 @@ const SingleTextField = ({
     }
   }, [dispatch, field.autofill, field.id, sectionIndex, auth.user]);
 
-  // function to generate title from form config string and filled in fields
+  // function to generate value from form config string and filled in fields
   // set to state, so we only have to call this function once
-  const generateTitle = () => {
-    const titleString = lookupLanguageString(
-      formConfig.generatedTitle,
+  const generateValue = () => {
+    const generatedString = lookupLanguageString(
+      field.autoGenerateValue,
       i18n.language,
     );
     // split string into segments to replace
-    const segments = titleString ? titleString.split(/({{.*?}})/) : [];
-    const title = segments.map((segment) => {
+    const segments = generatedString ? generatedString.split(/({{.*?}})/) : [];
+    const value = segments.map((segment) => {
       const match = segment.match(/{{(.*?)}}/);
       if (match) {
         const field = metadata
@@ -68,7 +62,7 @@ const SingleTextField = ({
           .filter(Boolean)[0];
 
         return (
-          field && field.value ?
+          field && field.value && !field.private ?
             field.type === "autocomplete" ?
               Array.isArray(field.value) ?
                 field.value.map((v) => v.label).join(" & ")
@@ -77,6 +71,8 @@ const SingleTextField = ({
               // TODO: should any other app than ohsmart want to use this, modify this where necessary
             : field.type === "date" ?
               moment(field.value).startOf("day").format("DD-MM-YYYY")
+            : field.type === "daterange" ?
+              moment(field.value[0]).startOf("day").format("DD-MM-YYYY")
             : field.value
           : null
         );
@@ -84,30 +80,31 @@ const SingleTextField = ({
       return segment;
     });
 
-    if (!title.includes(null)) {
-      setGeneratedTitle(title.join(""));
+    if (!value.includes(null)) {
+      setGeneratedValue(value.join(""));
     }
   };
 
-  const setTitle = () => {
+  const setValue = () => {
     dispatch(
       setField({
         sectionIndex: sectionIndex,
         id: field.id,
-        value: generatedTitle,
+        value: generatedValue,
       }),
     );
   };
 
-  // generate the title, makes sure this updates when title state has been set
+  // generate the value, makes sure this updates when value state has been set
   useEffect(() => {
-    if (field.autoGenerateTitle && allowTitleGeneration) {
-      // generate title if it hasn't been do so yet
-      !generatedTitle && generateTitle();
-      // if there's no value set yet, set title to generated value
-      !field.value && setTitle();
+    if (field.autoGenerateValue) {
+      // generate value if it hasn't been do so yet
+      !generatedValue && generateValue();
+      // if there's no value set yet, set value to generated value
+      !field.value && setValue();
     }
-  }, [generatedTitle]);
+  }, [generatedValue]);
+
 
   return (
     <Stack direction="row" alignItems="center">
@@ -155,19 +152,22 @@ const SingleTextField = ({
         }}
         inputProps={{ "data-testid": `${field.name}-${field.id}` }}
       />
-      {field.autoGenerateTitle && allowTitleGeneration && generatedTitle && (
-        // auto generation of title field if allowed and there's a title available
-        <Tooltip title={t("generate")}>
-          <IconButton
-            onClick={() => setTitle()}
-            sx={{
-              ml: 0.5,
-              // keep icon centered
-              mt: status === "error" && field.touched ? -3 : 0,
-            }}
-          >
-            <RefreshIcon />
-          </IconButton>
+      {field.autoGenerateValue && (
+        // auto generation of title field if allowed (all specced fields filled and public)
+        <Tooltip title={generatedValue ? t("generate") : t("generateDisabled")}>
+          <span>
+            <IconButton
+              onClick={() => setValue()}
+              sx={{
+                ml: 0.5,
+                // keep icon centered
+                mt: status === "error" && field.touched ? -3 : 0,
+              }}
+              disabled={!generatedValue ? true : false}
+            >
+              <RefreshIcon />
+            </IconButton>
+          </span>
         </Tooltip>
       )}
       <AddDeleteControls 

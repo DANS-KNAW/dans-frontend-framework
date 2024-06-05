@@ -169,8 +169,6 @@ export const DateRangeField = ({
     );
   }, [range]);
 
-  console.log(range)
-
   // and reset when format is changed
   useEffect(() => {
     if (format !== field.format){

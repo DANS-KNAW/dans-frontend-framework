@@ -65,7 +65,7 @@ const section: InitialSectionType = {
             en: "Interview period",
             nl: "Interviewperiode",
           },
-          name: "subject_date_time",
+          name: "subject_date_time_range",
           description: {
             en: "Start and end of a period the interview covers",
             nl: "Begin en eind van een periode waar het interview over gaat",

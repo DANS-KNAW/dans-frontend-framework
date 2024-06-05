@@ -42,5 +42,6 @@
   "dateMinRange": "Date must be after starting date, or date too far in the past",
   "dateMaxRange": "Date must be before end date, or date too far in the future",
   "apiFetchError": "Could not get data from {{api}}",
-  "generate": "Regenerate title"
+  "generate": "Regenerate value",
+  "generateDisabled": "Cannot generate value, as not all required fields have been filled in or are public data."
 }

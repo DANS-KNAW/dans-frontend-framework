@@ -28,7 +28,6 @@ export interface InitialStateType {
   panel: string;
   tab: number;
   touched: boolean;
-  allowTitleGeneration?: boolean;
 }
 
 export interface InitialFormType {
@@ -64,6 +63,4 @@ export interface FormConfig {
       value: string;
     }[];
   };
-  generatedTitle?: string | LanguageStrings;
-  allowTitleGeneration?: boolean;
 }

@@ -1,4 +1,4 @@
-import { SyntheticEvent } from "react";
+import { type SyntheticEvent } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -32,8 +32,15 @@ const Form = () => {
           key={`section-${section.id}`}
           expanded={openPanel === section.id}
           onChange={handleChange(section.id)}
-          TransitionProps={{ unmountOnExit: true }}
+          TransitionProps={{ 
+            unmountOnExit: true,
+          }}
+          // todo: update mui, change TransitionProps to the following:
+          // slotProps={{ transition: { unmountOnExit: true, etc... } }}
           data-testid={`section-${section.id}`}
+          id={`section-${section.id}`}
+          // needed to keep panel in view on open/exit scroll height change
+          sx={{overflowAnchor: "auto"}}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}

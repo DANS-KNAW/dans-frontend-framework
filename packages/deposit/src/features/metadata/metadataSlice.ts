@@ -27,7 +27,6 @@ import {
   formatInitialState,
   findByIdOrName,
   changeConditionalState,
-  isEmpty,
   // findFieldInGroup,
 } from "./metadataHelpers";
 import { v4 as uuidv4 } from "uuid";
@@ -107,11 +106,6 @@ export const metadataSlice = createSlice({
             "togglePrivateIds",
             "private",
           );
-        }
-
-        if (field.toggleTitleGeneration) {
-          // set flag if auto title generation is allowed
-          state.allowTitleGeneration = !isEmpty(action.payload.value as FieldValue);
         }
 
         // After every input, we need to update field valid status and section status as well.
@@ -263,9 +257,6 @@ export const metadataSlice = createSlice({
       // We only need to remove the id. Deposit.tsx will then reinit the form
       state.id = "";
     },
-    setTitleGeneration: (state, action: PayloadAction<boolean>) => {
-      state.allowTitleGeneration = action.payload;
-    },
   },
 });
 
@@ -281,7 +272,6 @@ export const {
   deleteField,
   resetMetadata,
   setDateTypeField,
-  setTitleGeneration,
 } = metadataSlice.actions;
 
 // Select values from state
@@ -294,7 +284,5 @@ export const getMetadataStatus = (state: RootState) => {
   return getSectionStatus(statusArray);
 };
 export const getTouchedStatus = (state: RootState) => state.metadata.touched;
-export const getAllowTitleGeneration = (state: RootState) =>
-  state.metadata.allowTitleGeneration;
 
 export default metadataSlice.reducer;

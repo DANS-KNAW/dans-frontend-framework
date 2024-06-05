@@ -40,5 +40,6 @@
   "dateStart": "Begin",
   "dateEnd": "Eind",
   "apiFetchError": "Kan geen data ophalen van {{api}}",
-  "generate": "Hergenereer titel"
+  "generate": "Vul automatisch in",
+  "generateDisabled": "Kan dit veld niet automatisch invullen, aangezien niet alle benodigde velden zijn ingevuld of publieke data zijn."
 }
