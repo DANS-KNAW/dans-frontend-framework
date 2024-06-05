@@ -519,6 +519,10 @@ const section: InitialSectionType = {
           name: "transcript_human_first_name",
           private: true,
           noIndicator: true,
+          toggleRequired: [
+            "transcript_human_consent",
+            "transcript_human_last_name",
+          ],
         },
         {
           type: "text",
@@ -529,6 +533,10 @@ const section: InitialSectionType = {
           name: "transcript_human_last_name",
           private: true,
           noIndicator: true,
+          toggleRequired: [
+            "transcript_human_consent",
+            "transcript_human_first_name",
+          ],
         },
         {
           type: "text",
@@ -539,6 +547,11 @@ const section: InitialSectionType = {
           name: "transcript_human_function",
           private: true,
           noIndicator: true,
+          toggleRequired: [
+            "transcript_human_consent",
+            "transcript_human_first_name",
+            "transcript_human_last_name",
+          ],
         },
         {
           type: "text",
@@ -549,6 +562,11 @@ const section: InitialSectionType = {
           name: "transcript_human_affiliation",
           private: true,
           noIndicator: true,
+          toggleRequired: [
+            "transcript_human_consent",
+            "transcript_human_first_name",
+            "transcript_human_last_name",
+          ],
         },
         {
           type: "check",

@@ -10,7 +10,6 @@ export const LoginButton = ({ variant }: { variant?: "contained" }) => {
   const { t } = useTranslation("user");
   const auth = useAuth();
   const location = useLocation();
-          console.log(auth)
 
   return (
     <Button

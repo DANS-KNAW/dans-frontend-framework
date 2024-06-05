@@ -124,11 +124,12 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
           actionDone: true,
         });
       }
-      // Load the files if there are any. Probably not doable for copy? TODO: check
+      // Load the files if there are any, but not when copying form
       if (
         formAction.id &&
         serverFormData &&
-        serverFormData.md["file-metadata"]
+        serverFormData.md["file-metadata"] &&
+        formAction.action !== "copy"
       ) {
         dispatch(addFiles(serverFormData.md["file-metadata"]));
       }
