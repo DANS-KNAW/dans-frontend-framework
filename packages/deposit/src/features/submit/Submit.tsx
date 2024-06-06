@@ -26,7 +26,6 @@ import {
   resetFilesSubmitStatus,
   resetMetadataSubmitStatus,
 } from "./submitSlice";
-import { beforeUnloadHandler } from "./submitHelpers";
 import { useTranslation } from "react-i18next";
 import {
   getData,
@@ -89,7 +88,6 @@ const Submit = ({
       isLoading: isLoadingMeta,
       isError: isErrorMeta,
       reset: resetMeta,
-      isSuccess: isSuccessMeta,
     },
   ] = useSubmitDataMutation();
   const [
@@ -97,7 +95,6 @@ const Submit = ({
     {
       isLoading: isLoadingFiles,
       reset: resetSubmittedFiles,
-      isSuccess: isSuccessFiles,
     },
   ] = useSubmitFilesMutation();
 
@@ -139,8 +136,6 @@ const Submit = ({
 
     dispatch(setFormDisabled(true));
     dispatch(setMetadataSubmitStatus("submitting"));
-    // add event listener to make sure user doesn't navigate outside of app
-    window.addEventListener("beforeunload", beforeUnloadHandler);
 
     // do the actual submit
     getUser().then((user) =>
@@ -188,17 +183,6 @@ const Submit = ({
     // and enable form
     dispatch(setFormDisabled(false));
   };
-
-  // remove event listener when successfully submitted
-  useEffect(() => {
-    if (
-      (isSuccessMeta && selectedFiles.length === 0) ||
-      isSuccessFiles ||
-      fileStatus === "success"
-    ) {
-      window.removeEventListener("beforeunload", beforeUnloadHandler);
-    }
-  }, [isSuccessMeta, isSuccessFiles, fileStatus]);
 
   const iconSx = {
     color: "white",
