@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
-import { useAuth } from "react-oidc-context";
+import { useAuth, hasAuthParams } from "react-oidc-context";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
@@ -22,6 +22,15 @@ export const UserMenu = ({
   userSubmissions: boolean;
 }) => {
   const auth = useAuth();
+
+  // keep user signed in, and try to sign in automatically
+  const [hasTriedSignin, setHasTriedSignin] = useState(false);
+  useEffect(() => {
+    if (!hasAuthParams() && !auth.isAuthenticated && !auth.activeNavigator && !auth.isLoading && !hasTriedSignin) {
+      void auth.signinSilent();
+      setHasTriedSignin(true);
+    }
+  }, [auth, hasTriedSignin]);
 
   if (auth.isAuthenticated && auth.user) {
     return (
