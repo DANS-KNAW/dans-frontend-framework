@@ -1,6 +1,7 @@
 import { SelectedFile } from "../../types/Files";
 import { SectionType } from "../../types/Metadata";
 import { findByIdOrName } from "../metadata/metadataHelpers";
+import moment from "moment";
 
 // Function to rearrange the metadata for submission
 export const formatFormData = (
@@ -19,7 +20,8 @@ export const formatFormData = (
       private: f.private,
       role: f.role,
       process: f.process,
-      embargo: f.embargo,
+      // convert date to preferred date format
+      embargo: f.embargo ? moment(f.embargo, "DD-MM-YYYY").format("YYYY-MM-DD").toString() : undefined,
     }));
 
   // since the title field is unique, we can assume we only find one value
