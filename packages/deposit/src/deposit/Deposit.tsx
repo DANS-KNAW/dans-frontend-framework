@@ -22,7 +22,6 @@ import {
   initForm,
   resetMetadata,
   getTouchedStatus,
-  setTitleGeneration,
 } from "../features/metadata/metadataSlice";
 import {
   resetFilesSubmitStatus,
@@ -105,8 +104,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       // Then we create a fresh form if there's no id to load
       if (!sessionId && !formAction.id) {
         dispatch(initForm(config.form));
-        // set title generation to enabled if specified in config
-        config.allowTitleGeneration && dispatch(setTitleGeneration(true));
       }
       // If there's server data available, load that into the form
       // For copying a form, we create a new uuid as sessionId.
@@ -127,11 +124,12 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
           actionDone: true,
         });
       }
-      // Load the files if there are any. Probably not doable for copy? TODO: check
+      // Load the files if there are any, but not when copying form
       if (
         formAction.id &&
         serverFormData &&
-        serverFormData.md["file-metadata"]
+        serverFormData.md["file-metadata"] &&
+        formAction.action !== "copy"
       ) {
         dispatch(addFiles(serverFormData.md["file-metadata"]));
       }

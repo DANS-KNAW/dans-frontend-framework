@@ -28,7 +28,6 @@ export interface InitialStateType {
   panel: string;
   tab: number;
   touched: boolean;
-  allowTitleGeneration?: boolean;
 }
 
 export interface InitialFormType {
@@ -56,6 +55,7 @@ export interface FormConfig {
   formDisabled?: boolean;
   formTitle?: any;
   filesUpload?: {
+    embargoDate?: boolean;
     convertFiles?: boolean;
     displayRoles?: boolean;
     displayProcesses?: boolean;
@@ -64,6 +64,4 @@ export interface FormConfig {
       value: string;
     }[];
   };
-  generatedTitle?: string | LanguageStrings;
-  allowTitleGeneration?: boolean;
 }

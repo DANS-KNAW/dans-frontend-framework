@@ -9,26 +9,12 @@ import { Deposit } from "@dans-framework/deposit"
 
 <Deposit config=
   {
-    // an array of form sections, see below
+    // An array of form sections, see below
     form: [{...}],
 
-    // pointer to the field in the "sections" array that contains the form title, which is used in a users submissions overview
-    formTitle: "[1].fields[0]",
-
-    // Optional string from which the title automatically gets generated.
-    // Value can be a string or language object, eg. {en: "", nl: "", ...etc}.
-    // Supply the input field names between {{...}} to have their content automatically inserted into the title string.
-    // Need to use the autoGenerateTitle key on the field object that represents the title, see fields below.
-    generatedTitle: {
-      en: "Interview with {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} on {{interview_date_time_start}}",
-      nl: "Interview met {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} op {{interview_date_time_start}}",
-    },
-
-    // Optionally set this flag to allow title generation unconditionally.
-    // Otherwise use the toggleTitleGeneration key in a field object to allow title generation conditionally.
-    // See below under field options.
-    // Note that the fields indicated above between {{...}} always need to have a value filled in to allow title generation.
-    allowTitleGeneration: true,
+    // Pointer to the field in the "sections" array that contains the form title, which is used in a users submissions overview
+    // Must be a unique value, so no repeatable fields
+    formTitle: "field_name",
 
     // Target object, the destination of the submission. Config usually read from .env file,
     // because of differences in demo/staging/production environment
@@ -108,6 +94,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       // * autocomplete - this is a selectbox with either a pre-defined list or typeahead service coupled
       // * text - plain textbox
       // * date - date/time selector
+      // * daterange - a date range selector
       // * number - numbers only
       // * group - a field group, this group contains another fields array
       // * radio - a radio button selection field (one option is always selected)
@@ -124,6 +111,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       required: true,
 
       // Optionally set field to not display a "recommended you fill this in" status. Field cannot be required obviously.
+      // Disabled for daterange field types.
       noIndicator: true,
 
       // Optional field description, can be a string or a language object. Appears in tooltip or under label in case of group field
@@ -144,7 +132,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       // Text field only, enable this if you want a larger textarea
       multiline: true,
 
-      // Sets field with to 100% instead of default 50%
+      // Sets field with to 100% instead of default 50%, recommended for daterange
       fullWidth: true,
 
       // Textfield only, to validate input. See ValidationType in types/Metadata.ts
@@ -154,15 +142,19 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       // See AuthProperty in types/Metadata.ts for options.
       autofill: "name",
 
-      // Date field only. Specify the format you want to use. See DateTimeFormat in types/Metadata.ts.
+      // Date and daterange field only. Specify the format you want to use. See DateTimeFormat in types/Metadata.ts.
       format: "DD-MM-YYYY HH:mm",
 
-      // Date field only. Provide an optional list of date format options the user can choose from.
+      // Date and daterange field only. Provide an optional list of date format options the user can choose from.
       formatOptions: ["YYYY", "MM-YYYY", "DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
 
-      // Date field only. Specify an optional minimum and/or maximum input date, in the format you"ve provided.
+      // Date and daterange field only. Specify an optional minimum and/or maximum input date, in the format you've provided.
       minDate: "01-01-2020 12:00",
       maxDate: "01-01-2024 12:00",
+
+      // Daterange only, set end date as optional
+      // By default, an end date is required for a date range, when a starting date has been filled in
+      optionalEndDate: true,
 
       // Number field only, specify min and/or max number
       minValue: "10",
@@ -221,12 +213,9 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       // to toggle their private status if the current field is filled in.
       togglePrivate: ["name_of_field_to_change"],
 
-      // Sets a flag that allows title generation if this field has a value
-      toggleTitleGeneration: true,
-
-      // Optionally indicate that this is the title field, in which the automatically
-      // generated title can be entered. Can only be used on a text field type.
-      autoGenerateTitle: true,
+      // Auto generate the value of this field, based on a specific string. Only for text fields.
+      // Value must be a string, or a language string object
+      autoGenerateValue: "{{some_field_name}} has a value, and {{some_other_field}} also has one",
     },
   ]
 }

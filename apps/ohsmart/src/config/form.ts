@@ -23,10 +23,6 @@ const sections = [
 const form: FormConfig = {
   form: sections as InitialSectionType[],
   formTitle: "title", // must point to a field with a unique name
-  generatedTitle: {
-    en: "Interview with {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} on {{interview_date_time_start}}",
-    nl: "Interview met {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} op {{interview_date_time_start}}",
-  },
   target: {
     envName: import.meta.env.VITE_ENV_NAME,
     configName: import.meta.env.VITE_CONFIG_NAME,
@@ -49,6 +45,7 @@ const form: FormConfig = {
   skipValidation: import.meta.env.DEV,
   filesUpload: {
     fileRoles: fileRoleOptions,
+    embargoDate: true,
   },
 };
 

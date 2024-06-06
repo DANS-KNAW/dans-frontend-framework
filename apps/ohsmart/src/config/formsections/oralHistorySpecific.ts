@@ -56,7 +56,6 @@ const section: InitialSectionType = {
             },
           ],
           togglePrivate: ["interviewee_first_name", "interviewee_last_name"],
-          toggleTitleGeneration: true,
           fullWidth: true,
         },
         {
@@ -414,27 +413,17 @@ const section: InitialSectionType = {
       },
       fields: [
         {
-          type: "date",
+          type: "daterange",
           format: "DD-MM-YYYY",
           formatOptions: ["DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
           label: {
-            en: "Start time and date",
-            nl: "Starttijd en -datum",
+            en: "Time and date",
+            nl: "Tijd en datum",
           },
-          name: "interview_date_time_start",
+          name: "interview_date_time_range",
           required: true,
-          minDateField: "interview_date_time_end", // note that this will only work within the same field group
-        },
-        {
-          type: "date",
-          format: "DD-MM-YYYY",
-          formatOptions: ["DD-MM-YYYY", "DD-MM-YYYY HH:mm"],
-          label: {
-            en: "End time and date",
-            nl: "Eindtijd en -datum",
-          },
-          name: "interview_date_time_end",
-          noIndicator: true,
+          optionalEndDate: true, // if we only require a start date
+          fullWidth: true,
         },
       ],
     },
@@ -530,6 +519,10 @@ const section: InitialSectionType = {
           name: "transcript_human_first_name",
           private: true,
           noIndicator: true,
+          toggleRequired: [
+            "transcript_human_consent",
+            "transcript_human_last_name",
+          ],
         },
         {
           type: "text",
@@ -540,6 +533,10 @@ const section: InitialSectionType = {
           name: "transcript_human_last_name",
           private: true,
           noIndicator: true,
+          toggleRequired: [
+            "transcript_human_consent",
+            "transcript_human_first_name",
+          ],
         },
         {
           type: "text",
@@ -550,6 +547,11 @@ const section: InitialSectionType = {
           name: "transcript_human_function",
           private: true,
           noIndicator: true,
+          toggleRequired: [
+            "transcript_human_consent",
+            "transcript_human_first_name",
+            "transcript_human_last_name",
+          ],
         },
         {
           type: "text",
@@ -560,6 +562,11 @@ const section: InitialSectionType = {
           name: "transcript_human_affiliation",
           private: true,
           noIndicator: true,
+          toggleRequired: [
+            "transcript_human_consent",
+            "transcript_human_first_name",
+            "transcript_human_last_name",
+          ],
         },
         {
           type: "check",

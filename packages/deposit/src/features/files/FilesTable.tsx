@@ -1,4 +1,4 @@
-import { useState, forwardRef } from "react";
+import { useState, forwardRef, useMemo } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -13,6 +13,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
+import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
 import ReplayCircleFilledIcon from "@mui/icons-material/ReplayCircleFilled";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Tooltip from "@mui/material/Tooltip";
@@ -43,14 +44,20 @@ import FileStatusIndicator from "./FileStatusIndicator";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useFetchGroupedListQuery } from "./api/dansFormats";
 import { findFileGroup } from "./filesHelpers";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import moment, { Moment } from "moment";
+import type { DateValidationError } from "@mui/x-date-pickers/models";
 
 const FilesTable = () => {
   const { t } = useTranslation("files");
   const selectedFiles = useAppSelector<SelectedFile[]>(getFiles);
   const formConfig = useAppSelector(getData);
 
-  const { displayRoles = true, displayProcesses = true } =
-    formConfig?.filesUpload || {};
+  const { 
+    displayRoles = true, 
+    displayProcesses = true,
+    embargoDate = false,
+  } = formConfig?.filesUpload || {};
 
   return selectedFiles.length !== 0 ?
       <TableContainer component={Paper} sx={{ overflow: "hidden" }}>
@@ -66,8 +73,18 @@ const FilesTable = () => {
                 <TableCell sx={{ p: 1, width: 230 }}>{t("role")}</TableCell>
               )}
               {displayProcesses && (
-                <TableCell sx={{ p: 1, width: 280 }}>
+                <TableCell sx={{ p: 1, width: 230 }}>
                   {t("processing")}
+                </TableCell>
+              )}
+              {embargoDate && (
+                <TableCell sx={{ p: 1, width: 161 }}>
+                  <Box sx={{ display: "flex",alignItems: "center" }}>
+                    {t("embargoDate")}
+                    <Tooltip title={t("embargoDateDescription")}>
+                      <InfoRoundedIcon color="neutral" fontSize="small" sx={{ml: 0.25}} />
+                    </Tooltip>
+                  </Box>
                 </TableCell>
               )}
             </TableRow>
@@ -142,6 +159,59 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
   );
 };
 
+const EmbargoDate = ({ file }: { file: SelectedFile }) => {
+  const { t } = useTranslation("files");
+  const [error, setError] = useState<DateValidationError | null>(null);
+  const dispatch = useAppDispatch();
+  const formDisabled = useAppSelector(getFormDisabled);
+  const dateFormat = "DD-MM-YYYY";
+
+  const errorMessage = useMemo(() => {
+    switch (error) {
+      case "minDate": {
+        return t("minDate");
+      }
+      case "invalidDate": {
+        return t("dateInvalid");
+      }
+      default: {
+        return "";
+      }
+    }
+  }, [error]);
+
+  console.log(error)
+
+  return (
+    <DatePicker 
+      format={dateFormat}
+      onChange={(value: Moment | null, context) => {
+        // Serialize the date value we get from the component so we can store it using Redux
+        const dateValue =
+          !context.validationError && value ? value.format(dateFormat) : "";
+        dispatch(
+          setFileMeta({
+            id: file.id,
+            type: "embargo",
+            value: dateValue,
+          }),
+        );
+      }}
+      value={moment(file.embargo, dateFormat) || null}
+      disabled={formDisabled}
+      minDate={moment().add(1,'days')}
+      onError={(newError) => setError(newError as DateValidationError)}
+      slotProps={{
+        textField: {
+          error: error && file.hasOwnProperty("embargo") ? true : false,
+          helperText: file.hasOwnProperty("embargo") && errorMessage,
+          size: "small",
+        },
+      }}
+    />
+  );
+};
+
 const ForwardRow = forwardRef<
   HTMLTableRowElement,
   TableRowProps & HTMLMotionProps<"tr">
@@ -160,6 +230,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
     displayRoles = true,
     displayProcesses = true,
     convertFiles = true,
+    embargoDate = false,
   } = formConfig?.filesUpload || {};
 
   return (
@@ -271,6 +342,13 @@ const FileTableRow = ({ file }: FileItemProps) => {
             <FileActionOptions type="process" file={file} />
           </TableCell>
         )}
+        {embargoDate && (
+          <TableCell
+            sx={{ p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1 }}
+          >
+            <EmbargoDate file={file} />
+          </TableCell>
+        )}
       </MotionRow>
       <MotionRow
         layout
@@ -318,7 +396,7 @@ const UploadProgress = ({ file }: FileItemProps) => {
           paddingBottom: 0,
           paddingTop: 0,
         }}
-        colSpan={7}
+        colSpan={8}
       >
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Box sx={{ width: "100%", mr: 1 }}>

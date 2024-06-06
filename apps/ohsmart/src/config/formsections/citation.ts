@@ -19,7 +19,10 @@ const section: InitialSectionType = {
         en: "A descriptive title for the work, to be used in citations",
         nl: "Een beschrijvende titel voor deze data, wordt gebruikt in referenties.",
       },
-      autoGenerateTitle: true,
+      autoGenerateValue: {
+        en: "Interview with {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} on {{interview_date_time_range}}",
+        nl: "Interview met {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} op {{interview_date_time_range}}",
+      },
     },
     {
       type: "text",
@@ -28,7 +31,6 @@ const section: InitialSectionType = {
         nl: "Ondertitel",
       },
       name: "subtitle",
-      repeatable: true,
       noIndicator: true,
       description: {
         en: "You can provide a subtitle if you wish",

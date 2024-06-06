@@ -30,3 +30,4 @@ dist-ssr
 
 # Testing related
 playwright-report
+test-results
