@@ -37,6 +37,20 @@ const section: InitialSectionType = {
       },
       options: languageList,
     },
+    {
+      type: "date",
+      format: "DD-MM-YYYY",
+      label: {
+        en: "Embargo date",
+        nl: "Datum embargo",
+      },
+      name: "date_available",
+      noIndicator: true,
+      description: {
+        en: "In case of an embargo, you should provide a future date for this field.",
+        nl: "In het geval van een embargo kun je hier een toekomstige datum invullen.",
+      },
+    },
   ],
 };
 
