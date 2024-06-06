@@ -65,6 +65,34 @@ import { Deposit } from "@dans-framework/deposit"
     // if true, a form can always be submitted, handy for testing purposes
     skipValidation: false,
 
+    // Specify optional options for file uploads
+    filesUpload: {
+      // override default file roles (see packages/deposit/src/features/files/fileOptions.tsx)
+      fileRoles: [
+        {
+          value: "audio_file",
+          label: "Audio file",
+        },
+        // etc
+      ],
+      // override default processing options
+      fileProcessing: [
+        {
+          value: "create_thumbnail",
+          label: {
+            en: "Create thumbnail",
+            nl: "Genereer thumbnail",
+          },
+          for: ["video", "images"], 
+        },
+        // etc
+      ],
+      // enable/disable these columns (default value specified)
+      embargoDate: false,
+      displayRoles: true, 
+      displayProcesses: true,
+    },
+
   }
   page={...} // A page object
 />
