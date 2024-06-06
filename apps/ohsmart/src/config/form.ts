@@ -45,6 +45,7 @@ const form: FormConfig = {
   skipValidation: import.meta.env.DEV,
   filesUpload: {
     fileRoles: fileRoleOptions,
+    embargoDate: true,
   },
 };
 

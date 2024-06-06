@@ -14,7 +14,8 @@ export type FileActionType =
   | "submitProgress"
   | "submitSuccess"
   | "submitError"
-  | "submittedFile";
+  | "submittedFile"
+  | "embargo";
 
 export interface ReduxFileActions {
   id: string;
@@ -34,6 +35,7 @@ export interface SelectedFile {
   role?: FileActions;
   process?: FileActions[];
   valid?: boolean;
+  embargo?: string;
   submitProgress?: number;
   submitSuccess?: boolean;
   submitError?: boolean;

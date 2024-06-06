@@ -55,6 +55,7 @@ export interface FormConfig {
   formDisabled?: boolean;
   formTitle?: any;
   filesUpload?: {
+    embargoDate?: boolean;
     convertFiles?: boolean;
     displayRoles?: boolean;
     displayProcesses?: boolean;
