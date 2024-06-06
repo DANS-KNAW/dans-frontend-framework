@@ -180,8 +180,6 @@ const EmbargoDate = ({ file }: { file: SelectedFile }) => {
     }
   }, [error]);
 
-  console.log(error)
-
   return (
     <DatePicker 
       format={dateFormat}

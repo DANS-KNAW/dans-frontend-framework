@@ -19,6 +19,7 @@ export const formatFormData = (
       private: f.private,
       role: f.role,
       process: f.process,
+      embargo: f.embargo,
     }));
 
   // since the title field is unique, we can assume we only find one value
