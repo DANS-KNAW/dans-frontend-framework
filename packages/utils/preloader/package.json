@@ -1,0 +1,11 @@
+{
+  "name": "@dans-framework/utils/preloader",
+  "main": "index.ts",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "dependencies": {
+    "lz-string": "^1.5.0"
+  }
+}

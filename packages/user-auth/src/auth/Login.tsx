@@ -1,11 +1,23 @@
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Unstable_Grid2";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { LoginButton } from "../user/Buttons";
+import { useSearchParams } from "react-router-dom";
 
 export const LoginPage = () => {
+  const [ searchParams ] = useSearchParams();
+
+  useEffect(() => {
+    // save data params to session storage to get them back after Keycloak login
+    const data = searchParams.get("data");
+    if (data) {
+      sessionStorage.setItem('preloadData', data);
+    }
+  }, [searchParams]);
+
   const { t } = useTranslation(["auth", "user"]);
   return (
     <Container>
