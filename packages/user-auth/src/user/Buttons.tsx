@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "react-oidc-context";
 import Button from "@mui/material/Button";
@@ -45,6 +46,16 @@ export const LoginButton = ({ variant }: { variant?: "contained" }) => {
 export const LogoutButton = () => {
   const { t } = useTranslation("user");
   const auth = useAuth();
+
+  useEffect(() => {
+    // clear session storage preload data after logging in
+    // do this in the logout button, as this will render when a user has logged in
+    // also when not using the signin-callback url
+    const sessionData = sessionStorage.getItem("preloadData");
+    if (sessionData && auth.user?.session_state) {
+      sessionStorage.removeItem("preloadData");
+    }
+  }, [auth.user]);
 
   // Remove user
   const logOut = () => {
