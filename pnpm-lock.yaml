@@ -814,6 +814,12 @@ importers:
         specifier: ^18.2.15
         version: 18.2.15
 
+  packages/utils/preloader:
+    dependencies:
+      lz-string:
+        specifier: ^1.5.0
+        version: 1.5.0
+
   packages/utils/sitetitle:
     dependencies:
       react:

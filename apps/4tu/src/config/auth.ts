@@ -6,6 +6,4 @@ const authProvider = {
   loadUserInfo: true,
 };
 
-console.log(authProvider)
-
 export default authProvider;

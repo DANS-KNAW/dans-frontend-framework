@@ -1,13 +1,16 @@
 import type { FormConfig, InitialSectionType } from "@dans-framework/deposit";
-import main from "./formsections/main";
-import { fileRoleOptions } from "./fileOptions";
+import citation from "./formsections/citation";
+import relations from "./formsections/relations";
+import rights from "./formsections/rights";
 
 // Make sure to import all sections of the form here, and add them to the sections export
 // Section data are formatted as js/ts, so we can easily import things like option lists, or set a variable that gets reused
 // For now, see types/Metadata.ts to check the types of input fields you can use
 
 const sections = [
-  main
+  citation,
+  relations,
+  rights,
 ];
 
 const form: FormConfig = {
@@ -30,9 +33,6 @@ const form: FormConfig = {
   ],
   submitKey: import.meta.env.VITE_PACKAGING_KEY,
   skipValidation: import.meta.env.DEV,
-  filesUpload: {
-    fileRoles: fileRoleOptions,
-  },
 };
 
 export default form;
