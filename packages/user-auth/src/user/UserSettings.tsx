@@ -71,7 +71,7 @@ export const UserSettings = ({
 
           <Link
             component={RouterLink}
-            to={apiKeyError !== undefined ? "" : `/${depositSlug || `deposit`}`}
+            to={apiKeyError !== undefined ? "" : `/${depositSlug !== undefined ? depositSlug : `deposit`}`}
             data-testid="deposit-data"
           >
             <Button

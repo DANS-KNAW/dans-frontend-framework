@@ -44,7 +44,7 @@ const App = () => {
                   <AuthRoute>
                     <UserSettings
                       target={form.targetCredentials}
-                      depositSlug="deposit"
+                      depositSlug=""
                     />
                   </AuthRoute>
                 }
