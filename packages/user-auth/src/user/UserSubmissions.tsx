@@ -85,6 +85,8 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
     auth.user?.profile.sub,
   );
 
+  console.log(data)
+
   // are there any targets that have been submitted not complete yet?
   const allTargetsComplete =
     (data &&
@@ -140,7 +142,7 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
             type="draft"
             isLoading={isLoading}
             header={t("userSubmissionsDrafts")}
-            depositSlug={depositSlug}
+            depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
           />
           <SubmissionList
             data={
@@ -155,6 +157,7 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
             type="published"
             isLoading={isLoading}
             header={t("userSubmissionsCompleted")}
+            depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
           />
         </Grid>
       </Grid>
@@ -167,13 +170,13 @@ const SubmissionList = ({
   isLoading,
   header,
   type,
-  depositSlug = "deposit",
+  depositSlug,
 }: {
   data: SubmissionResponse[];
   isLoading: boolean;
   header: string;
   type: "draft" | "published";
-  depositSlug?: string;
+  depositSlug: string;
 }) => {
   const { t, i18n } = useTranslation("user");
   const navigate = useNavigate();
@@ -614,7 +617,7 @@ const ViewAction = ({
           (target, i) =>
             target["output-response"] &&
             target["output-response"].response?.identifiers &&
-            target["deposit-status"] === "accepted" && (
+            (target["deposit-status"] === "accepted" || target["deposit-status"] === "finish") && (
               <Link
                 href={target["output-response"].response.identifiers[0].url}
                 color="inherit"
