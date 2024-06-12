@@ -87,7 +87,7 @@ const section: InitialSectionType = {
             nl: "Type relatie met dit externe item",
           },
           noIndicator: true,
-          options: relationships.map((r: string) => ({ label: r, value: r })),
+          options: relationships.map((r: string) => ({ label: r, value: r.toLowerCase() })),
           toggleRequired: ["relation_item", "relation_reference"],
         },
         {

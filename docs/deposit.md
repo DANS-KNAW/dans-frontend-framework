@@ -167,7 +167,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       validation: "email",
 
       // Textfield only. Optionally provide this value if you want to fill a textfield based on user authentication object.
-      // See AuthProperty in types/Metadata.ts for options.
+      // See AuthProperty in @dans-framework/user-auth/types for options.
       autofill: "name",
 
       // Date and daterange field only. Specify the format you want to use. See DateTimeFormat in types/Metadata.ts.
