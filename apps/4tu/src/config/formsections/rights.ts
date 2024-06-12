@@ -28,8 +28,8 @@ const section: InitialSectionType = {
       description: "One of a number of specific licences",
       options: "sshLicences",
       value: {
-        label: "DANS Licence",
-        value: "https://doi.org/10.17026/fp39-0x58",
+        label: "CC0 1.0",
+        value: "http://creativecommons.org/publicdomain/zero/1.0",
       },
     },
   ],
