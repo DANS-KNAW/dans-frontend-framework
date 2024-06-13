@@ -197,7 +197,7 @@ export const getValid = (
     // special check for date range: start date must be before or equal to end date,
     // or if end date not required, end date can be empty
     (field.type === 'daterange' && value && (
-      moment(value[0]).isSameOrBefore(moment(value[1])) ||
+      moment(value[0], field.format).isSameOrBefore(moment(value[1], field.format)) ||
       (field.optionalEndDate && value[0] && !value[1]) 
     ))
   ) {
