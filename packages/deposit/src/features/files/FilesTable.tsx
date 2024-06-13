@@ -165,6 +165,7 @@ const EmbargoDate = ({ file }: { file: SelectedFile }) => {
   const dispatch = useAppDispatch();
   const formDisabled = useAppSelector(getFormDisabled);
   const dateFormat = "DD-MM-YYYY";
+  const serverDateFormat = "YYYY-MM-DD";
   const config = useAppSelector(getData);
 
   const errorMessage = useMemo(() => {
@@ -187,7 +188,7 @@ const EmbargoDate = ({ file }: { file: SelectedFile }) => {
       onChange={(value: Moment | null, context) => {
         // Serialize the date value we get from the component so we can store it using Redux
         const dateValue =
-          !context.validationError && value ? value.format(dateFormat) : "";
+          !context.validationError && value ? value.format(serverDateFormat) : "";
         dispatch(
           setFileMeta({
             id: file.id,
@@ -196,7 +197,7 @@ const EmbargoDate = ({ file }: { file: SelectedFile }) => {
           }),
         );
       }}
-      value={moment(file.embargo, dateFormat) || null}
+      value={moment(file.embargo, serverDateFormat) || null}
       disabled={formDisabled}
       minDate={moment().add(config.filesUpload?.embargoDateMin || 1, 'days')}
       maxDate={moment().add(config.filesUpload?.embargoDateMax || 10000, 'days')}
