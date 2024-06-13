@@ -85,8 +85,6 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
     auth.user?.profile.sub,
   );
 
-  console.log(data)
-
   // are there any targets that have been submitted not complete yet?
   const allTargetsComplete =
     (data &&
