@@ -63,5 +63,7 @@ export interface FormConfig {
       label: string;
       value: string;
     }[];
+    embargoDateMin?: number;
+    embargoDateMax?: number;
   };
 }

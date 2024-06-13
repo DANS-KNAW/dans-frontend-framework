@@ -46,6 +46,8 @@ const form: FormConfig = {
   filesUpload: {
     fileRoles: fileRoleOptions,
     embargoDate: true,
+    embargoDateMin: 2, // days in the future
+    embargoDateMax: 18250,
   },
 };
 

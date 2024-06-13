@@ -165,6 +165,7 @@ const EmbargoDate = ({ file }: { file: SelectedFile }) => {
   const dispatch = useAppDispatch();
   const formDisabled = useAppSelector(getFormDisabled);
   const dateFormat = "DD-MM-YYYY";
+  const config = useAppSelector(getData);
 
   const errorMessage = useMemo(() => {
     switch (error) {
@@ -197,7 +198,8 @@ const EmbargoDate = ({ file }: { file: SelectedFile }) => {
       }}
       value={moment(file.embargo, dateFormat) || null}
       disabled={formDisabled}
-      minDate={moment().add(1,'days')}
+      minDate={moment().add(config.filesUpload?.embargoDateMin || 1, 'days')}
+      maxDate={moment().add(config.filesUpload?.embargoDateMax || 10000, 'days')}
       onError={(newError) => setError(newError as DateValidationError)}
       slotProps={{
         textField: {
