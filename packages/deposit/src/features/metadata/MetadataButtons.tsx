@@ -23,6 +23,7 @@ export const DeleteButton = ({
 }: DeleteFieldButtonProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
+  const formDisabled = useAppSelector(getFormDisabled);
   return (
     <Tooltip title={t("delete") as string}>
       <IconButton
@@ -40,6 +41,7 @@ export const DeleteButton = ({
           )
         }
         data-testid={`delete-button-${groupedFieldName}-${deleteGroupId}`}
+        disabled={formDisabled}
       >
         <RemoveCircleOutlineIcon fontSize={size} />
       </IconButton>
@@ -57,6 +59,7 @@ export const AddButton = ({
 }: AddFieldButtonProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
+  const formDisabled = useAppSelector(getFormDisabled);
   return (
     <Tooltip title={t("add") as string}>
       <IconButton
@@ -74,6 +77,7 @@ export const AddButton = ({
           )
         }
         data-testid={`add-button-${groupedFieldName}-${groupedFieldId}`}
+        disabled={formDisabled}
       >
         <AddCircleOutlineIcon fontSize={size} />
       </IconButton>
@@ -90,6 +94,7 @@ export const AddButtonText = ({
 }: AddFieldButtonProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
+  const formDisabled = useAppSelector(getFormDisabled);
   return (
     <Button
       onClick={() =>
@@ -104,6 +109,7 @@ export const AddButtonText = ({
       size={size}
       startIcon={<AddCircleOutlineIcon />}
       data-testid={`add-button-${groupedFieldName}-${groupedFieldId}`}
+      disabled={formDisabled}
     >
       {t("add")}
     </Button>
@@ -117,10 +123,8 @@ export const AddDeleteControls = ({ groupedFieldId, totalFields, sectionIndex, c
   currentField: number;
   field: any;
 }) => {
-  const formDisabled = useAppSelector(getFormDisabled);
-
   return (
-    (groupedFieldId && !formDisabled) ? [
+    groupedFieldId ? [
       totalFields > 1 && (
         <DeleteButton
           key="delete"
