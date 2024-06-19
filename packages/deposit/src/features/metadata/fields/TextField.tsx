@@ -70,9 +70,9 @@ const SingleTextField = ({
               // if field type is date, just convert it to DD-MM-YYYY for every value
               // TODO: should any other app than ohsmart want to use this, modify this where necessary
             : field.type === "date" ?
-              moment(field.value).startOf("day").format("DD-MM-YYYY")
+              moment(field.value, field.format).startOf("day").format("DD-MM-YYYY")
             : field.type === "daterange" ?
-              moment(field.value[0]).startOf("day").format("DD-MM-YYYY")
+              moment(field.value[0], field.format).startOf("day").format("DD-MM-YYYY")
             : field.value
           : null
         );
