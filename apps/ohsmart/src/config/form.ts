@@ -48,6 +48,7 @@ const form: FormConfig = {
     embargoDate: true,
     embargoDateMin: 2, // days in the future
     embargoDateMax: 18250,
+    displayProcesses: false,
   },
 };
 
