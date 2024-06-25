@@ -174,17 +174,18 @@ export const submitApi = createApi({
         if (metadataResult.error) {
           // enable form again if there's an error, so user can try and resubmit
           store.dispatch(setFormDisabled(false));
-          console.log(metadataResult.error);
+          const error = metadataResult.error as FetchBaseQueryError;
           return {
             error: {
-              ...(metadataResult.error as FetchBaseQueryError),
+              ...error,
               data: i18n.t(
                 actionType === "save" ?
                   "saveErrorNotification"
                 : "submitErrorNotification",
                 {
                   ns: "submit",
-                  error: (metadataResult.error as FetchBaseQueryError).data,
+                  error: (error.data as any).detail || 
+                    (typeof error.data === 'object' ? JSON.stringify(error.data) : error.data),
                 },
               ),
             },
