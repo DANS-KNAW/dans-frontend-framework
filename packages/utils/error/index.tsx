@@ -23,7 +23,6 @@ export const errorLogger: Middleware = () => (next) => async (action) => {
     // Set error message, keep it simple for the user
     const error =
       action.payload.error || action.payload.data || action.error.message;
-    console.log(error);
 
     // Set conditions for when to post a ticket to freshdesk, if freshdesk is enabled
     let ticket;
