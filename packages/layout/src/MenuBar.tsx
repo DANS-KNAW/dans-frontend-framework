@@ -116,7 +116,6 @@ const MenuBar = ({
             sx={{ mr: 2, width: 100, display: { xs: "none", md: "flex" } }}
             style={{
               textDecoration: "none",
-              display: "flex",
               justifyContent: "center",
             }}
           >

@@ -23,6 +23,7 @@ const Form = () => {
   const handleChange =
     (panel: string) => (_e: SyntheticEvent, isExpanded: boolean) => {
       dispatch(setOpenPanel(isExpanded ? panel : ""));
+      console.log(isExpanded)
     };
 
   return (
@@ -34,13 +35,23 @@ const Form = () => {
           onChange={handleChange(section.id)}
           TransitionProps={{ 
             unmountOnExit: true,
+            timeout: 200,
+            onEntered: (el) => {
+              // make sure accordion scrolls into view after expanding, 
+              // if not in view yet, including header
+              const rect = el.getBoundingClientRect();
+              if ( rect.top < 0 ) {
+                window.scrollBy({
+                  top: rect.bottom - rect.height - 80,
+                  behavior: "smooth",
+                });
+              }
+            }
           }}
           // todo: update mui, change TransitionProps to the following:
           // slotProps={{ transition: { unmountOnExit: true, etc... } }}
           data-testid={`section-${section.id}`}
           id={`section-${section.id}`}
-          // needed to keep panel in view on open/exit scroll height change
-          sx={{overflowAnchor: "auto"}}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
