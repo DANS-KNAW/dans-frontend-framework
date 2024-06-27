@@ -35,6 +35,11 @@ const form: FormConfig = {
   ],
   submitKey: import.meta.env.VITE_PACKAGING_KEY, // still needed??
   skipValidation: import.meta.env.DEV,
+  filesUpload: {
+    displayProcesses: false,
+    displayRoles: false,
+    displayPrivate: false,
+  }
 };
 
 export default form;
