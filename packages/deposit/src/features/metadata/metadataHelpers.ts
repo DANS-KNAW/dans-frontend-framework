@@ -9,6 +9,7 @@ import type {
   Field,
   ValidationType,
 } from "../../types/MetadataFields";
+import moment from "moment";
 
 // import { current } from '@reduxjs/toolkit';
 
@@ -31,7 +32,11 @@ export const validateData = (type: ValidationType, value: string): boolean => {
 // Recursive function that finds and returns a single field or nothing if not found
 // id: field's ID
 // fields: an array of fields
-export const findByIdOrName = (id: string, fields: Field[], type: 'id' | 'name' = 'id'): Field | undefined => {
+export const findByIdOrName = (
+  id: string,
+  fields: Field[],
+  type: "id" | "name" = "id",
+): Field | undefined => {
   for (let item of fields) {
     if (item[type] === id) {
       return item;
@@ -51,36 +56,46 @@ export const findByIdOrName = (id: string, fields: Field[], type: 'id' | 'name' 
 export const findConditionalChanges = (
   id: string,
   fields: Field[],
-  searchKey: 'toggleRequired' | 'minDateField' | 'togglePrivate',
+  searchKey: "toggleRequired" | "minDateField" | "togglePrivate",
 ): string[] | undefined => {
   for (let item of fields) {
     if (item.id === id && item[searchKey]) {
-      const toFind = (Array.isArray(item[searchKey]) ? item[searchKey] : [item[searchKey]]) as string[];
-      return toFind 
+      const toFind = (
+        Array.isArray(item[searchKey]) ?
+          item[searchKey]
+        : [item[searchKey]]) as string[];
+      return toFind
         .map((name: string) => fields.map((f) => f.name === name && f.id))
         .flat()
         .filter(Boolean) as string[];
     }
     if (item.fields && item.type === "group") {
       let result = item.fields
-        .map(
-          (field) => {
-            if (Array.isArray(field)) {
-              // for a repeatable field, this needs to be recursive
-              return findConditionalChanges(id, field, searchKey);
-            } else {
-              // otherwise find the field ids directly
-              if (field.id === id && field[searchKey]) {
-                const toFind = (Array.isArray(field[searchKey]) ? field[searchKey] : [field[searchKey]]) as string[];
-                return toFind 
-                  .map((name: string) => item.fields && (item.fields as Field[]).map((f) => f.name === name && f.id))
-                  .flat()
-                  .filter(Boolean) as string[];
-              }
+        .map((field) => {
+          if (Array.isArray(field)) {
+            // for a repeatable field, this needs to be recursive
+            return findConditionalChanges(id, field, searchKey);
+          } else {
+            // otherwise find the field ids directly
+            if (field.id === id && field[searchKey]) {
+              const toFind = (
+                Array.isArray(field[searchKey]) ?
+                  field[searchKey]
+                : [field[searchKey]]) as string[];
+              return toFind
+                .map(
+                  (name: string) =>
+                    item.fields &&
+                    (item.fields as Field[]).map(
+                      (f) => f.name === name && f.id,
+                    ),
+                )
+                .flat()
+                .filter(Boolean) as string[];
             }
-            return false
           }
-        )
+          return false;
+        })
         .flat()
         .filter(Boolean) as string[];
       if (result.length > 0) {
@@ -93,12 +108,14 @@ export const findConditionalChanges = (
 
 // helper function to determine if const has any value
 export const isEmpty = (value: string | object | any[] | null): boolean => {
-    return value === null ||
-           value === undefined ||
-           (typeof value === 'string' && value.trim() === '') ||
-           (Array.isArray(value) && value.length === 0) ||
-           (typeof value === 'object' && Object.keys(value).length === 0);
-}
+  return (
+    value === null ||
+    value === undefined ||
+    (typeof value === "string" && value.trim() === "") ||
+    (Array.isArray(value) && value.length === 0) ||
+    (typeof value === "object" && Object.keys(value).length === 0)
+  );
+};
 
 // Function to toggle conditional state of fields,
 // like required or private
@@ -106,14 +123,13 @@ export const changeConditionalState = (
   fieldId: string,
   sectionFields: Field[],
   value: any,
-  field: Field, 
-  key: 'toggleRequired' | 'togglePrivate', 
-  idKey: 'toggleRequiredIds' | 'togglePrivateIds', 
-  togglekey: 'required' | 'private',
+  field: Field,
+  key: "toggleRequired" | "togglePrivate",
+  idKey: "toggleRequiredIds" | "togglePrivateIds",
+  togglekey: "required" | "private",
 ) => {
   const idsToChange =
-    field[idKey] ||
-    findConditionalChanges(fieldId, sectionFields, key);
+    field[idKey] || findConditionalChanges(fieldId, sectionFields, key);
 
   if (!field[idKey]) {
     field[idKey] = idsToChange;
@@ -123,28 +139,36 @@ export const changeConditionalState = (
   idsToChange &&
     idsToChange.map((id) => {
       const changeField = findByIdOrName(id, sectionFields);
-      if (changeField && togglekey === 'required') {
+      if (changeField && togglekey === "required") {
         changeField[togglekey] = !isEmpty(value) ? true : undefined;
       }
-      if (changeField && togglekey === 'private') {
+      if (changeField && togglekey === "private") {
         changeField[togglekey] = isEmpty(value) ? true : false;
       }
     });
-}
+};
 
 // Get the status of a single field
+// Some specific checking for dateranges needed
 export const getFieldStatus = (field: InputField): SectionStatus => {
   const fieldEmpty =
     !field.value ||
     (typeof field.value === "string" && !field.value.trim()) ||
-    (Array.isArray(field.value) && field.value.length === 0);
+    (Array.isArray(field.value) && field.value.length === 0 ) ||
+    (field.type === 'daterange' && Array.isArray(field.value) && field.value.every(v => v === null || v === ""));
+
   if (field.noIndicator && !field.required && fieldEmpty) {
     return "neutral";
-  } else if (!field.required && fieldEmpty) {
+  } else if (
+    (!field.required && fieldEmpty) ||
+    // daterange should also give a warning state if end date is optional and not filled in
+    (field.type === 'daterange' && field.optionalEndDate && Array.isArray(field.value) && !field.value[1] && field.valid)
+  ) {
     return "warning";
   } else if (
     (field.required && fieldEmpty) ||
-    (!fieldEmpty && field.validation && !field.valid)
+    (!fieldEmpty && field.validation && !field.valid) ||
+    (field.type === 'daterange' && !fieldEmpty && !field.valid)
   ) {
     return "error";
   } else {
@@ -164,11 +188,19 @@ export const getSectionStatus = (section: SectionStatus[]): SectionStatus => {
 // Check if a field conforms to validation type specified
 export const getValid = (
   value: string,
-  validation?: ValidationType,
+  field: Field,
 ): boolean => {
-  if (validation) {
-    return validateData(validation, value);
-  } else if (value && value.length !== 0) {
+  if (field.validation) {
+    return validateData(field.validation, value);
+  } else if (
+    ( value && value.length !== 0 && field.type !== 'daterange' ) || 
+    // special check for date range: start date must be before or equal to end date,
+    // or if end date not required, end date can be empty
+    (field.type === 'daterange' && value && (
+      moment(value[0], field.format).isSameOrBefore(moment(value[1], field.format)) ||
+      (field.optionalEndDate && value[0] && !value[1]) 
+    ))
+  ) {
     return true;
   }
   return false;
@@ -237,22 +269,21 @@ export const formatInitialState = (form: InitialSectionType[]) => {
   return newForm as SectionType[];
 };
 
-
 // Debounce function for autosaving on form change
 export const debounce = <F extends (...args: any[]) => any>(
   func: F,
-  wait: number
+  wait: number,
 ): ((...args: Parameters<F>) => void) => {
   let timeoutId: ReturnType<typeof setTimeout> | null;
-  
-  return function(this: ThisParameterType<F>, ...args: Parameters<F>) {
+
+  return function (this: ThisParameterType<F>, ...args: Parameters<F>) {
     const context = this;
-    
+
     const later = () => {
       timeoutId = null;
       func.apply(context, args);
     };
-    
+
     clearTimeout(timeoutId!);
     timeoutId = setTimeout(later, wait);
   };

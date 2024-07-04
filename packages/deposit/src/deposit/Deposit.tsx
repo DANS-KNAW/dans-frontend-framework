@@ -10,7 +10,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import Metadata from "../features/metadata/Metadata";
 import Files from "../features/files/Files";
 import Collapse from "@mui/material/Collapse";
-import Paper from '@mui/material/Paper';
+import Paper from "@mui/material/Paper";
 import type { TabPanelProps, TabHeaderProps } from "../types/Deposit";
 import type { FormConfig } from "../types/Metadata";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
@@ -22,7 +22,6 @@ import {
   initForm,
   resetMetadata,
   getTouchedStatus,
-  setTitleGeneration,
 } from "../features/metadata/metadataSlice";
 import {
   resetFilesSubmitStatus,
@@ -31,11 +30,10 @@ import {
 import { getFiles, resetFiles, addFiles } from "../features/files/filesSlice";
 import { StatusIcon } from "../features/generic/Icons";
 import Submit from "../features/submit/Submit";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-import Link from "@mui/material/Link";
 import { Link as RouterLink } from "react-router-dom";
 import { setData, setFormDisabled } from "./depositSlice";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -106,8 +104,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       // Then we create a fresh form if there's no id to load
       if (!sessionId && !formAction.id) {
         dispatch(initForm(config.form));
-        // set title generation to enabled if specified in config
-        config.allowTitleGeneration && dispatch(setTitleGeneration(true));
       }
       // If there's server data available, load that into the form
       // For copying a form, we create a new uuid as sessionId.
@@ -128,11 +124,12 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
           actionDone: true,
         });
       }
-      // Load the files if there are any. Probably not doable for copy? TODO: check
+      // Load the files if there are any, but not when copying form
       if (
         formAction.id &&
         serverFormData &&
-        serverFormData.md["file-metadata"]
+        serverFormData.md["file-metadata"] &&
+        formAction.action !== "copy"
       ) {
         dispatch(addFiles(serverFormData.md["file-metadata"]));
       }
@@ -174,26 +171,13 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     skip: !targetCredentials,
   });
 
-  const hasTargetCredentials = targetCredentials && !apiKeyError;
+  const hasTargetCredentials = (targetCredentials && !apiKeyError) || import.meta.env.VITE_DISABLE_API_KEY_MESSAGE;
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <Container>
         <Grid container>
           <Grid xs={12} mt={4}>
-            {!hasTargetCredentials && (
-              // Show a message if keys are missing
-              <Alert severity="warning" data-testid="invalid-api-keys">
-                <AlertTitle>{t("missingInfoHeader")}</AlertTitle>
-                <Trans
-                  i18nKey="generic:missingInfoText"
-                  components={[
-                    <Link component={RouterLink} to="/user-settings" />,
-                  ]}
-                />
-              </Alert>
-            )}
-
             {/* Shows user a message about current form state */}
             <Collapse in={dataMessage}>
               <Alert
@@ -278,28 +262,42 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
             </Collapse>
 
             {/* The form. Show an overlay if there's no API key filled in */}
-            <Box sx={{position: 'relative'}}>
-              {!hasTargetCredentials && !import.meta.env.VITE_DISABLE_API_KEY_MESSAGE && (
-                <Box sx={{
-                  position: 'absolute',
-                  top: 0, left: 0, right: 0, bottom: 0,
-                  zIndex: 10,
-                  background: 'rgba(245,245,245,0.8)',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                  <Paper elevation={15}>
-                    <Alert severity="warning" data-testid="invalid-api-keys" sx={{p: 3}}>
-                      <AlertTitle>{t("missingInfoHeader")}</AlertTitle>
-                      <Typography mb={2}>{t("missingInfoText")}</Typography>
-                      <Button variant="contained" component={RouterLink} to="/user-settings">
-                        {t("missingInfoButton")}
-                      </Button>
-                    </Alert>
-                  </Paper>
-                </Box>
-              )}
+            <Box sx={{ position: "relative" }}>
+              {!hasTargetCredentials &&
+                !import.meta.env.VITE_DISABLE_API_KEY_MESSAGE && (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      zIndex: 10,
+                      background: "rgba(245,245,245,0.8)",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <Paper elevation={15} sx={{mt: 15}}>
+                      <Alert
+                        severity="warning"
+                        data-testid="invalid-api-keys"
+                        sx={{ p: 3 }}
+                      >
+                        <AlertTitle>{t("missingInfoHeader")}</AlertTitle>
+                        <Typography mb={2}>{t("missingInfoText")}</Typography>
+                        <Button
+                          variant="contained"
+                          component={RouterLink}
+                          to="/user-settings"
+                        >
+                          {t("missingInfoButton")}
+                        </Button>
+                      </Alert>
+                    </Paper>
+                  </Box>
+                )}
 
               <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                 <TabHeader
@@ -317,7 +315,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
               </AnimatePresence>
               <Submit hasTargetCredentials={hasTargetCredentials} />
             </Box>
-
           </Grid>
         </Grid>
       </Container>

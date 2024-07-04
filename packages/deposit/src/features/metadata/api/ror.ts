@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { RorResponse } from "../../../types/Api";
-import i18n from '../../../languages/i18n';
+import i18n from "../../../languages/i18n";
 
 export const rorApi = createApi({
   reducerPath: "ror",
@@ -25,7 +25,9 @@ export const rorApi = createApi({
             }
           : [];
       },
-      transformErrorResponse: () => ({ error: i18n.t('metadata:apiFetchError', {api: 'RoR'}) }),
+      transformErrorResponse: () => ({
+        error: i18n.t("metadata:apiFetchError", { api: "RoR" }),
+      }),
     }),
   }),
 });

@@ -10,10 +10,14 @@
     "format": "prettier --experimental-ternaries --write \"**/*.{ts,tsx,md}\"",
     "dev:ohsmart": "turbo dev --filter=@dans-framework/ohsmart",
     "build:ohsmart": "turbo build --filter=@dans-framework/ohsmart",
+    "dev:cat": "turbo dev --filter=@dans-framework/cat",
+    "build:cat": "turbo build --filter=@dans-framework/cat",
     "dev:rda": "turbo dev --filter=@dans-framework/rda",
     "build:rda": "turbo build --filter=@dans-framework/rda",
     "dev:swh": "turbo dev --filter=@dans-framework/swh",
-    "build:swh": "turbo build --filter=@dans-framework/swh"
+    "build:swh": "turbo build --filter=@dans-framework/swh",
+    "dev:4tu": "turbo dev --filter=@dans-framework/4tu",
+    "build:4tu": "turbo build --filter=@dans-framework/4tu"
   },
   "keywords": [],
   "author": "",

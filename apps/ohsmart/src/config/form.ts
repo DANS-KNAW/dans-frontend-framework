@@ -22,11 +22,7 @@ const sections = [
 
 const form: FormConfig = {
   form: sections as InitialSectionType[],
-  formTitle: "[1].fields[0]", 
-  generatedTitle: {
-    en: "Interview with {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} on {{interview_date_time_start}}",
-    nl: "Interview met {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} op {{interview_date_time_start}}",
-  },
+  formTitle: "title", // must point to a field with a unique name
   target: {
     envName: import.meta.env.VITE_ENV_NAME,
     configName: import.meta.env.VITE_CONFIG_NAME,
@@ -39,12 +35,20 @@ const form: FormConfig = {
       authKey: "dataverse_api_key",
       keyUrl: import.meta.env.VITE_TARGET_1_KEY_URL,
       keyCheckUrl: import.meta.env.VITE_TARGET_1_KEY_CHECK_URL,
+      helpText: {
+        en: "The OH-SMArt app deposits your data to the DANS Social Sciences and Humanities data station. To be able to do this, you need to have a valid API key in the data station.",
+        nl: "De OH-SMArt app slaat je data in het DANS Social Sciences and Humanities datastation. Om dit te kunnen doen, heb je een geldige API sleutel nodig in dit datastation.",
+      },
     },
   ],
   submitKey: import.meta.env.VITE_PACKAGING_KEY,
   skipValidation: import.meta.env.DEV,
   filesUpload: {
     fileRoles: fileRoleOptions,
+    embargoDate: true,
+    embargoDateMin: 2, // days in the future
+    embargoDateMax: 18250,
+    displayProcesses: false,
   },
 };
 

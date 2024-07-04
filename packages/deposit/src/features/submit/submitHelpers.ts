@@ -1,11 +1,13 @@
 import { SelectedFile } from "../../types/Files";
 import { SectionType } from "../../types/Metadata";
+import { findByIdOrName } from "../metadata/metadataHelpers";
 
 // Function to rearrange the metadata for submission
 export const formatFormData = (
   sessionId: string,
   metadata: SectionType[],
   files?: SelectedFile[],
+  formTitle: string = '',
 ) => {
   // Create the file metadata array
   const fileMetadata =
@@ -17,12 +19,27 @@ export const formatFormData = (
       private: f.private,
       role: f.role,
       process: f.process,
+      // convert date to preferred date format
+      embargo: f.embargo,
     }));
+
+  // since the title field is unique, we can assume we only find one value
+  // so lets return that
+  let foundTitle = false;
+  const title = metadata.map(section => {
+    if (foundTitle) return false;
+    const toFind = findByIdOrName(formTitle, section.fields, "name")?.value;
+    if (toFind) {
+      foundTitle = true;
+    }
+    return toFind;
+  }).filter(Boolean)[0];
 
   return {
     id: sessionId,
     metadata: metadata,
     "file-metadata": fileMetadata,
+    title: title || '',
   };
 };
 
@@ -51,10 +68,4 @@ export const formatFileData = async (
     ));
 
   return fileData;
-};
-
-// event handler for leaving page when form is submitting or errored and unsaved
-export const beforeUnloadHandler = (event: any) => {
-  event.preventDefault();
-  event.returnValue = true;
 };

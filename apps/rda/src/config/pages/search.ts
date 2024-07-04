@@ -11,7 +11,7 @@ const page: Page = {
   inMenu: true,
   menuTitle: {
     en: "Search",
-    nl: "Search",
+    nl: "Zoeken",
   },
 };
 

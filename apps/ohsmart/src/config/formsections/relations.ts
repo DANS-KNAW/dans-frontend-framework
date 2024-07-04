@@ -52,12 +52,15 @@ const section: InitialSectionType = {
         nl: "Iets hier",
       },
       options: "dansCollections",
-      value: [{
-        mandatory: true,
-        "label": "Oral History",
-        "value": "https://vocabularies.dans.knaw.nl/collections/ssh/cfa04ed6-4cd0-4651-80cb-ed4ca8fa14f3",
-        "id": "ssh/cfa04ed6-4cd0-4651-80cb-ed4ca8fa14f3"
-      }],
+      value: [
+        {
+          mandatory: true,
+          label: "Oral History",
+          value:
+            "https://vocabularies.dans.knaw.nl/collections/ssh/cfa04ed6-4cd0-4651-80cb-ed4ca8fa14f3",
+          id: "ssh/cfa04ed6-4cd0-4651-80cb-ed4ca8fa14f3",
+        },
+      ],
     },
     {
       type: "group",
@@ -84,7 +87,7 @@ const section: InitialSectionType = {
             nl: "Type relatie met dit externe item",
           },
           noIndicator: true,
-          options: relationships.map((r: string) => ({ label: r, value: r })),
+          options: relationships.map((r: string) => ({ label: r, value: r.toLowerCase() })),
           toggleRequired: ["relation_item", "relation_reference"],
         },
         {

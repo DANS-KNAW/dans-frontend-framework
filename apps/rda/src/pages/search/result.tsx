@@ -7,6 +7,8 @@ import Button from "@mui/material/Button";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
+/* Custom component for search results */
+
 export function Rda2Result(props: ResultBodyProps) {
   const { result: item } = props;
 
@@ -28,9 +30,8 @@ export function Rda2Result(props: ResultBodyProps) {
 
 function ReadMore({ item }: { item: ResultBodyProps["result"] }) {
   const [active, setActive] = useState(false);
- 
-  const description = item.dc_description || "";
 
+  const description = item.dc_description || "";
 
   const [visibleText, hiddenText] = [
     description.substring(0, 180),

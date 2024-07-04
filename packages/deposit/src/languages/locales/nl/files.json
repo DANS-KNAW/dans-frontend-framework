@@ -40,5 +40,9 @@
   "confirmDelete": "Bevestig verwijderen",
   "limitHeader": "Waarschuwing! Bestanden groter danm {{amount}} MB",
   "lowerLimitDescription": "If you have a relatively high upload speed, as it should be with fibre and/or in an office setting, you should encounter no problem with this. It may still take up to 5 minutes to upload your files, though. Depending on circumstances (including your upload speed) the files may take too long to upload and you might encounter a server timeout error. If this happens, please <0>contact DANS directly</0>.",
-  "upperLimitDescription": "It is likely that these files take too long to upload and you might encounter a server timeout error. Please <0>contact DANS directly</0> about depositing these data files."
+  "upperLimitDescription": "It is likely that these files take too long to upload and you might encounter a server timeout error. Please <0>contact DANS directly</0> about depositing these data files.",
+  "embargoDate": "Embargodatum",
+  "embargoDateDescription": "Vul dit in als dit bestand pas beschikbaar mag zijn na een bepaalde datum",
+  "minDate": "Moet een toekomstige datum zijn",
+  "dateInvalid": "Ongeldige datum"
 }

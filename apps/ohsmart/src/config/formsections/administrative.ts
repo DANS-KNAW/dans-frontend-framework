@@ -11,31 +11,47 @@ const section: InitialSectionType = {
     {
       type: "autocomplete",
       label: {
-        en: "Language",
-        nl: "Taal",
+        en: "Language of interview",
+        nl: "Taal van interview",
       },
-      name: "language",
+      name: "language_interview",
       required: true,
       description: {
-        en: "Language of interview",
-        nl: "Taal van het interview",
+        en: "Provide the language the interview was held in",
+        nl: "Geef de taal waarin het interview is gehouden op",
       },
       options: languageList,
     },
     {
-      type: "date",
-      format: "DD-MM-YYYY",
+      type: "autocomplete",
       label: {
-        en: "Embargo date",
-        nl: "Datum embargo",
+        en: "Language of metadata",
+        nl: "Taal van metadata",
       },
-      name: "date_available",
-      noIndicator: true,
+      name: "language_metadata",
+      required: true,
+      multiselect: true,
       description: {
-        en: "In case of an embargo, you should provide a future date for this field.",
-        nl: "In het geval van een embargo kun je hier een toekomstige datum invullen.",
+        en: "Provide the language(s) of the metadata you've entered, e.g. the description and title",
+        nl: "Geef de taal of talen op van deze metadata, denk bijvoorbeeld aan titel en bescrijving",
       },
-    }
+      options: languageList,
+    },
+    {
+      type: "text",
+      label: {
+        en: "Email address of dataset contact person",
+        nl: "Emailadres contacpersoon dataset",
+      },
+      name: "contact_email",
+      required: true,
+      validation: "email",
+      autofill: "email",
+      description: {
+        en: "This is the e-mail address of the person who receives questions about this dataset, once it has been published.",
+        nl: "Dit is het e-mailadres van de persoon die vragen ontvangt over deze dataset, wanneer deze is gepubliceerd.",
+      },
+    },
   ],
 };
 

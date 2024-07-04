@@ -13,7 +13,7 @@ const sections = [administrative, citation, coverage, relations, rights];
 
 const form: FormConfig = {
   form: sections as InitialSectionType[],
-  formTitle: "[1].fields[0]", // pointer to the field in the 'sections' array that contains form title, which is used in a users submissions overview
+  formTitle: "title",
   target: {
     envName: import.meta.env.VITE_ENV_NAME,
     configName: import.meta.env.VITE_CONFIG_NAME,
@@ -35,6 +35,11 @@ const form: FormConfig = {
   ],
   submitKey: import.meta.env.VITE_PACKAGING_KEY, // still needed??
   skipValidation: import.meta.env.DEV,
+  filesUpload: {
+    displayProcesses: false,
+    displayRoles: false,
+    displayPrivate: false,
+  }
 };
 
 export default form;

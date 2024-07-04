@@ -6,6 +6,7 @@ export interface AuthProviderConfig {
   scope: string;
   redirect_uri: string;
   loadUserInfo: boolean;
+  automaticSilentRenew?: boolean;
 }
 
 // Define the types of targets here, so we can use this in the key checking API

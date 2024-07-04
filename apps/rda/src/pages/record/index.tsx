@@ -1,5 +1,5 @@
 import { Chip, Container } from "@mui/material";
-import type { Result } from "@dans-framework/rdt-search-ui";
+import { getCurrentEndpoint, type Result } from "@dans-framework/rdt-search-ui";
 import React from "react";
 import { useParams } from "react-router-dom";
 import Button from "@mui/material/Button";
@@ -16,13 +16,52 @@ interface RdaRecord {
     fullname: string;
   }[];
   page_url: string;
-  pathways: {
+  pathways?: {
     uuid_pathway: string;
     pathway: string;
     description: string;
     datasource: string;
     relation: string;
   }[];
+  interest_groups?: {
+    uuid_interestgroup: string;
+    relation: string;
+    title: string;
+    description: string;
+    uuid_domain: string;
+    domains: string;
+    url: string;
+  }[];
+  working_groups?: {
+    uuid_workinggroup: string;
+    title: string;
+    description: string;
+    uuid_domain: string;
+    domains: string;
+    url: string;
+    relation: string;
+  }[];
+  gorc_elements?: {
+    uuid_element: string;
+    element: string;
+    description: string;
+  }[];
+  gorc_attributes?: {
+    uuid_attribute: string;
+    attribute: string;
+    description: string;
+  }[];
+  disciplines?: {
+    "#": string;
+    uuid: string;
+    list_item: string;
+    description: string;
+    description_source: string;
+    _taxonomy_parent: string;
+    _taxonomy_terms: string;
+    uuid_parent: string;
+    url: string;
+  }[]
   pid_lod: string;
   pid_lod_type: string;
   relation_types: string;
@@ -40,20 +79,16 @@ interface RdaRecord {
   uuid_rda: string;
   uuid_resource: string;
   workflows: string[];
-  workinggroupstring: string;
   fragment: string;
 }
 
 export function RdaRecord() {
   const { id } = useParams();
   const [record, setRecord] = React.useState<RdaRecord | null>(null);
+  const endpoint = getCurrentEndpoint();
 
   React.useEffect(() => {
-    fetch(
-      `${
-        import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT
-      }/dans-rda2/_source/${id}`
-    )
+    fetch(`${endpoint}/_source/${id}`)
       .then((res) => res.json())
       .then(setRecord);
   }, [id]);
@@ -75,9 +110,52 @@ export function RdaRecord() {
           <Typography variant="h3">
             {record.title || <i>Untitled</i>}
           </Typography>
+
           <Typography gutterBottom>{record.dc_description || ""}</Typography>
 
-          <MetadataList record={record} />
+          {record.fragment && (
+            <>
+              <Typography variant="h5">Fragment</Typography>
+              <Typography gutterBottom>{record.fragment || ""}</Typography>
+            </>
+          )}
+
+          <Metadata
+            name="Pathways"
+            value={record.pathways?.map((p) => p.pathway) ?? ["-"]}
+            options={{ turnicate: false }}
+          />
+          <Metadata
+            name="Interest Groups"
+            value={record.interest_groups?.map((ig) => ig.title) ?? ["-"]}
+            options={{ turnicate: false }}
+          />
+          <Metadata
+            name="Working Groups"
+            value={record.working_groups?.map((wg) => wg.title) ?? ["-"]}
+            options={{ turnicate: false }}
+          />
+          <Metadata
+            name="GORC Elements"
+            value={record.gorc_elements?.map((gorce) => gorce.element) ?? ["-"]}
+            options={{ turnicate: false }}
+          />
+          <Metadata
+            name="GORC Attributes"
+            value={
+              record.gorc_attributes?.map((gorca) => gorca.attribute) ?? ["-"]
+            }
+            options={{ turnicate: false }}
+          />
+          <Metadata
+            name="Domains"
+            value={
+              record.disciplines?.map((discipline) => discipline.list_item) ?? ["-"]
+            }
+            options={{ turnicate: false }}
+          />
+
+          {/* <MetadataList record={record} /> */}
 
           <div style={{ margin: "2rem 0" }}>
             {record.page_url && (
@@ -109,10 +187,20 @@ const style = {
   marginBottom: "0.25rem",
 };
 
-function Metadata({ name, value }: { name: string; value: string | string[] }) {
+function Metadata({
+  name,
+  value,
+  options = {
+    turnicate: true,
+  },
+}: {
+  name: string;
+  value: string | string[];
+  options?: { turnicate: boolean };
+}) {
   if (value == null) return null;
 
-  const _value = Array.isArray(value) ? value.join(" / ") : value;
+  const _value = Array.isArray(value) ? value.join(" || ") : value;
 
   return (
     <div style={style}>
@@ -122,9 +210,10 @@ function Metadata({ name, value }: { name: string; value: string | string[] }) {
       <Typography
         variant="body2"
         sx={{
-          overflow: "hidden",
-          whiteSpace: "nowrap",
-          textOverflow: "ellipsis",
+          overflow: options?.turnicate ? "hidden" : "unset",
+          whiteSpace: options?.turnicate ? "nowrap" : "normal",
+          textOverflow: options?.turnicate ? "ellipsis" : "unset",
+          overflowWrap: "break-word",
         }}
       >
         {_value}
@@ -134,18 +223,14 @@ function Metadata({ name, value }: { name: string; value: string | string[] }) {
 }
 
 export function MetadataList({ record }: { record: RdaRecord | Result }) {
-  const individuals = record.individuals
-    ? record.individuals.map((i: any) => i.fullname)
-    : [];
-  const workflows = record.workflows
-    ? record.workflows.map((w: any) => w.workflowstate)
-    : [];
-  const rights = record.rights
-    ? record.rights.map((r: any) => r.description)
-    : [];
-  const pathways = record.pathways
-    ? record.pathways.map((p: any) => p.pathway)
-    : [];
+  const individuals =
+    record.individuals ? record.individuals.map((i: any) => i.fullname) : [];
+  const workflows =
+    record.workflows ? record.workflows.map((w: any) => w.workflowstate) : [];
+  const rights =
+    record.rights ? record.rights.map((r: any) => r.description) : [];
+  const pathways =
+    record.pathways ? record.pathways.map((p: any) => p.pathway) : [];
 
   return (
     <div>
@@ -161,7 +246,6 @@ export function MetadataList({ record }: { record: RdaRecord | Result }) {
       )}
       {record.workflows && <Metadata name="Workflows" value={workflows} />}
       {record.pathways && <Metadata name="Pathways" value={pathways} />}
-      {record.fragment && <Metadata name="Fragment" value={record.fragment} />}
     </div>
   );
 }

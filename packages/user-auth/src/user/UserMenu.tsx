@@ -1,16 +1,16 @@
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
-import { useAuth } from "react-oidc-context";
+import { useAuth, hasAuthParams } from "react-oidc-context";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import Divider from "@mui/material/Divider";
 import { NavLink as RouterLink } from "react-router-dom";
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 import Tooltip from "@mui/material/Tooltip";
 import { LoginButton, LogoutButton } from "./Buttons";
 
@@ -22,6 +22,15 @@ export const UserMenu = ({
   userSubmissions: boolean;
 }) => {
   const auth = useAuth();
+
+  // keep user signed in, and try to sign in automatically
+  const [hasTriedSignin, setHasTriedSignin] = useState(false);
+  useEffect(() => {
+    if (!hasAuthParams() && !auth.isAuthenticated && !auth.activeNavigator && !auth.isLoading && !hasTriedSignin) {
+      void auth.signinSilent();
+      setHasTriedSignin(true);
+    }
+  }, [auth, hasTriedSignin]);
 
   if (auth.isAuthenticated && auth.user) {
     return (
@@ -54,12 +63,8 @@ const SettingsMenu = ({
   return (
     <Box sx={{ flexGrow: 0 }}>
       {userSubmissions && (
-        <Link
-          component={RouterLink}
-          to="/user-submissions"
-          color="inherit"
-        >
-          <Tooltip title={t('userSubmissions')}>
+        <Link component={RouterLink} to="/user-submissions" color="inherit">
+          <Tooltip title={t("userSubmissions")}>
             <IconButton size="large" color="inherit">
               <CollectionsBookmarkIcon />
             </IconButton>

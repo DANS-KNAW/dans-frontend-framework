@@ -10,13 +10,11 @@ const initialState: {
 } = {
   config: {
     targetCredentials: [],
-    formTitle: '',
-    generatedTitle: '',
+    formTitle: "",
     target: {},
     submitKey: "",
     skipValidation: false,
     filesUpload: {},
-    allowTitleGeneration: false,
   },
   formDisabled: false,
 };

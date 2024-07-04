@@ -1,4 +1,10 @@
-import { useEffect, useMemo, useState, MouseEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  forwardRef,
+  type MouseEvent,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -6,18 +12,29 @@ import Grid from "@mui/material/Unstable_Grid2";
 import Stack from "@mui/material/Stack";
 import { useTranslation } from "react-i18next";
 import Paper from "@mui/material/Paper";
-import { motion, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  LayoutGroup,
+  type HTMLMotionProps,
+} from "framer-motion";
 import {
   DataGrid,
   GridColDef,
   GridColumnMenuProps,
   GridColumnMenu,
   GridActionsCellItem,
+  GridRow,
+  type GridRowProps,
 } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import moment from "moment";
 import { useSiteTitle, setSiteTitle } from "@dans-framework/utils";
-import { useFetchUserSubmissionsQuery, useDeleteSubmissionMutation } from "./userApi";
+import {
+  useFetchUserSubmissionsQuery,
+  useDeleteSubmissionMutation,
+  userSubmissionsApi,
+} from "./userApi";
 import { useAuth } from "react-oidc-context";
 import type { SubmissionResponse, TargetOutput, DepositStatus } from "../types";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -29,8 +46,8 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import PendingIcon from "@mui/icons-material/Pending";
 import ErrorIcon from "@mui/icons-material/Error";
 import PreviewIcon from "@mui/icons-material/Preview";
-import DeleteIcon from '@mui/icons-material/Delete';
-import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from "@mui/icons-material/Delete";
+import CloseIcon from "@mui/icons-material/Close";
 import Popover from "@mui/material/Popover";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -58,24 +75,19 @@ const depositStatus: DepositStatus = {
 };
 
 export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
-  const [skip, setSkip] = useState<boolean>(false);
   const { t } = useTranslation("user");
   const siteTitle = useSiteTitle();
   const auth = useAuth();
+  const dispatch = useAppDispatch();
 
   // Fetch the users submitted/saved forms, every 10 sec, to update submission status
   const { data, isLoading } = useFetchUserSubmissionsQuery(
     auth.user?.profile.sub,
-    {
-      pollingInterval: 10000,
-      skip: skip,
-    },
   );
 
   // are there any targets that have been submitted not complete yet?
   const allTargetsComplete =
-    data &&
-    data.length > 0 &&
+    (data &&
     data
       .filter(
         (d) =>
@@ -96,11 +108,19 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
             // Todo: modify API to give more consistent output
             (t) => t["deposit-status"] === null,
           ),
-      );
+      )) || 
+    // or when fetch is complete but there's no data for this user
+    (data === undefined && !isLoading);
 
-  // if all targets are complete, skip further fetching
   useEffect(() => {
-    allTargetsComplete && setSkip(true);
+    // on load, we set an interval once to keep checking for new data if there's still targets being processed
+    const interval =
+      !allTargetsComplete &&
+      setInterval(
+        () => dispatch(userSubmissionsApi.util.invalidateTags(["Submissions"])),
+        5000,
+      );
+    return () => (interval ? clearInterval(interval) : undefined);
   }, [allTargetsComplete]);
 
   useEffect(() => {
@@ -120,7 +140,7 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
             type="draft"
             isLoading={isLoading}
             header={t("userSubmissionsDrafts")}
-            depositSlug={depositSlug}
+            depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
           />
           <SubmissionList
             data={
@@ -135,6 +155,7 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
             type="published"
             isLoading={isLoading}
             header={t("userSubmissionsCompleted")}
+            depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
           />
         </Grid>
       </Grid>
@@ -147,19 +168,19 @@ const SubmissionList = ({
   isLoading,
   header,
   type,
-  depositSlug = "deposit",
+  depositSlug,
 }: {
   data: SubmissionResponse[];
   isLoading: boolean;
   header: string;
   type: "draft" | "published";
-  depositSlug?: string;
+  depositSlug: string;
 }) => {
   const { t, i18n } = useTranslation("user");
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const auth = useAuth();
-  const [toDelete, setToDelete] = useState<string>('');
+  const [toDelete, setToDelete] = useState<string>("");
   const [deleteSubmission] = useDeleteSubmissionMutation();
 
   // useMemo to make sure columns don't change
@@ -235,14 +256,25 @@ const SubmissionList = ({
             </Tooltip>,
             (type === "draft" || params.row.error) && (
               // Delete an item, for drafts and for errored submissions. todo
-              <Tooltip title={t(toDelete === params.row.id ? "undeleteItem" : "deleteItem")} placement="bottom">
+              <Tooltip
+                title={t(
+                  toDelete === params.row.id ? "undeleteItem" : "deleteItem",
+                )}
+                placement="bottom"
+              >
                 <GridActionsCellItem
-                  icon={toDelete === params.row.id ? <CloseIcon/> : <DeleteIcon />}
-                  label={t(toDelete === params.row.id ? "undeleteItem" : "deleteItem")}
-                  onClick={() => setToDelete(toDelete === params.row.id ? '' : params.row.id)}
+                  icon={
+                    toDelete === params.row.id ? <CloseIcon /> : <DeleteIcon />
+                  }
+                  label={t(
+                    toDelete === params.row.id ? "undeleteItem" : "deleteItem",
+                  )}
+                  onClick={() =>
+                    setToDelete(toDelete === params.row.id ? "" : params.row.id)
+                  }
                 />
               </Tooltip>
-            )
+            ),
           ].filter(Boolean);
         },
         type: "actions",
@@ -256,44 +288,56 @@ const SubmissionList = ({
         width: 250,
         renderCell: (params) => (
           // render a confirm delete button in the title cell
-          <Stack 
-            direction="row" 
-            sx={{
-              overflow: 'hidden', 
-              width: '100%',
-            }} 
-            alignItems="center"
-            title={params.value}
-          >
-            <AnimatePresence>
-              {toDelete === params.row.id &&
-                <motion.div
-                  key={`delete-${params.row.id}`}
-                  initial={{ x: "-100%" }}
-                  animate={{ x: 0 }}
-                  exit={{ x: "-100%" }}
-                >
-                  <Button
-                    size="small"
-                    variant="contained"
-                    sx={{
-                      fontSize: 11,
-                      mr: 1,
-                    }}
-                    color="error"
-                    onClick={ 
-                      // delete call to server
-                      () => deleteSubmission({id: params.row.id, user: auth.user})
-                    }>
-                    {t("confirmDelete")}
-                  </Button>
-                </motion.div>
-              }
-              <motion.div layout key={`title-${params.row.id}`}>
+          <LayoutGroup>
+            <Stack
+              direction="row"
+              sx={{
+                overflow: "hidden",
+                width: "100%",
+              }}
+              alignItems="center"
+              title={params.value}
+            >
+              <AnimatePresence>
+                {toDelete === params.row.id && (
+                  <motion.div
+                    key={`delete-${params.row.id}`}
+                    initial={{ x: "-100%" }}
+                    animate={{ x: 0 }}
+                    exit={{ x: "-100%" }}
+                    layout
+                  >
+                    <Button
+                      size="small"
+                      variant="contained"
+                      sx={{
+                        fontSize: 11,
+                        mr: 1,
+                      }}
+                      color="error"
+                      onClick={
+                        // delete call to server
+                        () =>
+                          deleteSubmission({
+                            id: params.row.id,
+                            user: auth.user,
+                          })
+                      }
+                    >
+                      {t("confirmDelete")}
+                    </Button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <motion.div
+                layout
+                key={`title-${params.row.id}`}
+                layoutDependency={toDelete}
+              >
                 {params.value ? params.value : t("noTitle")}
               </motion.div>
-            </AnimatePresence>
-          </Stack>
+            </Stack>
+          </LayoutGroup>
         ),
       },
       {
@@ -301,8 +345,8 @@ const SubmissionList = ({
         headerName: type === "draft" ? t("savedOn") : t("submittedOn"),
         width: 200,
         type: "dateTime",
-        valueGetter: (params) => new Date(params.value),
-        renderCell: (params) => moment(params.value).format("D-M-Y - HH:mm"),
+        valueGetter: (params) => moment.utc(params.value).toDate(),
+        renderCell: (params) => moment(params.value).local().format("D-M-Y - HH:mm"),
       },
       ...(type === "published" ?
         [
@@ -333,8 +377,8 @@ const SubmissionList = ({
     data.map((d) => ({
       // Todo: API needs work and standardisation, also see types.
       error: d["targets"].some(
-        // Only if the error is rejected (input data related error), we offer the option to edit & resubmit & delete
-        (t) => t["deposit-status"] === "rejected",
+        // If there's an error, allow deletion
+        (t) => t["deposit-status"] === "rejected" || t["deposit-status"] === "error",
       ),
       processing: d["targets"].some(
         (t) => depositStatus.processing.indexOf(t["deposit-status"]) !== -1,
@@ -369,6 +413,14 @@ const SubmissionList = ({
                 {t("noRows")}
               </Box>
             ),
+            row: MotionGridRow,
+          }}
+          slotProps={{
+            row: {
+              animate: { opacity: 1 },
+              initial: { opacity: 0 },
+              exit: { opacity: 0 },
+            },
           }}
           rows={rows}
           columns={columns}
@@ -376,6 +428,9 @@ const SubmissionList = ({
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 10 },
+            },
+            sorting: {
+              sortModel: [{ field: "created", sort: "desc" }],
             },
           }}
           pageSizeOptions={[10, 50, 100]}
@@ -396,6 +451,14 @@ const SubmissionList = ({
     </>
   );
 };
+
+// Animation doesn't work great as we'd ideally need an AnimatePresence component inside DataGrid
+// (modify the virtual scroll container). So for now it's just a fade in, no fade out.
+const ForwardRow = forwardRef<
+  HTMLDivElement,
+  GridRowProps & HTMLMotionProps<"div">
+>((props, ref) => <GridRow ref={ref} {...props} />);
+const MotionGridRow = motion(ForwardRow);
 
 // A separate component for a target, needs to have it's own state to display popover
 const SingleTargetStatus = ({
@@ -551,9 +614,10 @@ const ViewAction = ({
         {status.map(
           (target, i) =>
             target["output-response"] &&
-            target["output-response"].response.url && (
+            target["output-response"].response?.identifiers &&
+            (target["deposit-status"] === "accepted" || target["deposit-status"] === "finish") && (
               <Link
-                href={target["output-response"].response.url}
+                href={target["output-response"].response.identifiers[0].url}
                 color="inherit"
                 underline="none"
                 target="_blank"

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { OrcidResponse } from "../../../types/Api";
-import i18n from '../../../languages/i18n';
+import i18n from "../../../languages/i18n";
 
 export const orcidApi = createApi({
   reducerPath: "orcid",
@@ -42,7 +42,9 @@ export const orcidApi = createApi({
             }
           : [];
       },
-      transformErrorResponse: () => ({ error: i18n.t('metadata:apiFetchError', {api: 'ORCID'}) }),
+      transformErrorResponse: () => ({
+        error: i18n.t("metadata:apiFetchError", { api: "ORCID" }),
+      }),
     }),
   }),
 });

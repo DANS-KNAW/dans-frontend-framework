@@ -39,7 +39,7 @@ const section: InitialSectionType = {
       value: {
         label: "DANS Licence",
         value: "https://doi.org/10.17026/fp39-0x58",
-      }
+      },
     },
     {
       type: "radio",

@@ -35,12 +35,10 @@ import {
 } from "./fields/AutocompleteAPIField";
 import AutocompleteField from "./fields/AutocompleteField";
 import TextField from "./fields/TextField";
-import DateTimeField from "./fields/DateTimeField";
+import { DateTimeField, DateRangeField } from "./fields/DateTimeField";
 import { RadioField, CheckField } from "./fields/RadioCheckField";
 import { TransitionGroup } from "react-transition-group";
 import { lookupLanguageString } from "@dans-framework/utils";
-import { getMetadataSubmitStatus } from "../submit/submitSlice";
-import { useAppSelector } from "../../redux/hooks";
 import { useTranslation } from "react-i18next";
 
 // Memoized Field function, so only the affected field rerenders when form/metadata props change.
@@ -53,6 +51,9 @@ const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
       )}
       {field.type === "date" && (
         <DateTimeField field={field} sectionIndex={sectionIndex} />
+      )}
+      {field.type === "daterange" && (
+        <DateRangeField field={field} sectionIndex={sectionIndex} />
       )}
       {field.type === "repeatSingleField" && (
         <TransitionGroup id={`group-${field.name}-${field.id}`}>
@@ -102,7 +103,11 @@ const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
           <GettyField field={field} sectionIndex={sectionIndex} />
         : field.options === "sheets" ?
           <SheetsField field={field} sectionIndex={sectionIndex} />
-        : field.options === "elsst" || field.options === "narcis" || field.options === "dansCollections" ?
+        : (
+          field.options === "elsst" ||
+          field.options === "narcis" ||
+          field.options === "dansCollections"
+        ) ?
           <DatastationsField field={field} sectionIndex={sectionIndex} />
         : field.options === "dansFormats" ?
           <DansFormatsField field={field} sectionIndex={sectionIndex} />
@@ -135,7 +140,6 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
     field.repeatable ?
       (field.fields as InputField[][])
     : [field.fields as InputField[]];
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
 
   return (
     <Grid xs={12}>
@@ -176,38 +180,34 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
                         />
                       ))}
                     </Grid>
-                    {field.repeatable &&
-                      fieldArray.length > 1 &&
-                      !metadataSubmitStatus && (
-                        <DeleteButton
-                          sectionIndex={sectionIndex}
-                          groupedFieldId={field.id}
-                          deleteFieldIndex={i}
-                          size="medium"
-                          deleteGroupId={`group-${i}`}
-                          groupedFieldName={field.name}
-                        />
-                      )}
+                    {field.repeatable && fieldArray.length > 1 && (
+                      <DeleteButton
+                        sectionIndex={sectionIndex}
+                        groupedFieldId={field.id}
+                        deleteFieldIndex={i}
+                        size="medium"
+                        deleteGroupId={`group-${i}`}
+                        groupedFieldName={field.name}
+                      />
+                    )}
                   </Stack>
                 </Collapse>
               ))}
             </TransitionGroup>
           </CardContent>
         )}
-        {field.repeatable &&
-          metadataSubmitStatus !== "submitted" &&
-          metadataSubmitStatus !== "submitting" && (
-            <CardActions sx={{ pl: 3, pr: 3, justifyContent: "right" }}>
-              <Stack direction="row" alignItems="center" justifyContent="end">
-                <AddButtonText
-                  sectionIndex={sectionIndex}
-                  groupedFieldId={field.id}
-                  groupedFieldName={field.name}
-                  type="group"
-                />
-              </Stack>
-            </CardActions>
-          )}
+        {field.repeatable && 
+          <CardActions sx={{ pl: 3, pr: 3, justifyContent: "right" }}>
+            <Stack direction="row" alignItems="center" justifyContent="end">
+              <AddButtonText
+                sectionIndex={sectionIndex}
+                groupedFieldId={field.id}
+                groupedFieldName={field.name}
+                type="group"
+              />
+            </Stack>
+          </CardActions>
+        }
       </Card>
     </Grid>
   );

@@ -7,13 +7,15 @@ import { enqueueSnackbar } from "notistack";
 
 const getUser = () => {
   const oidcStorage = sessionStorage.getItem(
-    `oidc.user:${import.meta.env.VITE_OIDC_AUTHORITY}:${import.meta.env.VITE_OIDC_CLIENT_ID}`
+    `oidc.user:${import.meta.env.VITE_OIDC_AUTHORITY}:${
+      import.meta.env.VITE_OIDC_CLIENT_ID
+    }`,
   );
   if (!oidcStorage) {
     return null;
   }
   return User.fromStorageString(oidcStorage);
-}
+};
 
 export const userApi = createApi({
   reducerPath: "auth",
@@ -67,7 +69,7 @@ export const userSubmissionsApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_PACKAGING_TARGET }),
   // Make sure data isn't stale and always contains freshly submitted forms
   keepUnusedDataFor: 0.1,
-  tagTypes: ['Submissions'],
+  tagTypes: ["Submissions"],
   endpoints: (build) => ({
     fetchUserSubmissions: build.query({
       query: (userId) => {
@@ -78,30 +80,38 @@ export const userSubmissionsApi = createApi({
           },
         };
       },
+      providesTags: ["Submissions"],
       transformResponse: (response: { assets: SubmissionResponse[] }) => {
         return response.assets;
       },
       transformErrorResponse: (response) => {
-        console.log(response)
+        console.log(response);
         return { error: i18n.t("fetchFormError", { ns: "user" }) };
       },
     }),
     deleteSubmission: build.mutation({
-      query: ({id, user}) => {
+      query: ({ id, user }) => {
         return {
           url: `inbox/dataset/${id}`,
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${user.access_token}`,
             Accept: "application/json",
+            "auth-env-name": import.meta.env.VITE_ENV_NAME,
+            "user-id": user?.profile.sub,
           },
         };
       },
+      invalidatesTags: ["Submissions"],
       transformErrorResponse: (response) => {
-        console.log(response)
+        console.log(response);
         return { error: i18n.t("deleteFormError", { ns: "user" }) };
       },
-      invalidatesTags: ['Submissions'],
+      transformResponse: () => {
+        enqueueSnackbar(i18n.t("deleteSuccess", { ns: "user" }), {
+          variant: "info",
+        });
+      },
     }),
   }),
 });
@@ -115,6 +125,7 @@ const getUrl = (url: string, key: string, type: AuthKeys) =>
 export const validateKeyApi = createApi({
   reducerPath: "apiKeys",
   baseQuery: fetchBaseQuery(),
+  refetchOnMountOrArgChange: true,
   endpoints: (build) => ({
     validateKey: build.query({
       query: ({ url, key, type }) => {
@@ -131,9 +142,9 @@ export const validateKeyApi = createApi({
         response.status,
       // response for setting the error snackbar
       transformErrorResponse: (response) => {
-        console.log(response)
+        console.log(response);
         // show snackbar only on server fetch error, not for invalid keys
-        if (response.status === 'FETCH_ERROR') {
+        if (response.status === "FETCH_ERROR") {
           return { error: i18n.t("fetchApiKeyError", { ns: "user" }) };
         }
         return;
@@ -167,4 +178,5 @@ export const { useValidateKeyQuery, useValidateAllKeysQuery } = validateKeyApi;
 
 export const { useFetchUserProfileQuery, useSaveUserDataMutation } = userApi;
 
-export const { useFetchUserSubmissionsQuery, useDeleteSubmissionMutation } = userSubmissionsApi;
+export const { useFetchUserSubmissionsQuery, useDeleteSubmissionMutation } =
+  userSubmissionsApi;

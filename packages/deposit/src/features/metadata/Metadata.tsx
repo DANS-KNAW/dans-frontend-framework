@@ -1,4 +1,4 @@
-import { SyntheticEvent } from "react";
+import { type SyntheticEvent } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -23,6 +23,7 @@ const Form = () => {
   const handleChange =
     (panel: string) => (_e: SyntheticEvent, isExpanded: boolean) => {
       dispatch(setOpenPanel(isExpanded ? panel : ""));
+      console.log(isExpanded)
     };
 
   return (
@@ -32,8 +33,25 @@ const Form = () => {
           key={`section-${section.id}`}
           expanded={openPanel === section.id}
           onChange={handleChange(section.id)}
-          TransitionProps={{ unmountOnExit: true }}
+          TransitionProps={{ 
+            unmountOnExit: true,
+            timeout: 200,
+            onEntered: (el) => {
+              // make sure accordion scrolls into view after expanding, 
+              // if not in view yet, including header
+              const rect = el.getBoundingClientRect();
+              if ( rect.top < 0 ) {
+                window.scrollBy({
+                  top: rect.bottom - rect.height - 80,
+                  behavior: "smooth",
+                });
+              }
+            }
+          }}
+          // todo: update mui, change TransitionProps to the following:
+          // slotProps={{ transition: { unmountOnExit: true, etc... } }}
           data-testid={`section-${section.id}`}
+          id={`section-${section.id}`}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
