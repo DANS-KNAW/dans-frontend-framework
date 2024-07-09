@@ -55,6 +55,7 @@ const FilesTable = () => {
   const { 
     displayRoles = true, 
     displayProcesses = true,
+    displayPrivate = true,
     embargoDate = false,
   } = formConfig?.filesUpload || {};
 
@@ -67,7 +68,9 @@ const FilesTable = () => {
               <TableCell sx={{ p: 1 }}>{t("fileName")}</TableCell>
               <TableCell sx={{ p: 1 }}>{t("fileSize")}</TableCell>
               <TableCell sx={{ p: 1 }}>{t("fileType")}</TableCell>
-              <TableCell sx={{ p: 1, width: 10 }}>{t("private")}</TableCell>
+              {displayPrivate && (
+                <TableCell sx={{ p: 1, width: 10 }}>{t("private")}</TableCell>
+              )}
               {displayRoles && (
                 <TableCell sx={{ p: 1, width: 230 }}>{t("role")}</TableCell>
               )}
@@ -229,6 +232,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
   const {
     displayRoles = true,
     displayProcesses = true,
+    displayPrivate = true,
     convertFiles = true,
     embargoDate = false,
   } = formConfig?.filesUpload || {};
@@ -311,7 +315,8 @@ const FileTableRow = ({ file }: FileItemProps) => {
         <TableCell sx={{ p: 1, borderWidth: fileStatus ? 0 : 1 }}>
           <FileStatusIndicator convertFiles={convertFiles} file={file} />
         </TableCell>
-        <TableCell sx={{ p: 0, borderWidth: fileStatus ? 0 : 1 }}>
+        {displayPrivate && (
+          <TableCell sx={{ p: 0, borderWidth: fileStatus ? 0 : 1 }}>
           <Checkbox
             checked={file.private}
             onChange={(e) =>
@@ -321,12 +326,13 @@ const FileTableRow = ({ file }: FileItemProps) => {
                   type: "private",
                   value: e.target.checked,
                 }),
-              )
-            }
-            data-testid={`private-${file.name}`}
-            disabled={file.valid === false || formDisabled}
-          />
-        </TableCell>
+                )
+              }
+              data-testid={`private-${file.name}`}
+              disabled={file.valid === false || formDisabled}
+              />
+          </TableCell>
+        )}
         {displayRoles && (
           <TableCell
             sx={{ p: 1, minWidth: 150, borderWidth: fileStatus ? 0 : 1 }}
