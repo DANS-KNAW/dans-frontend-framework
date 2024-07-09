@@ -1,20 +1,20 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import type { BaseQueryFn, FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import axios from "axios";
-import type { AxiosRequestConfig, AxiosError, AxiosProgressEvent } from "axios";
-import { setMetadataSubmitStatus, setFilesSubmitStatus } from "./submitSlice";
-import { setFileMeta } from "../files/filesSlice";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { /*BaseQueryFn,*/ FetchBaseQueryError } from "@reduxjs/toolkit/query";
+// import axios from "axios";
+// import type { AxiosRequestConfig, AxiosError, AxiosProgressEvent } from "axios";
+import { setMetadataSubmitStatus, /*setFilesSubmitStatus*/ } from "./submitSlice";
+// import { setFileMeta } from "../files/filesSlice";
 import { setFormDisabled } from "../../deposit/depositSlice";
 import { store } from "../../redux/store";
 import type { Target } from "@dans-framework/user-auth";
 import moment from "moment";
 import { enqueueSnackbar } from "notistack";
 import i18n from "../../languages/i18n";
-import { formatFormData, formatFileData } from "./submitHelpers";
-import type { SubmitData } from "../../types/Submit";
+import { formatFormData, /*formatFileData*/ } from "./submitHelpers";
+// import type { SubmitData } from "../../types/Submit";
 
 // We use Axios to enable file upload progress monitoring
-const axiosBaseQuery =
+/*const axiosBaseQuery =
   (
     { baseUrl }: { baseUrl: string } = { baseUrl: "" },
   ): BaseQueryFn<
@@ -104,18 +104,97 @@ const axiosBaseQuery =
         },
       };
     }
-  };
+  };*/
 
 export const submitApi = createApi({
   reducerPath: "submitApi",
-  baseQuery: axiosBaseQuery({
+  baseQuery: fetchBaseQuery({
     baseUrl: `${import.meta.env.VITE_PACKAGING_TARGET}/inbox/`,
   }),
   endpoints: (build) => ({
     submitData: build.mutation({
+      query: ({ user, actionType, id, metadata, config, files }) => {
+        console.log(metadata)
+        // format data
+        const data = formatFormData(id, metadata, files, config.formTitle);
+        console.log("Submit metadata:");
+        console.log(data);
+
+        // format headers
+        const headers = {
+          Authorization: `Bearer ${
+            config.submitKey || user?.access_token
+          }`,
+          "user-id": user?.profile.sub,
+          "auth-env-name": config.target?.envName,
+          "assistant-config-name": config.target?.configName,
+          "targets-credentials": JSON.stringify(
+            config.targetCredentials.map((t: Target) => ({
+              "target-repo-name": t.repo,
+              credentials: {
+                username: t.auth,
+                password: Object.assign(
+                  {},
+                  ...config.targetCredentials.map((t: Target) => ({
+                    [t.authKey]: user?.profile[t.authKey],
+                  })),
+                )[t.authKey],
+              },
+            })),
+          ),
+        };
+        console.log("Submit req headers:");
+        console.log(headers);
+
+        const submitUrl =
+          actionType === "resubmit" ?
+            `resubmit/${data.id}`
+          : `dataset/${actionType === "save" ? "DRAFT" : "PUBLISH"}`;
+
+        return ({
+          url: submitUrl,
+          method: "POST",
+          headers: headers,
+          body: data,
+        })
+      },
+      transformResponse: (response, _meta, arg) => {
+        // TODO: check for pending files
+        if (arg.actionType === "save") {
+          // show notice and enable form again after successful save
+          enqueueSnackbar(
+            i18n.t("saveSuccess", {
+              ns: "submit",
+              dateTime: moment().format("D-M-YYYY @ HH:mm"),
+            }),
+            {
+              variant: "success",
+            },
+          );
+          store.dispatch(setMetadataSubmitStatus(
+            arg.actionType === "save" ? "saved" : "submitted",
+          ));
+        }
+        store.dispatch(setFormDisabled(false));
+        return response;
+      },
+      transformErrorResponse: (response: FetchBaseQueryError) => {
+        store.dispatch(setFormDisabled(false));
+        return {
+          error: {
+            ...response,
+            data: i18n.t("submitMetadataError", {
+              ns: "submit",
+              error: (response.data as any).detail || 
+                (typeof response.data === 'object' ? JSON.stringify(response.data) : response.data),
+            }),
+          },
+        };
+      },
+
       // Custom query for chaining Post functions
       // submitKey is the current users Keycloak token
-      async queryFn(
+      /*async queryFn(
         { user, actionType },
         queryApi,
         _extraOptions,
@@ -193,9 +272,9 @@ export const submitApi = createApi({
         }
 
         return { data: metadataResult };
-      },
+      },*/
     }),
-    submitFiles: build.mutation({
+    /*submitFiles: build.mutation({
       async queryFn(
         { actionType },
         queryApi,
@@ -272,8 +351,8 @@ export const submitApi = createApi({
 
         return { data: filesResults };
       },
-    }),
+    }),*/
   }),
 });
 
-export const { useSubmitDataMutation, useSubmitFilesMutation } = submitApi;
+export const { useSubmitDataMutation, /*useSubmitFilesMutation*/ } = submitApi;

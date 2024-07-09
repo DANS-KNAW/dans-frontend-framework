@@ -16,9 +16,11 @@ import {
   setOpenTab,
   getMetadata,
   getTouchedStatus,
+  getSessionId,
 } from "../metadata/metadataSlice";
 import { getFiles, resetFiles } from "../files/filesSlice";
-import { useSubmitDataMutation, useSubmitFilesMutation } from "./submitApi";
+import { useSubmitDataMutation, /*useSubmitFilesMutation*/ } from "./submitApi";
+import { uploadFile } from "./submitFile";
 import {
   setMetadataSubmitStatus,
   getMetadataSubmitStatus,
@@ -54,6 +56,7 @@ const Submit = ({
   const metadata = useAppSelector(getMetadata);
   const isTouched = useAppSelector(getTouchedStatus);
   const [fileWarning, setFileWarning] = useState<boolean>(false);
+  const sessionId = useAppSelector(getSessionId);
 
   // get form config
   const formConfig = useAppSelector(getData);
@@ -82,6 +85,8 @@ const Submit = ({
     fileStatus === "error" && dispatch(setOpenTab(1));
   }, [fileStatus]);
 
+  console.log(fileStatus)
+
   const [
     submitData,
     {
@@ -90,13 +95,13 @@ const Submit = ({
       reset: resetMeta,
     },
   ] = useSubmitDataMutation();
-  const [
-    submitFiles,
-    {
-      isLoading: isLoadingFiles,
-      reset: resetSubmittedFiles,
-    },
-  ] = useSubmitFilesMutation();
+  // const [
+  //   submitFiles,
+  //   {
+  //     isLoading: isLoadingFiles,
+  //     reset: resetSubmittedFiles,
+  //   },
+  // ] = useSubmitFilesMutation();
 
   // Access token might just be expiring, or user settings just changed
   // So we do a callback to signinSilent, which refreshes the current user
@@ -137,18 +142,23 @@ const Submit = ({
     dispatch(setFormDisabled(true));
     dispatch(setMetadataSubmitStatus("submitting"));
 
+    console.log(formConfig)
+
     // do the actual submit
     getUser().then((user) =>
       // with fresh headerdata/user info, we can submit the metadata
       submitData({
         user: user,
         actionType: actionType,
+        id: sessionId,
+        metadata: metadata, 
+        config: formConfig,
+        files: selectedFiles,
       }).then((result: { data?: any; error?: any }) => {
-        if (result.data?.data?.status === "OK") {
+        if (result.data?.status === "OK") {
           // if metadata has been submitted ok, we start the file submit
-          submitFiles({
-            actionType: actionType,
-          });
+          const fileUpload = Promise.all(selectedFiles.map( file => uploadFile(file, sessionId) ) ).then(res => console.log(res));
+          console.log(fileUpload)
         }
       }),
     );
@@ -168,7 +178,7 @@ const Submit = ({
   // Reset the entire form to initial state
   const resetForm = () => {
     // reset RTK mutations
-    resetSubmittedFiles();
+    // resetSubmittedFiles();
     resetMeta();
     // reset metadata in metadata slice
     dispatch(resetMetadata());
@@ -221,7 +231,7 @@ const Submit = ({
               : (
                 metadataSubmitStatus === "submitting" ||
                 fileStatus === "submitting" ||
-                isLoadingFiles ||
+                // isLoadingFiles ||
                 isLoadingMeta
               ) ?
                 t("submitting")
@@ -275,7 +285,7 @@ const Submit = ({
                   (
                     metadataSubmitStatus === "submitting" ||
                     fileStatus === "submitting" ||
-                    isLoadingFiles ||
+                    // isLoadingFiles ||
                     isLoadingMeta
                   ) ?
                     0.5
@@ -296,15 +306,15 @@ const Submit = ({
                   isErrorMeta) &&
                 !(
                   metadataSubmitStatus === "submitting" ||
-                  fileStatus === "submitting" ||
-                  isLoadingFiles
+                  fileStatus === "submitting" //||
+                  // isLoadingFiles
                 )
               ) ?
                 <ErrorOutlineOutlinedIcon sx={iconSx} />
               : <SendIcon sx={iconSx} />}
             </Box>
             {(fileStatus === "submitting" ||
-              isLoadingFiles ||
+              // isLoadingFiles ||
               isLoadingMeta) && (
               <CircularProgress
                 size={54}

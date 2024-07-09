@@ -27,16 +27,16 @@ import type {
   FileItemProps,
   FileActions,
 } from "../../types/Files";
-import { getSessionId } from "../metadata/metadataSlice";
+// import { getSessionId } from "../metadata/metadataSlice";
 import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import {
   getSingleFileSubmitStatus,
-  getMetadataSubmitStatus,
+  // getMetadataSubmitStatus,
 } from "../submit/submitSlice";
-import { useSubmitFilesMutation } from "../submit/submitApi";
-import { formatFileData } from "../submit/submitHelpers";
+// import { useSubmitFilesMutation } from "../submit/submitApi";
+// import { formatFileData } from "../submit/submitHelpers";
 import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
 import { getFormDisabled, getData } from "../../deposit/depositSlice";
 import FileStatusIndicator from "./FileStatusIndicator";
@@ -374,24 +374,24 @@ const UploadProgress = ({ file }: FileItemProps) => {
   // We handle progress and retrying/restarting of file uploads here
   // If metadata submission is successful, and file fails right away, there needs to be an option to manually start file upload.
   // So we check if the submit button has been touched.
-  const sessionId = useAppSelector(getSessionId);
+  // const sessionId = useAppSelector(getSessionId);
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const { t } = useTranslation("files");
-  const [submitFiles] = useSubmitFilesMutation();
-  const formConfig = useAppSelector(getData);
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
+  // const [submitFiles] = useSubmitFilesMutation();
+  // const formConfig = useAppSelector(getData);
+  // const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
 
   const handleSingleFileUpload = () => {
-    formatFileData(sessionId, [file]).then((d) => {
-      console.log('submit')
-      submitFiles({
+    // formatFileData(sessionId, [file]).then((d) => {
+    //   console.log('submit')
+      /*submitFiles({
         data: d,
         headerData: {
           target: formConfig.target,
         },
         actionType: metadataSubmitStatus === "saved" ? "save" : "submit",
-      });
-    });
+      });*/
+    // });
   };
 
   return (
