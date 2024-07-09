@@ -147,7 +147,6 @@ const Submit = ({
         if (result.data?.data?.status === "OK") {
           // if metadata has been submitted ok, we start the file submit
           submitFiles({
-            user: user,
             actionType: actionType,
           });
         }

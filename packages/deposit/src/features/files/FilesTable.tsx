@@ -39,7 +39,6 @@ import { useSubmitFilesMutation } from "../submit/submitApi";
 import { formatFileData } from "../submit/submitHelpers";
 import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
 import { getFormDisabled, getData } from "../../deposit/depositSlice";
-import { useAuth } from "react-oidc-context";
 import FileStatusIndicator from "./FileStatusIndicator";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useFetchGroupedListQuery } from "./api/dansFormats";
@@ -373,16 +372,15 @@ const UploadProgress = ({ file }: FileItemProps) => {
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const { t } = useTranslation("files");
   const [submitFiles] = useSubmitFilesMutation();
-  const auth = useAuth();
   const formConfig = useAppSelector(getData);
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
 
   const handleSingleFileUpload = () => {
     formatFileData(sessionId, [file]).then((d) => {
+      console.log('submit')
       submitFiles({
         data: d,
         headerData: {
-          submitKey: auth.user?.access_token,
           target: formConfig.target,
         },
         actionType: metadataSubmitStatus === "saved" ? "save" : "submit",

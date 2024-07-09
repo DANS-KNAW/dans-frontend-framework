@@ -197,7 +197,7 @@ export const submitApi = createApi({
     }),
     submitFiles: build.mutation({
       async queryFn(
-        { user, actionType },
+        { actionType },
         queryApi,
         _extraOptions,
         fetchWithBQ,
@@ -227,9 +227,6 @@ export const submitApi = createApi({
                 method: "POST",
                 data: file,
                 headers: {
-                  Authorization: `Bearer ${
-                    deposit.config.submitKey || user?.access_token
-                  }`,
                   "auth-env-name": deposit.config.target?.envName,
                 },
               }),
