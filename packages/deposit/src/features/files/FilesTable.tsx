@@ -46,6 +46,7 @@ import { findFileGroup } from "./filesHelpers";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment, { Moment } from "moment";
 import type { DateValidationError } from "@mui/x-date-pickers/models";
+import { useAuth } from "react-oidc-context";
 
 const FilesTable = () => {
   const { t } = useTranslation("files");
@@ -380,6 +381,7 @@ const UploadProgress = ({ file }: FileItemProps) => {
   const [submitFiles] = useSubmitFilesMutation();
   const formConfig = useAppSelector(getData);
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
+  const auth = useAuth();
 
   const handleSingleFileUpload = () => {
     formatFileData(sessionId, [file]).then((d) => {
@@ -388,6 +390,7 @@ const UploadProgress = ({ file }: FileItemProps) => {
         data: d,
         headerData: {
           target: formConfig.target,
+          submitKey: auth.user?.access_token,
         },
         actionType: metadataSubmitStatus === "saved" ? "save" : "submit",
       });

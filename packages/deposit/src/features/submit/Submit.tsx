@@ -148,6 +148,7 @@ const Submit = ({
           // if metadata has been submitted ok, we start the file submit
           submitFiles({
             actionType: actionType,
+            user: user,
           });
         }
       }),
