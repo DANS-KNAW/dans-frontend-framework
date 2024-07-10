@@ -10,7 +10,7 @@ import {
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 import AlertTitle from "@mui/material/AlertTitle";
-import { User } from "oidc-client-ts";
+import { getUser } from "@dans-framework/utils/user";
 
 /**
  * Log a warning and show a toast!
@@ -92,18 +92,6 @@ export const CustomError = forwardRef<HTMLDivElement, CustomErrorProps>(
 );
 
 // Freshdesk ticketing system
-const getUser = () => {
-  const oidcStorage = sessionStorage.getItem(
-    `oidc.user:${import.meta.env.VITE_OIDC_AUTHORITY}:${
-      import.meta.env.VITE_OIDC_CLIENT_ID
-    }`,
-  );
-  if (!oidcStorage) {
-    return null;
-  }
-  return User.fromStorageString(oidcStorage);
-};
-
 const sendTicket = async (data: any) => {
   const encodedCredentials = btoa(
     `${import.meta.env.VITE_FRESHDESK_API_KEY}:X`,

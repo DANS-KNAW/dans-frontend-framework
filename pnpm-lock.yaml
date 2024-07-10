@@ -797,6 +797,9 @@ importers:
 
   packages/utils/error:
     dependencies:
+      '@dans-framework/utils':
+        specifier: workspace:*
+        version: link:..
       '@mui/material':
         specifier: ^5.14.3
         version: 5.14.3(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)
@@ -806,9 +809,6 @@ importers:
       notistack:
         specifier: ^3.0.1
         version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
-      oidc-client-ts:
-        specifier: ^2.2.4
-        version: 2.2.4
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -832,6 +832,12 @@ importers:
       '@types/react':
         specifier: ^18.2.15
         version: 18.2.15
+
+  packages/utils/user:
+    dependencies:
+      oidc-client-ts:
+        specifier: ^2.2.4
+        version: 2.2.4
 
 packages:
 

@@ -85,7 +85,7 @@ const Submit = ({
     fileStatus === "error" && dispatch(setOpenTab(1));
   }, [fileStatus]);
 
-  console.log(fileStatus)
+  console.log('file status: ' + fileStatus)
 
   const [
     submitData,
@@ -95,13 +95,6 @@ const Submit = ({
       reset: resetMeta,
     },
   ] = useSubmitDataMutation();
-  // const [
-  //   submitFiles,
-  //   {
-  //     isLoading: isLoadingFiles,
-  //     reset: resetSubmittedFiles,
-  //   },
-  // ] = useSubmitFilesMutation();
 
   // Access token might just be expiring, or user settings just changed
   // So we do a callback to signinSilent, which refreshes the current user
@@ -137,12 +130,10 @@ const Submit = ({
     // Clear any form action messages on submit
     if (actionType === "resubmit" || actionType === "submit") {
       clearFormActions();
+      dispatch(setFormDisabled(true));
     }
 
-    dispatch(setFormDisabled(true));
     dispatch(setMetadataSubmitStatus("submitting"));
-
-    console.log(formConfig)
 
     // do the actual submit
     getUser().then((user) =>
@@ -156,9 +147,14 @@ const Submit = ({
         files: selectedFiles,
       }).then((result: { data?: any; error?: any }) => {
         if (result.data?.status === "OK") {
+          console.log(selectedFiles)
+          console.log(filesSubmitStatus)
           // if metadata has been submitted ok, we start the file submit
-          const fileUpload = Promise.all(selectedFiles.map( file => uploadFile(file, sessionId) ) ).then(res => console.log(res));
-          console.log(fileUpload)
+          selectedFiles.map( file => {
+            // only call the upload function if file is not yet uploaded, or is not currently uploading
+            const hasStatus = filesSubmitStatus.find( f => f.id === file.id);
+            return !file.submittedFile && !hasStatus && uploadFile(file, sessionId);
+          });
         }
       }),
     );
@@ -219,7 +215,8 @@ const Submit = ({
             {
               (
                 !metadataSubmitStatus ||
-                (metadataSubmitStatus === "saved" && !formDisabled)
+                (metadataSubmitStatus === "saved" && !formDisabled) &&
+                fileStatus !== "submitting"
               ) ?
                 // metadata has not yet been submitted, so let's just indicate metadata completeness
                 metadataStatus === "error" ?
@@ -231,7 +228,6 @@ const Submit = ({
               : (
                 metadataSubmitStatus === "submitting" ||
                 fileStatus === "submitting" ||
-                // isLoadingFiles ||
                 isLoadingMeta
               ) ?
                 t("submitting")
@@ -285,7 +281,6 @@ const Submit = ({
                   (
                     metadataSubmitStatus === "submitting" ||
                     fileStatus === "submitting" ||
-                    // isLoadingFiles ||
                     isLoadingMeta
                   ) ?
                     0.5
@@ -306,8 +301,7 @@ const Submit = ({
                   isErrorMeta) &&
                 !(
                   metadataSubmitStatus === "submitting" ||
-                  fileStatus === "submitting" //||
-                  // isLoadingFiles
+                  fileStatus === "submitting"
                 )
               ) ?
                 <ErrorOutlineOutlinedIcon sx={iconSx} />
