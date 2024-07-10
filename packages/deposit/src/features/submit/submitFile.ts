@@ -10,6 +10,7 @@ import { getUser } from "@dans-framework/utils/user";
 export const uploadFile = async (
   file: SelectedFile, 
   sessionId: string,
+  target: string = ''
 ) => {
   // set a loader right away, while we wait for blob to be created
   store.dispatch(
@@ -83,6 +84,7 @@ export const uploadFile = async (
           method: 'PATCH',
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
+            "auth-env-name": target,
           },
         });
         const json = await response.json();

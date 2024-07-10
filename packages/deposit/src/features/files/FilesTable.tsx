@@ -371,9 +371,10 @@ const UploadProgress = ({ file }: FileItemProps) => {
   const sessionId = useAppSelector(getSessionId);
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const { t } = useTranslation("files");
+  const formConfig = useAppSelector(getData);
 
   const handleSingleFileUpload = () => {
-    uploadFile(file, sessionId)
+    uploadFile(file, sessionId, formConfig.target?.envName)
   };
 
   return (

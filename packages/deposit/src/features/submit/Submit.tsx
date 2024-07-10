@@ -153,7 +153,7 @@ const Submit = ({
           selectedFiles.map( file => {
             // only call the upload function if file is not yet uploaded, or is not currently uploading
             const hasStatus = filesSubmitStatus.find( f => f.id === file.id);
-            return !file.submittedFile && !hasStatus && uploadFile(file, sessionId);
+            return !file.submittedFile && !hasStatus && uploadFile(file, sessionId, formConfig.target?.envName);
           });
         }
       }),
