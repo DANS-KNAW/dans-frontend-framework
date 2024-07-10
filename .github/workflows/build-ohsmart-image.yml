@@ -34,7 +34,6 @@ jobs:
 
     name: Push to registry.
     runs-on: ohsmart-production
-    needs: master
     strategy:
       matrix:
         node-version: ["18"]
