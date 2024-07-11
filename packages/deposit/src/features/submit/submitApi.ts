@@ -65,7 +65,7 @@ export const submitApi = createApi({
         store.dispatch(setMetadataSubmitStatus(
           arg.actionType === "save" ? "saved" : "submitted",
         ));
-        if (arg.actionType === "save") {
+        if (arg.actionType === "save" && !arg.autoSave) {
           // show notice and enable form again after successful save
           enqueueSnackbar(
             i18n.t(arg.files.length === 0 ? "saveSuccess" : "saveFileSuccess", {
