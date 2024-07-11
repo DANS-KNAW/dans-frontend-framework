@@ -159,7 +159,15 @@ const Submit = ({
   // Autosave functionality, debounced on metadata change
   const autoSave = useDebouncedCallback(() => {
     if (!formDisabled && isTouched) {
-      submitData({ user: auth.user, actionType: "save" });
+      submitData({ 
+        user: auth.user, 
+        actionType: "save",
+        id: sessionId,
+        metadata: metadata, 
+        config: formConfig,
+        // don't send along files on autosave
+        files: [],
+      });
     }
   }, 2000);
 
