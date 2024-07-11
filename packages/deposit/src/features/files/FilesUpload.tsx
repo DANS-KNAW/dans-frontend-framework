@@ -32,9 +32,9 @@ import { getFormDisabled } from "../../deposit/depositSlice";
 import { getSessionId } from "../metadata/metadataSlice";
 
 // Temporary soft file limits in bytes
+// Probably move this to form config, as it's target dependant
 const bytes = 1048576;
-const lowerLimit = 1000 * bytes;
-const upperLimit = 2000 * bytes;
+const limit = 10000 * bytes;
 
 const FilesUpload = () => {
   const dispatch = useAppDispatch();
@@ -130,10 +130,7 @@ const FilesUpload = () => {
 
   const formDisabled = useAppSelector(getFormDisabled);
 
-  const filesTooBig = currentFiles.filter(
-    (f) => lowerLimit < f.size && f.size < upperLimit,
-  );
-  const filesWayTooBig = currentFiles.filter((f) => upperLimit < f.size);
+  const filesTooBig = currentFiles.filter((f) => limit < f.size);
 
   return (
     <Card>
@@ -194,16 +191,8 @@ const FilesUpload = () => {
           <FileAlert
             files={filesTooBig}
             color="warning"
-            title={t("limitHeader", { amount: lowerLimit / 1048576 })}
-            description="lowerLimitDescription"
-          />
-        )}
-        {filesWayTooBig.length > 0 && (
-          <FileAlert
-            files={filesWayTooBig}
-            color="warning"
-            title={t("limitHeader", { amount: upperLimit / 1048576 })}
-            description="upperLimitDescription"
+            title={t("fileLimitHeader", { amount: limit / bytes })}
+            description="fileLimitDescription"
           />
         )}
       </CardContent>
