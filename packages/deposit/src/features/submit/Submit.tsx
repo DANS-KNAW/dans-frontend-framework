@@ -165,8 +165,9 @@ const Submit = ({
         id: sessionId,
         metadata: metadata, 
         config: formConfig,
-        // don't send along files on autosave
+        // don't send along files on autosave and set flag autoSave, so we don't show a snackbar each time
         files: [],
+        autoSave: true,
       });
     }
   }, 2000);
