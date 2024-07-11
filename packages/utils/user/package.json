@@ -1,0 +1,11 @@
+{
+  "name": "@dans-framework/utils/user",
+  "main": "index.ts",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "dependencies": {
+    "oidc-client-ts": "^2.2.4"
+  }
+}

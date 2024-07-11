@@ -16,9 +16,11 @@ import {
   setOpenTab,
   getMetadata,
   getTouchedStatus,
+  getSessionId,
 } from "../metadata/metadataSlice";
 import { getFiles, resetFiles } from "../files/filesSlice";
-import { useSubmitDataMutation, useSubmitFilesMutation } from "./submitApi";
+import { useSubmitDataMutation, /*useSubmitFilesMutation*/ } from "./submitApi";
+import { uploadFile } from "./submitFile";
 import {
   setMetadataSubmitStatus,
   getMetadataSubmitStatus,
@@ -54,6 +56,7 @@ const Submit = ({
   const metadata = useAppSelector(getMetadata);
   const isTouched = useAppSelector(getTouchedStatus);
   const [fileWarning, setFileWarning] = useState<boolean>(false);
+  const sessionId = useAppSelector(getSessionId);
 
   // get form config
   const formConfig = useAppSelector(getData);
@@ -90,13 +93,6 @@ const Submit = ({
       reset: resetMeta,
     },
   ] = useSubmitDataMutation();
-  const [
-    submitFiles,
-    {
-      isLoading: isLoadingFiles,
-      reset: resetSubmittedFiles,
-    },
-  ] = useSubmitFilesMutation();
 
   // Access token might just be expiring, or user settings just changed
   // So we do a callback to signinSilent, which refreshes the current user
@@ -132,9 +128,9 @@ const Submit = ({
     // Clear any form action messages on submit
     if (actionType === "resubmit" || actionType === "submit") {
       clearFormActions();
+      dispatch(setFormDisabled(true));
     }
 
-    dispatch(setFormDisabled(true));
     dispatch(setMetadataSubmitStatus("submitting"));
 
     // do the actual submit
@@ -143,12 +139,17 @@ const Submit = ({
       submitData({
         user: user,
         actionType: actionType,
+        id: sessionId,
+        metadata: metadata, 
+        config: formConfig,
+        files: selectedFiles,
       }).then((result: { data?: any; error?: any }) => {
-        if (result.data?.data?.status === "OK") {
+        if (result.data?.status === "OK") {
           // if metadata has been submitted ok, we start the file submit
-          submitFiles({
-            actionType: actionType,
-            user: user,
+          selectedFiles.map( file => {
+            // only call the upload function if file is not yet uploaded, or is not currently uploading
+            const hasStatus = filesSubmitStatus.find( f => f.id === file.id);
+            return !file.submittedFile && !hasStatus && uploadFile(file, sessionId, formConfig.target?.envName);
           });
         }
       }),
@@ -169,7 +170,7 @@ const Submit = ({
   // Reset the entire form to initial state
   const resetForm = () => {
     // reset RTK mutations
-    resetSubmittedFiles();
+    // resetSubmittedFiles();
     resetMeta();
     // reset metadata in metadata slice
     dispatch(resetMetadata());
@@ -210,7 +211,8 @@ const Submit = ({
             {
               (
                 !metadataSubmitStatus ||
-                (metadataSubmitStatus === "saved" && !formDisabled)
+                (metadataSubmitStatus === "saved" && !formDisabled) &&
+                fileStatus !== "submitting"
               ) ?
                 // metadata has not yet been submitted, so let's just indicate metadata completeness
                 metadataStatus === "error" ?
@@ -222,7 +224,6 @@ const Submit = ({
               : (
                 metadataSubmitStatus === "submitting" ||
                 fileStatus === "submitting" ||
-                isLoadingFiles ||
                 isLoadingMeta
               ) ?
                 t("submitting")
@@ -276,7 +277,6 @@ const Submit = ({
                   (
                     metadataSubmitStatus === "submitting" ||
                     fileStatus === "submitting" ||
-                    isLoadingFiles ||
                     isLoadingMeta
                   ) ?
                     0.5
@@ -297,15 +297,14 @@ const Submit = ({
                   isErrorMeta) &&
                 !(
                   metadataSubmitStatus === "submitting" ||
-                  fileStatus === "submitting" ||
-                  isLoadingFiles
+                  fileStatus === "submitting"
                 )
               ) ?
                 <ErrorOutlineOutlinedIcon sx={iconSx} />
               : <SendIcon sx={iconSx} />}
             </Box>
             {(fileStatus === "submitting" ||
-              isLoadingFiles ||
+              // isLoadingFiles ||
               isLoadingMeta) && (
               <CircularProgress
                 size={54}

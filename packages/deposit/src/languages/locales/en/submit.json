@@ -4,7 +4,10 @@
   "metadataSuccess": "All set, ready to submit!",
   "submitting": "Sending your data to the server...",
   "submitSuccess": "Your data has been submitted for processing",
-  "saveSuccess": "Succesfully saved on our server on {{dateTime}}",
+  "saveSuccess": "Metadata has succesfully been saved on our server on {{dateTime}}",
+  "uploadSuccess": "File {{file}} has been uploaded succesfully",
+  "uploadRetry": "Error uploading {{file}}. Retrying... (attempt {{attempt}})",
+  "saveFileSuccess": "Metadata has been saved on our server. Hold on while your files are being uploaded...",
   "submitErrorMetadata": "Oh no! Error sending data to the server",
   "submitErrorFiles": "Oh no! Error uploading your files. Please retry the failed files.",
   "reset": "Reset form",
@@ -17,5 +20,7 @@
   "saveErrorNotification": "Failed to save metadata - {{error}}",
   "submitErrorNotification": "Failed to submit metadata - {{error}}",
   "saveFileErrorNotification": "Failed to save files - {{error}}",
-  "submitFileErrorNotification": "Failed to submit files - {{error}}"
+  "submitFileErrorNotification": "Failed to submit files - {{error}}",
+  "submitMetadataError": "Failed to send metadata to the server - {{error}}",
+  "submitFileError": "Failed to send files to the server - {{error}}"
 }

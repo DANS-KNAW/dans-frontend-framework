@@ -31,12 +31,7 @@ import { getSessionId } from "../metadata/metadataSlice";
 import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import {
-  getSingleFileSubmitStatus,
-  getMetadataSubmitStatus,
-} from "../submit/submitSlice";
-import { useSubmitFilesMutation } from "../submit/submitApi";
-import { formatFileData } from "../submit/submitHelpers";
+import { getSingleFileSubmitStatus } from "../submit/submitSlice";
 import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
 import { getFormDisabled, getData } from "../../deposit/depositSlice";
 import FileStatusIndicator from "./FileStatusIndicator";
@@ -46,7 +41,7 @@ import { findFileGroup } from "./filesHelpers";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment, { Moment } from "moment";
 import type { DateValidationError } from "@mui/x-date-pickers/models";
-import { useAuth } from "react-oidc-context";
+import { uploadFile } from "../submit/submitFile";
 
 const FilesTable = () => {
   const { t } = useTranslation("files");
@@ -372,29 +367,13 @@ const FileTableRow = ({ file }: FileItemProps) => {
 };
 
 const UploadProgress = ({ file }: FileItemProps) => {
-  // We handle progress and retrying/restarting of file uploads here
-  // If metadata submission is successful, and file fails right away, there needs to be an option to manually start file upload.
-  // So we check if the submit button has been touched.
+  // We handle progress and manually retrying/restarting of file uploads here
   const sessionId = useAppSelector(getSessionId);
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const { t } = useTranslation("files");
-  const [submitFiles] = useSubmitFilesMutation();
   const formConfig = useAppSelector(getData);
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
-  const auth = useAuth();
-
   const handleSingleFileUpload = () => {
-    formatFileData(sessionId, [file]).then((d) => {
-      console.log('submit')
-      submitFiles({
-        data: d,
-        headerData: {
-          target: formConfig.target,
-          submitKey: auth.user?.access_token,
-        },
-        actionType: metadataSubmitStatus === "saved" ? "save" : "submit",
-      });
-    });
+    uploadFile(file, sessionId, formConfig.target?.envName)
   };
 
   return (
