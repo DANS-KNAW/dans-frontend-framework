@@ -92,7 +92,7 @@ export const CustomError = forwardRef<HTMLDivElement, CustomErrorProps>(
 );
 
 // Freshdesk ticketing system
-const sendTicket = async (data: any) => {
+export const sendTicket = async (data: any) => {
   const encodedCredentials = btoa(
     `${import.meta.env.VITE_FRESHDESK_API_KEY}:X`,
   );

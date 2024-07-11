@@ -68,7 +68,7 @@ export const submitApi = createApi({
         if (arg.actionType === "save") {
           // show notice and enable form again after successful save
           enqueueSnackbar(
-            i18n.t("saveSuccess", {
+            i18n.t(arg.files.length === 0 ? "saveSuccess" : "saveFileSuccess", {
               ns: "submit",
               dateTime: moment().format("D-M-YYYY @ HH:mm"),
             }),

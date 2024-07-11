@@ -5,6 +5,26 @@ import { setFileMeta } from "../files/filesSlice";
 import { SelectedFile } from "../../types/Files";
 import { enqueueSnackbar } from "notistack";
 import { getUser } from "@dans-framework/utils/user";
+import i18n from "../../languages/i18n";
+import { sendTicket } from "@dans-framework/utils/error";
+
+const manualError = async (fileName: string, fileId: string, error: any, type: string) => {
+  console.error("Error", error);
+  // Since this process is not connected to Redux, we manually
+  // display a message, send a Freshdesk ticket or error, and set file status to errored
+  let ticket;
+  if (import.meta.env.VITE_FRESHDESK_API_KEY) {
+    ticket = await sendTicket({error: error, function: type});
+  }
+  enqueueSnackbar(`Uploading ${fileName} - ${error}`, { variant: "customError", ticket: ticket });
+  store.dispatch(
+    setFilesSubmitStatus({
+      id: fileId,
+      status: "error",
+    }),
+  );
+}
+
 
 // Create a new tus upload
 export const uploadFile = async (
@@ -21,47 +41,49 @@ export const uploadFile = async (
     }),
   );
 
+  // convert file url to blob
   const fetchedFile = await fetch(file.url);
   const fileBlob = await fetchedFile.blob();
 
-  console.log('upload fn')
-  console.log(file)
-
-
+  // TUS upload logic
   const upload = new tus.Upload(fileBlob, {
     endpoint: `${import.meta.env.VITE_PACKAGING_TARGET}/files`,
-    // endpoint: 'https://tusd.tusdemo.net/files/',
-    retryDelays: [0, 3000, 5000, 10000, 20000],
+    // retry 5 times on error
+    retryDelays: [1000, 5000, 10000, 20000, 30000],
+    // optional metadata for the file
     metadata: {
       fileName: file.name,
       fileId: file.id,
       datasetId: sessionId,
     },
+    // no resume after leaving session, since we'd need to load the form first then
     storeFingerprintForResuming: false,
     onError: function (error) {
-      // Display an error message
-      console.log('Failed because: ' + error);
-
-      enqueueSnackbar(`Error uploading ${file.name}`, {
-        variant: "error",
-      });
+      manualError(file.name, file.id, error, 'onError function in TUS upload');
     },
-    onShouldRetry: function (err, retryAttempt, _options) {
-      console.log("Error", err)
-      console.log("Request", err.originalRequest)
-      console.log("Response", err.originalResponse)
+    onShouldRetry: function (error, retryAttempt, _options) {
+      console.error("Error", error)
+      console.log("Request", error.originalRequest)
+      console.log("Response", error.originalResponse)
 
-      var status = err.originalResponse ? err.originalResponse.getStatus() : 0
+      var status = error.originalResponse ? error.originalResponse.getStatus() : 0
       // Do not retry if the status is a 403.
       if (status === 403) {
         return false
       }
 
-      enqueueSnackbar(`Error uploading ${file.name}. Retrying... (${retryAttempt + 1})`, {
-        variant: "warning",
-      });
+      enqueueSnackbar(
+        i18n.t("uploadRetry", {
+          ns: "submit",
+          file: file.name,
+          attempt: retryAttempt + 2,
+        }),
+        {
+          variant: "warning",
+        },
+      );
 
-      // For any other status code, tus-js-client should retry.
+      // For any other status code, we should retry.
       return true
     },
     onProgress: (bytesUploaded, bytesTotal) => {
@@ -89,24 +111,34 @@ export const uploadFile = async (
         });
         const json = await response.json();
         console.log(json);
+
+        // set file status to success
+        store.dispatch(
+          setFileMeta({
+            id: file.id,
+            type: "submittedFile",
+            value: true,
+          }),
+        );
+        store.dispatch(
+          setFilesSubmitStatus({
+            id: file.id,
+            status: "success",
+          }),
+        );
+        enqueueSnackbar(
+          i18n.t("uploadSuccess", {
+            ns: "submit",
+            file: file.name,
+          }),
+          {
+            variant: "success",
+          },
+        );
       } catch(error){
-        console.error(error);
+        // on error, file must be set to failed, as server can't processed it properly
+        manualError(file.name, file.id, error, 'error dispatching PATCH call to inbox/files/{sessionID}/{tusID}');
       };
-      
-      // set file status to success
-      store.dispatch(
-        setFileMeta({
-          id: file.id,
-          type: "submittedFile",
-          value: true,
-        }),
-      );
-      store.dispatch(
-        setFilesSubmitStatus({
-          id: file.id,
-          status: "success",
-        }),
-      );
     },
   });
 

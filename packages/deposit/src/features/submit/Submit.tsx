@@ -85,8 +85,6 @@ const Submit = ({
     fileStatus === "error" && dispatch(setOpenTab(1));
   }, [fileStatus]);
 
-  console.log('file status: ' + fileStatus)
-
   const [
     submitData,
     {
@@ -147,8 +145,6 @@ const Submit = ({
         files: selectedFiles,
       }).then((result: { data?: any; error?: any }) => {
         if (result.data?.status === "OK") {
-          console.log(selectedFiles)
-          console.log(filesSubmitStatus)
           // if metadata has been submitted ok, we start the file submit
           selectedFiles.map( file => {
             // only call the upload function if file is not yet uploaded, or is not currently uploading
