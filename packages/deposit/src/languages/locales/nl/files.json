@@ -43,5 +43,6 @@
   "embargoDate": "Embargodatum",
   "embargoDateDescription": "Vul dit in als dit bestand pas beschikbaar mag zijn na een bepaalde datum",
   "minDate": "Moet een toekomstige datum zijn",
-  "dateInvalid": "Ongeldige datum"
+  "dateInvalid": "Ongeldige datum",
+  "fileTooLarge": "Bestanden groter dan {{ size }} GB kunnen niet worden verwerkt door het doelrepository"
 }

@@ -91,6 +91,8 @@ import { Deposit } from "@dans-framework/deposit"
       embargoDate: false,
       displayRoles: true, 
       displayProcesses: true,
+      // set an optional maximum file upload size in bytes
+      maxSize: 10737418240, // e.g. 10 GB
     },
 
   }

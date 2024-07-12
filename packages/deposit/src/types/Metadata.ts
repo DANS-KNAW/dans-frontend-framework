@@ -66,5 +66,6 @@ export interface FormConfig {
     }[];
     embargoDateMin?: number;
     embargoDateMax?: number;
+    maxSize?: number;
   };
 }

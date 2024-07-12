@@ -28,23 +28,28 @@ import type {
 import { v4 as uuidv4 } from "uuid";
 import { useFetchSimpleListQuery } from "./api/dansFormats";
 import { enqueueSnackbar } from "notistack";
-import { getFormDisabled } from "../../deposit/depositSlice";
+import { getFormDisabled, getData } from "../../deposit/depositSlice";
 import { getSessionId } from "../metadata/metadataSlice";
-
-// Temporary soft file limits in bytes
-// Probably move this to form config, as it's target dependant
-const bytes = 1048576;
-const limit = 10000 * bytes;
 
 const FilesUpload = () => {
   const dispatch = useAppDispatch();
   const currentFiles = useAppSelector(getFiles);
   const { t } = useTranslation("files");
   const { data } = useFetchSimpleListQuery<DansSimpleListQueryResponse>(null);
+  const formConfig = useAppSelector(getData);
 
   // Validate added files, needs to be synchronous, so no API calls possible here
   const fileValidator = (file: File) => {
     if (!file.name) return null;
+
+    // No files over the file size limit set in formConfig
+    if (formConfig?.filesUpload?.maxSize && file.size > formConfig?.filesUpload?.maxSize) {
+      return {
+        code: "file-too-large",
+        message: t("fileTooLarge", { size: (formConfig?.filesUpload?.maxSize / 1073741824).toFixed(2) }),
+      };
+    }
+
     // No duplicate files
     const extensionIndex = file.name.lastIndexOf(".");
     const baseName = file.name.slice(0, extensionIndex);
@@ -66,6 +71,7 @@ const FilesUpload = () => {
         message: t("fileAlreadyAdded", { file: file.name }),
       };
     }
+
     // No files with these file names
     if (file.name.indexOf("__generated__") !== -1) {
       return {
@@ -73,6 +79,7 @@ const FilesUpload = () => {
         message: t("fileNotAllowed"),
       };
     }
+
     return null;
   };
 
@@ -130,8 +137,6 @@ const FilesUpload = () => {
 
   const formDisabled = useAppSelector(getFormDisabled);
 
-  const filesTooBig = currentFiles.filter((f) => limit < f.size);
-
   return (
     <Card>
       <CardHeader title={t("addLocal") as string} />
@@ -185,14 +190,6 @@ const FilesUpload = () => {
             files={fileRejections}
             color="error"
             title={t("fileTypeError")}
-          />
-        )}
-        {filesTooBig.length > 0 && (
-          <FileAlert
-            files={filesTooBig}
-            color="warning"
-            title={t("fileLimitHeader", { amount: limit / bytes })}
-            description="fileLimitDescription"
           />
         )}
       </CardContent>
