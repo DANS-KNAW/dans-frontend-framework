@@ -43,5 +43,6 @@
   "embargoDate": "Embargo date",
   "embargoDateDescription": "Fill this in if this file should only be available after a specific date",
   "minDate": "Must be a future date",
-  "dateInvalid": "Invalid date"
+  "dateInvalid": "Invalid date",
+  "fileTooLarge": "Files over {{ size }} GB cannot be processed by the target repository"
 }
