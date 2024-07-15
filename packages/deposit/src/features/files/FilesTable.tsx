@@ -27,11 +27,10 @@ import type {
   FileItemProps,
   FileActions,
 } from "../../types/Files";
-import { getSessionId } from "../metadata/metadataSlice";
 import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { getSingleFileSubmitStatus } from "../submit/submitSlice";
+import { getSingleFileSubmitStatus, setFilesSubmitStatus } from "../submit/submitSlice";
 import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
 import { getFormDisabled, getData } from "../../deposit/depositSlice";
 import FileStatusIndicator from "./FileStatusIndicator";
@@ -41,7 +40,6 @@ import { findFileGroup } from "./filesHelpers";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment, { Moment } from "moment";
 import type { DateValidationError } from "@mui/x-date-pickers/models";
-import { uploadFile } from "../submit/submitFile";
 
 const FilesTable = () => {
   const { t } = useTranslation("files");
@@ -367,13 +365,17 @@ const FileTableRow = ({ file }: FileItemProps) => {
 };
 
 const UploadProgress = ({ file }: FileItemProps) => {
+  const dispatch = useAppDispatch();
   // We handle progress and manually retrying/restarting of file uploads here
-  const sessionId = useAppSelector(getSessionId);
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const { t } = useTranslation("files");
-  const formConfig = useAppSelector(getData);
   const handleSingleFileUpload = () => {
-    uploadFile(file, sessionId, formConfig.target?.envName)
+    console.log('retrying')
+    dispatch(setFilesSubmitStatus({
+      id: file.id,
+      progress: 0,
+      status: "queued",
+    }));
   };
 
   return (
@@ -400,7 +402,7 @@ const UploadProgress = ({ file }: FileItemProps) => {
             />
           </Box>
           <Box sx={{ minWidth: 35, textAlign: "right" }}>
-            {fileStatus.status === "submitting" && (
+            {(fileStatus.status === "submitting" || fileStatus.status === "queued") && (
               <Typography variant="body2" color="text.secondary">{`${
                 fileStatus.progress || 0
               }%`}</Typography>
