@@ -32,7 +32,7 @@ export const uploadFile = async (
   sessionId: string,
   target: string = ''
 ) => {
-  // set a loader right away, while we wait for blob to be created
+  // set file status to submitting, to add it to actual upload queue, while we create the blob
   store.dispatch(
     setFilesSubmitStatus({
       id: file.id,
