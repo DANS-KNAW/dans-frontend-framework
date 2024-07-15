@@ -389,6 +389,9 @@ const Submit = ({
 const FileUploader = () => {
   // component that listen to file upload status: 
   // check files that have status submitting, and start queueing them for upload
+  // note: use filesStatus as the queue, selectedFiles as the queue source. Push one extra to queue when queue has less than X submitting
+  // or: add extra status type to queue, like readyToSubmit alongside submitting
+  // TODO refactor main submit code, fileUpload code
   const maxConcurrentUploads = 6;
   const filesStatus = useAppSelector(getFilesSubmitStatus);
   const selectedFiles = useAppSelector(getFiles);
