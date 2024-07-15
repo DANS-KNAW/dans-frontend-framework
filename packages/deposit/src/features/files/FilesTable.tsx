@@ -28,6 +28,7 @@ import type {
   FileActions,
 } from "../../types/Files";
 import LinearProgress from "@mui/material/LinearProgress";
+import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { getSingleFileSubmitStatus, setFilesSubmitStatus } from "../submit/submitSlice";
@@ -370,7 +371,6 @@ const UploadProgress = ({ file }: FileItemProps) => {
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const { t } = useTranslation("files");
   const handleSingleFileUpload = () => {
-    console.log('retrying')
     dispatch(setFilesSubmitStatus({
       id: file.id,
       progress: 0,
@@ -406,6 +406,11 @@ const UploadProgress = ({ file }: FileItemProps) => {
               <Typography variant="body2" color="text.secondary">{`${
                 fileStatus.progress || 0
               }%`}</Typography>
+            )}
+            {fileStatus.status === "finalising" && (
+              <Tooltip title={t("fileSubmitWaiting")}>
+                <CircularProgress size={20} />
+              </Tooltip>
             )}
             {fileStatus.status === "success" && (
               <Tooltip title={t("fileSubmitSuccess")}>
