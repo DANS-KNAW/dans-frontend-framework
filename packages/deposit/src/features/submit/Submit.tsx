@@ -148,6 +148,7 @@ const Submit = ({
           // if metadata has been submitted ok, we start the file submit
           selectedFiles.map( file => {
             // only call the upload function if file is not yet uploaded, or is not currently uploading
+            // TODO: modify this and file upload function to not upload more than X files in parallel 
             const hasStatus = filesSubmitStatus.find( f => f.id === file.id);
             return !file.submittedFile && !hasStatus && uploadFile(file, sessionId, formConfig.target?.envName);
           });
@@ -378,10 +379,34 @@ const Submit = ({
               t("resubmit")
             : t("submit")}
           </Button>
+          <FileUploader />
         </Stack>
       </Stack>
     </Stack>
   );
+};
+
+const FileUploader = () => {
+  // component that listen to file upload status: 
+  // check files that have status submitting, and start queueing them for upload
+  const maxConcurrentUploads = 6;
+  const filesStatus = useAppSelector(getFilesSubmitStatus);
+  const selectedFiles = useAppSelector(getFiles);
+
+  console.log(filesStatus)
+  console.log(selectedFiles)
+
+  useEffect(() => {
+    const currentlyUploading = filesStatus.filter( (file) => file.status === 'submitting');
+    if (currentlyUploading.length < maxConcurrentUploads) {
+      // add first file of selectedFiles that is not currently uploading to queue
+      // TODO: maybe combine filesSubmitStatus with selectedFiles?? 
+      // const addIdToUpload = selectedFiles
+    }
+  }, [filesStatus, selectedFiles])
+
+  return null;
+
 };
 
 export default Submit;
