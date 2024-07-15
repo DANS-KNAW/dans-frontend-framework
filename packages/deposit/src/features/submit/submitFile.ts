@@ -43,6 +43,17 @@ export const uploadFile = async (
 
   // convert file url to blob
   const fetchedFile = await fetch(file.url);
+
+  if (!fetchedFile.ok) {
+    throw new Error(`Failed to fetch file: ${fetchedFile.statusText}`);
+    store.dispatch(
+      setFilesSubmitStatus({
+        id: file.id,
+        status: "error",
+      }),
+    );
+  }
+
   const fileBlob = await fetchedFile.blob();
 
   // TUS upload logic

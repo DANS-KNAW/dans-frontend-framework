@@ -80,18 +80,13 @@ export const submitApi = createApi({
         return response;
       },
       transformErrorResponse: (response: FetchBaseQueryError) => {
-        // enable form again if there's an error, so user can try and resubmit
+        // flag submit as failed
+        store.dispatch(setMetadataSubmitStatus("error"));
+        // enable form again, so user can try and resubmit
         store.dispatch(setFormDisabled(false));
-        return {
-          error: {
-            ...response,
-            data: i18n.t("submitMetadataError", {
-              ns: "submit",
-              error: (response.data as any).detail || 
-                (typeof response.data === 'object' ? JSON.stringify(response.data) : response.data),
-            }),
-          },
-        };
+        return ({
+          error: i18n.t("submit:submitMetadataError", { error: response.status })
+        });
       },
     }),
   }),
