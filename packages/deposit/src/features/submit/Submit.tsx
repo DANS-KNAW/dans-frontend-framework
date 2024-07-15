@@ -155,10 +155,6 @@ const Submit = ({
                 status: "queued",
               }),
             )
-            // only call the upload function if file is not yet uploaded, or is not currently uploading
-            // TODO: modify this and file upload function to not upload more than X files in parallel 
-            // const hasStatus = filesSubmitStatus.find( f => f.id === file.id);
-            // return !file.submittedFile && !hasStatus && uploadFile(file, sessionId, formConfig.target?.envName);
           );
         }
       }),
@@ -395,8 +391,8 @@ const Submit = ({
 };
 
 const FileUploader = () => {
-  // component that manages file upload queue 
-  // Check files that have status queued, and start uploading when a spot becomes available in the queue
+  // Component that manages file upload queue.
+  // Check files that have status queued, and start uploading when a spot becomes available in the queue.
   const maxConcurrentUploads = 3;
   const filesSubmitStatus = useAppSelector(getFilesSubmitStatus);
   const selectedFiles = useAppSelector(getFiles);
