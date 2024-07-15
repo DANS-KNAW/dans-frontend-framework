@@ -371,7 +371,6 @@ const UploadProgress = ({ file }: FileItemProps) => {
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const { t } = useTranslation("files");
   const handleSingleFileUpload = () => {
-    console.log('retrying')
     dispatch(setFilesSubmitStatus({
       id: file.id,
       progress: 0,
