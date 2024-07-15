@@ -147,15 +147,17 @@ const Submit = ({
       }).then((result: { data?: any; error?: any }) => {
         if (result.data?.status === "OK") {
           // if metadata has been submitted ok, we start the file submit
-          selectedFiles.map( file => 
-            !file.submittedFile && dispatch(
+          selectedFiles.map( file => {
+            const hasStatus = filesSubmitStatus.find( f => f.id === file.id);
+            // make sure file is not already submitted or currently submitting
+            return !file.submittedFile && (!hasStatus || hasStatus?.status === 'error') && dispatch(
               setFilesSubmitStatus({
                 id: file.id,
                 progress: 0,
                 status: "queued",
               }),
             )
-          );
+          });
         }
       }),
     );

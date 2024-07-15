@@ -25,7 +25,6 @@ const manualError = async (fileName: string, fileId: string, error: any, type: s
   );
 }
 
-
 // Create a new tus upload
 export const uploadFile = async (
   file: SelectedFile, 
@@ -67,8 +66,6 @@ export const uploadFile = async (
       fileId: file.id,
       datasetId: sessionId,
     },
-    // no resume after leaving session, since we'd need to load the form first then
-    storeFingerprintForResuming: false,
     onError: function (error) {
       manualError(file.name, file.id, error, 'onError function in TUS upload');
     },
@@ -111,7 +108,15 @@ export const uploadFile = async (
       const tusId = upload.url?.split('/').pop();
       const user = getUser();
       // Due to incomplete Python TUS implementation,
-      // we do an extra api PATCH call to the server to signal succesful upload
+      // we do an extra api PATCH call to the server to signal succesful upload.
+      // Response might take a while, so lets display a spinner that informs the user
+      store.dispatch(
+        setFilesSubmitStatus({
+          id: file.id,
+          status: "finalising",
+        }),
+      );
+
       try {
         const response = await fetch(`${import.meta.env.VITE_PACKAGING_TARGET}/inbox/files/${sessionId}/${tusId}`, {
           method: 'PATCH',

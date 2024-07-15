@@ -32,6 +32,7 @@
   "fileRenamed": "Een bestand met dezelfde naam is al toegevoegd. We hebben je bestand hernoemd naar {{file}}",
   "fileAlreadyAdded": "Bestand {{file}} is al toegevoegd",
   "fileNotAllowed": "Deze bestandsnaam is niet toegestaan. Hernoem je bestand.",
+  "fileSubmitWaiting": "Server is bezig met verwerken bestand",
   "fileSubmitSuccess": "Successvol verstuurd",
   "uploadFailed": "Gefaald",
   "fileSubmitError": "Probeer opnieuw te uploaden",

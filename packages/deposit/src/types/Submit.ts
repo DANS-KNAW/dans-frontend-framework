@@ -22,6 +22,7 @@ export type SubmitStatus =
   | "submitted"
   | "error"
   | "saved"
+  | "finalising"
   | "success";
 
 export interface ReduxFileSubmitActions {
