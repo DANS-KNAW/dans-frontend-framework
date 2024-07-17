@@ -1,11 +1,10 @@
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import { ThemeWrapper } from "@dans-framework/theme";
 import { MenuBar, Footer } from "@dans-framework/layout";
 import { Deposit } from "@dans-framework/deposit";
-import { Generic, type Page } from "@dans-framework/pages";
 import {
   AuthWrapper,
   AuthRoute,
@@ -13,21 +12,22 @@ import {
   UserSubmissions,
   SignInCallback,
 } from "@dans-framework/user-auth";
+import RepoAdvisor from './config/pages/RepoAdvisor';
 
 // Load config variables
 import theme from "./config/theme";
 import footer from "./config/footer";
-import pages from "./config/pages";
 import siteTitle from "./config/siteTitle";
 import authProvider from "./config/auth";
 import form from "./config/form";
 
 const App = () => {
+  const [ repoConfig, setRepoConfig ] = useState();
   return (
     <AuthWrapper authProvider={authProvider}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
         <BrowserRouter>
-          <MenuBar pages={pages} />
+          <MenuBar pages={[]} />
           {/* Suspense to make sure languages can load first */}
           <Suspense
             fallback={
@@ -38,40 +38,49 @@ const App = () => {
           >
             <Routes>
               <Route path="signin-callback" element={<SignInCallback />} />
+              {repoConfig ? [
+                <Route
+                  path="user-settings"
+                  element={
+                    <AuthRoute>
+                      <UserSettings
+                        target={form.targetCredentials}
+                        depositSlug=""
+                      />
+                    </AuthRoute>
+                  }
+                />,
+                <Route
+                  path="user-submissions"
+                  element={
+                    <AuthRoute>
+                      <UserSubmissions depositSlug="" />
+                    </AuthRoute>
+                  }
+                />,
+                <Route
+                  key="deposit"
+                  path="deposit"
+                  element={
+                    <AuthRoute>
+                      <Deposit config={form} page={{ 
+                        name: "Deposit",
+                        id: "deposit",
+                        inMenu: false,
+                      }} />
+                    </AuthRoute>
+                  }
+                />
+              ] :
               <Route
-                path="user-settings"
+                path=""
                 element={
                   <AuthRoute>
-                    <UserSettings
-                      target={form.targetCredentials}
-                      depositSlug=""
-                    />
+                    <RepoAdvisor setRepoConfig={setRepoConfig} />
                   </AuthRoute>
                 }
               />
-              <Route
-                path="user-submissions"
-                element={
-                  <AuthRoute>
-                    <UserSubmissions depositSlug="" />
-                  </AuthRoute>
-                }
-              />
-              {(pages as Page[]).map((page) => {
-                return (
-                  <Route
-                    key={page.id}
-                    path={page.slug}
-                    element={
-                      page.template === "deposit" ?
-                        <AuthRoute>
-                          <Deposit config={form} page={page} />
-                        </AuthRoute>
-                      : <Generic {...page} />
-                    }
-                  />
-                );
-              })}
+            }
             </Routes>
           </Suspense>
         </BrowserRouter>
