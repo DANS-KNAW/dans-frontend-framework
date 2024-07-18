@@ -22,12 +22,17 @@ import authProvider from "./config/auth";
 import form from "./config/form";
 
 const App = () => {
-  const [ repoConfig, setRepoConfig ] = useState();
+  const [ repoConfig, setRepoConfig ] = useState({});
+  const configIsSet = repoConfig.hasOwnProperty('form');
   return (
     <AuthWrapper authProvider={authProvider}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
         <BrowserRouter>
-          <MenuBar pages={[]} />
+          <MenuBar 
+            pages={[]}
+            userSettings={configIsSet}
+            userSubmissions={configIsSet}
+          />
           {/* Suspense to make sure languages can load first */}
           <Suspense
             fallback={
@@ -38,7 +43,7 @@ const App = () => {
           >
             <Routes>
               <Route path="signin-callback" element={<SignInCallback />} />
-              {repoConfig ? [
+              {configIsSet ? [
                 <Route
                   path="user-settings"
                   element={

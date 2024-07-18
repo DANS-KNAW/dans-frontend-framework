@@ -15,25 +15,40 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import type { AutocompleteAPIFieldData } from "@dans-framework/deposit";
+import { AnimatePresence, motion } from "framer-motion";
+import { fetchTypeaheadApiData, postRecommendationsApiData } from "./apiHelpers";
+import { enqueueSnackbar } from "notistack";
 
 const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<any>>}) => {
   const [recommendations, setRecommendations] = useState<any>([]);
-  const [ror, setRor] = useState(null);
-  const [narcis, setNarcis] = useState(null);
-  const [depositType, setDepositType] = useState('');
-  const [fileType, setFileType] = useState('');
+  const [ror, setRor] = useState<Option | null>(null);
+  const [narcis, setNarcis] = useState<Option | null>(null);
+  const [depositType, setDepositType] = useState<string>("");
+  const [fileType, setFileType] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
 
-  const fetchRecommendations = () => {
-    // fetch the recommendations list
-    const result = ['something', 'other'];
-
-    // set state accordingly
-    setRecommendations(result);
+  const fetchRecommendations = async () => {
+    setLoading(true);
+    setError(false);
+    const result = await postRecommendationsApiData(ror!.value, narcis!.value, depositType, fileType);
+    result ? setRecommendations(result) : setError(true);
+    setLoading(false);
   }
 
   const resetRecommendations = () => {
     setRecommendations([]);
   }
+
+  useEffect(() => {
+    error && enqueueSnackbar("Something's gone wrong fetching recommendations. Please try again.", { variant: "customError" });
+  }, [error]);
+
+  const dataMissing = 
+    !ror ||
+    !narcis ||
+    !depositType ||
+    (depositType === 'dataset' && !fileType);
 
   return (
     <Container>
@@ -72,43 +87,62 @@ const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<an
               ]}
               disabled={recommendations.length > 0}
             />
-            {depositType === 'dataset' &&
-              <SelectField 
-                label="File type"
-                value={fileType}
-                onChange={setFileType}
-                options={[
-                  {label: "Audiovisual", value: "audiovisual"},
-                  {label: "Other", value: "other"},
-                ]}
-                disabled={recommendations.length > 0}
-              />
-            }
-            <Box>
-              <Button variant="contained" size="large" onClick={fetchRecommendations} disabled={recommendations.length > 0}>
-                Get recommendations
-              </Button>
-            </Box>
+            <AnimatePresence>
+              {depositType === 'dataset' &&
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <SelectField 
+                    label="File type"
+                    value={fileType}
+                    onChange={setFileType}
+                    options={[
+                      {label: "Audiovisual", value: "audiovisual"},
+                      {label: "Other", value: "other"},
+                    ]}
+                    disabled={recommendations.length > 0}
+                  />
+                </motion.div>
+              }
+            </AnimatePresence >
+            <Button 
+              variant="contained" 
+              size="large" 
+              onClick={fetchRecommendations} 
+              disabled={recommendations.length > 0 || dataMissing || loading}
+            >
+              {dataMissing ? "Complete the form to get recommendations" : "Get recommendations"}
+            </Button>
           </Paper>
-          {recommendations.length > 0 && 
-            <Paper sx={{p: 4, mt: 1}}>
-              <Typography variant="h5" mb={4}>
-                Recommended repositories
-              </Typography>
-              {recommendations.map( rec =>
-                <Box mb={2}>
-                  <Button key={rec} variant="contained" size="large" onClick={() => setRepoConfig(rec)}>
-                    Repo 1
-                  </Button>
-                </Box>
-              )}
-              <Box sx={{display: "flex", justifyContent: "flex-end"}}>
-                <Button size="large" variant="contained" onClick={resetRecommendations} color="warning">
-                  Reset recommendations
-                </Button>
-              </Box>
-            </Paper>
-          }
+          <AnimatePresence>
+            {recommendations.length > 0 && 
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+              >
+                <Paper sx={{p: 4, mt: 1}}>
+                  <Typography variant="h5" mb={4}>
+                    Recommended repositories
+                  </Typography>
+                  {recommendations.map( (rec: any) =>
+                    <Box mb={2}>
+                      <Button key={rec} variant="contained" size="large" onClick={() => setRepoConfig(rec)}>
+                        Repo 1
+                      </Button>
+                    </Box>
+                  )}
+                  <Box sx={{display: "flex", justifyContent: "flex-end"}}>
+                    <Button size="large" variant="contained" onClick={resetRecommendations} color="warning">
+                      Reset recommendations
+                    </Button>
+                  </Box>
+                </Paper>
+              </motion.div>
+            }
+          </AnimatePresence >
         </Grid>
       </Grid>
     </Container>
@@ -142,58 +176,6 @@ const SelectField = ({label, value, onChange, options, disabled}: {
     </FormControl>
   </Box>
 
-// Basic API fetching function, based on the API calls in the Deposit package
-const fetchData = async (
-  type: string, 
-  setData: (option: AutocompleteAPIFieldData) => void, 
-  debouncedInputValue: string, 
-  setLoading: (b: boolean) => void
-) => {
-  const uri = 
-    type === 'ror' ?
-    `https://api.ror.org/organizations?query.advanced=name:${debouncedInputValue}*` :
-    type === 'narcis' ?
-    `https://vocabs.datastations.nl/rest/v1/NARCIS/search?query=${debouncedInputValue}*&unique=true&lang=en` :
-    '';
-  try {
-    const result = await fetch(uri, {
-      headers: { Accept: "application/json" }
-    });
-    const json = await result.json();
-    const transformResult = 
-      type === 'ror' ?
-        (json.number_of_results > 0 ? 
-          {
-            arg: debouncedInputValue,
-            response: json.items.map((item: any) => ({
-              label: item.name,
-              value: item.id,
-              extraLabel: "country",
-              extraContent: item.country.country_name,
-            }))
-          } : 
-          []
-        ) :
-      type === 'narcis' ?
-        (json.results.length > 0 ? 
-          {
-            arg: debouncedInputValue,
-            response: json.results.map((item: any) => ({
-              label: item.prefLabel,
-              value: item.uri,
-              id: item.localname,
-            })).filter(Boolean),
-          } :
-          []
-        ) :
-      [];
-    setData(transformResult as AutocompleteAPIFieldData);
-  } catch (error) {
-    console.error(error);
-  }
-  setLoading(false);
-}
-
 // Derived from the API field in the Deposit package
 const ApiField = ({type, label, value, setValue, disabled}: {
   type: string;
@@ -204,16 +186,21 @@ const ApiField = ({type, label, value, setValue, disabled}: {
 }) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [data, setData] = useState<AutocompleteAPIFieldData>();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
+
+  useEffect(() => {
+    error && enqueueSnackbar(`Could not reach the ${type} database`, { variant: "customError" });
+  }, [error])
   
   useEffect( () => {
-    debouncedInputValue && fetchData(
-      type, 
-      setData, 
-      debouncedInputValue,
-      setLoading
-    ); 
+    const fetchData = async () => {
+      const results = await fetchTypeaheadApiData(type, debouncedInputValue);
+      results ? setData(results) : setError(true);
+      setLoading(false);
+    };
+    debouncedInputValue && fetchData();
   }, [debouncedInputValue]);
 
   useEffect( () => {
