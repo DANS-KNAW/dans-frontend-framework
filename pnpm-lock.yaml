@@ -56,9 +56,15 @@ importers:
       '@mui/material':
         specifier: ^5.14.3
         version: 5.14.3(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)
+      framer-motion:
+        specifier: ^10.15.0
+        version: 10.15.0(react-dom@18.2.0)(react@18.2.0)
       lz-string:
         specifier: ^1.5.0
         version: 1.5.0
+      notistack:
+        specifier: ^3.0.1
+        version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -68,6 +74,9 @@ importers:
       react-router-dom:
         specifier: ^6.14.2
         version: 6.14.2(react-dom@18.2.0)(react@18.2.0)
+      use-debounce:
+        specifier: ^9.0.4
+        version: 9.0.4(react@18.2.0)
       web-vitals:
         specifier: ^3.4.0
         version: 3.4.0
@@ -1977,7 +1986,7 @@ packages:
     peerDependencies:
       react: ^17.0.0 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.22.10
+      '@babel/runtime': 7.23.2
       '@types/prop-types': 15.7.9
       '@types/react-is': 18.2.1
       prop-types: 15.8.1
