@@ -4,7 +4,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import { ThemeWrapper } from "@dans-framework/theme";
 import { MenuBar, Footer } from "@dans-framework/layout";
-import { Deposit } from "@dans-framework/deposit";
+import { Deposit, type FormConfig } from "@dans-framework/deposit";
 import {
   AuthWrapper,
   AuthRoute,
@@ -13,7 +13,6 @@ import {
   SignInCallback,
 } from "@dans-framework/user-auth";
 import RepoAdvisor, { NoRepoSelected, CurrentlySelected } from './config/pages/RepoAdvisor';
-import type { ExtendedFormConfig } from "./config/pages/apiHelpers";
 
 // Load config variables
 import pages from "./config/pages";
@@ -24,7 +23,7 @@ import authProvider from "./config/auth";
 import { AnimatePresence, motion } from "framer-motion";
 
 const App = () => {
-  const [ repoConfig, setRepoConfig ] = useState<ExtendedFormConfig>();
+  const [ repoConfig, setRepoConfig ] = useState<FormConfig>();
   const configIsSet = repoConfig?.hasOwnProperty('form') || false;
   return (
     <AuthWrapper authProvider={authProvider}>
@@ -36,9 +35,9 @@ const App = () => {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                key={repoConfig?.displayName.en}
+                key={repoConfig?.displayName?.en}
               >
-                <CurrentlySelected repo={repoConfig?.displayName.en as string} />
+                <CurrentlySelected repo={repoConfig?.displayName?.en as string} />
               </motion.div>
             }
           </AnimatePresence>

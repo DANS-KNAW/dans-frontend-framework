@@ -68,4 +68,6 @@ export interface FormConfig {
     embargoDateMax?: number;
     maxSize?: number;
   };
+  displayName?: LanguageStrings;
+  description?: LanguageStrings;
 }
