@@ -12,24 +12,39 @@ import {
   UserSubmissions,
   SignInCallback,
 } from "@dans-framework/user-auth";
-import RepoAdvisor from './config/pages/RepoAdvisor';
+import RepoAdvisor, { NoRepoSelected, CurrentlySelected } from './config/pages/RepoAdvisor';
+import type { ExtendedFormConfig } from "./config/pages/apiHelpers";
 
 // Load config variables
+import pages from "./config/pages";
 import theme from "./config/theme";
 import footer from "./config/footer";
 import siteTitle from "./config/siteTitle";
 import authProvider from "./config/auth";
 import form from "./config/form";
+import { AnimatePresence, motion } from "framer-motion";
 
 const App = () => {
-  const [ repoConfig, setRepoConfig ] = useState({});
-  const configIsSet = repoConfig.hasOwnProperty('form');
+  const [ repoConfig, setRepoConfig ] = useState<ExtendedFormConfig>();
+  const configIsSet = repoConfig?.hasOwnProperty('form') || false;
   return (
     <AuthWrapper authProvider={authProvider}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
         <BrowserRouter>
+          <AnimatePresence>
+            { configIsSet && 
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                key={repoConfig?.displayName.en}
+              >
+                <CurrentlySelected repo={repoConfig?.displayName.en as string} />
+              </motion.div>
+            }
+          </AnimatePresence>
           <MenuBar 
-            pages={[]}
+            pages={pages}
             userSettings={configIsSet}
             userSubmissions={configIsSet}
           />
@@ -43,40 +58,6 @@ const App = () => {
           >
             <Routes>
               <Route path="signin-callback" element={<SignInCallback />} />
-              {configIsSet ? [
-                <Route
-                  path="user-settings"
-                  element={
-                    <AuthRoute>
-                      <UserSettings
-                        target={form.targetCredentials}
-                        depositSlug=""
-                      />
-                    </AuthRoute>
-                  }
-                />,
-                <Route
-                  path="user-submissions"
-                  element={
-                    <AuthRoute>
-                      <UserSubmissions depositSlug="" />
-                    </AuthRoute>
-                  }
-                />,
-                <Route
-                  key="deposit"
-                  path="deposit"
-                  element={
-                    <AuthRoute>
-                      <Deposit config={form} page={{ 
-                        name: "Deposit",
-                        id: "deposit",
-                        inMenu: false,
-                      }} />
-                    </AuthRoute>
-                  }
-                />
-              ] :
               <Route
                 path=""
                 element={
@@ -85,7 +66,55 @@ const App = () => {
                   </AuthRoute>
                 }
               />
-            }
+              <Route
+                path="user-settings"
+                element={
+                  <AuthRoute>
+                    {configIsSet ?
+                      <UserSettings
+                        target={form.targetCredentials}
+                        depositSlug=""
+                      /> :
+                      <NoRepoSelected />
+                    }
+                  </AuthRoute>
+                }
+              />
+              <Route
+                path="user-submissions"
+                element={
+                  <AuthRoute>
+                    {configIsSet ?
+                      <UserSubmissions depositSlug="" /> :
+                      <NoRepoSelected />
+                    }
+                  </AuthRoute>
+                }
+              />
+              <Route
+                key="deposit"
+                path="deposit"
+                element={
+                  <AuthRoute>
+                    {configIsSet ?
+                      <Deposit config={form} page={{ 
+                        name: "Deposit",
+                        id: "deposit",
+                        inMenu: true,
+                      }} /> :
+                      <NoRepoSelected />
+                    }
+                  </AuthRoute>
+                }
+              />
+              <Route
+                path="*"
+                element={
+                  <AuthRoute>
+                    <NoRepoSelected />
+                  </AuthRoute>
+                }
+              />
             </Routes>
           </Suspense>
         </BrowserRouter>

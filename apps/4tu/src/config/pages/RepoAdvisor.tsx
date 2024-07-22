@@ -1,4 +1,5 @@
-import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
+import { useState, useEffect, Fragment, type Dispatch, type SetStateAction } from "react";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import Stack from '@mui/material/Stack';
 import CircularProgress from '@mui/material/CircularProgress';
 import Paper from '@mui/material/Paper';
@@ -16,17 +17,23 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import type { AutocompleteAPIFieldData } from "@dans-framework/deposit";
 import { AnimatePresence, motion } from "framer-motion";
-import { fetchTypeaheadApiData, postRecommendationsApiData } from "./apiHelpers";
+import { fetchTypeaheadApiData, postRecommendationsApiData, type ExtendedFormConfig } from "./apiHelpers";
 import { enqueueSnackbar } from "notistack";
+import Link from '@mui/material/Link';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import Divider from '@mui/material/Divider';
+import ListItemText from '@mui/material/ListItemText';
 
 const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<any>>}) => {
-  const [recommendations, setRecommendations] = useState<any>([]);
+  const [recommendations, setRecommendations] = useState<ExtendedFormConfig[]>([]);
   const [ror, setRor] = useState<Option | null>(null);
   const [narcis, setNarcis] = useState<Option | null>(null);
   const [depositType, setDepositType] = useState<string>("");
   const [fileType, setFileType] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const fetchRecommendations = async () => {
     setLoading(true);
@@ -34,10 +41,22 @@ const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<an
     const result = await postRecommendationsApiData(ror!.value, narcis!.value, depositType, fileType);
     result ? setRecommendations(result) : setError(true);
     setLoading(false);
+    // and scroll down a bit to show recommendations
+    const recs = document.getElementById("recommendations");
+    recs && recs.scrollIntoView({
+      behavior: 'smooth'
+    });
   }
 
   const resetRecommendations = () => {
     setRecommendations([]);
+  }
+
+  const pickRepo = (repo: ExtendedFormConfig) => {
+    // set repo and redirect to deposit
+    setRepoConfig(repo);
+    navigate("/deposit");
+    window.scrollTo({top: 0, behavior: "smooth"});
   }
 
   useEffect(() => {
@@ -116,6 +135,7 @@ const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<an
               {dataMissing ? "Complete the form to get recommendations" : "Get recommendations"}
             </Button>
           </Paper>
+          <div id="recommendations" />
           <AnimatePresence>
             {recommendations.length > 0 && 
               <motion.div
@@ -124,16 +144,31 @@ const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<an
                 exit={{ opacity: 0, y: -10 }}
               >
                 <Paper sx={{p: 4, mt: 1}}>
-                  <Typography variant="h5" mb={4}>
+                  <Typography variant="h5" mb={1}>
                     Recommended repositories
                   </Typography>
-                  {recommendations.map( (rec: any) =>
-                    <Box mb={2}>
-                      <Button key={rec} variant="contained" size="large" onClick={() => setRepoConfig(rec)}>
-                        Repo 1
-                      </Button>
-                    </Box>
-                  )}
+                  <List sx={{mb: 2}}>
+                    {recommendations.map( (rec, i) =>
+                      <Fragment key={i}>
+                        <ListItem 
+                          alignItems="flex-start"
+                          disableGutters
+                          secondaryAction={
+                            <Button key={i} variant="contained" onClick={() => pickRepo(rec)}>
+                              Deposit
+                            </Button>
+                          }
+                        >
+                         <ListItemText
+                            primary={rec.displayName.en}
+                            secondary={rec.description.en}
+                            sx={{pr: 6}}
+                          />
+                        </ListItem>
+                        {i < recommendations.length - 1 && <Divider component="li" />}
+                      </Fragment>
+                    )}
+                  </List>
                   <Box sx={{display: "flex", justifyContent: "flex-end"}}>
                     <Button size="large" variant="contained" onClick={resetRecommendations} color="warning">
                       Reset recommendations
@@ -258,5 +293,30 @@ const ApiField = ({type, label, value, setValue, disabled}: {
     </Box>
   );
 };
+
+export const NoRepoSelected = () => 
+  <Container>
+    <Grid container justifyContent="center">
+      <Grid xs={12} sm={11} md={8} lg={7} xl={6} mt={4}>
+        <Typography variant="h1">Select a repository first</Typography>
+        <Typography>
+          Please go to the <Link component={RouterLink} to="/">repository advisor</Link> and fill in the form to get recommendations.
+        </Typography>
+      </Grid>
+    </Grid>
+  </Container>
+
+export const CurrentlySelected = ({repo}: {repo: string}) => 
+  <Box sx={{ backgroundColor: "primary.dark"}}>
+    <Container>
+      <Grid container>
+        <Grid>
+          <Typography variant="caption" sx={{ color: "white" }}>
+            Active repository: {repo}
+          </Typography>
+        </Grid>
+      </Grid>
+    </Container>
+  </Box>
 
 export default RepoAdvisor;

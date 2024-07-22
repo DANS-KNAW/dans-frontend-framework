@@ -630,9 +630,6 @@ importers:
 
   packages/rdt-search-ui:
     dependencies:
-      '@dans-framework/utils':
-        specifier: workspace:*
-        version: link:../utils
       '@elastic/elasticsearch':
         specifier: ^8.10.0
         version: 8.10.0
@@ -648,18 +645,9 @@ importers:
       echarts:
         specifier: ^5.4.2
         version: 5.4.3
-      framer-motion:
-        specifier: ^10.15.0
-        version: 10.15.0(react-dom@18.2.0)(react@18.2.0)
       html-react-parser:
         specifier: ^4.2.2
         version: 4.2.2(react@18.2.0)
-      i18next:
-        specifier: ^23.4.1
-        version: 23.4.1
-      i18next-resources-to-backend:
-        specifier: ^1.1.4
-        version: 1.1.4
       lodash.debounce:
         specifier: ^4.0.8
         version: 4.0.8
@@ -669,21 +657,12 @@ importers:
       ngeohash:
         specifier: ^0.6.3
         version: 0.6.3
-      notistack:
-        specifier: ^3.0.1
-        version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
       ol:
         specifier: ^7.3.0
         version: 7.5.2
       react:
         specifier: ^18.2.0
         version: 18.2.0
-      react-i18next:
-        specifier: ^13.0.3
-        version: 13.0.3(i18next@23.4.1)(react-dom@18.2.0)(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.14.2
-        version: 6.14.2(react-dom@18.2.0)(react@18.2.0)
       styled-components:
         specifier: ^5.3.10
         version: 5.3.10(@babel/core@7.22.10)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
@@ -715,9 +694,6 @@ importers:
       typescript:
         specifier: ^5.0.3
         version: 5.1.6
-      vite:
-        specifier: ^4.4.5
-        version: 4.4.5(@types/node@18.0.6)
 
   packages/theme:
     dependencies:

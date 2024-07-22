@@ -1,5 +1,21 @@
-import deposit from "./pages/deposit";
+import type { Page } from "@dans-framework/pages";
 
-const pages = [deposit];
+const depositPage: Page = {
+  id: "deposit",
+  name: "Deposit",
+  slug: "deposit",
+  template: "deposit",
+  inMenu: true,
+  menuTitle: "Deposit",
+};
 
-export default pages;
+const advisorPage: Page = {
+  id: "advisor",
+  name: "Advisor",
+  slug: "/",
+  template: "deposit",
+  inMenu: true,
+  menuTitle: "Advisor",
+};
+
+export default [ advisorPage, depositPage ];

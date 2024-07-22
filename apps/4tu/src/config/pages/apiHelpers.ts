@@ -1,4 +1,11 @@
 import type { AutocompleteAPIFieldData } from "@dans-framework/deposit";
+import type { FormConfig } from "@dans-framework/deposit";
+import type { LanguageStrings } from "@dans-framework/utils";
+
+export interface ExtendedFormConfig extends FormConfig {
+  displayName: LanguageStrings;
+  description: LanguageStrings;
+} 
 
 export const postRecommendationsApiData = async (
   ror: string | null, 
@@ -7,19 +14,21 @@ export const postRecommendationsApiData = async (
   fileType: string
 ) => {
   try {
-    /*const result = await fetch(``, {
+    const result = await fetch(`https://repository-assistant.labs.dansdemo.nl/seek-advice`, {
       method: "POST",
-      headers: { Accept: "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: "Bearer @km1-10122004-lamA!M@rdh1yy@h@51nnur1@hK",
+      },
       body: JSON.stringify({
         affiliation: ror,
         domain: narcis,
-        depositType: depositType,
-        fileType: fileType,
+        "deposit-type": depositType,
+        ...(fileType && { "file-type": fileType }),
       }),
     });
     const json = await result.json();
-    return json;*/
-    return ['fake1', 'fake2'];
+    return json.advice as ExtendedFormConfig[];
   } catch (error) {
     console.error(error);
     return false;
