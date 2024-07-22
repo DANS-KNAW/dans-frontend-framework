@@ -35,7 +35,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { Link as RouterLink } from "react-router-dom";
-import { setData, setFormDisabled } from "./depositSlice";
+import { setData, setFormDisabled, getData } from "./depositSlice";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import {
@@ -71,6 +71,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // const [formAction, setFormAction] = useState(getFormActions());
   const formAction = getFormActions();
   const formTouched = useAppSelector(getTouchedStatus);
+  const currentConfig = useAppSelector(getData);
 
   // Can load a saved form based on metadata id, passed along from UserSubmissions.
   // Set form behaviour based on action param.
@@ -153,6 +154,19 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     // Set init form props in redux, all props without the form metadata config itself
     dispatch(setData(config));
   }, []);
+
+  // For external form selection from the pre-form advisor without reloading the app,
+  // we listen for changes to the form object, and initiate a new form when it changes
+  useEffect(() => {
+    if (config.displayName && (!currentConfig.displayName || (currentConfig.displayName.en !== config.displayName.en))) {
+      dispatch(resetMetadataSubmitStatus());
+      dispatch(resetFilesSubmitStatus());
+      dispatch(resetFiles());
+      dispatch(setFormDisabled(false));
+      dispatch(initForm(config.form));
+      setDataMessage(false);
+    }
+  }, [config, currentConfig]);
 
   // Check the user object if target credentials are filled in
   const targetCredentials =

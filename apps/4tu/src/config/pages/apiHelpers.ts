@@ -1,11 +1,5 @@
 import type { AutocompleteAPIFieldData } from "@dans-framework/deposit";
 import type { FormConfig } from "@dans-framework/deposit";
-import type { LanguageStrings } from "@dans-framework/utils";
-
-export interface ExtendedFormConfig extends FormConfig {
-  displayName: LanguageStrings;
-  description: LanguageStrings;
-} 
 
 export const postRecommendationsApiData = async (
   ror: string | null, 
@@ -28,7 +22,7 @@ export const postRecommendationsApiData = async (
       }),
     });
     const json = await result.json();
-    return json.advice as ExtendedFormConfig[];
+    return json.advice as FormConfig[];
   } catch (error) {
     console.error(error);
     return false;

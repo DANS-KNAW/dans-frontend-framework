@@ -15,9 +15,9 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import type { AutocompleteAPIFieldData } from "@dans-framework/deposit";
+import type { AutocompleteAPIFieldData, FormConfig } from "@dans-framework/deposit";
 import { AnimatePresence, motion } from "framer-motion";
-import { fetchTypeaheadApiData, postRecommendationsApiData, type ExtendedFormConfig } from "./apiHelpers";
+import { fetchTypeaheadApiData, postRecommendationsApiData } from "./apiHelpers";
 import { enqueueSnackbar } from "notistack";
 import Link from '@mui/material/Link';
 import List from '@mui/material/List';
@@ -26,7 +26,7 @@ import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 
 const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<any>>}) => {
-  const [recommendations, setRecommendations] = useState<ExtendedFormConfig[]>([]);
+  const [recommendations, setRecommendations] = useState<FormConfig[]>([]);
   const [ror, setRor] = useState<Option | null>(null);
   const [narcis, setNarcis] = useState<Option | null>(null);
   const [depositType, setDepositType] = useState<string>("");
@@ -52,7 +52,7 @@ const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<an
     setRecommendations([]);
   }
 
-  const pickRepo = (repo: ExtendedFormConfig) => {
+  const pickRepo = (repo: FormConfig) => {
     // set repo and redirect to deposit
     setRepoConfig(repo);
     navigate("/deposit");
@@ -160,8 +160,8 @@ const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<an
                           }
                         >
                          <ListItemText
-                            primary={rec.displayName.en}
-                            secondary={rec.description.en}
+                            primary={rec.displayName?.en}
+                            secondary={rec.description?.en}
                             sx={{pr: 6}}
                           />
                         </ListItem>
