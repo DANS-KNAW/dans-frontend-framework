@@ -21,7 +21,6 @@ import theme from "./config/theme";
 import footer from "./config/footer";
 import siteTitle from "./config/siteTitle";
 import authProvider from "./config/auth";
-import form from "./config/form";
 import { AnimatePresence, motion } from "framer-motion";
 
 const App = () => {
@@ -70,9 +69,9 @@ const App = () => {
                 path="user-settings"
                 element={
                   <AuthRoute>
-                    {configIsSet ?
+                    {repoConfig ?
                       <UserSettings
-                        target={form.targetCredentials}
+                        target={repoConfig.targetCredentials}
                         depositSlug=""
                       /> :
                       <NoRepoSelected />
@@ -84,7 +83,7 @@ const App = () => {
                 path="user-submissions"
                 element={
                   <AuthRoute>
-                    {configIsSet ?
+                    {repoConfig ?
                       <UserSubmissions depositSlug="" /> :
                       <NoRepoSelected />
                     }
@@ -96,12 +95,15 @@ const App = () => {
                 path="deposit"
                 element={
                   <AuthRoute>
-                    {configIsSet ?
-                      <Deposit config={form} page={{ 
-                        name: "Deposit",
-                        id: "deposit",
-                        inMenu: true,
-                      }} /> :
+                    {repoConfig ?
+                      <Deposit 
+                        config={repoConfig} 
+                        page={{ 
+                          name: "Deposit",
+                          id: "deposit",
+                          inMenu: true,
+                        }} 
+                      /> :
                       <NoRepoSelected />
                     }
                   </AuthRoute>
