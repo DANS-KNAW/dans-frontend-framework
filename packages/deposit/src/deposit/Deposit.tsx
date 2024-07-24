@@ -26,6 +26,7 @@ import {
 import {
   resetFilesSubmitStatus,
   resetMetadataSubmitStatus,
+  getMetadataSubmitStatus,
 } from "../features/submit/submitSlice";
 import { getFiles, resetFiles, addFiles } from "../features/files/filesSlice";
 import { StatusIcon } from "../features/generic/Icons";
@@ -68,7 +69,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const { t, i18n } = useTranslation("generic");
   const siteTitle = useSiteTitle();
   const [dataMessage, setDataMessage] = useState(false);
-  // const [formAction, setFormAction] = useState(getFormActions());
   const formAction = getFormActions();
   const formTouched = useAppSelector(getTouchedStatus);
   const currentConfig = useAppSelector(getData);
@@ -193,88 +193,10 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
         <Grid container>
           <Grid xs={12} mt={4}>
             {/* Shows user a message about current form state */}
-            <Collapse in={dataMessage}>
-              <Alert
-                severity={formAction.action === "resubmit" ? "error" : "info"}
-                data-testid="data-message"
-                onClose={() => {
-                  setDataMessage(false);
-                }}
-                sx={{
-                  position: "relative",
-                  "& .MuiAlert-message": {
-                    flex: 1,
-                  },
-                  "& .MuiAlert-action": {
-                    position: "absolute",
-                    right: "0.75rem",
-                    marginRight: 0,
-                  },
-                }}
-              >
-                <AlertTitle>
-                  {formAction.action === "resubmit" ?
-                    t("dataMessageHeaderResubmit", {
-                      title:
-                        (serverFormData && serverFormData.title) ||
-                        t("untitled"),
-                    })
-                  : formAction.action === "copy" ?
-                    t("dataMessageHeaderCopy", {
-                      title:
-                        (serverFormData && serverFormData.title) ||
-                        t("untitled"),
-                    })
-                  : formAction.action === "load" ?
-                    t("dataMessageHeaderLoad", {
-                      title:
-                        (serverFormData && serverFormData.title) ||
-                        t("untitled"),
-                    })
-                  : formAction.action === "view" ?
-                    t("dataMessageHeaderView", {
-                      title:
-                        (serverFormData && serverFormData.title) ||
-                        t("untitled"),
-                    })
-                  : t("dataMessageHeader")}
-                </AlertTitle>
-                <Typography mb={1}>
-                  {formAction.action === "resubmit" ?
-                    t("dataMessageContentResubmit")
-                  : formAction.action === "copy" ?
-                    t("dataMessageContentCopy")
-                  : formAction.action === "load" ?
-                    t("dataMessageContentLoad")
-                  : formAction.action === "view" ?
-                    t("dataMessageContentView")
-                  : t("dataMessageContent")}
-                </Typography>
-                <Stack
-                  justifyContent="flex-end"
-                  direction="row"
-                  alignItems="center"
-                >
-                  <Typography mb={0} mr={2} variant="h6">
-                    {formAction.action === "view" ?
-                      t("dataResetHeaderView")
-                    : t("dataResetHeader")}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      dispatch(resetMetadata());
-                      setDataMessage(false);
-                      clearFormActions();
-                    }}
-                    color="warning"
-                  >
-                    {t("dataResetButton")}
-                  </Button>
-                </Stack>
-              </Alert>
-            </Collapse>
-
+            <ActionMessage 
+              dataMessage={dataMessage}
+              setDataMessage={setDataMessage} 
+            />
             {/* The form. Show an overlay if there's no API key filled in */}
             <Box sx={{ position: "relative" }}>
               {!hasTargetCredentials &&
@@ -376,5 +298,109 @@ const TabPanel = ({ children, value, index }: TabPanelProps) => {
       </motion.div>
     : null;
 };
+
+const ActionMessage = ({
+  dataMessage, 
+  setDataMessage, 
+}: {
+  dataMessage: boolean;
+  setDataMessage: (arg: boolean) => void;
+}) => {
+  const { t } = useTranslation("generic");
+  const dispatch = useAppDispatch();
+  const formAction = getFormActions();
+  const { data } = useFetchSavedMetadataQuery(formAction.id, { 
+    skip: !formAction.id 
+  });
+  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
+
+  return (
+    <Collapse in={dataMessage}>
+      <Alert
+        severity={formAction.action === "resubmit" ? "error" : "info"}
+        data-testid="data-message"
+        onClose={() => {
+          setDataMessage(false);
+        }}
+        sx={{
+          position: "relative",
+          "& .MuiAlert-message": {
+            flex: 1,
+          },
+          "& .MuiAlert-action": {
+            position: "absolute",
+            right: "0.75rem",
+            marginRight: 0,
+          },
+        }}
+      >
+        <AlertTitle>
+          {formAction.action === "resubmit" ?
+            t("dataMessageHeaderResubmit", {
+              title:
+                (data && data.title) ||
+                t("untitled"),
+            })
+          : formAction.action === "copy" ?
+            t("dataMessageHeaderCopy", {
+              title:
+                (data && data.title) ||
+                t("untitled"),
+            })
+          : formAction.action === "load" ?
+            t("dataMessageHeaderLoad", {
+              title:
+                (data && data.title) ||
+                t("untitled"),
+            })
+          : formAction.action === "view" ?
+            t("dataMessageHeaderView", {
+              title:
+                (data && data.title) ||
+                t("untitled"),
+            })
+          : metadataSubmitStatus === "submitted" ?
+            t("dataMessageHeaderSubmitted")
+          : t("dataMessageHeader")}
+        </AlertTitle>
+        <Typography mb={1}>
+          {formAction.action === "resubmit" ?
+            t("dataMessageContentResubmit")
+          : formAction.action === "copy" ?
+            t("dataMessageContentCopy")
+          : formAction.action === "load" ?
+            t("dataMessageContentLoad")
+          : formAction.action === "view" ?
+            t("dataMessageContentView")
+          : metadataSubmitStatus === "submitted" ?
+            t("dataMessageContentSubmitted")
+          : t("dataMessageContent")}
+        </Typography>
+        <Stack
+          justifyContent="flex-end"
+          direction="row"
+          alignItems="center"
+        >
+          <Typography mb={0} mr={2} variant="h6">
+            {formAction.action === "view" ?
+              t("dataResetHeaderView")
+            : t("dataResetHeader")}
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={() => {
+              dispatch(resetMetadata());
+              setDataMessage(false);
+              clearFormActions();
+            }}
+            color="warning"
+          >
+            {t("dataResetButton")}
+          </Button>
+        </Stack>
+      </Alert>
+    </Collapse>
+  )
+}
 
 export default Deposit;
