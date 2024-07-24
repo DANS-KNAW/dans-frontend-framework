@@ -23,7 +23,6 @@ const Form = () => {
   const handleChange =
     (panel: string) => (_e: SyntheticEvent, isExpanded: boolean) => {
       dispatch(setOpenPanel(isExpanded ? panel : ""));
-      console.log(isExpanded)
     };
 
   return (
