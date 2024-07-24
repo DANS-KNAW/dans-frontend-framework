@@ -1,4 +1,3 @@
-import languageList from "../data/languageList.json";
 import type { InitialSectionType } from "@dans-framework/deposit";
 
 const section: InitialSectionType = {
@@ -20,7 +19,7 @@ const section: InitialSectionType = {
         en: "Provide the language the interview was held in",
         nl: "Geef de taal waarin het interview is gehouden op",
       },
-      options: languageList,
+      options: "languageList",
     },
     {
       type: "autocomplete",
@@ -35,7 +34,7 @@ const section: InitialSectionType = {
         en: "Provide the language(s) of the metadata you've entered, e.g. the description and title",
         nl: "Geef de taal of talen op van deze metadata, denk bijvoorbeeld aan titel en bescrijving",
       },
-      options: languageList,
+      options: "languageList",
     },
     {
       type: "text",
