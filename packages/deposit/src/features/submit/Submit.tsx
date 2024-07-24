@@ -165,6 +165,7 @@ const Submit = ({
 
   // Autosave functionality, debounced on metadata change
   const autoSave = useDebouncedCallback(() => {
+    // on autosave, we send along file metadata, but not the actual files
     if (!formDisabled && isTouched) {
       submitData({ 
         user: auth.user, 
@@ -172,8 +173,8 @@ const Submit = ({
         id: sessionId,
         metadata: metadata, 
         config: formConfig,
-        // don't send along files on autosave and set flag autoSave, so we don't show a snackbar each time
-        files: [],
+        files: selectedFiles,
+        // set flag autoSave, so we don't show a snackbar each time
         autoSave: true,
       });
     }
