@@ -34,15 +34,10 @@ export const UserMenu = ({
 
   // if we get an error renewing the token, just sign the user out
   useEffect(() => {
-    const getSessionStatus = async () => {
-      const sessionStatus = await auth.querySessionStatus();
-      console.log(sessionStatus);
-    }
-    getSessionStatus();
-    return auth.events.addSilentRenewError(() => {
+    auth.events.addSilentRenewError(() => {
       console.error('Auth event: silent renew error. Signing user out.');
       auth.removeUser();
-    })
+    });
   }, [auth.events, auth.removeUser]);
 
   if (auth.isAuthenticated && auth.user) {
