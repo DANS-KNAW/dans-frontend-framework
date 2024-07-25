@@ -125,32 +125,34 @@ export const uploadFile = async (
             "auth-env-name": target,
           },
         });
-        const json = await response.json();
-        console.log(json);
-
-        // set file status to success
-        store.dispatch(
-          setFileMeta({
-            id: file.id,
-            type: "submittedFile",
-            value: true,
-          }),
-        );
-        store.dispatch(
-          setFilesSubmitStatus({
-            id: file.id,
-            status: "success",
-          }),
-        );
-        enqueueSnackbar(
-          i18n.t("uploadSuccess", {
-            ns: "submit",
-            file: file.name,
-          }),
-          {
-            variant: "success",
-          },
-        );
+        // check if patch result is ok
+        if (response.status === 200) {
+          // set file status to success
+          store.dispatch(
+            setFileMeta({
+              id: file.id,
+              type: "submittedFile",
+              value: true,
+            }),
+          );
+          store.dispatch(
+            setFilesSubmitStatus({
+              id: file.id,
+              status: "success",
+            }),
+          );
+          enqueueSnackbar(
+            i18n.t("uploadSuccess", {
+              ns: "submit",
+              file: file.name,
+            }),
+            {
+              variant: "success",
+            },
+          );
+        } else {
+          manualError(file.name, file.id, 'PATCH call failed', `PATCH call gave an invalid response ${response.status}`);
+        }
       } catch(error){
         // on error, file must be set to failed, as server can't processed it properly
         manualError(file.name, file.id, error, 'error dispatching PATCH call to inbox/files/{sessionID}/{tusID}');

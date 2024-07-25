@@ -32,6 +32,7 @@ import AutocompleteField, { InfoLink, InfoChip } from "./AutocompleteField";
 import { getFormDisabled } from "../../../deposit/depositSlice";
 import { useFetchLicencesQuery } from "../api/licences";
 import { useFetchSshLicencesQuery } from "../api/sshLicences";
+import { useFetchLanguagesQuery } from "../api/languages";
 import {
   useFetchGorcQuery,
   useFetchRdaWorkingGroupQuery,
@@ -225,6 +226,27 @@ export const LicensesField = ({
   // Fetch data right away
   const { data, isFetching, isLoading } =
     useFetchLicencesQuery<QueryReturnType>(null);
+  const newField = {
+    ...field,
+    options: data && data.response ? data.response : [],
+  };
+
+  return (
+    <AutocompleteField
+      field={newField}
+      sectionIndex={sectionIndex}
+      isLoading={isLoading || isFetching}
+    />
+  );
+};
+
+export const LanguagesField = ({
+  field,
+  sectionIndex,
+}: AutocompleteFieldProps) => {
+  // Fetch data right away
+  const { data, isFetching, isLoading } =
+    useFetchLanguagesQuery<QueryReturnType>(null);
   const newField = {
     ...field,
     options: data && data.response ? data.response : [],
