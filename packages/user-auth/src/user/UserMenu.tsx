@@ -27,10 +27,23 @@ export const UserMenu = ({
   const [hasTriedSignin, setHasTriedSignin] = useState(false);
   useEffect(() => {
     if (!hasAuthParams() && !auth.isAuthenticated && !auth.activeNavigator && !auth.isLoading && !hasTriedSignin) {
-      void auth.signinSilent();
+      auth.signinSilent();
       setHasTriedSignin(true);
     }
   }, [auth, hasTriedSignin]);
+
+  // if we get an error renewing the token, just sign the user out
+  useEffect(() => {
+    const getSessionStatus = async () => {
+      const sessionStatus = await auth.querySessionStatus();
+      console.log(sessionStatus);
+    }
+    getSessionStatus();
+    return auth.events.addSilentRenewError(() => {
+      console.error('Auth event: silent renew error. Signing user out.');
+      auth.removeUser();
+    })
+  }, [auth.events, auth.removeUser]);
 
   if (auth.isAuthenticated && auth.user) {
     return (

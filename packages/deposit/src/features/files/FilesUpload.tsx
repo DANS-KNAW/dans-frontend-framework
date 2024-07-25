@@ -50,6 +50,13 @@ const FilesUpload = () => {
       };
     }
 
+    if (!file.size || file.size === 0) {
+      return {
+        code: "file-invalid",
+        message: t("fileNoSize"),
+      };
+    }
+
     // No duplicate files
     const extensionIndex = file.name.lastIndexOf(".");
     const baseName = file.name.slice(0, extensionIndex);

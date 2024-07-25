@@ -149,8 +149,9 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     // Show a message when data's been entered previously.
     // Give option to clear form and start again.
     ((sessionId && formTouched) || formAction.id) && setDataMessage(true);
-    // Update user on initial render, makes sure all keys are up-to-date
-    auth.signinSilent();
+    // Update user on initial render, makes sure all target credentials are up-to-date. 
+    // Also remove user immediately, should there be an error..
+    auth.signinSilent().catch(() => auth.removeUser());
     // Set init form props in redux, all props without the form metadata config itself
     dispatch(setData(config));
   }, []);
