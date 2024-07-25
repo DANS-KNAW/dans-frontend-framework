@@ -34,9 +34,9 @@ const App = () => {
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
-        return <FacetedWrapper dashboard />;
+        return <FacetedWrapper dashboard dashRoute="/" resultRoute="/search" />;
       case "search":
-        return <FacetedWrapper />;
+        return <FacetedWrapper dashRoute="/" resultRoute="/search" />;
       case "record":
         return <RdaRecord />;
       case "deposit":
