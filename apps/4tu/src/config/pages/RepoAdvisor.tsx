@@ -49,7 +49,7 @@ const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<an
   }
 
   const resetRecommendations = () => {
-    setRecommendations([]);
+    setRecommendations(undefined);
   }
 
   const pickRepo = (repo: FormConfig) => {
