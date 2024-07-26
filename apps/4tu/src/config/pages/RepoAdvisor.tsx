@@ -26,7 +26,7 @@ import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 
 const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<any>>}) => {
-  const [recommendations, setRecommendations] = useState<FormConfig[]>([]);
+  const [recommendations, setRecommendations] = useState<FormConfig[]>();
   const [ror, setRor] = useState<Option | null>(null);
   const [narcis, setNarcis] = useState<Option | null>(null);
   const [depositType, setDepositType] = useState<string>("");
@@ -85,14 +85,12 @@ const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<an
               label="Your institution"
               value={ror}
               setValue={setRor}
-              disabled={recommendations.length > 0}
             />
             <ApiField 
               type="narcis"
               label="Research domain"
               value={narcis}
               setValue={setNarcis}
-              disabled={recommendations.length > 0}
             />
             <SelectField 
               label="Deposit type"
@@ -101,10 +99,9 @@ const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<an
               options={[
                 {label: "Dataset", value: "dataset"},
                 {label: "Code", value: "code"},
-                {label: "Report", value: "report"},
+                {label: "Report, article, or presentation", value: "report"},
                 {label: "Publication", value: "publication"},
               ]}
-              disabled={recommendations.length > 0}
             />
             <AnimatePresence>
               {depositType === 'dataset' &&
@@ -118,10 +115,13 @@ const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<an
                     value={fileType}
                     onChange={setFileType}
                     options={[
-                      {label: "Audiovisual", value: "audiovisual"},
+                      {label: "Audiovisual materials", value: "audiovisual_materials"},
+                      {label: "Statistical data", value: "statistical_data"},
+                      {label: "Geospatial data files", value: "geospatial_data_files"},
+                      {label: "NetCDF and HDF files", value: "netcdf_and_hdf_files"},
+                      {label: "Darwin core and ecological markup language files", value: "darwin_core_and_ecological_markup_language_files"},
                       {label: "Other", value: "other"},
                     ]}
-                    disabled={recommendations.length > 0}
                   />
                 </motion.div>
               }
@@ -130,14 +130,14 @@ const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<an
               variant="contained" 
               size="large" 
               onClick={fetchRecommendations} 
-              disabled={recommendations.length > 0 || dataMissing || loading}
+              disabled={dataMissing || loading}
             >
               {dataMissing ? "Complete the form to get recommendations" : "Get recommendations"}
             </Button>
           </Paper>
           <div id="recommendations" />
           <AnimatePresence>
-            {recommendations.length > 0 && 
+            {recommendations && 
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -147,31 +147,45 @@ const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<an
                   <Typography variant="h5" mb={1}>
                     Recommended repositories
                   </Typography>
-                  <List sx={{mb: 2}}>
-                    {recommendations.map( (rec, i) =>
-                      <Fragment key={i}>
-                        <ListItem 
-                          alignItems="flex-start"
-                          disableGutters
-                          secondaryAction={
-                            <Button key={i} variant="contained" onClick={() => pickRepo(rec)}>
-                              Deposit
-                            </Button>
-                          }
-                        >
-                         <ListItemText
-                            primary={rec.displayName?.en}
-                            secondary={rec.description?.en}
-                            sx={{pr: 6}}
-                          />
-                        </ListItem>
-                        {i < recommendations.length - 1 && <Divider component="li" />}
-                      </Fragment>
-                    )}
-                  </List>
+                  {recommendations.length === 0 ?
+                    <Typography mb={2}>
+                      Sorry, at the moment we cannot recommend a suitable repository for your data set
+                    </Typography>
+                    :
+                    <List sx={{mb: 2}}>
+                      {recommendations.map( (rec, i) =>
+                        <Fragment key={i}>
+                          <ListItem 
+                            alignItems="flex-start"
+                            disableGutters
+                            secondaryAction={
+                              <Button 
+                                key={i} 
+                                variant="contained" 
+                                onClick={() => {
+                                  rec.external ? 
+                                  window.location.href = rec.external :
+                                  pickRepo(rec)
+                                }}
+                              >
+                                Deposit
+                              </Button>
+                            }
+                          >
+                           <ListItemText
+                              primary={rec.displayName?.en}
+                              secondary={rec.description?.en}
+                              sx={{pr: 6}}
+                            />
+                          </ListItem>
+                          {i < recommendations.length - 1 && <Divider component="li" />}
+                        </Fragment>
+                      )}
+                    </List>
+                  }
                   <Box sx={{display: "flex", justifyContent: "flex-end"}}>
                     <Button size="large" variant="contained" onClick={resetRecommendations} color="warning">
-                      Reset recommendations
+                      Reset advisor
                     </Button>
                   </Box>
                 </Paper>
@@ -194,7 +208,7 @@ const SelectField = ({label, value, onChange, options, disabled}: {
   value: string;
   onChange: (s: string) => void;
   options: Option[];
-  disabled: boolean;
+  disabled?: boolean;
 }) =>
   <Box mb={2}>
     <FormControl fullWidth disabled={disabled}>
@@ -217,7 +231,7 @@ const ApiField = ({type, label, value, setValue, disabled}: {
   label: string;
   value: Option | null;
   setValue: Dispatch<SetStateAction<any>>;
-  disabled: boolean;
+  disabled?: boolean;
 }) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [data, setData] = useState<AutocompleteAPIFieldData>();

@@ -70,4 +70,5 @@ export interface FormConfig {
   };
   displayName?: LanguageStrings;
   description?: LanguageStrings;
+  external?: string;
 }
