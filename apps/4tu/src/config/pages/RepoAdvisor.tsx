@@ -159,22 +159,30 @@ const RepoAdvisor = ({setRepoConfig}: {setRepoConfig: Dispatch<SetStateAction<an
                             alignItems="flex-start"
                             disableGutters
                             secondaryAction={
-                              <Button 
-                                key={i} 
-                                variant="contained" 
-                                onClick={() => {
-                                  rec.external ? 
-                                  window.location.href = rec.external :
-                                  pickRepo(rec)
-                                }}
-                              >
+                              rec.external ?
+                              <Link href={rec.external} target="_blank">
+                                <Button variant="contained">Deposit</Button>
+                              </Link> :
+                              <Button variant="contained" onClick={() => pickRepo(rec)}>
                                 Deposit
                               </Button>
                             }
                           >
                            <ListItemText
                               primary={rec.displayName?.en}
-                              secondary={rec.description?.en}
+                              secondary={
+                                <>
+                                  {rec.external && <Typography
+                                    sx={{ display: 'inline', mr: 0.5 }}
+                                    component="span"
+                                    variant="body2"
+                                    color="text.primary"
+                                  >
+                                    External repository: opens in new tab  — 
+                                  </Typography>}
+                                  {rec.description?.en}
+                                </>
+                              }
                               sx={{pr: 6}}
                             />
                           </ListItem>
