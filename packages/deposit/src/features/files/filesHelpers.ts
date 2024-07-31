@@ -17,16 +17,8 @@ export function validateFileType(headerString: string) {
 
 export function findFileGroup(
   ext?: string,
-  data?: GroupedDataObject[],
+  data?: GroupedDataObject,
 ): string | null {
   if (!ext || !data) return null;
-
-  for (const obj of data) {
-    for (const key in obj) {
-      if (obj[key].includes(ext)) {
-        return key;
-      }
-    }
-  }
-  return null; // Return null if ext is not found in any key
+  return Object.keys(data).find((key: string) => data[key].includes(ext)) || null;
 }
