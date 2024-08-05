@@ -66,7 +66,7 @@ export interface GroupedDataObject {
 }
 
 export interface DansGroupedList {
-  type: GroupedDataObject[];
+  type: GroupedDataObject;
 }
 
 export interface DansSimpleListQueryResponse {
