@@ -117,7 +117,7 @@ export const userSubmissionsApi = createApi({
 });
 
 const getUrl = (url: string, key: string, type: AuthKeys) =>
-  type === "dataverse_api_key" ? `${url}`
+  type.includes("dataverse") ? `${url}`
   : type === "zenodo_api_key" ? `${url}?access_token=${key}`
   : url;
 
@@ -131,7 +131,7 @@ export const validateKeyApi = createApi({
       query: ({ url, key, type }) => {
         return {
           url: getUrl(url, key, type),
-          ...(type === "dataverse_api_key" && {
+          ...(type.includes("dataverse") && {
             headers: {
               "X-Dataverse-key": key,
             },
@@ -156,7 +156,7 @@ export const validateKeyApi = createApi({
         const promises = arg.map((t: any) =>
           fetchWithBQ({
             url: getUrl(t.url, t.key, t.type),
-            ...(t.type === "dataverse_api_key" && {
+            ...(t.type.includes("dataverse") && {
               headers: {
                 "X-Dataverse-key": t.key,
               },
