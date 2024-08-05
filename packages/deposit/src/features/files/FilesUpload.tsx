@@ -42,6 +42,14 @@ const FilesUpload = () => {
   const fileValidator = (file: File) => {
     if (!file.name) return null;
 
+    const forbiddenCharacters = /[\/:*?"<>|;#]/;
+    if (forbiddenCharacters.test(file.name)) {
+      return {
+        code: "file-invalid",
+        message: t("fileForbiddenCharacters"),
+      };
+    }
+
     // No files over the file size limit set in formConfig
     if (formConfig?.filesUpload?.maxSize && file.size > formConfig?.filesUpload?.maxSize) {
       return {

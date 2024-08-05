@@ -46,5 +46,6 @@
   "minDate": "Must be a future date",
   "dateInvalid": "Invalid date",
   "fileTooLarge": "Files over {{ size }} GB cannot be processed by the target repository",
-  "fileNoSize": "Cannot upload files of 0 bytes"
+  "fileNoSize": "Cannot upload files of 0 bytes",
+  "fileForbiddenCharacters": "File name contains forbidden characters: /:*?\"<>|;#"
 }
