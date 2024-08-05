@@ -46,5 +46,6 @@
   "minDate": "Moet een toekomstige datum zijn",
   "dateInvalid": "Ongeldige datum",
   "fileTooLarge": "Bestanden groter dan {{ size }} GB kunnen niet worden verwerkt door het doelrepository",
-  "fileNoSize": "Kan geen bestanden van 0 bytes uploaden"
+  "fileNoSize": "Kan geen bestanden van 0 bytes uploaden",
+  "fileForbiddenCharacters": "Bestandsnaam bevat tekens die niet zijn toegestaan: /:*?\"<>|;#"
 }
