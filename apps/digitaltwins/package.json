@@ -11,26 +11,22 @@
   },
   "dependencies": {
     "@dans-framework/deposit": "workspace:*",
+    "@dans-framework/file-mapper": "workspace:*",
     "@dans-framework/layout": "workspace:*",
     "@dans-framework/pages": "workspace:*",
     "@dans-framework/theme": "workspace:*",
     "@dans-framework/user-auth": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@fontsource/roboto": "^5.0.7",
-    "@mui/icons-material": "^5.14.3",
     "@mui/material": "^5.14.3",
     "i18next": "^23.4.1",
     "i18next-browser-languagedetector": "^7.1.0",
     "i18next-resources-to-backend": "^1.1.4",
-    "js-xlsx": "^0.8.22",
-    "papaparse": "^5.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-dropzone": "^14.2.3",
     "react-i18next": "^13.0.3",
     "react-router-dom": "^6.14.2",
-    "web-vitals": "^3.4.0",
-    "xlsx": "^0.18.5"
+    "web-vitals": "^3.4.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.27",

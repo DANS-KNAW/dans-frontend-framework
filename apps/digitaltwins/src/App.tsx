@@ -24,7 +24,7 @@ import languages from "./config/languages";
 import authProvider from "./config/auth";
 import form from "./config/form";
 
-import FileMapper from "./config/pages/FileMapper";
+import { FileMapper } from "@dans-framework/file-mapper";
 
 const App = () => {
   const { i18n } = useTranslation();
