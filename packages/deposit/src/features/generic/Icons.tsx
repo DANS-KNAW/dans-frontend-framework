@@ -15,13 +15,6 @@ const titleStyle = {
 // Convert a HTML string to MUI components using html react parser
 export const parseOptions = {
   replace: ({ name, children, data }: any) => {
-    if (data && !children) {
-      return (
-        <Typography sx={titleStyle} gutterBottom>
-          {data}
-        </Typography>
-      );
-    }
     if (name === 'ul') {
       return (
         <ul>
@@ -32,15 +25,13 @@ export const parseOptions = {
     if (name === 'li') {
       return (
         <li>
-          <Typography sx={titleStyle}>
-            {domToReact(children, parseOptions)}
-          </Typography>
+          {domToReact(children, parseOptions)}
         </li>
       )
     }
     return (
       <Typography sx={titleStyle} gutterBottom>
-        {domToReact(children, parseOptions)}
+        {data}
       </Typography>
     );
   },
