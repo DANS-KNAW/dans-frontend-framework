@@ -4,7 +4,7 @@ const section: InitialSectionType = {
   id: "citation",
   title: {
     en: "Citation",
-    nl: "Citaten",
+    nl: "Bibliografisch",
   },
   fields: [
     {
@@ -16,8 +16,8 @@ const section: InitialSectionType = {
       name: "title",
       required: true,
       description: {
-        en: "A descriptive title for the work, to be used in citations",
-        nl: "Een beschrijvende titel voor deze data, wordt gebruikt in referenties.",
+        en: "A descriptive title for the interview dataset, to be used in citations. <p>A title will be automatically generated if the following conditions apply:</p><ul><li>Under Interviewee the checkbox for 'First and last name are public data' has been checked</li><li>Location of the interview has been provided</li><li>Date of the interview has been provided</li></ul>The automatically generated title can always been adapted manually.",
+        nl: "Een beschrijvende titel voor de interview dataset, voor gebruik in citaties. <p>Er wordt automatisch een titel gegenereerd, als de aan volgende voorwaarden wordt voldaan:</p><ul><li>Onder de geïnterviewde is 'Voor- en achternaam zijn openbaar' aangevinkt</li><li>Locatie van het interview is ingevoerd</li><li>Datum van het interview is ingevoerd</li></ul>De automatisch gegenereerde titel kan altijd worden aangepast.",
       },
       autoGenerateValue: {
         en: "Interview with {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} on {{interview_date_time_range}}",
@@ -33,8 +33,8 @@ const section: InitialSectionType = {
       name: "subtitle",
       noIndicator: true,
       description: {
-        en: "You can provide a subtitle if you wish",
-        nl: "Je kunt een optionele ondertitel opgeven als je wilt",
+        en: "You can provide a subtitle if you wish - not mandatory.",
+        nl: "Je kunt een optionele ondertitel opgeven als je wilt.",
       },
     },
     {
@@ -47,8 +47,8 @@ const section: InitialSectionType = {
       multiline: true,
       required: true,
       description: {
-        en: "Some context on the interview. What is the role and relevance of the interviewee in the project? What led to the interview being conducted? Summary of what was discussed in the interview, with time breakdown, and describe important events in the interview. Improves discoverability and reusability of the interview data. Briefly describe the setting and atmosphere of the interview to indicate what does not emerge when only the text is read. Basic HTML tags are allowed.",
-        nl: "Wat context bij het interview. Wat is de rol en relevantie van de geinterviewde bij dit project? Waarom is dit interview afgenomen? Samenvatting van wat er besproken is in het interview, met een tijdindicatie. Beschrijf belangrijke gebeurtenissen in hter interview. Verbetert zichtbaarheid en herbruikbaarheid van de data. Beschrijf kort de setting en sfeer van het interview om meer dan alleen de tekst die gelezen wordt duidelijk te maken. Simpele HTML tags zijn toegestaan.",
+        en: "Some context on the interview. What is the role and relevance of the interviewee in the project? What led to the interview being conducted? Summary of what was discussed in the interview, with time breakdown, and describe important events in the interview. Briefly describe the setting and atmosphere of the interview to indicate what does not emerge when only the text is read.",
+        nl: "Wat context bij het interview. Wat is de rol en relevantie van de geïnterviewde in dit project? Waarom is dit interview afgenomen? Samenvatting van wat er besproken is in het interview, met een tijdsindicatie. Beschrijf belangrijke gebeurtenissen in het interview. Beschrijf kort de setting en sfeer van het interview om duidelijk te maken wat niet naar voren komt wanneer alleen de tekst wordt gelezen.",
       },
     },
     {
@@ -60,8 +60,8 @@ const section: InitialSectionType = {
       name: "publisher",
       required: true,
       description: {
-        en: "Institution - often the rights holder",
-        nl: "Instituut - vaak de rechthebbende",
+        en: "Institution - often the rights holder.",
+        nl: "Instituut - vaak de rechthebbende.",
       },
       options: "ror",
       allowFreeText: true,
@@ -88,8 +88,8 @@ const section: InitialSectionType = {
           name: "name",
           required: true,
           description: {
-            en: "First and last name",
-            nl: "Voor en achternaam",
+            en: "First and last name.",
+            nl: "Voor en achternaam.",
           },
           options: "orcid",
           allowFreeText: true,
@@ -103,8 +103,8 @@ const section: InitialSectionType = {
           name: "affiliation",
           required: true,
           description: {
-            en: "",
-            nl: "",
+            en: "State the organisation with which the author is affiliated.",
+            nl: "Geef de organisatie waar de auteur aan is verbonden.",
           },
         },
       ],
@@ -113,13 +113,13 @@ const section: InitialSectionType = {
       type: "group",
       label: {
         en: "Grant information",
-        nl: "Beursinformatie",
+        nl: "Financier",
       },
       name: "grant",
       repeatable: true,
       description: {
-        en: "Optional information if a grant was involved in financing the project",
-        nl: "Optionele informatie als het project met behulp van subsidie tot stand is gekomen",
+        en: "Optional information if a grant was involved in financing the project.",
+        nl: "Optionele informatie als het project met behulp van subsidie tot stand is gekomen.",
       },
       fields: [
         {
@@ -131,8 +131,8 @@ const section: InitialSectionType = {
           name: "grant_agency",
           noIndicator: true,
           description: {
-            en: "Information about the agency providing a grant",
-            nl: "Informatie over de verstrekker van de beurs of subsidie",
+            en: "Information about the agency providing a grant.",
+            nl: "Informatie over de verstrekker van de beurs of subsidie.",
           },
         },
         {
@@ -144,8 +144,8 @@ const section: InitialSectionType = {
           name: "grant_number",
           noIndicator: true,
           description: {
-            en: "Information about the grant number or identifier",
-            nl: "Informatie over het dossiernummer van de beurs of subsidie",
+            en: "Information about the grant number or identifier.",
+            nl: "Het dossiernummer van de verstrekte beurs of subsidie.",
           },
         },
       ],

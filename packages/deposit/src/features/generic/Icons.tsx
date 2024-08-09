@@ -1,10 +1,50 @@
 import InfoIcon from "@mui/icons-material/Info";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import { useTranslation } from "react-i18next";
 import type { StatusIconProps } from "../../types/Generic";
 import { LightTooltip } from "./Tooltip";
+import parse, { domToReact } from "html-react-parser";
+
+const titleStyle = {
+  fontSize: 14,
+}
+
+// Convert a HTML string to MUI components using html react parser
+export const parseOptions = {
+  replace: ({ name, children, data }: any) => {
+    if (data && !children) {
+      return (
+        <Typography sx={titleStyle} gutterBottom>
+          {data}
+        </Typography>
+      );
+    }
+    if (name === 'ul') {
+      return (
+        <ul>
+          {domToReact(children, parseOptions)}
+        </ul>
+      )
+    }
+    if (name === 'li') {
+      return (
+        <li>
+          <Typography sx={titleStyle}>
+            {domToReact(children, parseOptions)}
+          </Typography>
+        </li>
+      )
+    }
+    return (
+      <Typography sx={titleStyle} gutterBottom>
+        {domToReact(children, parseOptions)}
+      </Typography>
+    );
+  },
+};
 
 export const StatusIcon = ({
   status,
@@ -25,14 +65,15 @@ export const StatusIcon = ({
       title={
         <>
           {title && (
-            <Typography
-              sx={{
-                fontSize: 14,
-                p: 2,
-              }}
-            >
-              {title}
-            </Typography>
+            <Box sx={{
+              pt: 2,
+              pl: 2,
+              pr: 2,
+              pb: 1,
+              fontSize: 14,
+            }}>
+              {parse(title, parseOptions)}
+            </Box>
           )}
           {subtitle && (
             <Typography

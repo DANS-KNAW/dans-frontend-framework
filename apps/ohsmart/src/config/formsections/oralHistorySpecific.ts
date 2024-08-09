@@ -2,21 +2,18 @@ import type { InitialSectionType } from "@dans-framework/deposit";
 
 const section: InitialSectionType = {
   id: "ohs",
-  title: {
-    en: "Oral-history specific",
-    nl: "Specifiek voor mondelinge geschiedenis",
-  },
+  title: "Oral History",
   fields: [
     {
       type: "group",
       label: {
         en: "Interviewee",
-        nl: "Geinterviewde",
+        nl: "Geïnterviewde",
       },
       name: "interviewee",
       description: {
         en: "Information about the person being interviewed. This data will not be public.",
-        nl: "Informatie over de persoon die wordt geinterviewd. Deze data wordt niet gepubliceerd.",
+        nl: "Informatie over de persoon die wordt geïnterviewd. Deze data worden niet gepubliceerd.",
       },
       fields: [
         {
@@ -43,15 +40,15 @@ const section: InitialSectionType = {
           type: "check",
           name: "interviewee_public",
           description: {
-            en: "First and last name of interviewee will be publically viewable if checked",
-            nl: "Voor- en achternaam van de geinterviewde zijn publiek als dit is aangevinkt",
+            en: "First and last name of interviewee will be publicy viewable if checked.",
+            nl: "Voor- en achternaam zijn openbaar als dit is aangevinkt.",
           },
           options: [
             {
               value: "interviewee_public_data",
               label: {
                 en: "First and last name are public data",
-                nl: "Voor- en achternaam zijn publiek",
+                nl: "Voor- en achternaam zijn openbaar",
               },
             },
           ],
@@ -62,9 +59,13 @@ const section: InitialSectionType = {
           type: "text",
           label: {
             en: "Preferred name",
-            nl: "Voorkeursnaam",
+            nl: "Roepnaam of bijnaam",
           },
           name: "interviewee_preferred_name",
+          description: {
+            en: "Name under which the interviewee prefers to be known.",
+            nl: "Naam waaronder de geïnterviewde bekend wil staan.",
+          },
           noIndicator: true,
           private: true,
         },
@@ -82,8 +83,8 @@ const section: InitialSectionType = {
         {
           type: "text",
           label: {
-            en: "Function",
-            nl: "Functie",
+            en: "Profession or function",
+            nl: "Beroep of functie",
           },
           name: "interviewee_function",
           private: true,
@@ -95,14 +96,18 @@ const section: InitialSectionType = {
             nl: "Affiliatie",
           },
           name: "interviewee_affiliation",
+          description: {
+            en: "State the organisation with which the interviewee is affiliated.",
+            nl: "Geef de organisatie waar de geïnterviewde aan is verbonden.",
+          },
           private: true,
         },
         {
           type: "check",
           name: "interviewee_consent",
           description: {
-            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse, for instance through an informed consent form)",
-            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik, bijvoorbeeld via een toestemmingsformulier)",
+            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse), for instance through an informed consent form?",
+            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik), bijvoorbeeld via een toestemmingsformulier?",
           },
           required: true,
           private: true,
@@ -128,7 +133,7 @@ const section: InitialSectionType = {
       repeatable: true,
       description: {
         en: "Information about the person(s) taking the interview. This data will not be public.",
-        nl: "Informatie over de persoon het interview afneemt. Deze data wordt niet gepubliceerd.",
+        nl: "Informatie over de persoon die het interview afneemt. Deze data worden niet gepubliceerd.",
       },
       fields: [
         {
@@ -158,6 +163,10 @@ const section: InitialSectionType = {
             nl: "Voorkeursnaam",
           },
           name: "interviewer_preferred_name",
+          description: {
+            en: "Name under which the interviewee prefers to be known.",
+            nl: "Naam waaronder de interviewer bekend wil staan.",
+          },
           noIndicator: true,
           private: true,
         },
@@ -175,8 +184,8 @@ const section: InitialSectionType = {
         {
           type: "text",
           label: {
-            en: "Function",
-            nl: "Functie",
+            en: "Profession or function",
+            nl: "Beroep of functie",
           },
           name: "interviewer_function",
           private: true,
@@ -188,14 +197,18 @@ const section: InitialSectionType = {
             nl: "Affiliatie",
           },
           name: "interviewer_affiliation",
+          description: {
+            en: "State the organisation with which the interviewer is affiliated.",
+            nl: "Geef de organisatie waar de interviewer aan is verbonden.",
+          },
           private: true,
         },
         {
           type: "check",
           name: "interviewer_consent",
           description: {
-            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse, for instance through an informed consent form)",
-            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik, bijvoorbeeld via een toestemmingsformulier)",
+            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse), for instance through an informed consent form?",
+            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik), bijvoorbeeld via een toestemmingsformulier?",
           },
           required: true,
           private: true,
@@ -215,13 +228,13 @@ const section: InitialSectionType = {
       type: "group",
       label: {
         en: "Interpreter",
-        nl: "Vertaler",
+        nl: "Tolk",
       },
       name: "interpreter",
       repeatable: true,
       description: {
-        en: "Information about the person(s) interpreting the interview. This data will not be public.",
-        nl: "Informatie over de persoon het interview heeft vertaald. Deze data wordt niet gepubliceerd.",
+        en: "Information about the person(s) translating during the interview. This data will not be public.",
+        nl: "Informatie over de persoon die tijdens het interview heeft getolkt. Deze data worden niet gepubliceerd.",
       },
       fields: [
         {
@@ -268,6 +281,10 @@ const section: InitialSectionType = {
             nl: "Affiliatie",
           },
           name: "interpreter_affiliation",
+          description: {
+            en: "State the organisation with which the interpreter is affiliated.",
+            nl: "Geef de organisatie waar de tolk aan is verbonden.",
+          },
           private: true,
           noIndicator: true,
           toggleRequired: [
@@ -280,8 +297,8 @@ const section: InitialSectionType = {
           type: "check",
           name: "interpreter_consent",
           description: {
-            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse, for instance through an informed consent form)",
-            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik, bijvoorbeeld via een toestemmingsformulier)",
+            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse), for instance through an informed consent form?",
+            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik), bijvoorbeeld via een toestemmingsformulier?",
           },
           private: true,
           noIndicator: true,
@@ -300,14 +317,14 @@ const section: InitialSectionType = {
     {
       type: "group",
       label: {
-        en: "Others present",
+        en: "Other(s) present",
         nl: "Andere aanwezigen",
       },
       name: "others",
       repeatable: true,
       description: {
         en: "Information about other person(s) being present during the interview. This data will not be public.",
-        nl: "Informatie over andere aanwezigen bij het interview. Deze data wordt niet gepubliceerd.",
+        nl: "Informatie over andere aanwezigen bij het interview. Deze data worden niet gepubliceerd.",
       },
       fields: [
         {
@@ -354,6 +371,10 @@ const section: InitialSectionType = {
             nl: "Affiliatie",
           },
           name: "others_affiliation",
+          description: {
+            en: "State the organisation with which the other present is affiliated.",
+            nl: "Geef de organisatie waar deze andere aanwezige aan is verbonden.",
+          },
           private: true,
           noIndicator: true,
           toggleRequired: [
@@ -366,8 +387,8 @@ const section: InitialSectionType = {
           type: "check",
           name: "others_consent",
           description: {
-            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse, for instance through an informed consent form)",
-            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik, bijvoorbeeld via een toestemmingsformulier)",
+            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse), for instance through an informed consent form?",
+            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik), bijvoorbeeld via een toestemmingsformulier?",
           },
           private: true,
           noIndicator: true,
@@ -394,8 +415,8 @@ const section: InitialSectionType = {
       multiselect: true,
       allowFreeText: true,
       description: {
-        en: "Location where interview was conducted",
-        nl: "Plek waar het interview is afgenomen",
+        en: "Location where interview was conducted.",
+        nl: "Plek waar het interview is afgenomen.",
       },
       options: "geonames",
     },
@@ -408,8 +429,8 @@ const section: InitialSectionType = {
       name: "interview_date_time",
       repeatable: true,
       description: {
-        en: "Date and time of interview",
-        nl: "Datum en tijd waarop het interview is afgenomen",
+        en: "Date and time of interview.",
+        nl: "Datum en tijd waarop het interview is afgenomen.",
       },
       fields: [
         {
@@ -436,8 +457,8 @@ const section: InitialSectionType = {
       name: "recorded_by",
       repeatable: true,
       description: {
-        en: "Information about the person assisting with recording",
-        nl: "Informatie over de persoon die het interview heeft opgenomen",
+        en: "Information about the person assisting with recording.",
+        nl: "Informatie over de persoon die het interview heeft opgenomen.",
       },
       fields: [
         {
@@ -448,6 +469,7 @@ const section: InitialSectionType = {
           },
           name: "recorded_by_first_name",
           noIndicator: true,
+          toggleRequired: ["recorded_by_consent", "recorded_by_last_name"],
         },
         {
           type: "text",
@@ -457,6 +479,7 @@ const section: InitialSectionType = {
           },
           name: "recorded_by_last_name",
           noIndicator: true,
+          toggleRequired: ["recorded_by_consent", "recorded_by_first_name"],
         },
         {
           type: "text",
@@ -465,7 +488,35 @@ const section: InitialSectionType = {
             nl: "Affiliatie",
           },
           name: "recorded_by_affiliation",
+          description: {
+            en: "State the organisation with which the person assisting with recording is affiliated.",
+            nl: "Geef de organisatie waar degene die het interview heeft opgenomen, aan is verbonden.",
+          },
           noIndicator: true,
+          toggleRequired: [
+            "recorded_by_consent",
+            "recorded_by_first_name",
+            "recorded_by_last_name",
+          ],
+        },
+        {
+          type: "check",
+          name: "recorded_by_consent",
+          description: {
+            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse), for instance through an informed consent form?",
+            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik), bijvoorbeeld via een toestemmingsformulier?",
+          },
+          private: true,
+          noIndicator: true,
+          options: [
+            {
+              value: "recorded_by_consent_signed",
+              label: {
+                en: "Consent given",
+                nl: "Toestemming gegeven",
+              },
+            },
+          ],
         },
       ],
     },
@@ -478,8 +529,8 @@ const section: InitialSectionType = {
       name: "recording_format",
       multiselect: true,
       description: {
-        en: "MIME type and other type information",
-        nl: "MIME type en andere type-informatie",
+        en: "File type (or MIME type) of the recording.",
+        nl: "Bestandsformaat (of MIME type) van de opname.",
       },
       options: "dansFormats",
       noIndicator: true,
@@ -493,8 +544,8 @@ const section: InitialSectionType = {
       name: "recording_equipment",
       noIndicator: true,
       description: {
-        en: "Equipment, method, or platform used for recording",
-        nl: "Apparatuur/methode gebruikt voor de opname",
+        en: "Equipment, method, or platform used for recording.",
+        nl: "Apparatuur/methode gebruikt voor de opname.",
       },
     },
     {
@@ -507,7 +558,7 @@ const section: InitialSectionType = {
       repeatable: true,
       description: {
         en: "In case of transcript by human. This data will not be public.",
-        nl: "Wanneer de transcriptie door een persoon is gedaan. Deze data wordt niet gepubliceerd.",
+        nl: "Wanneer de transcriptie door een persoon is gedaan. Deze data worden niet gepubliceerd.",
       },
       fields: [
         {
@@ -560,6 +611,10 @@ const section: InitialSectionType = {
             nl: "Affiliatie",
           },
           name: "transcript_human_affiliation",
+          description: {
+            en: "State the organisation with which the transcriber is affiliated.",
+            nl: "Geef de organisatie waar de transcribent aan is verbonden.",
+          },
           private: true,
           noIndicator: true,
           toggleRequired: [
@@ -572,8 +627,8 @@ const section: InitialSectionType = {
           type: "check",
           name: "transcript_human_consent",
           description: {
-            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse, for instance through an informed consent form)",
-            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik, bijvoorbeeld via een toestemmingsformulier)",
+            en: "Consent given for the processing of personal data (including archiving and, if applicable, making accessible for reuse), for instance through an informed consent form?",
+            nl: "Toestemming gegeven voor de verwerking van persoonsgegevens (inclusief archivering en, indien van toepassing, toegankelijk maken voor hergebruik), bijvoorbeeld via een toestemmingsformulier?",
           },
           private: true,
           noIndicator: true,
@@ -596,6 +651,10 @@ const section: InitialSectionType = {
         nl: "Machinetranscriptie",
       },
       name: "transcript_machine",
+      description: {
+        en: "Enter the software or service used to transcribe the data, including the version number and the persistent identifier.",
+        nl: "Geef aan welke software of is gebruikt om de data te transcriberen, inclusief het versienummer en de Persistent Identifier.",
+      },
       noIndicator: true,
     },
   ],

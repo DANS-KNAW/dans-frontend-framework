@@ -61,7 +61,7 @@ export interface FormConfig {
     displayProcesses?: boolean;
     displayPrivate?: boolean;
     fileRoles?: {
-      label: string;
+      label: LanguageStrings;
       value: string;
     }[];
     embargoDateMin?: number;

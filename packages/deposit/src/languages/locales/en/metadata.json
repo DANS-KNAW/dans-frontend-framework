@@ -9,7 +9,7 @@
   "multiApiSelectLabel": "Select type",
   "institutions": "Institutions",
   "country": "Country",
-  "apiValue": "Looks up data from the {{api}} API as you type",
+  "apiValue": "Looks up data from the {{api}} API as you type.",
   "checkApi": "Double-check your selected value in the {{api}} registry (opens in new tab)",
   "checkValue": "Read more about {{value}} (opens in new tab)",
   "orcid": "ORCID",

@@ -101,7 +101,7 @@ const SingleTextField = ({
       // generate value if it hasn't been do so yet
       !generatedValue && generateValue();
       // if there's no value set yet, set value to generated value
-      !field.value && setValue();
+      generatedValue && !field.value && setValue();
     }
   }, [generatedValue]);
 
