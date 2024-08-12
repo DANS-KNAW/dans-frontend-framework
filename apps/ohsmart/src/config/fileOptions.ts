@@ -1,78 +1,78 @@
 export const fileRoleOptions = [
   {
+    value: "video_file",
+    label: { en: "Video file", nl: "Videobestand" }
+  },
+  {
     value: "audio_file",
-    label: "Audio file",
-  },
-  {
-    value: "code",
-    label: "Code",
-  },
-  {
-    value: "data_dictionary_code_book",
-    label: "Data dictionary - code book",
-  },
-  {
-    value: "data_dictionary_other",
-    label: "Data dictionary - other",
-  },
-  {
-    value: "data_file",
-    label: "Data file",
-  },
-  {
-    value: "dissemination_copy",
-    label: "Dissemination copy",
-  },
-  {
-    value: "image_file",
-    label: "Image file",
-  },
-  {
-    value: "interview_questions",
-    label: "Interview questions",
-  },
-  {
-    value: "methodology",
-    label: "Methodology",
-  },
-  {
-    value: "original_metadata",
-    label: "Original metadata",
-  },
-  {
-    value: "preservation_copy",
-    label: "Preservation copy",
-  },
-  {
-    value: "publication",
-    label: "Publication",
-  },
-  {
-    value: "report",
-    label: "Report",
-  },
-  {
-    value: "subtitles",
-    label: "Subtitles",
-  },
-  {
-    value: "supplementary_file",
-    label: "Supplementary file",
-  },
-  {
-    value: "thumbnail",
-    label: "Thumbnail",
+    label: { en: "Audio file", nl: "Audiobestand" }
   },
   {
     value: "transcript",
-    label: "Transcript",
+    label: { en: "Transcript", nl: "Transcript" }
+  },
+  {
+    value: "subtitles",
+    label: { en: "Subtitles", nl: "Ondertiteling" }
+  },
+  {
+    value: "interview_questions",
+    label: { en: "Interview questions", nl: "Interviewvragen" }
+  },
+  {
+    value: "methodology",
+    label: { en: "Methodology", nl: "Methodologie" }
+  },
+  {
+    value: "report",
+    label: { en: "Report", nl: "Rapport" }
+  },
+  {
+    value: "publication",
+    label: { en: "Publication", nl: "Publicatie" }
+  },
+  {
+    value: "supplementary_file",
+    label: { en: "Supplementary file", nl: "Overig materiaal" }
+  },
+  {
+    value: "image_file",
+    label: { en: "Image file", nl: "Beeldbestand" }
+  },
+  {
+    value: "thumbnail",
+    label: { en: "Thumbnail", nl: "Thumbnail" }
+  },
+  {
+    value: "dissemination_copy",
+    label: { en: "Dissemination copy", nl: "Disseminatiexemplaar" }
+  },
+  {
+    value: "preservation_copy",
+    label: { en: "Preservation copy", nl: "Preservatieexemplaar" }
+  },
+  {
+    value: "data_dictionary_code_book",
+    label: { en: "Data dictionary - code book", nl: "Data dictionary - code book" }
+  },
+  {
+    value: "data_dictionary_other",
+    label: { en: "Data dictionary - other", nl: "Data dictionary - overig" }
+  },
+  {
+    value: "original_metadata",
+    label: { en: "Original metadata", nl: "Oorspronkelijke metadata" }
+  },
+  {
+    value: "data_file",
+    label: { en: "Data file", nl: "Databestand" }
+  },
+  {
+    value: "code",
+    label: { en: "Code", nl: "Code" }
   },
   {
     value: "type_registry_value",
-    label: "Type registry value",
-  },
-  {
-    value: "video_file",
-    label: "Video file",
-  },
+    label: { en: "Type registry value", nl: "Type registry value" }
+  }
 ];
