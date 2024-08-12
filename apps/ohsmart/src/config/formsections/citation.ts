@@ -16,8 +16,8 @@ const section: InitialSectionType = {
       name: "title",
       required: true,
       description: {
-        en: "A descriptive title for the interview dataset, to be used in citations. <p>A title will be automatically generated if the following conditions apply:</p><ul><li>Under Interviewee the checkbox for 'First and last name are public data' has been checked</li><li>Location of the interview has been provided</li><li>Date of the interview has been provided</li></ul>The automatically generated title can always been adapted manually.",
-        nl: "Een beschrijvende titel voor de interview dataset, voor gebruik in citaties. <p>Er wordt automatisch een titel gegenereerd, als de aan volgende voorwaarden wordt voldaan:</p><ul><li>Onder de geïnterviewde is 'Voor- en achternaam zijn openbaar' aangevinkt</li><li>Locatie van het interview is ingevoerd</li><li>Datum van het interview is ingevoerd</li></ul>De automatisch gegenereerde titel kan altijd worden aangepast.",
+        en: "<p>A descriptive title for the interview dataset, to be used in citations.</p><p>A title will be automatically generated if the following conditions apply:</p><ul><li>Under Interviewee the checkbox for 'First and last name are public data' has been checked</li><li>Location of the interview has been provided</li><li>Date of the interview has been provided</li></ul><p>The automatically generated title can always been adapted manually.</p>",
+        nl: "<p>Een beschrijvende titel voor de interview dataset, voor gebruik in citaties.</p><p>Er wordt automatisch een titel gegenereerd, als de aan volgende voorwaarden wordt voldaan:</p><ul><li>Onder de geïnterviewde is 'Voor- en achternaam zijn openbaar' aangevinkt</li><li>Locatie van het interview is ingevoerd</li><li>Datum van het interview is ingevoerd</li></ul><p>De automatisch gegenereerde titel kan altijd worden aangepast.</p>",
       },
       autoGenerateValue: {
         en: "Interview with {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} on {{interview_date_time_range}}",

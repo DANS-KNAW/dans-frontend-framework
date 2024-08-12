@@ -36,21 +36,6 @@ const section: InitialSectionType = {
       },
       options: "languageList",
     },
-    /*{
-      type: "text",
-      label: {
-        en: "Email address of dataset contact person",
-        nl: "Emailadres contacpersoon dataset",
-      },
-      name: "contact_email",
-      required: true,
-      validation: "email",
-      autofill: "email",
-      description: {
-        en: "This is the e-mail address of the person who receives questions about this dataset, once it has been published.",
-        nl: "Dit is het e-mailadres van de persoon die vragen ontvangt over deze dataset, wanneer deze is gepubliceerd.",
-      },
-    },*/
   ],
 };
 

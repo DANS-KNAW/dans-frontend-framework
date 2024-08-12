@@ -3,6 +3,10 @@ import type { InitialSectionType } from "@dans-framework/deposit";
 const section: InitialSectionType = {
   id: "ohs",
   title: "Oral History",
+  description: {
+    en: "The Oral History metadata will be saved as a separate file in the dataset, whereas other metadata will be displayed directly in the DANS Data Station Social Sciences and Humanities.",
+    nl: "De Oral History metadata zullen worden opgeslagen als een apart bestand in de dataset, terwijl andere metadata direct worden getoond in het DANS Data Station Social Sciences and Humanities.",
+  },
   fields: [
     {
       type: "group",

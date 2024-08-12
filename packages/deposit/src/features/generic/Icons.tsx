@@ -29,6 +29,13 @@ export const parseOptions = {
         </li>
       )
     }
+    if (name === 'p') {
+      return (
+        <Typography sx={titleStyle} gutterBottom>
+          {domToReact(children)}
+        </Typography>
+      )
+    }
     return (
       <Typography sx={titleStyle} gutterBottom>
         {data}
