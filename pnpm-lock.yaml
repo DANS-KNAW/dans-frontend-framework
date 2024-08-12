@@ -623,6 +623,9 @@ importers:
 
   packages/file-mapper:
     dependencies:
+      '@dans-framework/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@mui/icons-material':
         specifier: ^5.14.3
         version: 5.14.3(@mui/material@5.14.3(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@types/react@18.2.15)(react@18.2.0)

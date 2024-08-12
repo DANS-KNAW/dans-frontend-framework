@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Unstable_Grid2";
 import Box from "@mui/material/Box";
@@ -9,25 +8,28 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import { useTranslation } from "react-i18next";
 import { Step1, Step2, Step3 } from './Steps';
-import type { MappingProps } from "../types";
+import { getActiveStep, setActiveStep, getFile, getSavedMap } from './fileMapperSlice';
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
 
 const steps = ['selectFile', 'createMapping', 'finish'];
 
 const FileMapper = () => {
-  const [ activeStep, setActiveStep ] = useState(0);
-  const [ mapping, setMapping ] = useState<MappingProps>({});
-  const [ file, setFile ] = useState<File>();
-  const [ savedMap, setSavedMap ] = useState<string>();
+  const dispatch = useAppDispatch();
   const { t } = useTranslation("steps");
+  const activeStep = useAppSelector(getActiveStep);
+  const file = useAppSelector(getFile);
+  const savedMap = useAppSelector(getSavedMap);
+
+  console.log(activeStep)
 
    const handleNext = () => {
     activeStep !== steps.length - 1 && !savedMap ? 
-    setActiveStep(activeStep + 1) :
+    dispatch(setActiveStep(activeStep + 1)) :
     console.log('send to api and go to form')
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    dispatch(setActiveStep(activeStep - 1));
   };
 
   return (
@@ -50,10 +52,10 @@ const FileMapper = () => {
             </Stepper>
             {
               activeStep === 0
-              ? <Step1 setFile={setFile} file={file} savedMap={savedMap} setSavedMap={setSavedMap} />
+              ? <Step1 />
               : activeStep === 1
-              ? <Step2 file={file} setMapping={setMapping} mapping={mapping} />
-              : <Step3 mapping={mapping} />
+              ? <Step2 />
+              : <Step3 />
             }
             <Box sx={{ 
               display: 'flex', 

@@ -24,7 +24,17 @@ import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import type { DarwinOptions, MappingProps, Saves } from "../types";
+import type { DarwinOptions, Saves } from "../types";
+import { 
+  getFile, 
+  setFile, 
+  getMapping, 
+  setMapping, 
+  getSavedMap,
+  setSavedMap,
+} from './fileMapperSlice';
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
+
 
 const options = [
   {
@@ -73,18 +83,23 @@ const StepWrap = ({ title, children }: { title: string; children: ReactNode }) =
     {children}
   </Box>
 
-export const Step1 = ({ setFile, file, savedMap, setSavedMap }: { 
-  setFile: (file: File | undefined) => void;
-  file?: File;
-  savedMap?: string;
-  setSavedMap: (save: string) => void;
-}) => {
+export const Step1 = () => {
   const { t } = useTranslation("steps");
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('md'));
+  const dispatch = useAppDispatch();
+  const file = useAppSelector(getFile);
+  const savedMap = useAppSelector(getSavedMap);
 
   const onDrop = async (files: File[]) => {
-    setFile(files[0]);
+    // serialize files to store in redux
+    const serializedFile = {
+      name: files[0].name,
+      size: files[0].size,
+      url: URL.createObjectURL(files[0]),
+    };
+
+    dispatch(setFile(serializedFile));
   }
 
   const {  
@@ -102,12 +117,12 @@ export const Step1 = ({ setFile, file, savedMap, setSavedMap }: {
 
   // reset saved selection on file choice
   useEffect(() => {
-    file && setSavedMap('');
+    file && dispatch(setSavedMap(''));
   }, [file]);
 
   // reset file selection if a saved map is picked
   useEffect(() => {
-    savedMap && setFile(undefined);
+    savedMap && dispatch(setFile(undefined));
   }, [savedMap]);
 
   return (
@@ -151,7 +166,7 @@ export const Step1 = ({ setFile, file, savedMap, setSavedMap }: {
             <List>
             {saves.map( (save: Saves) => 
               <ListItem key={save.id} disablePadding>
-                <ListItemButton onClick={() => setSavedMap(savedMap === save.id ? "" : save.id)} dense>
+                <ListItemButton onClick={() => dispatch(setSavedMap(savedMap === save.id ? "" : save.id))} dense>
                   <ListItemIcon>
                     <Checkbox
                       edge="start"
@@ -173,13 +188,10 @@ export const Step1 = ({ setFile, file, savedMap, setSavedMap }: {
   )
 }
 
-export const Step2 = ({ file, setMapping, mapping }: { 
-  file?: File;
-  mapping: MappingProps;
-  setMapping: (mapping: MappingProps) => void;
-}) => {
+export const Step2 = () => {
   const [ fileCols, setFileCols ] = useState<string[]>([]);
   const { t } = useTranslation("steps");
+  const file = useAppSelector(getFile);
 
   useEffect(() => {
     const reader = new FileReader();
@@ -192,11 +204,17 @@ export const Step2 = ({ file, setMapping, mapping }: {
 
       Array.isArray(sheetData) && setFileCols(sheetData);
     };
-
+    
     if (file) {
-      reader.readAsBinaryString(file);
+      // convert file url back to blob
+      (async () => {
+        const fetchedFile = await fetch(file.url);
+        const blob = await fetchedFile.blob();
+        if (blob) {
+          reader.readAsBinaryString(blob);
+        }
+      })();
     }
-
   }, [file]);
   
   return (
@@ -211,7 +229,7 @@ export const Step2 = ({ file, setMapping, mapping }: {
           </TableHead>
           <TableBody>
             {fileCols.length > 0 && fileCols.map((row) => (
-              <Row key={row} row={row} mapping={mapping} setMapping={setMapping} />
+              <Row key={row} row={row} />
             ))}
           </TableBody>
         </Table>
@@ -220,24 +238,22 @@ export const Step2 = ({ file, setMapping, mapping }: {
   )
 }
 
-const Row = ({row, mapping, setMapping}: {
-  row: string;
-  mapping: MappingProps;
-  setMapping: (mapping: MappingProps) => void;
-}) => {
+const Row = ({row}: {row: string}) => {
   const { t } = useTranslation("steps");
   const [inputValue, setInputValue] = useState('');
+  const mapping = useAppSelector(getMapping);
+  const dispatch = useAppDispatch();
 
   const selectValue = (row: string, value: DarwinOptions | null) => {
     if (value === null) {
       // Create a new object excluding the [row] key
       const { [row]: _, ...rest } = mapping;
-      setMapping(rest);
+      dispatch(setMapping(rest));
     } else {
-      setMapping({
+      dispatch(setMapping({
         ...mapping,
         [row]: value,
-      })
+      }));
     }
   }
 
@@ -269,10 +285,8 @@ const Row = ({row, mapping, setMapping}: {
   )
 }
 
-export const Step3 = ({ mapping }: { mapping: MappingProps }) => {  
+export const Step3 = () => {  
   const { t } = useTranslation("steps");
-
-  console.log(mapping)
 
   return (
     <StepWrap title={t("finish")}>
