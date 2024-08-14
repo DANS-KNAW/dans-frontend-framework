@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
@@ -23,11 +23,15 @@ import siteTitle from "./config/siteTitle";
 import languages from "./config/languages";
 import authProvider from "./config/auth";
 import form from "./config/form";
-
 import { FileMapper } from "@dans-framework/file-mapper";
 
 const App = () => {
   const { i18n } = useTranslation();
+  // Must keep a parent state for the form mapper component,
+  // otherwise the app will not know of any API response from the FileMapper component
+  const [mappedForm, setMappedForm] = useState();
+  console.log(mappedForm)
+
   return (
     <AuthWrapper authProvider={authProvider}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
@@ -75,21 +79,16 @@ const App = () => {
                     element={
                       page.template === "deposit" ?
                         <AuthRoute>
-                          <Deposit config={form} page={page} />
+                          {mappedForm
+                            ? <Deposit config={mappedForm} page={page} />
+                            : <FileMapper setMappedForm={setMappedForm} />
+                          }
                         </AuthRoute>
                       : <Generic {...page} />
                     }
                   />
                 );
               })}
-              <Route
-                path="map-dataset"
-                element={
-                  <AuthRoute>
-                    <FileMapper />
-                  </AuthRoute>
-                }
-              />
             </Routes>
           </Suspense>
         </BrowserRouter>

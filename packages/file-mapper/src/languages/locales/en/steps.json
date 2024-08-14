@@ -3,11 +3,11 @@
   "createMapping": "Map columns to schema",
   "finish": "Save and continue to form",
   "uploadNew": "Upload a file",
-  "selectSave": "Or select previously mapped data",
+  "selectSave": "Use previously mapped data (optional)",
   "savedOn": "Saved on {{date}}",
   "buttonBack": "Back",
   "buttonNext": "Next",
-  "buttonLast": "Finish",
+  "buttonLast": "Load form",
   "fileTypeError": "File type not supported",
   "drop": "Click to add file, or drag and drop a file here",
   "dropNow": "Drop file",
@@ -16,5 +16,6 @@
   "mapTo": "Map to",
   "selectOption": "Value in Darwin Core",
   "saveMapping": "Save as",
-  "saveMappingExtra": "You can save your mapping for future datasets for easy reference. Please enter a name below."
+  "saveMappingExtra": "You can save your mapping for future datasets for easy reference. Please enter a name below.",
+  "isLoading": "Loading..."
 }

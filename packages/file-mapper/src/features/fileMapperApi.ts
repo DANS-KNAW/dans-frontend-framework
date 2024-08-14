@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import * as XLSX from "xlsx";
 import type { DarwinOptions } from "../types";
+import { getUser } from "@dans-framework/utils/user";
 
 export const darwinCoreApi = createApi({
   reducerPath: "darwinCoreApi",
@@ -31,3 +32,45 @@ export const darwinCoreApi = createApi({
 });
 
 export const { useFetchDarwinTermsQuery } = darwinCoreApi;
+
+export const submitMappingApi = createApi({
+  reducerPath: "submitMappingApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: `${import.meta.env.VITE_PACKAGING_TARGET}/mapper/`,
+  }),
+  endpoints: (build) => ({
+    submitMap: build.mutation({
+      query: ({ savedMap, newMap, file }) => {
+        const user = getUser();
+        // format headers
+        const headers = {
+          Authorization: `Bearer ${user?.access_token}`,
+        };
+
+        let formData = new FormData();
+        formData.append("file", file);
+        formData.append("savedMap", savedMap);
+        formData.append("map", JSON.stringify(newMap));
+
+        console.log(`sending data:`)
+        console.log(formData.get('file'))
+        console.log(formData.get('savedMap'))
+        console.log(formData.get('map'))
+
+        return ({
+          url: '',
+          method: "POST",
+          headers: headers,
+          body: formData,
+        });
+      },
+      transformErrorResponse: () => {
+        return ({
+          error: "Error connecting to server"
+        });
+      },
+    }),
+  }),
+});
+
+export const { useSubmitMapMutation } = submitMappingApi;

@@ -87,16 +87,6 @@ export const Step1 = () => {
     },
   });
 
-  // reset saved selection on file choice
-  useEffect(() => {
-    file && dispatch(setSavedMap(''));
-  }, [file]);
-
-  // reset file selection if a saved map is picked
-  useEffect(() => {
-    savedMap && dispatch(setFile(undefined));
-  }, [savedMap]);
-
   return (
     <StepWrap title={t("selectFile")}>
       <Stack 

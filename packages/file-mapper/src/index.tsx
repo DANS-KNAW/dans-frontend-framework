@@ -4,10 +4,10 @@ import FileMapper from "./features/FileMapper";
 import { Provider as ReduxProvider } from "react-redux";
 import { store } from './redux/store';
 
-export const MapWrapper = () => 
+export const MapWrapper = ({setMappedForm}: { setMappedForm: (form: any) => void }) => 
   <ReduxProvider store={store}>
     <I18nextProvider i18n={i18nProvider}>
-      <FileMapper />
+      <FileMapper setMappedForm={setMappedForm} />
     </I18nextProvider>
   </ReduxProvider>
 
