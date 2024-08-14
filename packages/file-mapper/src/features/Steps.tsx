@@ -24,7 +24,7 @@ import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import type { DarwinOptions, Saves } from "../types";
+import type { DarwinOptions, Saves, SerializedFile } from "../types";
 import { 
   getFile, 
   setFile, 
@@ -33,36 +33,8 @@ import {
   getSavedMap,
   setSavedMap,
 } from './fileMapperSlice';
+import { useFetchDarwinTermsQuery } from "./fileMapperApi";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
-
-
-const options = [
-  {
-    term_localName: "genericName",
-    tdwgutility_organizedInClass: "Taxon",
-    label: "Generic Name",
-  },
-  {
-    term_localName: "scientificName",
-    tdwgutility_organizedInClass: "Taxon",
-    label: "Scientific Name",
-  },
-  {
-    term_localName: "individualCount",
-    tdwgutility_organizedInClass: "Occurrence",
-    label: "Individual Count",
-  },
-  {
-    term_localName: "lifeStage",
-    tdwgutility_organizedInClass: "Occurrence",
-    label: "Life Stage",
-  },
-  {
-    term_localName: "organismName",
-    tdwgutility_organizedInClass: "Organism",
-    label: "Organism Name",
-  },
-];
 
 const saves = [
   {
@@ -93,7 +65,7 @@ export const Step1 = () => {
 
   const onDrop = async (files: File[]) => {
     // serialize files to store in redux
-    const serializedFile = {
+    const serializedFile: SerializedFile = {
       name: files[0].name,
       size: files[0].size,
       url: URL.createObjectURL(files[0]),
@@ -244,6 +216,8 @@ const Row = ({row}: {row: string}) => {
   const mapping = useAppSelector(getMapping);
   const dispatch = useAppDispatch();
 
+  const { data, isLoading } = useFetchDarwinTermsQuery('');
+
   const selectValue = (row: string, value: DarwinOptions | null) => {
     if (value === null) {
       // Create a new object excluding the [row] key
@@ -267,9 +241,9 @@ const Row = ({row}: {row: string}) => {
       </TableCell>
       <TableCell>
         <Autocomplete
-          options={options}
+          options={data as DarwinOptions[]}
           getOptionLabel={(option) => option.label}
-          groupBy={(option) => option.tdwgutility_organizedInClass}
+          groupBy={(option) => option.header}
           sx={{ width: 300 }}
           renderInput={(params) => <TextField {...params} label={t('selectOption')} />}
           onChange={(_e, value) => selectValue(row, value)}
@@ -279,6 +253,7 @@ const Row = ({row}: {row: string}) => {
           onInputChange={(_e, newInputValue) => {
             setInputValue(newInputValue);
           }}
+          loading={isLoading}
         />
       </TableCell>
     </TableRow>

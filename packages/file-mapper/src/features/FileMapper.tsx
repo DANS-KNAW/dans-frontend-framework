@@ -20,8 +20,6 @@ const FileMapper = () => {
   const file = useAppSelector(getFile);
   const savedMap = useAppSelector(getSavedMap);
 
-  console.log(activeStep)
-
    const handleNext = () => {
     activeStep !== steps.length - 1 && !savedMap ? 
     dispatch(setActiveStep(activeStep + 1)) :

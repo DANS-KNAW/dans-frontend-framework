@@ -1,7 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../redux/store";
+import type { SerializedFile } from "../types";
 
-const initialState = {
+const initialState: {
+  activeStep: number;
+  mapping: any;
+  file: SerializedFile | undefined;
+  savedMap: string;
+} = {
   activeStep: 0,
   mapping: {},
   file: undefined,
@@ -12,16 +18,16 @@ export const fileMapperSlice = createSlice({
   name: "fileMapper",
   initialState,
   reducers: {
-    setActiveStep: (state, action) => {
+    setActiveStep: (state, action: PayloadAction<number>) => {
       state.activeStep = action.payload;
     },
-    setMapping: (state, action) => {
+    setMapping: (state, action: PayloadAction<any>) => {
       state.mapping = action.payload;
     },
-    setSavedMap: (state, action) => {
+    setSavedMap: (state, action: PayloadAction<string>) => {
       state.savedMap = action.payload;
     },
-    setFile: (state, action) => {
+    setFile: (state, action: PayloadAction<SerializedFile | undefined>) => {
       state.file = action.payload;
     }
   },
