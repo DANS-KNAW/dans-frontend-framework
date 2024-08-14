@@ -41,6 +41,9 @@ importers:
       '@dans-framework/pages':
         specifier: workspace:*
         version: link:../../packages/pages
+      '@dans-framework/repo-advisor':
+        specifier: workspace:*
+        version: link:../../packages/repo-advisor
       '@dans-framework/theme':
         specifier: workspace:*
         version: link:../../packages/theme
@@ -849,6 +852,61 @@ importers:
       vite:
         specifier: ^4.4.5
         version: 4.4.5(@types/node@20.11.30)(lightningcss@1.22.0)
+
+  packages/repo-advisor:
+    dependencies:
+      '@dans-framework/deposit':
+        specifier: workspace:*
+        version: link:../deposit
+      '@dans-framework/utils':
+        specifier: workspace:*
+        version: link:../utils
+      '@mui/material':
+        specifier: ^5.14.3
+        version: 5.14.3(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@reduxjs/toolkit':
+        specifier: ^1.9.5
+        version: 1.9.5(react-redux@8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
+      framer-motion:
+        specifier: ^10.15.0
+        version: 10.15.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      i18next:
+        specifier: ^23.4.1
+        version: 23.4.1
+      i18next-browser-languagedetector:
+        specifier: ^7.1.0
+        version: 7.1.0
+      i18next-resources-to-backend:
+        specifier: ^1.1.4
+        version: 1.1.4
+      notistack:
+        specifier: ^3.0.1
+        version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      react-i18next:
+        specifier: ^13.0.3
+        version: 13.0.3(i18next@23.4.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-redux:
+        specifier: ^8.1.2
+        version: 8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
+      react-router-dom:
+        specifier: ^6.14.2
+        version: 6.14.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      use-debounce:
+        specifier: ^9.0.4
+        version: 9.0.4(react@18.2.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.15
+        version: 18.2.15
+      '@types/react-dom':
+        specifier: ^18.2.7
+        version: 18.2.7
 
   packages/theme:
     dependencies:
@@ -3930,7 +3988,7 @@ snapshots:
   '@mui/private-theming@5.14.5(@types/react@18.2.15)(react@18.2.0)':
     dependencies:
       '@babel/runtime': 7.23.2
-      '@mui/utils': 5.14.7(react@18.2.0)
+      '@mui/utils': 5.14.14(@types/react@18.2.15)(react@18.2.0)
       prop-types: 15.8.1
       react: 18.2.0
     optionalDependencies:

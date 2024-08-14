@@ -12,7 +12,7 @@ import {
   UserSubmissions,
   SignInCallback,
 } from "@dans-framework/user-auth";
-import RepoAdvisor, { NoRepoSelected, CurrentlySelected } from './config/pages/RepoAdvisor';
+import { RepoAdvisor, NoRepoSelected, CurrentlySelected } from '@dans-framework/repo-advisor';
 
 // Load config variables
 import pages from "./config/pages";
