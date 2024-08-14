@@ -3373,7 +3373,7 @@ snapshots:
   '@ampproject/remapping@2.2.1':
     dependencies:
       '@jridgewell/gen-mapping': 0.3.3
-      '@jridgewell/trace-mapping': 0.3.9
+      '@jridgewell/trace-mapping': 0.3.19
 
   '@babel/code-frame@7.22.10':
     dependencies:
@@ -3828,7 +3828,7 @@ snapshots:
     dependencies:
       '@jridgewell/set-array': 1.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
-      '@jridgewell/trace-mapping': 0.3.19
+      '@jridgewell/trace-mapping': 0.3.9
 
   '@jridgewell/resolve-uri@3.1.1': {}
 
@@ -3927,7 +3927,7 @@ snapshots:
   '@mui/private-theming@5.14.5(@types/react@18.2.15)(react@18.2.0)':
     dependencies:
       '@babel/runtime': 7.23.2
-      '@mui/utils': 5.14.14(@types/react@18.2.15)(react@18.2.0)
+      '@mui/utils': 5.14.7(react@18.2.0)
       prop-types: 15.8.1
       react: 18.2.0
     optionalDependencies:
