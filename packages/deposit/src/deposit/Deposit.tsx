@@ -159,7 +159,16 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // For external form selection from the pre-form advisor without reloading the app,
   // we listen for changes to the form object, and initiate a new form when it changes
   useEffect(() => {
-    if (config.displayName && (!currentConfig.displayName || (currentConfig.displayName.en !== config.displayName.en))) {
+    if (config.displayName && (
+      !currentConfig.displayName || 
+        (
+          typeof currentConfig.displayName !== 'string' && 
+          typeof config.displayName !== 'string' && 
+          currentConfig.displayName.en !== config.displayName.en
+        ) ||
+        (currentConfig.displayName !== config.displayName)
+      )
+    ) {
       dispatch(resetMetadataSubmitStatus());
       dispatch(resetFilesSubmitStatus());
       dispatch(resetFiles());

@@ -55,6 +55,9 @@ export const uploadFile = async (
 
   const fileBlob = await fetchedFile.blob();
 
+  // Get the current user object to send along at start of upload, for auth
+  const userBeforeUpload = getUser();
+
   // TUS upload logic
   const upload = new tus.Upload(fileBlob, {
     endpoint: `${import.meta.env.VITE_PACKAGING_TARGET}/files`,
@@ -66,10 +69,14 @@ export const uploadFile = async (
       fileId: file.id,
       datasetId: sessionId,
     },
-    onError: function (error) {
+    headers: {
+      Authorization: `Bearer ${userBeforeUpload?.access_token}`,
+      "auth-env-name": target,
+    },
+    onError: (error) => {
       manualError(file.name, file.id, error, 'onError function in TUS upload');
     },
-    onShouldRetry: function (error, retryAttempt, _options) {
+    onShouldRetry: (error, retryAttempt, _options) => {
       console.error("Error", error)
       console.log("Request", error.originalRequest)
       console.log("Response", error.originalResponse)
@@ -106,7 +113,10 @@ export const uploadFile = async (
     },
     onSuccess: async () => {
       const tusId = upload.url?.split('/').pop();
-      const user = getUser();
+
+      // User key might have changed during upload, so let's get it again
+      const userAfterUpload = getUser();
+      
       // Due to incomplete Python TUS implementation,
       // we do an extra api PATCH call to the server to signal succesful upload.
       // Response might take a while, so lets display a spinner that informs the user
@@ -121,7 +131,7 @@ export const uploadFile = async (
         const response = await fetch(`${import.meta.env.VITE_PACKAGING_TARGET}/inbox/files/${sessionId}/${tusId}`, {
           method: 'PATCH',
           headers: {
-            Authorization: `Bearer ${user?.access_token}`,
+            Authorization: `Bearer ${userAfterUpload?.access_token}`,
             "auth-env-name": target,
           },
         });

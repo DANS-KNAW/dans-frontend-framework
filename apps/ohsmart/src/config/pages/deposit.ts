@@ -8,7 +8,7 @@ const page: Page = {
   inMenu: true,
   menuTitle: {
     en: "Deposit",
-    nl: "Indienen",
+    nl: "Deponeren",
   },
 };
 

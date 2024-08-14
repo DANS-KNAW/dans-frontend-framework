@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest 
     strategy:
       matrix:
-        node-version: ["18"]
+        node-version: ["20"]
     name: Run tests
     steps:
     - name: Checkout repo
@@ -20,7 +20,7 @@ jobs:
     - name: Set node version
       uses: actions/setup-node@v3
       with:
-        node-version: '18'
+        node-version: '20'
     - name: Install dependencies
       run: |
         sudo apt-get update
@@ -37,7 +37,7 @@ jobs:
     needs: test
     strategy:
       matrix:
-        node-version: ["18"]
+        node-version: ["20"]
     env:
       IMAGE_TAG: ${{ github.ref_name }}
       USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}

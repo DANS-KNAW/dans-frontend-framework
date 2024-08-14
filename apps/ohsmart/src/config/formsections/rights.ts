@@ -17,8 +17,8 @@ const section: InitialSectionType = {
       name: "rightsholder",
       required: true,
       description: {
-        en: "State the organisation or individual that is holder of the intellectual property rights. For datasets, these rights are usually vested in the organisation thet employs the data creator(s). Note that the depositor (account used to deposit the data and metadata will be contacted for access requests, and must have the consent of the rights holder to publish the data.",
-        nl: "Vermeld de organisatie of individu die de intellectuele eigendomsrechten bezit. Voor datasets liggen deze rechten meestal bij de organisatie die de maker(s) van de data in dienst heeft. Let op: de deposant (het account dat wordt gebruikt om de data en metadata te deponeren) wordt gecontacteerd voor toegangsverzoeken en moet de toestemming van de rechthebbende hebben om de data te publiceren.",
+        en: "State the organisation or individual that is holder of the intellectual property rights. For datasets, these rights are usually vested in the organisation that employs the data creator(s). Note that the depositor (who holds the account used to deposit the data and metadata) must have the consent of the rights holder to publish the data. The depositor will be the person contacted for access requests.",
+        nl: "Vermeld de organisatie of individu die de intellectuele eigendomsrechten bezit. Voor datasets liggen deze rechten meestal bij de organisatie die de maker(s) van de data in dienst heeft. Let op: de deposant (de houder van het account dat wordt gebruikt om de data en metadata te deponeren) moet toestemming van de rechthebbende hebben om de data te publiceren. De deposant is de persoon die wordt gecontacteerd voor verzoeken om toegang tot de data.",
       },
       multiApiValue: "ror",
       options: ["ror", "orcid"],
@@ -32,8 +32,8 @@ const section: InitialSectionType = {
       name: "licence_type",
       required: true,
       description: {
-        en: "One of a number of specific licences",
-        nl: "Eén van de volgende specifieke licenties",
+        en: "Choose one of a number of specific licences.",
+        nl: "Kies één van deze specifieke licenties.",
       },
       options: "sshLicences",
       value: {
