@@ -626,18 +626,12 @@ importers:
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../utils
-      '@mui/icons-material':
-        specifier: ^5.14.3
-        version: 5.14.3(@mui/material@5.14.3(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@types/react@18.2.15)(react@18.2.0)
       '@mui/material':
         specifier: ^5.14.3
         version: 5.14.3(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@reduxjs/toolkit':
         specifier: ^1.9.5
         version: 1.9.5(react-redux@8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
-      framer-motion:
-        specifier: ^10.15.0
-        version: 10.15.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       i18next:
         specifier: ^23.4.1
         version: 23.4.1
@@ -659,9 +653,6 @@ importers:
       react-i18next:
         specifier: ^13.0.3
         version: 13.0.3(i18next@23.4.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      react-oidc-context:
-        specifier: ^2.2.2
-        version: 2.2.2(oidc-client-ts@2.2.4)(react@18.2.0)
       react-redux:
         specifier: ^8.1.2
         version: 8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
