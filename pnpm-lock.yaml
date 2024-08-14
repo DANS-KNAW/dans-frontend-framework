@@ -188,6 +188,85 @@ importers:
         specifier: ^0.6.2
         version: 0.6.2(eslint@8.54.0)(optionator@0.9.3)(typescript@5.1.6)(vite@4.4.5(@types/node@20.11.30)(lightningcss@1.22.0))
 
+  apps/digitaltwins:
+    dependencies:
+      '@dans-framework/deposit':
+        specifier: workspace:*
+        version: link:../../packages/deposit
+      '@dans-framework/file-mapper':
+        specifier: workspace:*
+        version: link:../../packages/file-mapper
+      '@dans-framework/layout':
+        specifier: workspace:*
+        version: link:../../packages/layout
+      '@dans-framework/pages':
+        specifier: workspace:*
+        version: link:../../packages/pages
+      '@dans-framework/theme':
+        specifier: workspace:*
+        version: link:../../packages/theme
+      '@dans-framework/user-auth':
+        specifier: workspace:*
+        version: link:../../packages/user-auth
+      '@dans-framework/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      '@fontsource/roboto':
+        specifier: ^5.0.7
+        version: 5.0.7
+      '@mui/material':
+        specifier: ^5.14.3
+        version: 5.14.3(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      i18next:
+        specifier: ^23.4.1
+        version: 23.4.1
+      i18next-browser-languagedetector:
+        specifier: ^7.1.0
+        version: 7.1.0
+      i18next-resources-to-backend:
+        specifier: ^1.1.4
+        version: 1.1.4
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      react-i18next:
+        specifier: ^13.0.3
+        version: 13.0.3(i18next@23.4.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-router-dom:
+        specifier: ^6.14.2
+        version: 6.14.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      web-vitals:
+        specifier: ^3.4.0
+        version: 3.4.0
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.27
+        version: 20.11.30
+      '@types/react':
+        specifier: ^18.2.15
+        version: 18.2.15
+      '@types/react-dom':
+        specifier: ^18.2.7
+        version: 18.2.7
+      '@vitejs/plugin-react':
+        specifier: ^4.0.3
+        version: 4.0.3(vite@4.4.5(@types/node@20.11.30)(lightningcss@1.22.0))
+      eslint-plugin-react-hooks:
+        specifier: ^4.6.0
+        version: 4.6.0(eslint@8.54.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.3
+        version: 0.4.3(eslint@8.54.0)
+      vite:
+        specifier: ^4.4.5
+        version: 4.4.5(@types/node@20.11.30)(lightningcss@1.22.0)
+      vite-plugin-checker:
+        specifier: ^0.6.2
+        version: 0.6.2(eslint@8.54.0)(optionator@0.9.3)(typescript@5.1.6)(vite@4.4.5(@types/node@20.11.30)(lightningcss@1.22.0))
+
   apps/ohsmart:
     dependencies:
       '@dans-framework/deposit':
@@ -544,6 +623,52 @@ importers:
       '@types/uuid':
         specifier: ^9.0.2
         version: 9.0.2
+
+  packages/file-mapper:
+    dependencies:
+      '@dans-framework/utils':
+        specifier: workspace:*
+        version: link:../utils
+      '@mui/material':
+        specifier: ^5.14.3
+        version: 5.14.3(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@reduxjs/toolkit':
+        specifier: ^1.9.5
+        version: 1.9.5(react-redux@8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
+      i18next:
+        specifier: ^23.4.1
+        version: 23.4.1
+      i18next-browser-languagedetector:
+        specifier: ^7.1.0
+        version: 7.1.0
+      i18next-resources-to-backend:
+        specifier: ^1.1.4
+        version: 1.1.4
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      react-dropzone:
+        specifier: ^14.2.3
+        version: 14.2.3(react@18.2.0)
+      react-i18next:
+        specifier: ^13.0.3
+        version: 13.0.3(i18next@23.4.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-redux:
+        specifier: ^8.1.2
+        version: 8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
+      xlsx:
+        specifier: ^0.18.5
+        version: 0.18.5
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.15
+        version: 18.2.15
+      '@types/react-dom':
+        specifier: ^18.2.7
+        version: 18.2.7
 
   packages/layout:
     dependencies:
@@ -1777,6 +1902,10 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  adler-32@1.3.1:
+    resolution: {integrity: sha512-ynZ4w/nUUv5rrsR8UUGoe1VC9hZj6V5hU9Qw1HlMDJGEJw5S7TfTErWTjMys6M7vr0YWcPqs3qAr4ss0nDfP+A==}
+    engines: {node: '>=0.8'}
+
   ajv@6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
 
@@ -1862,6 +1991,10 @@ packages:
   caniuse-lite@1.0.30001522:
     resolution: {integrity: sha512-TKiyTVZxJGhsTszLuzb+6vUZSjVOAhClszBr2Ta2k9IwtNBT/4dzmL6aywt0HCgEZlmwJzXJd8yNiob6HgwTRg==}
 
+  cfb@1.2.2:
+    resolution: {integrity: sha512-KfdUZsSOw19/ObEWasvBP/Ac4reZvAGauZhs6S/gqNhXhI7cKwvlH7ulj+dOEYnca4bm4SGo8C1bTAQvnTjgQA==}
+    engines: {node: '>=0.8'}
+
   chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
     engines: {node: '>=4'}
@@ -1888,6 +2021,10 @@ packages:
   clsx@2.0.0:
     resolution: {integrity: sha512-rQ1+kcj+ttHG0MKVGBUXwayCCF1oh39BF5COIpRzuCEv8Mwjv0XucrI2ExNTOn9IlLifGClWQcU9BrZORvtw6Q==}
     engines: {node: '>=6'}
+
+  codepage@1.15.0:
+    resolution: {integrity: sha512-3g6NUTPd/YtuuGrhMnOMRjFc+LJw/bnMp3+0r/Wcz3IXUuCosKRJvMphm5+Q+bvTVGcJJuRvVLuYba+WojaFaA==}
+    engines: {node: '>=0.8'}
 
   color-convert@1.9.3:
     resolution: {integrity: sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg==}
@@ -1925,6 +2062,11 @@ packages:
 
   country-flag-icons@1.5.7:
     resolution: {integrity: sha512-AdvXhMcmSp7nBSkpGfW4qR/luAdRUutJqya9PuwRbsBzuoknThfultbv7Ib6fWsHXC43Es/4QJ8gzQQdBNm75A==}
+
+  crc-32@1.2.2:
+    resolution: {integrity: sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==}
+    engines: {node: '>=0.8'}
+    hasBin: true
 
   cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -2161,6 +2303,10 @@ packages:
   form-data@4.0.0:
     resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
     engines: {node: '>= 6'}
+
+  frac@1.1.2:
+    resolution: {integrity: sha512-w/XBfkibaTl3YDqASwfDUqkna4Z2p9cFSr1aHDt0WoMTECnRfBOv2WArlZILlqgWlmdIlALXGpM2AOhEk5W3IA==}
+    engines: {node: '>=0.8'}
 
   framer-motion@10.15.0:
     resolution: {integrity: sha512-HDjWrYWgbO5orKuhnXETLFzk7UUvwWur2HFs2elAZ8lVpI49ClHql31DNTVvVBcOrSHfAOS4eBDBedIvOx634w==}
@@ -2922,6 +3068,10 @@ packages:
     resolution: {integrity: sha512-LbrmJOMUSdEVxIKvdcJzQC+nQhe8FUZQTXQy6+I75skNgn3OoQ0DZA8YnFa7gp8tqtL3KPf1kmo0R5DoApeSGQ==}
     engines: {node: '>=0.10.0'}
 
+  ssf@0.11.2:
+    resolution: {integrity: sha512-+idbmIXoYET47hH+d7dfm2epdOMUDjqcB4648sTZ+t2JwoyBFL/insLfB/racrDmsKB3diwsDA696pZMieAC5g==}
+    engines: {node: '>=0.8'}
+
   stack-utils@2.0.6:
     resolution: {integrity: sha512-XlkWvfIm6RmsWtNJx+uqtKLS8eqFbxUg0ZzLXqY0caEy9l7hruX8IpiDnjsLavoBgqCCR71TqWO8MaXYheJ3RQ==}
     engines: {node: '>=10'}
@@ -3183,8 +3333,21 @@ packages:
     engines: {node: '>= 8'}
     hasBin: true
 
+  wmf@1.0.2:
+    resolution: {integrity: sha512-/p9K7bEh0Dj6WbXg4JG0xvLQmIadrner1bi45VMJTfnbVHsc7yIajZyoSoK60/dtVBs12Fm6WkUI5/3WAVsNMw==}
+    engines: {node: '>=0.8'}
+
+  word@0.3.0:
+    resolution: {integrity: sha512-OELeY0Q61OXpdUfTp+oweA/vtLVg5VDOXh+3he3PNzLGG/y0oylSOC1xRVj0+l4vQ3tj/bB1HVHv1ocXkQceFA==}
+    engines: {node: '>=0.8'}
+
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
+
+  xlsx@0.18.5:
+    resolution: {integrity: sha512-dmg3LCjBPHZnQp5/F/+nnTa+miPJxUXB6vtk42YjBBKayDNagxGEeIdWApkYPOf3Z3pm3k62Knjzp7lMeTEtFQ==}
+    engines: {node: '>=0.8'}
+    hasBin: true
 
   xml-utils@1.7.0:
     resolution: {integrity: sha512-bWB489+RQQclC7A9OW8e5BzbT8Tu//jtAOvkYwewFr+Q9T9KDGvfzC1lp0pYPEQPEoPQLDkmxkepSC/2gIAZGw==}
@@ -3213,7 +3376,7 @@ snapshots:
   '@ampproject/remapping@2.2.1':
     dependencies:
       '@jridgewell/gen-mapping': 0.3.3
-      '@jridgewell/trace-mapping': 0.3.9
+      '@jridgewell/trace-mapping': 0.3.19
 
   '@babel/code-frame@7.22.10':
     dependencies:
@@ -4089,6 +4252,8 @@ snapshots:
 
   acorn@8.10.0: {}
 
+  adler-32@1.3.1: {}
+
   ajv@6.12.6:
     dependencies:
       fast-deep-equal: 3.1.3
@@ -4178,6 +4343,11 @@ snapshots:
 
   caniuse-lite@1.0.30001522: {}
 
+  cfb@1.2.2:
+    dependencies:
+      adler-32: 1.3.1
+      crc-32: 1.2.2
+
   chalk@2.4.2:
     dependencies:
       ansi-styles: 3.2.1
@@ -4208,6 +4378,8 @@ snapshots:
   clsx@1.2.1: {}
 
   clsx@2.0.0: {}
+
+  codepage@1.15.0: {}
 
   color-convert@1.9.3:
     dependencies:
@@ -4245,6 +4417,8 @@ snapshots:
       yaml: 1.10.2
 
   country-flag-icons@1.5.7: {}
+
+  crc-32@1.2.2: {}
 
   cross-spawn@7.0.3:
     dependencies:
@@ -4537,6 +4711,8 @@ snapshots:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.35
+
+  frac@1.1.2: {}
 
   framer-motion@10.15.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
@@ -5229,6 +5405,10 @@ snapshots:
 
   source-map@0.5.7: {}
 
+  ssf@0.11.2:
+    dependencies:
+      frac: 1.1.2
+
   stack-utils@2.0.6:
     dependencies:
       escape-string-regexp: 2.0.0
@@ -5445,7 +5625,21 @@ snapshots:
     dependencies:
       isexe: 2.0.0
 
+  wmf@1.0.2: {}
+
+  word@0.3.0: {}
+
   wrappy@1.0.2: {}
+
+  xlsx@0.18.5:
+    dependencies:
+      adler-32: 1.3.1
+      cfb: 1.2.2
+      codepage: 1.15.0
+      crc-32: 1.2.2
+      ssf: 0.11.2
+      wmf: 1.0.2
+      word: 0.3.0
 
   xml-utils@1.7.0: {}
 

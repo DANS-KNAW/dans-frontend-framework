@@ -73,6 +73,7 @@ export const uploadFile = async (
       Authorization: `Bearer ${userBeforeUpload?.access_token}`,
       "auth-env-name": target,
     },
+    removeFingerprintOnSuccess: true,
     onError: (error) => {
       manualError(file.name, file.id, error, 'onError function in TUS upload');
     },
