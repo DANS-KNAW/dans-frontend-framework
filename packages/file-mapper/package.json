@@ -5,6 +5,7 @@
   "private": true,
   "version": "1.0.0",
   "dependencies": {
+    "@dans-framework/pages": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@mui/material": "^5.14.3",
     "@reduxjs/toolkit": "^1.9.5",

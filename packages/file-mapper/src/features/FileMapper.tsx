@@ -14,27 +14,39 @@ import { getActiveStep, setActiveStep, getFile, getSavedMap, getMapping } from '
 import { useSubmitMapMutation } from './fileMapperApi';
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import CircularProgress from '@mui/material/CircularProgress';
+import { useSiteTitle, setSiteTitle } from "@dans-framework/utils/sitetitle";
+import { lookupLanguageString } from "@dans-framework/utils/language";
+import { type Page } from "@dans-framework/pages";
 
 const steps = ['selectFile', 'createMapping', 'finish'];
 
-const FileMapper = ({setMappedForm}: { setMappedForm: (form: any) => void }) => {
+const FileMapper = ({setMappedForm, page}: { 
+  setMappedForm: (form: any) => void;
+  page: Page;
+}) => {
   const dispatch = useAppDispatch();
-  const { t } = useTranslation("steps");
+  const siteTitle = useSiteTitle();
+  const { t, i18n } = useTranslation("steps");
   const activeStep = useAppSelector(getActiveStep);
   const file = useAppSelector(getFile);
   const savedMap = useAppSelector(getSavedMap);
   const mapping = useAppSelector(getMapping);
   const [ submitMap, { isLoading, data } ] = useSubmitMapMutation();
 
+  // set page title
+  useEffect(() => {
+    setSiteTitle(siteTitle, lookupLanguageString(page.name, i18n.language));
+  }, [siteTitle, page.name]);
+
   useEffect(() => {
     // save server return data to state
     setMappedForm(data);
-  }, [data])
+  }, [data]);
 
   const handleNext = () => {
-    if (activeStep !== steps.length - 1 && !savedMap && !file) { 
+    if (activeStep !== steps.length - 1 && (!file || !savedMap)) { 
       dispatch(setActiveStep(activeStep + 1));
-    } else if(file) {
+    } else if ( file ) {
       (async () => {
         const fetchedFile = await fetch(file.url);
         const blob = await fetchedFile.blob();

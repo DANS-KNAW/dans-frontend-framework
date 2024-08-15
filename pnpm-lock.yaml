@@ -641,6 +641,9 @@ importers:
 
   packages/file-mapper:
     dependencies:
+      '@dans-framework/pages':
+        specifier: workspace:*
+        version: link:../pages
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../utils

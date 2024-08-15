@@ -29,8 +29,7 @@ const App = () => {
   const { i18n } = useTranslation();
   // Must keep a parent state for the form mapper component,
   // otherwise the app will not know of any API response from the FileMapper component
-  const [mappedForm, setMappedForm] = useState();
-  console.log(mappedForm)
+  const [ mappedForm, setMappedForm ] = useState();
 
   return (
     <AuthWrapper authProvider={authProvider}>
@@ -79,11 +78,12 @@ const App = () => {
                     element={
                       page.template === "deposit" ?
                         <AuthRoute>
-                          {mappedForm
-                            ? <Deposit config={mappedForm} page={page} />
-                            : <FileMapper setMappedForm={setMappedForm} />
-                          }
-                        </AuthRoute>
+                          <Deposit config={mappedForm || form} page={page} />
+                        </AuthRoute> 
+                      : page.template === "mapper" ?
+                        <AuthRoute>
+                          <FileMapper setMappedForm={setMappedForm} page={page} />
+                        </AuthRoute> 
                       : <Generic {...page} />
                     }
                   />
