@@ -5,7 +5,7 @@ import type { RepoResponse } from "../types";
 export const repoAdvisorApi = createApi({
   reducerPath: "repoAdvisorApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_ADVISOR_URI,
+    baseUrl: import.meta.env.VITE_ADVISOR_URL,
   }),
   endpoints: (build) => ({
     fetchData: build.query({
