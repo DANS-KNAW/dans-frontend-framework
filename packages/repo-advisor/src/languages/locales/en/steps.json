@@ -3,7 +3,7 @@
   "repoAdvisorDescription": "Fill out the form below to get recommendations on where to submit your data.",
   "defineDataset": "Define your data set",
   "recommendations": "Get recommendations",
-  "buttonBack": "Back a step",
+  "buttonBack": "Previous step",
   "buttonNext": "Next step",
   "buttonLast": "Go to deposit",
   "isLoading": "Loading",

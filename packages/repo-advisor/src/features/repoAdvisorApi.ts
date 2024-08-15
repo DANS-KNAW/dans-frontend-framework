@@ -5,17 +5,15 @@ import type { RepoResponse } from "../types";
 export const repoAdvisorApi = createApi({
   reducerPath: "repoAdvisorApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `https://repository-assistant.labs.dansdemo.nl`,
+    baseUrl: import.meta.env.VITE_ADVISOR_URI,
   }),
   endpoints: (build) => ({
     fetchData: build.query({
       query: ({ ror, narcis, depositType, fileType }) => {
         const user = getUser();
-        // format headers
         const headers = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user?.access_token}`,
-          // Authorization: "Bearer @km1-10122004-lamA!M@rdh1yy@h@51nnur1@hK",
         };
 
         return ({
