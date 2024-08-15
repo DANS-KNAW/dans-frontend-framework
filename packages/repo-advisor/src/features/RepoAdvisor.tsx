@@ -65,8 +65,8 @@ const RepoAdvisor = ({setRepoConfig, page, depositLocation}: {
 
   return (
     <Container>
-      <Grid container>
-        <Grid xs={12} mt={4}>
+      <Grid container display="flex" justifyContent="center">
+        <Grid xs={12} md={10} lg={8} mt={4}>
           <Paper sx={{p: 4}}>
             <Stepper 
               activeStep={activeStep} 
