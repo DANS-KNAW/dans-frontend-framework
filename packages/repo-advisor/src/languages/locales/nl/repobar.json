@@ -1,0 +1,5 @@
+{
+  "selectRepoFirst": "Select a repository first",
+  "activeRepo": "Active repository: {{repo}}",
+  "description": "Please go to the <0>repository advisor</0> and fill in the form to get recommendations"
+}

@@ -11,7 +11,8 @@ export type Template =
   | "deposit"
   | "search"
   | "record"
-  | "dashboard";
+  | "dashboard"
+  | "advisor";
 
 export interface Page {
   id: string;
