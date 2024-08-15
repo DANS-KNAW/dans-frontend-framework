@@ -1,13 +1,7 @@
-import { useState, useEffect, Fragment, type Dispatch, type SetStateAction } from "react";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { useState } from "react";
 import Stack from '@mui/material/Stack';
 import CircularProgress from '@mui/material/CircularProgress';
-import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Grid from "@mui/material/Unstable_Grid2";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
 import { useDebounce } from "use-debounce";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -15,17 +9,10 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import type { AutocompleteAPIFieldData, FormConfig } from "@dans-framework/deposit";
-import { AnimatePresence, motion } from "framer-motion";
-import { useSubmitMutation } from "./repoAdvisorApi";
-import { enqueueSnackbar } from "notistack";
-import Link from '@mui/material/Link';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Divider from '@mui/material/Divider';
-import ListItemText from '@mui/material/ListItemText';
 import { useFetchRorByNameQuery, useFetchDatastationsTermQuery } from "@dans-framework/deposit";
 import { useTranslation } from "react-i18next";
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { getRor, getNarcis, setRor, setNarcis } from "./repoAdvisorSlice";
 
 type Option = {
   value: string;
@@ -35,34 +22,40 @@ type Option = {
 export const SelectField = ({label, value, onChange, options, disabled}: {
   label: string;
   value: string;
-  onChange: (s: string) => void;
+  onChange: any;
   options: Option[];
   disabled?: boolean;
-}) =>
-  <Box mb={2}>
-    <FormControl fullWidth disabled={disabled}>
-      <InputLabel>{label}</InputLabel>
-      <Select
-        value={value}
-        label={label}
-        onChange={(e: SelectChangeEvent) => onChange(e.target.value)}
-      >
-        {options.map( option => 
-          <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
-        )}
-      </Select>
-    </FormControl>
-  </Box>
+}) => {
+  const dispatch = useAppDispatch();
+  return (
+    <Box mb={2}>
+      <FormControl fullWidth disabled={disabled}>
+        <InputLabel>{label}</InputLabel>
+        <Select
+          value={value || ''}
+          label={label}
+          onChange={(e: SelectChangeEvent) => dispatch(onChange(e.target.value))}
+        >
+          {options.map( option => 
+            <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
+          )}
+        </Select>
+      </FormControl>
+    </Box>
+  );
+}
 
 // Derived from the API field in the Deposit package
 export const RorField = () => {
+  const { t } = useTranslation("steps");
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   // Fetch data on input change
   const { data, isFetching, isLoading } =
-    useFetchRorByNameQuery<QueryReturnType>(debouncedInputValue, {
+    useFetchRorByNameQuery(debouncedInputValue, {
       skip: debouncedInputValue === "",
     });
+  const value = useAppSelector(getRor);
 
   return (
     <ApiField
@@ -72,17 +65,20 @@ export const RorField = () => {
       data={data}
       isLoading={isLoading}
       isFetching={isFetching}
+      label={t("ror")}
+      setValue={setRor}
+      value={value}
     />
   );
 };
 
 export const NarcisField = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation("steps");
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   // Fetch data on input change
   const { data, isFetching, isLoading } =
-    useFetchDatastationsTermQuery<QueryReturnType>(
+    useFetchDatastationsTermQuery(
       {
         vocabulary: "narcis",
         lang: i18n.language,
@@ -90,6 +86,7 @@ export const NarcisField = () => {
       },
       { skip: debouncedInputValue === "" },
     );
+  const value = useAppSelector(getNarcis);
 
   return (
     <ApiField
@@ -99,6 +96,9 @@ export const NarcisField = () => {
       data={data}
       isLoading={isLoading}
       isFetching={isFetching}
+      label={t("narcis")}
+      setValue={setNarcis}
+      value={value}
     />
   );
 };
@@ -111,7 +111,9 @@ const ApiField = ({
   isLoading,
   isFetching,
   label, 
-  disabled
+  setValue,
+  value,
+  disabled,
 }: {
   inputValue: any;
   setInputValue: any;
@@ -120,8 +122,13 @@ const ApiField = ({
   isLoading: boolean;
   isFetching: boolean;
   label: string;
+  setValue: any;
+  value: any;
   disabled?: boolean;
 }) => {
+  const { t } = useTranslation("steps");
+  const dispatch = useAppDispatch();
+
   return (
     <Box mb={2}>
       <Autocomplete
@@ -137,8 +144,8 @@ const ApiField = ({
             data.response
           : []
         }
-        value={debouncedInputValue}
-        inputValue={inputValue || debouncedInputValue?.label || ""}
+        value={debouncedInputValue || value || ""}
+        inputValue={inputValue || value?.label || ""}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -147,22 +154,22 @@ const ApiField = ({
           />
         )}
         onChange={(_e, newValue, _reason) => {
-          setValue(newValue);
+          dispatch(setValue(newValue));
         }}
         filterOptions={(x) => x}
         onInputChange={(e, newValue) => {
           e && e.type === "change" && setInputValue(newValue);
           e && (e.type === "click" || e.type === "blur") && setInputValue("");
         }}
-        noOptionsText={!inputValue ? "Start typing..." : "No results found"}
-        loading={isLoading}
+        noOptionsText={!inputValue ? t("startTyping") : t("noResults")}
+        loading={isLoading || isFetching || inputValue !== debouncedInputValue}
         loadingText={
           <Stack
             direction="row"
             justifyContent="space-between"
             alignItems="end"
           >
-            Loading... <CircularProgress size={18} />
+            {t("isLoading")} <CircularProgress size={18} />
           </Stack>
         }
         forcePopupIcon
@@ -173,28 +180,3 @@ const ApiField = ({
     </Box>
   );
 };
-
-export const NoRepoSelected = () => 
-  <Container>
-    <Grid container justifyContent="center">
-      <Grid xs={12} sm={11} md={8} lg={7} xl={6} mt={4}>
-        <Typography variant="h1">Select a repository first</Typography>
-        <Typography>
-          Please go to the <Link component={RouterLink} to="/">repository advisor</Link> and fill in the form to get recommendations.
-        </Typography>
-      </Grid>
-    </Grid>
-  </Container>
-
-export const CurrentlySelected = ({repo}: {repo: string}) => 
-  <Box sx={{ backgroundColor: "primary.dark"}}>
-    <Container>
-      <Grid container>
-        <Grid>
-          <Typography variant="caption" sx={{ color: "white" }}>
-            Active repository: {repo}
-          </Typography>
-        </Grid>
-      </Grid>
-    </Container>
-  </Box>

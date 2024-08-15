@@ -1,6 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import languages from "../config/languages";
+import languages from "./languages";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { i18n as i18nLayout } from "@dans-framework/layout";
 import { i18n as i18nDeposit } from "@dans-framework/deposit";

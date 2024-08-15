@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getUser } from "@dans-framework/utils/user";
+import type { RepoResponse } from "../types";
 
 export const repoAdvisorApi = createApi({
   reducerPath: "repoAdvisorApi",
@@ -7,13 +8,14 @@ export const repoAdvisorApi = createApi({
     baseUrl: `https://repository-assistant.labs.dansdemo.nl`,
   }),
   endpoints: (build) => ({
-    submit: build.mutation({
+    fetchData: build.query({
       query: ({ ror, narcis, depositType, fileType }) => {
         const user = getUser();
         // format headers
         const headers = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user?.access_token}`,
+          // Authorization: "Bearer @km1-10122004-lamA!M@rdh1yy@h@51nnur1@hK",
         };
 
         return ({
@@ -28,6 +30,7 @@ export const repoAdvisorApi = createApi({
           }),
         });
       },
+      transformResponse: (response: RepoResponse) => response.advice,
       transformErrorResponse: () => {
         return ({
           error: "Error connecting to server"
@@ -37,4 +40,4 @@ export const repoAdvisorApi = createApi({
   }),
 });
 
-export const { useSubmitMutation } = repoAdvisorApi;
+export const { useFetchDataQuery } = repoAdvisorApi;

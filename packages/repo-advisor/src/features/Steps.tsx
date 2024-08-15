@@ -1,76 +1,47 @@
-import { useState, useEffect, type ReactNode } from "react";
-import { useDropzone } from "react-dropzone";
+import { type ReactNode } from "react";
 import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Alert from "@mui/material/Alert";
 import { useTranslation } from "react-i18next";
-import * as XLSX from "xlsx";
-import TableContainer from '@mui/material/TableContainer';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
+import CircularProgress from '@mui/material/CircularProgress';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Checkbox from '@mui/material/Checkbox';
-import Divider from '@mui/material/Divider';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
-import type { DarwinOptions, Saves, SerializedFile } from "../types";
-import { 
-  getFile, 
-  setFile, 
-  getMapping, 
-  setMapping, 
-  getSavedMap,
-  setSavedMap,
-} from './fileMapperSlice';
-import { useFetchDarwinTermsQuery } from "./fileMapperApi";
+import Alert from '@mui/material/Alert';
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
-import { getRor, getNarcis, getDepositType, getFileType, setDepositType } from "./repoAdvisorSlice";
+import { getRor, getNarcis, getDepositType, getFileType, setFileType, setDepositType, getRepo, setRepo } from "./repoAdvisorSlice";
+import { useFetchDataQuery } from "./repoAdvisorApi";
 import { RorField, NarcisField, SelectField } from "./Components";
 import { AnimatePresence, motion } from "framer-motion";
+import { lookupLanguageString } from "@dans-framework/utils/language";
 
 const StepWrap = ({ title, children, subtitle }: { title: string; children: ReactNode, subtitle?: string; }) => 
   <Box sx={{pt: 2, pb: 1}}>
     <Typography variant="h2">{title}</Typography>
-    {subtitle && <Typography variant="subtitle1">{subtitle}</Typography>}
+    {subtitle && <Typography variant="subtitle1" mb={3}>{subtitle}</Typography>}
     {children}
   </Box>
 
 export const Step1 = () => {
   const { t } = useTranslation("steps");
-  const dispatch = useAppDispatch();
-  const ror = useAppSelector(getRor);
-  const narcis = useAppSelector(getNarcis);
   const depositType = useAppSelector(getDepositType);
   const fileType = useAppSelector(getFileType);
 
   return (
     <StepWrap title={t("repoAdvisor")} subtitle={t("repoAdvisorDescription")}>
-      <RorField
-        label="Your institution"
-      />
-      <NarcisField 
-        label="Research domain"
-      />
+      <RorField />
+      <NarcisField />
       <SelectField 
-        label="Deposit type"
+        label={t("depositType")}
         value={depositType}
         onChange={setDepositType}
         options={[
-          {label: "Dataset", value: "dataset"},
-          {label: "Code", value: "code"},
-          {label: "Report, article, or presentation", value: "report"},
-          {label: "Publication", value: "publication"},
+          {label: t("dataset"), value: "dataset"},
+          {label: t("code"), value: "code"},
+          {label: t("report"), value: "report"},
+          {label: t("publication"), value: "publication"},
         ]}
       />
       <AnimatePresence>
@@ -81,16 +52,16 @@ export const Step1 = () => {
             exit={{ opacity: 0, y: -10 }}
           >
             <SelectField 
-              label="File type"
+              label={t("fileType")}
               value={fileType}
               onChange={setFileType}
               options={[
-                {label: "Audiovisual materials", value: "audiovisual_materials"},
-                {label: "Statistical data", value: "statistical_data"},
-                {label: "Geospatial data files", value: "geospatial_data_files"},
-                {label: "NetCDF and HDF files", value: "netcdf_and_hdf_files"},
-                {label: "Darwin core and ecological markup language files", value: "darwin_core_and_ecological_markup_language_files"},
-                {label: "Other", value: "other"},
+                {label: t("audiovisual_materials"), value: "audiovisual_materials"},
+                {label: t("statistical_data"), value: "statistical_data"},
+                {label: t("geospatial_data_files"), value: "geospatial_data_files"},
+                {label: t("netcdf_and_hdf_files"), value: "netcdf_and_hdf_files"},
+                {label: t("darwin_core_and_ecological_markup_language_files"), value: "darwin_core_and_ecological_markup_language_files"},
+                {label: t("other"), value: "other"},
               ]}
             />
           </motion.div>
@@ -101,11 +72,67 @@ export const Step1 = () => {
 }
 
 export const Step2 = () => {
-  const { t } = useTranslation("steps");
+  const { t, i18n } = useTranslation("steps");
+  const ror = useAppSelector(getRor);
+  const narcis = useAppSelector(getNarcis);
+  const depositType = useAppSelector(getDepositType);
+  const fileType = useAppSelector(getFileType);
+  const repo = useAppSelector(getRepo);
+  const dispatch = useAppDispatch();
+
+  const { data, isLoading, isError } = useFetchDataQuery({
+    ror: ror,
+    narcis: narcis,
+    depositType: depositType,
+    fileType: fileType,
+  });
   
   return (
-    <StepWrap title={t("selectDataset")}>
-      
+    <StepWrap title={t("selectDataset")} subtitle={t("selectDatasetDescription")}>
+      {data && data.length > 0 ?
+        <List sx={{mb: 2}}>
+          {data.map( (rec, i) =>
+            <ListItem 
+              key={i}
+              alignItems="flex-start"
+              disableGutters
+            >
+              <ListItemButton role={undefined} onClick={() => dispatch(setRepo(rec))} dense>
+                <ListItemIcon>
+                  <Checkbox
+                    edge="start"
+                    checked={repo?.displayName?.en === rec.displayName.en}
+                    tabIndex={-1}
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  primary={lookupLanguageString(rec.displayName, i18n.language)}
+                  secondary={
+                    <>
+                      {rec.external && <Typography
+                        sx={{ display: 'inline', mr: 0.5 }}
+                        component="span"
+                        variant="body2"
+                        color="text.primary"
+                      >
+                        {t("externalRepo")}
+                      </Typography>}
+                      {lookupLanguageString(rec.description, i18n.language)}
+                    </>
+                  }
+                  sx={{pr: 6}}
+                />
+              </ListItemButton>
+            </ListItem>
+          )}
+        </List>
+        : isLoading ?
+        <CircularProgress />
+        : isError ?
+        <Alert severity="error">{t("fetchError")}</Alert>
+        :
+        <Alert severity="info">{t("noRepoFound")}</Alert>
+      }
     </StepWrap>
   )
 }

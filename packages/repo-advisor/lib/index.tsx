@@ -1,3 +1,4 @@
 export { default as RepoAdvisor } from "../src";
 export { default as i18n } from "../src/languages/i18n";
-export { NoRepoSelected, CurrentlySelected } from "../src/features/Components";
+export { RepoBar, NoRepoSelected } from "../src/features/Layout";
+
