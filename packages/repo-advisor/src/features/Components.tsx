@@ -9,10 +9,11 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { useFetchRorByNameQuery, useFetchDatastationsTermQuery } from "@dans-framework/deposit";
+import { useFetchRorByNameQuery, useFetchDatastationsTermQuery, type OptionsType, type QueryReturnType } from "@dans-framework/deposit";
 import { useTranslation } from "react-i18next";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { getRor, getNarcis, setRor, setNarcis } from "./repoAdvisorSlice";
+import type { AutocompleteProps } from "../types";
 
 type Option = {
   value: string;
@@ -22,37 +23,34 @@ type Option = {
 export const SelectField = ({label, value, onChange, options, disabled}: {
   label: string;
   value: string;
-  onChange: any;
+  onChange: (val: string) => void;
   options: Option[];
   disabled?: boolean;
-}) => {
-  const dispatch = useAppDispatch();
-  return (
-    <Box mb={2}>
-      <FormControl fullWidth disabled={disabled}>
-        <InputLabel>{label}</InputLabel>
-        <Select
-          value={value || ''}
-          label={label}
-          onChange={(e: SelectChangeEvent) => dispatch(onChange(e.target.value))}
-        >
-          {options.map( option => 
-            <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
-          )}
-        </Select>
-      </FormControl>
-    </Box>
-  );
-}
+}) => 
+  <Box mb={2}>
+    <FormControl fullWidth disabled={disabled}>
+      <InputLabel>{label}</InputLabel>
+      <Select
+        value={value || ''}
+        label={label}
+        onChange={(e: SelectChangeEvent) => onChange(e.target.value)}
+      >
+        {options.map( option => 
+          <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
+        )}
+      </Select>
+    </FormControl>
+  </Box>
 
 // Derived from the API field in the Deposit package
 export const RorField = () => {
   const { t } = useTranslation("steps");
+  const dispatch = useAppDispatch();
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   // Fetch data on input change
   const { data, isFetching, isLoading } =
-    useFetchRorByNameQuery(debouncedInputValue, {
+    useFetchRorByNameQuery<QueryReturnType>(debouncedInputValue, {
       skip: debouncedInputValue === "",
     });
   const value = useAppSelector(getRor);
@@ -66,7 +64,7 @@ export const RorField = () => {
       isLoading={isLoading}
       isFetching={isFetching}
       label={t("ror")}
-      setValue={setRor}
+      setValue={(v) => dispatch(setRor(v))}
       value={value}
     />
   );
@@ -74,11 +72,12 @@ export const RorField = () => {
 
 export const NarcisField = () => {
   const { t, i18n } = useTranslation("steps");
+  const dispatch = useAppDispatch();
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   // Fetch data on input change
   const { data, isFetching, isLoading } =
-    useFetchDatastationsTermQuery(
+    useFetchDatastationsTermQuery<QueryReturnType>(
       {
         vocabulary: "narcis",
         lang: i18n.language,
@@ -97,7 +96,7 @@ export const NarcisField = () => {
       isLoading={isLoading}
       isFetching={isFetching}
       label={t("narcis")}
-      setValue={setNarcis}
+      setValue={(v) => dispatch(setNarcis(v))}
       value={value}
     />
   );
@@ -114,20 +113,8 @@ const ApiField = ({
   setValue,
   value,
   disabled,
-}: {
-  inputValue: any;
-  setInputValue: any;
-  debouncedInputValue: any;
-  data: any;
-  isLoading: boolean;
-  isFetching: boolean;
-  label: string;
-  setValue: any;
-  value: any;
-  disabled?: boolean;
-}) => {
+}: AutocompleteProps ) => {
   const { t } = useTranslation("steps");
-  const dispatch = useAppDispatch();
 
   return (
     <Box mb={2}>
@@ -144,8 +131,8 @@ const ApiField = ({
             data.response
           : []
         }
-        value={debouncedInputValue || value || ""}
-        inputValue={inputValue || value?.label || ""}
+        value={value || null}
+        inputValue={inputValue || value?.label as string || ""}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -153,9 +140,7 @@ const ApiField = ({
             placeholder=""
           />
         )}
-        onChange={(_e, newValue, _reason) => {
-          dispatch(setValue(newValue));
-        }}
+        onChange={(_e, newValue, _reason) => setValue(newValue as OptionsType)}
         filterOptions={(x) => x}
         onInputChange={(e, newValue) => {
           e && e.type === "change" && setInputValue(newValue);
@@ -173,7 +158,7 @@ const ApiField = ({
           </Stack>
         }
         forcePopupIcon
-        isOptionEqualToValue={(option, value) => option.value === value.value}
+        // isOptionEqualToValue={(option, value) => option.value === value.value}
         clearOnBlur
         disabled={disabled}
       />

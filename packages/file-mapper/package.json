@@ -19,6 +19,8 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@dans-framework/deposit": "workspace:*",
+    "@dans-framework/pages": "workspace:*",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7"
   }

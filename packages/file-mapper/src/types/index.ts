@@ -9,21 +9,17 @@ export type DarwinOptions = {
   [key in DarwinTerms]: string;
 }
 
-export type MappingProps = {
-  [key: string]: DarwinOptions;
+export interface Mapping {
+  [key: string]: DarwinOptions
 }
 
-export type Mapping = {
-  [key: string]: string;
-}
-
-export type Saves = {
+export interface Saves {
   name: string;
   date: string;
   id: string;
 }
 
-export type SerializedFile = {
+export interface SerializedFile {
   name: string;
   size: number;
   url: string;

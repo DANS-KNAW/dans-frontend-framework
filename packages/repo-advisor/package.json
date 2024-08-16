@@ -6,7 +6,6 @@
   "version": "1.0.0",
   "dependencies": {
     "@dans-framework/deposit": "workspace:*",
-    "@dans-framework/pages": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@mui/material": "^5.14.3",
     "@reduxjs/toolkit": "^1.9.5",
@@ -23,6 +22,7 @@
     "use-debounce": "^9.0.4"
   },
   "devDependencies": {
+    "@dans-framework/pages": "workspace:*",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7"
   }

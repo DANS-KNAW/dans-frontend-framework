@@ -1,13 +1,14 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../redux/store";
-import type { SerializedFile } from "../types";
+import type { SerializedFile, Mapping } from "../types";
+import type { FormConfig } from "@dans-framework/deposit";
 
 const initialState: {
   activeStep: number;
-  mapping: any;
+  mapping: Mapping;
   file: SerializedFile | undefined;
   savedMap: string;
-  form: any | undefined;
+  form: FormConfig | undefined;
 } = {
   activeStep: 0,
   mapping: {},
@@ -23,7 +24,7 @@ export const fileMapperSlice = createSlice({
     setActiveStep: (state, action: PayloadAction<number>) => {
       state.activeStep = action.payload;
     },
-    setMapping: (state, action: PayloadAction<any>) => {
+    setMapping: (state, action: PayloadAction<Mapping>) => {
       state.mapping = action.payload;
     },
     setSavedMap: (state, action: PayloadAction<string>) => {

@@ -219,7 +219,7 @@ const Row = ({row}: {row: string}) => {
         [row]: value,
       }));
     }
-  }
+  };
 
   return (
     <TableRow
@@ -231,7 +231,7 @@ const Row = ({row}: {row: string}) => {
       </TableCell>
       <TableCell>
         <Autocomplete
-          options={data as DarwinOptions[]}
+          options={data as DarwinOptions[] || []}
           getOptionLabel={(option) => option.label}
           groupBy={(option) => option.header}
           sx={{ width: 300 }}

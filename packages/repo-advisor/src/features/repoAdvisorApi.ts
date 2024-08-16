@@ -5,7 +5,7 @@ import type { RepoResponse } from "../types";
 export const repoAdvisorApi = createApi({
   reducerPath: "repoAdvisorApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_ADVISOR_URI,
+    baseUrl: import.meta.env.VITE_ADVISOR_URL,
   }),
   endpoints: (build) => ({
     fetchData: build.query({
@@ -14,6 +14,7 @@ export const repoAdvisorApi = createApi({
         const headers = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user?.access_token}`,
+          "auth-env-name": import.meta.env.VITE_ENV_NAME,
         };
 
         return ({

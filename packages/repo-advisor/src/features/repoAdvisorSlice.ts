@@ -1,19 +1,20 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../redux/store";
+import type { OptionsType, FormConfig } from "@dans-framework/deposit";
 
 const initialState: {
   activeStep: number;
-  ror: any;
-  narcis: any;
-  depositType: any;
-  fileType: any;
-  repo: any;
+  ror: OptionsType | null;
+  narcis: OptionsType | null;
+  depositType: string;
+  fileType: string;
+  repo: FormConfig | undefined;
 } = {
   activeStep: 0,
-  ror: undefined,
-  narcis: undefined,
-  depositType: undefined,
-  fileType: undefined,
+  ror: null,
+  narcis: null,
+  depositType: '',
+  fileType: '',
   repo: undefined,
 };
 
@@ -24,19 +25,19 @@ export const repoAdvisorSlice = createSlice({
     setActiveStep: (state, action: PayloadAction<number>) => {
       state.activeStep = action.payload;
     },
-    setRor: (state, action: PayloadAction<any>) => {
+    setRor: (state, action: PayloadAction<OptionsType | null>) => {
       state.ror = action.payload;
     },
-    setNarcis: (state, action: PayloadAction<any>) => {
+    setNarcis: (state, action: PayloadAction<OptionsType | null>) => {
       state.narcis = action.payload;
     },
-    setDepositType: (state, action: PayloadAction<any>) => {
+    setDepositType: (state, action: PayloadAction<string>) => {
       state.depositType = action.payload;
     },
-    setFileType: (state, action: PayloadAction<any>) => {
+    setFileType: (state, action: PayloadAction<string>) => {
       state.fileType = action.payload;
     },
-    setRepo: (state, action: PayloadAction<any>) => {
+    setRepo: (state, action: PayloadAction<FormConfig>) => {
       state.repo = action.payload;
     }
   },

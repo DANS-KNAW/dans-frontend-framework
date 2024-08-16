@@ -36,7 +36,7 @@ export const { useFetchDarwinTermsQuery } = darwinCoreApi;
 export const submitMappingApi = createApi({
   reducerPath: "submitMappingApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${import.meta.env.VITE_PACKAGING_TARGET}/mapper/`,
+    baseUrl: `${import.meta.env.VITE_MAPPER_URI}`,
   }),
   endpoints: (build) => ({
     submitMap: build.mutation({
@@ -58,7 +58,7 @@ export const submitMappingApi = createApi({
         console.log(formData.get('map'))
 
         return ({
-          url: '',
+          url: 'mapper',
           method: "POST",
           headers: headers,
           body: formData,

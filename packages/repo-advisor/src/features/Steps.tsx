@@ -15,7 +15,8 @@ import { getRor, getNarcis, getDepositType, getFileType, setFileType, setDeposit
 import { useFetchDataQuery } from "./repoAdvisorApi";
 import { RorField, NarcisField, SelectField } from "./Components";
 import { AnimatePresence, motion } from "framer-motion";
-import { lookupLanguageString } from "@dans-framework/utils/language";
+import { lookupLanguageString, type LanguageStrings } from "@dans-framework/utils/language";
+import type { FormConfig } from "@dans-framework/deposit";
 
 const StepWrap = ({ title, children, subtitle }: { title: string; children: ReactNode, subtitle?: string; }) => 
   <Box sx={{pt: 2, pb: 1}}>
@@ -28,6 +29,7 @@ export const Step1 = () => {
   const { t } = useTranslation("steps");
   const depositType = useAppSelector(getDepositType);
   const fileType = useAppSelector(getFileType);
+  const dispatch = useAppDispatch();
 
   return (
     <StepWrap title={t("repoAdvisor")} subtitle={t("repoAdvisorDescription")}>
@@ -36,7 +38,7 @@ export const Step1 = () => {
       <SelectField 
         label={t("depositType")}
         value={depositType}
-        onChange={setDepositType}
+        onChange={(value) => dispatch(setDepositType(value))}
         options={[
           {label: t("dataset"), value: "dataset"},
           {label: t("code"), value: "code"},
@@ -80,7 +82,11 @@ export const Step2 = () => {
   const repo = useAppSelector(getRepo);
   const dispatch = useAppDispatch();
 
-  const { data, isLoading, isError } = useFetchDataQuery({
+  const { data, isLoading, isError } = useFetchDataQuery<{
+    data: FormConfig[]; 
+    isLoading: boolean;
+    isError: boolean;
+  }>({
     ror: ror,
     narcis: narcis,
     depositType: depositType,
@@ -101,7 +107,7 @@ export const Step2 = () => {
                 <ListItemIcon>
                   <Checkbox
                     edge="start"
-                    checked={repo?.displayName?.en === rec.displayName.en}
+                    checked={(repo?.displayName as LanguageStrings)?.en === (rec?.displayName as LanguageStrings)?.en}
                     tabIndex={-1}
                   />
                 </ListItemIcon>

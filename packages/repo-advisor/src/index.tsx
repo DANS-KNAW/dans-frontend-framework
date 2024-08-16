@@ -4,10 +4,11 @@ import i18nProvider from "./languages/i18n";
 import RepoAdvisor from "./features/RepoAdvisor";
 import { Provider as ReduxProvider } from "react-redux";
 import { store } from './redux/store';
-import { type Page } from "@dans-framework/pages";
+import type { Page } from "@dans-framework/pages";
+import type { FormConfig } from "@dans-framework/deposit";
 
 export const AdvisorWrapper = ({setRepoConfig, page, depositLocation}: { 
-  setRepoConfig: Dispatch<SetStateAction<any>>;
+  setRepoConfig: Dispatch<SetStateAction<FormConfig | undefined>>;
   page: Page;
   depositLocation: string;
 }) => 

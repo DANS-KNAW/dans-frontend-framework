@@ -14,12 +14,13 @@ import { getActiveStep, getRor, getNarcis, getFileType, getDepositType, setActiv
 import { Step1, Step2 } from './Steps';
 import { useSiteTitle, setSiteTitle } from "@dans-framework/utils/sitetitle";
 import { lookupLanguageString } from "@dans-framework/utils/language";
-import { type Page } from "@dans-framework/pages";
+import type { Page } from "@dans-framework/pages";
+import type { FormConfig } from "@dans-framework/deposit";
 
 const steps = ['defineDataset', 'recommendations'];
 
 const RepoAdvisor = ({setRepoConfig, page, depositLocation}: {
-  setRepoConfig: Dispatch<SetStateAction<any>>;
+  setRepoConfig: Dispatch<SetStateAction<FormConfig | undefined>>;
   page: Page;
   depositLocation: string;
 }) => {
