@@ -57,7 +57,7 @@ export const Step1 = () => {
             <SelectField 
               label={t("fileType")}
               value={fileType}
-              onChange={setFileType}
+              onChange={(value) => dispatch(setFileType(value))}
               options={[
                 {label: t("audiovisual_materials"), value: "audiovisual_materials"},
                 {label: t("statistical_data"), value: "statistical_data"},
