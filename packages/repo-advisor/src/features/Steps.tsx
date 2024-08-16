@@ -10,6 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Checkbox from '@mui/material/Checkbox';
 import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { getRor, getNarcis, getDepositType, getFileType, setFileType, setDepositType, getRepo, setRepo } from "./repoAdvisorSlice";
 import { useFetchDataQuery } from "./repoAdvisorApi";
@@ -82,10 +83,11 @@ export const Step2 = () => {
   const repo = useAppSelector(getRepo);
   const dispatch = useAppDispatch();
 
-  const { data, isLoading, isError } = useFetchDataQuery<{
+  const { data, isLoading, isError, refetch } = useFetchDataQuery<{
     data: FormConfig[]; 
     isLoading: boolean;
     isError: boolean;
+    refetch: () => void;
   }>({
     ror: ror,
     narcis: narcis,
@@ -135,7 +137,17 @@ export const Step2 = () => {
         : isLoading ?
         <CircularProgress />
         : isError ?
-        <Alert severity="error">{t("fetchError")}</Alert>
+        <Alert severity="error">
+          <Typography gutterBottom>{t("fetchError")}</Typography>
+          <Button 
+            variant="contained" 
+            size="small" 
+            color="warning"
+            onClick={() => refetch()}
+          >
+            {t("retryFetch")}
+          </Button>
+        </Alert>
         :
         <Alert severity="info">{t("noRepoFound")}</Alert>
       }

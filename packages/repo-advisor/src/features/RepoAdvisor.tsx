@@ -97,14 +97,14 @@ const RepoAdvisor = ({setRepoConfig, page, depositLocation}: {
                 disabled={activeStep === 0}
                 onClick={handleBack}
                 sx={{ mr: 1 }}
-                variant="outlined"
+                variant="contained"
               >
                 {t("buttonBack")}
               </Button>
               <Box sx={{ flex: '1 1 auto' }} />
               <Button 
                 onClick={handleNext} 
-                variant="outlined"
+                variant="contained"
                 disabled={dataMissing || (!repo && activeStep === steps.length - 1)}
               >
                 {
