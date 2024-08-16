@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, type Dispatch, type SetStateAction  } from "react";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Unstable_Grid2";
 import Box from "@mui/material/Box";
@@ -17,11 +17,12 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useSiteTitle, setSiteTitle } from "@dans-framework/utils/sitetitle";
 import { lookupLanguageString } from "@dans-framework/utils/language";
 import { type Page } from "@dans-framework/pages";
+import type { FormConfig } from "@dans-framework/deposit";
 
 const steps = ['selectFile', 'createMapping', 'finish'];
 
 const FileMapper = ({setMappedForm, page}: { 
-  setMappedForm: (form: any) => void;
+  setMappedForm: Dispatch<SetStateAction<FormConfig | undefined>>;
   page: Page;
 }) => {
   const dispatch = useAppDispatch();

@@ -641,9 +641,6 @@ importers:
 
   packages/file-mapper:
     dependencies:
-      '@dans-framework/pages':
-        specifier: workspace:*
-        version: link:../pages
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../utils
@@ -681,6 +678,12 @@ importers:
         specifier: ^0.18.5
         version: 0.18.5
     devDependencies:
+      '@dans-framework/deposit':
+        specifier: workspace:*
+        version: link:../deposit
+      '@dans-framework/pages':
+        specifier: workspace:*
+        version: link:../pages
       '@types/react':
         specifier: ^18.2.15
         version: 18.2.15
@@ -873,9 +876,6 @@ importers:
       '@dans-framework/deposit':
         specifier: workspace:*
         version: link:../deposit
-      '@dans-framework/pages':
-        specifier: workspace:*
-        version: link:../pages
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../utils
@@ -919,6 +919,9 @@ importers:
         specifier: ^9.0.4
         version: 9.0.4(react@18.2.0)
     devDependencies:
+      '@dans-framework/pages':
+        specifier: workspace:*
+        version: link:../pages
       '@types/react':
         specifier: ^18.2.15
         version: 18.2.15

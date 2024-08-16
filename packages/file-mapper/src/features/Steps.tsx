@@ -219,7 +219,7 @@ const Row = ({row}: {row: string}) => {
         [row]: value,
       }));
     }
-  }
+  };
 
   return (
     <TableRow
