@@ -8,14 +8,14 @@ const initialState: {
   narcis: OptionsType | null;
   depositType: string;
   fileType: string;
-  repo: FormConfig | null;
+  repo: FormConfig | undefined;
 } = {
   activeStep: 0,
   ror: null,
   narcis: null,
   depositType: '',
   fileType: '',
-  repo: null,
+  repo: undefined,
 };
 
 export const repoAdvisorSlice = createSlice({
