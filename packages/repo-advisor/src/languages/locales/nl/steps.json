@@ -30,5 +30,6 @@
   "selectDataset": "Select a repository",
   "selectDatasetDescription": "Pick one of the repositories below to deposit your data to.",
   "externalRepo": "External repository  — ",
-  "fetchError": "Error connecting to the advisor server"
+  "fetchError": "Error connecting to the advisor server",
+  "retryFetch": "Try again"
 }
