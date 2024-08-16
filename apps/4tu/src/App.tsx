@@ -33,18 +33,21 @@ const App = () => {
     <AuthWrapper authProvider={authProvider}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
         <BrowserRouter>
-          <AnimatePresence>
-            { configIsSet && 
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                key="repo"
-              >
-                <RepoBar repo={repoConfig?.displayName} />
-              </motion.div>
-            }
-          </AnimatePresence>
+          {/* Suspense to make sure languages can load first */}
+          <Suspense>
+            <AnimatePresence>
+              { configIsSet && 
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  key="repo"
+                >
+                  <RepoBar repo={repoConfig?.displayName} />
+                </motion.div>
+              }
+            </AnimatePresence>
+          </Suspense>
           <LanguageBar
             languages={languages}
             changeLanguage={i18n.changeLanguage}
