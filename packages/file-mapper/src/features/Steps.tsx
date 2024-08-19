@@ -15,6 +15,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import CircularProgress from '@mui/material/CircularProgress';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -24,7 +25,7 @@ import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import type { DarwinOptions, Saves, SerializedFile } from "../types";
+import type { DarwinOptions, Saves, SerializedFile, FileError } from "../types";
 import { 
   getFile, 
   setFile, 
@@ -32,6 +33,13 @@ import {
   setMapping, 
   getSavedMap,
   setSavedMap,
+  resetMapping,
+  setFileCols,
+  getFileCols,
+  resetFileCols,
+  getFileError,
+  setFileError,
+  resetFileError,
 } from './fileMapperSlice';
 import { useFetchDarwinTermsQuery } from "./fileMapperApi";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
@@ -49,6 +57,9 @@ const saves = [
   },
 ];
 
+// define max number of rows a file selected for processing can contain
+const maxRows = 10;
+
 const StepWrap = ({ title, children }: { title: string; children: ReactNode }) => 
   <Box sx={{pt: 2, pb: 1}}>
     <Typography variant="h2">{title}</Typography>
@@ -62,6 +73,7 @@ export const Step1 = () => {
   const dispatch = useAppDispatch();
   const file = useAppSelector(getFile);
   const savedMap = useAppSelector(getSavedMap);
+  const fileError = useAppSelector(getFileError);
 
   const onDrop = async (files: File[]) => {
     // serialize files to store in redux
@@ -72,6 +84,11 @@ export const Step1 = () => {
     };
 
     dispatch(setFile(serializedFile));
+
+    // reset saved mapping and column values after selecting a different file
+    dispatch(resetMapping());
+    dispatch(resetFileCols());
+    dispatch(resetFileError());
   }
 
   const {  
@@ -119,6 +136,11 @@ export const Step1 = () => {
               <Alert severity="success">
                 {t("selectedFile", { name: file.name, size: (file.size / 1024).toFixed(0) })}
               </Alert>
+              {fileError && 
+                <Alert severity="error">
+                  {t(fileError, {max: maxRows})}
+                </Alert>
+              }
             </Box> 
           }
         </Box>
@@ -151,24 +173,37 @@ export const Step1 = () => {
 }
 
 export const Step2 = () => {
-  const [ fileCols, setFileCols ] = useState<string[]>([]);
   const { t } = useTranslation("steps");
+  const dispatch = useAppDispatch();
   const file = useAppSelector(getFile);
+  const fileCols = useAppSelector(getFileCols);
+  const fileError = useAppSelector(getFileError);
+  // loading indicator only if new file needs to be read
+  const [ loading, setLoading ] = useState<boolean>( !Array.isArray(fileCols) && !fileError );
 
   useEffect(() => {
     const reader = new FileReader();
 
     reader.onload = (event) => {
+      // parse the xlsx/csv file
       const workbook = XLSX.read(event.target?.result, { type: 'binary' });
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
       const sheetData = XLSX.utils.sheet_to_json(sheet, { header: 1 })[0];
-
-      Array.isArray(sheetData) && setFileCols(sheetData);
+      // check to see if sheet doesn't have too many rows
+      const rowCount = XLSX.utils.sheet_to_json(sheet).length;
+      if (rowCount > maxRows) {
+        dispatch(setFileError("tooManyRows"));
+      } else {
+        // save column data to store so we only have to load and parse once
+        Array.isArray(sheetData) && dispatch(setFileCols(sheetData));
+      }
+      setLoading(false);
     };
     
-    if (file) {
-      // convert file url back to blob
+    if (file && !fileCols && !fileError) {
+      dispatch(setFileError(undefined));
+      // if no file loaded yet, convert file url back to blob
       (async () => {
         const fetchedFile = await fetch(file.url);
         const blob = await fetchedFile.blob();
@@ -177,7 +212,7 @@ export const Step2 = () => {
         }
       })();
     }
-  }, [file]);
+  }, [file, fileCols, fileError]);
   
   return (
     <StepWrap title={t("createMapping")}>
@@ -190,7 +225,20 @@ export const Step2 = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {fileCols.length > 0 && fileCols.map((row) => (
+            { ( loading || fileError ) && 
+              <TableRow>
+                <TableCell align="center" colSpan={2}>
+                  {
+                    loading ? 
+                    <CircularProgress /> : 
+                    <Alert severity="error">
+                      {t(fileError as FileError, {max: maxRows})}
+                    </Alert>
+                  }
+                </TableCell>
+              </TableRow>
+            }
+            {fileCols && fileCols.map((row) => (
               <Row key={row} row={row} />
             ))}
           </TableBody>
