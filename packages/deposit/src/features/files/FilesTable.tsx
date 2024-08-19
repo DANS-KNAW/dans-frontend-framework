@@ -27,19 +27,13 @@ import type {
   FileItemProps,
   FileActions,
 } from "../../types/Files";
-import { getSessionId } from "../metadata/metadataSlice";
 import LinearProgress from "@mui/material/LinearProgress";
+import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import {
-  getSingleFileSubmitStatus,
-  getMetadataSubmitStatus,
-} from "../submit/submitSlice";
-import { useSubmitFilesMutation } from "../submit/submitApi";
-import { formatFileData } from "../submit/submitHelpers";
+import { getSingleFileSubmitStatus, setFilesSubmitStatus } from "../submit/submitSlice";
 import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
 import { getFormDisabled, getData } from "../../deposit/depositSlice";
-import { useAuth } from "react-oidc-context";
 import FileStatusIndicator from "./FileStatusIndicator";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useFetchGroupedListQuery } from "./api/dansFormats";
@@ -372,28 +366,16 @@ const FileTableRow = ({ file }: FileItemProps) => {
 };
 
 const UploadProgress = ({ file }: FileItemProps) => {
-  // We handle progress and retrying/restarting of file uploads here
-  // If metadata submission is successful, and file fails right away, there needs to be an option to manually start file upload.
-  // So we check if the submit button has been touched.
-  const sessionId = useAppSelector(getSessionId);
+  const dispatch = useAppDispatch();
+  // We handle progress and manually retrying/restarting of file uploads here
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const { t } = useTranslation("files");
-  const [submitFiles] = useSubmitFilesMutation();
-  const auth = useAuth();
-  const formConfig = useAppSelector(getData);
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
-
   const handleSingleFileUpload = () => {
-    formatFileData(sessionId, [file]).then((d) => {
-      submitFiles({
-        data: d,
-        headerData: {
-          submitKey: auth.user?.access_token,
-          target: formConfig.target,
-        },
-        actionType: metadataSubmitStatus === "saved" ? "save" : "submit",
-      });
-    });
+    dispatch(setFilesSubmitStatus({
+      id: file.id,
+      progress: 0,
+      status: "queued",
+    }));
   };
 
   return (
@@ -420,10 +402,15 @@ const UploadProgress = ({ file }: FileItemProps) => {
             />
           </Box>
           <Box sx={{ minWidth: 35, textAlign: "right" }}>
-            {fileStatus.status === "submitting" && (
+            {(fileStatus.status === "submitting" || fileStatus.status === "queued") && (
               <Typography variant="body2" color="text.secondary">{`${
                 fileStatus.progress || 0
               }%`}</Typography>
+            )}
+            {fileStatus.status === "finalising" && (
+              <Tooltip title={t("fileSubmitWaiting")}>
+                <CircularProgress size={20} />
+              </Tooltip>
             )}
             {fileStatus.status === "success" && (
               <Tooltip title={t("fileSubmitSuccess")}>

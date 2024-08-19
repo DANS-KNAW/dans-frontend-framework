@@ -28,23 +28,43 @@ import type {
 import { v4 as uuidv4 } from "uuid";
 import { useFetchSimpleListQuery } from "./api/dansFormats";
 import { enqueueSnackbar } from "notistack";
-import { getFormDisabled } from "../../deposit/depositSlice";
+import { getFormDisabled, getData } from "../../deposit/depositSlice";
 import { getSessionId } from "../metadata/metadataSlice";
-
-// Temporary soft file limits in bytes
-const bytes = 1048576;
-const lowerLimit = 1000 * bytes;
-const upperLimit = 2000 * bytes;
 
 const FilesUpload = () => {
   const dispatch = useAppDispatch();
   const currentFiles = useAppSelector(getFiles);
   const { t } = useTranslation("files");
   const { data } = useFetchSimpleListQuery<DansSimpleListQueryResponse>(null);
+  const formConfig = useAppSelector(getData);
 
   // Validate added files, needs to be synchronous, so no API calls possible here
   const fileValidator = (file: File) => {
     if (!file.name) return null;
+
+    const forbiddenCharacters = /[\/:*?"<>|;#]/;
+    if (forbiddenCharacters.test(file.name)) {
+      return {
+        code: "file-invalid",
+        message: t("fileForbiddenCharacters"),
+      };
+    }
+
+    // No files over the file size limit set in formConfig
+    if (formConfig?.filesUpload?.maxSize && file.size > formConfig?.filesUpload?.maxSize) {
+      return {
+        code: "file-too-large",
+        message: t("fileTooLarge", { size: (formConfig?.filesUpload?.maxSize / 1073741824).toFixed(2) }),
+      };
+    }
+
+    if (!file.size || file.size === 0) {
+      return {
+        code: "file-invalid",
+        message: t("fileNoSize"),
+      };
+    }
+
     // No duplicate files
     const extensionIndex = file.name.lastIndexOf(".");
     const baseName = file.name.slice(0, extensionIndex);
@@ -66,6 +86,7 @@ const FilesUpload = () => {
         message: t("fileAlreadyAdded", { file: file.name }),
       };
     }
+
     // No files with these file names
     if (file.name.indexOf("__generated__") !== -1) {
       return {
@@ -73,6 +94,7 @@ const FilesUpload = () => {
         message: t("fileNotAllowed"),
       };
     }
+
     return null;
   };
 
@@ -130,11 +152,6 @@ const FilesUpload = () => {
 
   const formDisabled = useAppSelector(getFormDisabled);
 
-  const filesTooBig = currentFiles.filter(
-    (f) => lowerLimit < f.size && f.size < upperLimit,
-  );
-  const filesWayTooBig = currentFiles.filter((f) => upperLimit < f.size);
-
   return (
     <Card>
       <CardHeader title={t("addLocal") as string} />
@@ -188,22 +205,6 @@ const FilesUpload = () => {
             files={fileRejections}
             color="error"
             title={t("fileTypeError")}
-          />
-        )}
-        {filesTooBig.length > 0 && (
-          <FileAlert
-            files={filesTooBig}
-            color="warning"
-            title={t("limitHeader", { amount: lowerLimit / 1048576 })}
-            description="lowerLimitDescription"
-          />
-        )}
-        {filesWayTooBig.length > 0 && (
-          <FileAlert
-            files={filesWayTooBig}
-            color="warning"
-            title={t("limitHeader", { amount: upperLimit / 1048576 })}
-            description="upperLimitDescription"
           />
         )}
       </CardContent>

@@ -23,7 +23,6 @@ const Form = () => {
   const handleChange =
     (panel: string) => (_e: SyntheticEvent, isExpanded: boolean) => {
       dispatch(setOpenPanel(isExpanded ? panel : ""));
-      console.log(isExpanded)
     };
 
   return (
@@ -64,6 +63,13 @@ const Form = () => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={2}>
+              {section.description &&
+                <Grid xs={12} md={9} lg={8} xl={7}>
+                  <Typography variant="body2" mt={-1} gutterBottom sx={{color: 'rgba(0, 0, 0, 0.6)'}}>
+                    {lookupLanguageString(section.description, i18n.language)}
+                  </Typography>
+                </Grid>
+              }
               {section.fields.map((field, i) =>
                 field.type === "group" ?
                   <GroupedField

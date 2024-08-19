@@ -1,4 +1,3 @@
-import languageList from "../data/languageList.json";
 import type { InitialSectionType } from "@dans-framework/deposit";
 
 const section: InitialSectionType = {
@@ -77,7 +76,7 @@ const section: InitialSectionType = {
         en: "Language of the deposit",
         nl: "Taal van het deposit",
       },
-      options: languageList,
+      options: "languageList",
     },
   ],
 };

@@ -1,21 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { User } from "oidc-client-ts";
 import type { SubmissionResponse, AuthKeys } from "../types";
 import i18n from "../languages/i18n";
 import { enqueueSnackbar } from "notistack";
-
-const getUser = () => {
-  const oidcStorage = sessionStorage.getItem(
-    `oidc.user:${import.meta.env.VITE_OIDC_AUTHORITY}:${
-      import.meta.env.VITE_OIDC_CLIENT_ID
-    }`,
-  );
-  if (!oidcStorage) {
-    return null;
-  }
-  return User.fromStorageString(oidcStorage);
-};
+import { getUser } from "@dans-framework/utils/user";
 
 export const userApi = createApi({
   reducerPath: "auth",
@@ -117,7 +105,7 @@ export const userSubmissionsApi = createApi({
 });
 
 const getUrl = (url: string, key: string, type: AuthKeys) =>
-  type === "dataverse_api_key" ? `${url}`
+  type.includes("dataverse") ? `${url}`
   : type === "zenodo_api_key" ? `${url}?access_token=${key}`
   : url;
 
@@ -131,7 +119,7 @@ export const validateKeyApi = createApi({
       query: ({ url, key, type }) => {
         return {
           url: getUrl(url, key, type),
-          ...(type === "dataverse_api_key" && {
+          ...(type.includes("dataverse") && {
             headers: {
               "X-Dataverse-key": key,
             },
@@ -156,7 +144,7 @@ export const validateKeyApi = createApi({
         const promises = arg.map((t: any) =>
           fetchWithBQ({
             url: getUrl(t.url, t.key, t.type),
-            ...(t.type === "dataverse_api_key" && {
+            ...(t.type.includes("dataverse") && {
               headers: {
                 "X-Dataverse-key": t.key,
               },

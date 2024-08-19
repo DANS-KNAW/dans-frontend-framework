@@ -32,6 +32,7 @@ import {
   RdaDomainsField,
   RdaInterestGroupsField,
   SshLicencesField,
+  LanguagesField,
 } from "./fields/AutocompleteAPIField";
 import AutocompleteField from "./fields/AutocompleteField";
 import TextField from "./fields/TextField";
@@ -119,6 +120,8 @@ const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
           <RdaDomainsField field={field} sectionIndex={sectionIndex} />
         : field.options === "interest groups" ?
           <RdaInterestGroupsField field={field} sectionIndex={sectionIndex} />
+        : field.options === "languageList" ?
+          <LanguagesField field={field} sectionIndex={sectionIndex} />
         : field.multiApiValue ?
           <MultiApiField field={field} sectionIndex={sectionIndex} />
         : null)}

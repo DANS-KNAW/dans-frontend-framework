@@ -1,5 +1,33 @@
-import deposit from "./pages/deposit";
+import type { Page } from "@dans-framework/pages";
 
-const pages = [deposit];
+const depositPage: Page = {
+  id: "deposit",
+  name: {
+    en: "Deposit",
+    nl: "Deponeren",
+  },
+  slug: "deposit",
+  template: "deposit",
+  inMenu: true,
+  menuTitle: {
+    en: "Deposit",
+    nl: "Deponeren",
+  },
+};
 
-export default pages;
+const advisorPage: Page = {
+  id: "advisor",
+  name: {
+    en: "Repository selector",
+    nl: "Repository selector",
+  },
+  slug: "/",
+  template: "advisor",
+  inMenu: true,
+  menuTitle: {
+    en: "Repository selector",
+    nl: "Repository selector",
+  },
+};
+
+export default [ advisorPage, depositPage ];

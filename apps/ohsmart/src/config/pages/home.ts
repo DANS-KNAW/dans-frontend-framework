@@ -16,7 +16,7 @@ const page: Page = {
     link: "deposit",
     text: {
       en: "Deposit data",
-      nl: "Data indienen",
+      nl: "Data deponeren",
     },
     restricted: true,
   },

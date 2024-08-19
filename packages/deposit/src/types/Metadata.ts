@@ -8,6 +8,7 @@ export interface InitialSectionType {
   id: string;
   title: string | LanguageStrings;
   fields: RecursiveOmit<Field, "id">[];
+  description?: string | LanguageStrings;
 }
 
 export type SectionStatus =
@@ -61,10 +62,14 @@ export interface FormConfig {
     displayProcesses?: boolean;
     displayPrivate?: boolean;
     fileRoles?: {
-      label: string;
+      label: string | LanguageStrings;
       value: string;
     }[];
     embargoDateMin?: number;
     embargoDateMax?: number;
+    maxSize?: number;
   };
+  displayName?: string | LanguageStrings;
+  description?: string | LanguageStrings;
+  external?: string;
 }

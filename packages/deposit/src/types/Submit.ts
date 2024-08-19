@@ -17,10 +17,12 @@ export interface SubmittedFile {
 
 export type SubmitStatus =
   | ""
+  | "queued"
   | "submitting"
   | "submitted"
   | "error"
   | "saved"
+  | "finalising"
   | "success";
 
 export interface ReduxFileSubmitActions {
