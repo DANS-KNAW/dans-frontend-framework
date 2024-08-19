@@ -100,7 +100,7 @@ const FileMapper = ({setMappedForm, page}: {
                 disabled={activeStep === 0}
                 onClick={handleBack}
                 sx={{ mr: 1 }}
-                variant="outlined"
+                variant="contained"
               >
                 {t("buttonBack")}
               </Button>
@@ -108,7 +108,7 @@ const FileMapper = ({setMappedForm, page}: {
               <Button 
                 onClick={handleNext} 
                 disabled={!file || isLoading || fileError !== undefined }
-                variant="outlined"   
+                variant="contained"   
               >
                 {
                   activeStep === steps.length - 1 || (file && savedMap)
