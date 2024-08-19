@@ -3,7 +3,6 @@ import metadataReducer from "../features/metadata/metadataSlice";
 import filesReducer from "../features/files/filesSlice";
 import submitReducer from "../features/submit/submitSlice";
 import depositReducer from "../deposit/depositSlice";
-import { depositApi } from "../deposit/depositApi";
 import { orcidApi } from "../features/metadata/api/orcid";
 import { rorApi } from "../features/metadata/api/ror";
 import { gettyApi } from "../features/metadata/api/getty";
@@ -37,7 +36,6 @@ export const store = configureStore({
     [dansUtilityApi.reducerPath]: dansUtilityApi.reducer,
     [rdaApi.reducerPath]: rdaApi.reducer,
     [languagesApi.reducerPath]: languagesApi.reducer,
-    [depositApi.reducerPath]: depositApi.reducer,
     [validateKeyApi.reducerPath]: validateKeyApi.reducer,
     submit: submitReducer,
     deposit: depositReducer,
@@ -57,7 +55,6 @@ export const store = configureStore({
       .concat(dansUtilityApi.middleware)
       .concat(rdaApi.middleware)
       .concat(languagesApi.middleware)
-      .concat(depositApi.middleware)
       .concat(validateKeyApi.middleware)
       .concat(errorLogger),
 });

@@ -8,16 +8,16 @@ import grey from "@mui/material/colors/grey";
 const customTheme = createTheme({
   palette: {
     primary: {
-      light: "#E4F9FF",
-      main: "#38a7d4",
-      dark: "#1f97c8",
+      light: "#27a56a",
+      main: "#007663",
+      dark: "#036354",
       contrastText: "#fff",
     },
     secondary: {
-      light: "#ff7961",
-      main: "#f44336",
-      dark: "#ba000d",
-      contrastText: "#000",
+      light: "#00add9",
+      main: "#004b85",
+      dark: "#00365f",
+      contrastText: "#fff",
     },
   },
   typography: {
