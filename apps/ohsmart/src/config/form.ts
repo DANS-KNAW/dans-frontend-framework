@@ -49,7 +49,7 @@ const form: FormConfig = {
     embargoDateMin: 2, // days in the future
     embargoDateMax: 18250,
     displayProcesses: false,
-    maxSize: 9985798963, // max file size that can be uploaded in bytes
+    maxSize: 10000000000, // max file size that can be uploaded in bytes
   },
 };
 
