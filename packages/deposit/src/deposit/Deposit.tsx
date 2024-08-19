@@ -46,7 +46,7 @@ import {
 } from "@dans-framework/utils";
 import type { Page } from "@dans-framework/pages";
 import { useAuth } from "react-oidc-context";
-import { useFetchSavedMetadataQuery } from "./depositApi";
+import { useFetchSavedMetadataQuery } from "../features/submit/submitApi";
 import {
   useValidateAllKeysQuery,
   getFormActions,

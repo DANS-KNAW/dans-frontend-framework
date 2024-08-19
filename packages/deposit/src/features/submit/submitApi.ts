@@ -8,12 +8,14 @@ import moment from "moment";
 import { enqueueSnackbar } from "notistack";
 import i18n from "../../languages/i18n";
 import { formatFormData } from "./submitHelpers";
+import type { SavedFormResponse } from "../../types/Metadata";
 
 export const submitApi = createApi({
   reducerPath: "submitApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${import.meta.env.VITE_PACKAGING_TARGET}/inbox/`,
+    baseUrl: `${import.meta.env.VITE_PACKAGING_TARGET}`,
   }),
+  tagTypes: ["Forms"],
   endpoints: (build) => ({
     submitData: build.mutation({
       query: ({ user, actionType, id, metadata, config, files }) => {
@@ -55,12 +57,13 @@ export const submitApi = createApi({
           : `dataset/${actionType === "save" ? "DRAFT" : "PUBLISH"}`;
 
         return ({
-          url: submitUrl,
+          url: `inbox/${submitUrl}`,
           method: "POST",
           headers: headers,
           body: data,
         })
       },
+      invalidatesTags: (_res, _err, arg ) => [{ type: "Forms", id: arg.id }],
       transformResponse: (response, _meta, arg) => {
         store.dispatch(setMetadataSubmitStatus(
           arg.actionType === "save" ? "saved" : "submitted",
@@ -89,7 +92,34 @@ export const submitApi = createApi({
         });
       },
     }),
+    fetchSavedMetadata: build.query({
+      query: (id) => ({
+        url: `dataset/${id}`,
+        headers: { Accept: "application/json" },
+      }),
+      providesTags: (_res, _err, id) => [{ type: "Forms", id }],
+      transformResponse: (response: SavedFormResponse) => {
+        // mark previously submitted files
+        const modifiedResponse = {
+          ...response,
+          md: {
+            ...response.md,
+            "file-metadata":
+              response.md["file-metadata"] ?
+                response.md["file-metadata"].map((f) => ({
+                  ...f,
+                  submittedFile: true,
+                }))
+              : [],
+          },
+        };
+        return modifiedResponse;
+      },
+    }),
   }),
 });
 
-export const { useSubmitDataMutation } = submitApi;
+export const { 
+  useSubmitDataMutation,
+  useFetchSavedMetadataQuery
+} = submitApi;
