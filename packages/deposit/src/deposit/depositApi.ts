@@ -7,6 +7,8 @@ export const depositApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${import.meta.env.VITE_PACKAGING_TARGET}/dataset/`,
   }),
+  // no stale forms
+  keepUnusedDataFor: 0.1,
   refetchOnMountOrArgChange: true,
   endpoints: (build) => ({
     fetchSavedMetadata: build.query({

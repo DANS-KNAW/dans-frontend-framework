@@ -30,8 +30,8 @@ export const errorLogger: Middleware = () => (next) => async (action) => {
     if (
       // freshdesk enabled?
       import.meta.env.VITE_FRESHDESK_API_KEY &&
-      // some conditions when not to create a ticket
-      action.meta.arg.endpointName !== "validateAllKeys"
+      // only create a ticket when something's gone wrong with the actual submission
+      action.meta.arg.endpointName === "submitData"
     ) {
       ticket = await sendTicket(action);
     }
