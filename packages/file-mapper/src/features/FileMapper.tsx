@@ -10,7 +10,7 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import { useTranslation } from "react-i18next";
 import { Step1, Step2, Step3 } from './Steps';
-import { getActiveStep, setActiveStep, getFile, getSavedMap, getMapping } from './fileMapperSlice';
+import { getActiveStep, setActiveStep, getFile, getSavedMap, getMapping, getFileError } from './fileMapperSlice';
 import { useSubmitMapMutation } from './fileMapperApi';
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import CircularProgress from '@mui/material/CircularProgress';
@@ -32,6 +32,7 @@ const FileMapper = ({setMappedForm, page}: {
   const file = useAppSelector(getFile);
   const savedMap = useAppSelector(getSavedMap);
   const mapping = useAppSelector(getMapping);
+  const fileError = useAppSelector(getFileError);
   const [ submitMap, { isLoading, data } ] = useSubmitMapMutation();
 
   // set page title
@@ -106,7 +107,7 @@ const FileMapper = ({setMappedForm, page}: {
               <Box sx={{ flex: '1 1 auto' }} />
               <Button 
                 onClick={handleNext} 
-                disabled={!file || isLoading}
+                disabled={!file || isLoading || fileError !== undefined }
                 variant="outlined"   
               >
                 {

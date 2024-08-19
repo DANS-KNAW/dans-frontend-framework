@@ -24,3 +24,6 @@ export interface SerializedFile {
   size: number;
   url: string;
 }
+
+export type FileError = 
+  | "tooManyRows";
