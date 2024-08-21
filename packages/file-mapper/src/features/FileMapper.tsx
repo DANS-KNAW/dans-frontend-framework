@@ -9,7 +9,9 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import { useTranslation } from "react-i18next";
-import { Step1, Step2, Step3 } from './Steps';
+import SelectFile from './SelectFile';
+import SetMapping from './SetMapping';
+import SaveMapping from './SaveMapping';
 import { getActiveStep, setActiveStep, getFile, getSavedMap, getMapping, getFileError } from './fileMapperSlice';
 import { useSubmitMapMutation } from './fileMapperApi';
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
@@ -18,8 +20,7 @@ import { useSiteTitle, setSiteTitle } from "@dans-framework/utils/sitetitle";
 import { lookupLanguageString } from "@dans-framework/utils/language";
 import { type Page } from "@dans-framework/pages";
 import type { FormConfig } from "@dans-framework/deposit";
-
-const steps = ['selectFile', 'createMapping', 'finish'];
+import { steps } from "./Steps";
 
 const FileMapper = ({setMappedForm, page}: { 
   setMappedForm: Dispatch<SetStateAction<FormConfig | undefined>>;
@@ -85,10 +86,10 @@ const FileMapper = ({setMappedForm, page}: {
             </Stepper>
             {
               activeStep === 0
-              ? <Step1 />
+              ? <SelectFile />
               : activeStep === 1
-              ? <Step2 />
-              : <Step3 />
+              ? <SetMapping />
+              : <SaveMapping />
             }
             <Box sx={{ 
               display: 'flex', 
