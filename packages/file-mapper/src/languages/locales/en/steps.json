@@ -18,5 +18,6 @@
   "saveMapping": "Save as",
   "saveMappingExtra": "You can save your mapping for future datasets for easy reference. Please enter a name below.",
   "isLoading": "Loading...",
-  "tooManyRows": "Your data file contains too many rows to process using this tool. Make sure your file has less than {{max}} rows."
+  "tooManyRows": "Your data file contains too many rows to process using this tool. Make sure your file has less than {{max}} rows.",
+  "dataHeader": "Sheet data for this column"
 }

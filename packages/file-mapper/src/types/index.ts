@@ -10,7 +10,7 @@ export type DarwinOptions = {
 }
 
 export interface Mapping {
-  [key: string]: DarwinOptions
+  [key: string]: DarwinOptions;
 }
 
 export interface Saves {
@@ -27,3 +27,7 @@ export interface SerializedFile {
 
 export type FileError = 
   | "tooManyRows";
+
+export interface SheetData {
+  [key: string]: string;
+}
