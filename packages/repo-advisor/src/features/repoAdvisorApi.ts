@@ -22,8 +22,8 @@ export const repoAdvisorApi = createApi({
           method: "POST",
           headers: headers,
           body: JSON.stringify({
-            affiliation: ror,
-            domain: narcis,
+            affiliation: ror.value,
+            domain: narcis.value,
             "deposit-type": depositType,
             ...(fileType && { "file-type": fileType }),
           }),
