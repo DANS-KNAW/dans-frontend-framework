@@ -38,6 +38,7 @@ import AutocompleteField from "./fields/AutocompleteField";
 import TextField from "./fields/TextField";
 import { DateTimeField, DateRangeField } from "./fields/DateTimeField";
 import { RadioField, CheckField } from "./fields/RadioCheckField";
+import DrawMap from "./fields/Map";
 import { TransitionGroup } from "react-transition-group";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
@@ -130,6 +131,9 @@ const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
       )}
       {field.type === "check" && (
         <CheckField field={field} sectionIndex={sectionIndex} />
+      )}
+      {field.type === "drawmap" && (
+        <DrawMap field={field} sectionIndex={sectionIndex} />
       )}
     </Grid>
   );

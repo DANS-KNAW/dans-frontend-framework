@@ -9,7 +9,8 @@ export type InputField =
   | AutocompleteFieldType
   | RadioFieldType
   | CheckFieldType
-  | RepeatTextFieldType;
+  | RepeatTextFieldType
+  | DrawMapFieldType;
 
 // General field, can be input or group
 export type Field = InputField | GroupedFieldType | RepeatGroupedFieldType;
@@ -157,6 +158,18 @@ export interface CheckFieldType
   label?: LanguageStrings;
   validation?: never;
   valid?: never;
+  multiApiValue?: never;
+  fields?: never;
+  format?: never;
+  autofill?: never;
+  minDateField?: never;
+  maxDateField?: never;
+}
+
+export interface DrawMapFieldType
+  extends Omit<BasisFieldType, "value"> {
+  type: "drawmap";
+  value?: string[];
   multiApiValue?: never;
   fields?: never;
   format?: never;

@@ -1,0 +1,13 @@
+.mode-draw_polygon .maplibregl-canvas-container.maplibregl-interactive,
+.mode-draw_point .maplibregl-canvas-container.maplibregl-interactive,
+.mode-draw_line_string .maplibregl-canvas-container.maplibregl-interactive {
+  cursor: crosshair;
+}
+
+.mouse-pointer .maplibregl-canvas-container.maplibregl-interactive {
+  cursor: pointer;
+}
+
+.mouse-move .maplibregl-canvas-container.maplibregl-interactive {
+  cursor: move;
+}
