@@ -1,6 +1,6 @@
 {
   "draw": "Draw features",
-  "simple_select": "Select/move",
+  "simple_select": "Select",
   "draw_point": "Point",
   "draw_line_string": "Line",
   "draw_polygon": "Polygon"

@@ -1,7 +1,8 @@
 {
   "draw": "Draw features",
-  "simple_select": "Select/move",
+  "simple_select": "Select",
   "draw_point": "Point",
   "draw_line_string": "Line",
-  "draw_polygon": "Polygon"
+  "draw_polygon": "Polygon",
+  "drawExplanation": "<0>Select a shape type and click on the map to start drawing. In case of a multipoint shape, double click or press enter to finish drawing.</0><0>To delete a shape, select it and press 'Delete' on your keyboard.</0>"
 }
