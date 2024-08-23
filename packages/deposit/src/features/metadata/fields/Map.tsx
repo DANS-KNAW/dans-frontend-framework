@@ -3,15 +3,14 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import IconButton from "@mui/material/IconButton";
+import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
-import InputAdornment from "@mui/material/InputAdornment";
 import { useTranslation, Trans } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
 import { setField } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
-import type { TextFieldProps } from "../../../types/MetadataProps";
+import type { OptionsType } from "../../../types/MetadataFields";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled } from "../../../deposit/depositSlice";
 import Map, { ScaleControl, NavigationControl, useControl } from "react-map-gl/maplibre";
@@ -28,6 +27,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import PolylineIcon from '@mui/icons-material/Polyline';
+import DeleteIcon from '@mui/icons-material/Delete';
 import PlaceIcon from '@mui/icons-material/Place';
 import HighlightAltIcon from '@mui/icons-material/HighlightAlt';
 import PentagonIcon from '@mui/icons-material/Pentagon';
@@ -37,6 +37,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Autocomplete from "@mui/material/Autocomplete";
 import Typography from "@mui/material/Typography";
 import { useDebounce } from "use-debounce";
+import Collapse from '@mui/material/Collapse';
+import PublicIcon from '@mui/icons-material/Public';
 
 /** 
  * Map field
@@ -54,7 +56,8 @@ const DrawMap = ({
   const status = getFieldStatus(field);
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
-  const [geonamesValue, setGeonamesValue] = useState<string>("");
+  const [geonamesValue, setGeonamesValue] = useState<OptionsType>();
+  const [openMap, setOpenMap] = useState<boolean>(false);
   const [viewState, setViewState] = useState({
     longitude: 4.342779,
     latitude: 52.080738,
@@ -63,36 +66,55 @@ const DrawMap = ({
 
   // move map to selected GeoNames value
   useEffect(() => {
-    geonamesValue && setViewState({
-      longitude: geonamesValue.coordinates[1],
-      latitude: geonamesValue.coordinates[0],
-      zoom: 10,
-    });
-  }, [geonamesValue])
+    if (geonamesValue) {
+      setViewState({
+        longitude: geonamesValue.coordinates![1],
+        latitude: geonamesValue.coordinates![0],
+        zoom: 10,
+      });
+      setOpenMap(true);
+    }
+  }, [geonamesValue]);
 
   return (
     <Box>
-      <GeonamesApiField 
-        value={geonamesValue}
-        setValue={setGeonamesValue}
-        disabled={formDisabled || field.disabled}
-        label={lookupLanguageString(field.label, i18n.language)}
-      />
-      <Map
-        {...viewState}
-        onMove={(e) => setViewState(e.viewState)}
-        style={{
-          width: '100%', 
-          height: 400,
-          borderRadius: '5px',
-          border: "1px solid rgba(0,0,0,0.23)"
-        }}
-        mapStyle={`https://api.maptiler.com/maps/landscape/style.json?key=${import.meta.env.VITE_MAPTILER_API_KEY}`}
-      >
-        <NavigationControl position="top-left" />
-        <ScaleControl />
-        <DrawControls />
-      </Map>
+      <Stack direction="row" alignItems="center" sx={{ flex: 1 }} spacing={2}>
+        <GeonamesApiField 
+          value={geonamesValue}
+          setValue={setGeonamesValue}
+          disabled={formDisabled || field.disabled}
+          label={lookupLanguageString(field.label, i18n.language)}
+        />
+        <StatusIcon
+          status={status}
+          title={lookupLanguageString(field.description, i18n.language)}
+          subtitle={t("apiValue", { api: t('geonames') }) as string}
+        />
+        <Button 
+          sx={{ whiteSpace: "nowrap" }}
+          startIcon={<PublicIcon />}
+          onClick={() => setOpenMap(!openMap)}
+        >
+          {t("toggleMap")}
+        </Button>
+      </Stack>
+      <Collapse unmountOnExit in={openMap}>
+        <Map
+          {...viewState}
+          onMove={(e) => setViewState(e.viewState)}
+          style={{
+            width: '100%', 
+            height: 400,
+            borderRadius: '5px',
+            border: "1px solid rgba(0,0,0,0.23)"
+          }}
+          mapStyle={`https://api.maptiler.com/maps/landscape/style.json?key=${import.meta.env.VITE_MAPTILER_API_KEY}`}
+        >
+          <NavigationControl position="top-left" />
+          <ScaleControl />
+          <DrawControls />
+        </Map>
+      </Collapse>
     </Box>
   );
 };
@@ -101,36 +123,61 @@ export default DrawMap;
 
 const controls = ["simple_select", "draw_point", "draw_line_string", "draw_polygon"];
 
+interface Feature {
+  id?: string | number;
+}
+
+type FeaturesEvent = {features: Feature[], action?: string};
+
+type FeatureObject = {
+  [id: string]: Feature;
+}
+
 const DrawControls = () => {
-  const { t } = useTranslation("map");
+  const { t } = useTranslation("metadata");
   const [ selectedMode, setSelectedMode ] = useState(controls[0]);
 
-  // move this to redux store
-  const [ features, setFeatures ] = useState({});
-
+  // write this to redux store
+  const [ features, setFeatures ] = useState<FeatureObject>();
   console.log(features)
 
-  const onUpdate = useCallback(e => {
+  const onUpdate = useCallback((e: FeaturesEvent) => {
     setFeatures(currFeatures => {
       const newFeatures = {...currFeatures};
       for (const f of e.features) {
-        newFeatures[f.id] = f;
+        if (f.id) {
+          newFeatures[f.id] = f;
+        }
       }
       return newFeatures;
     });
     setSelectedMode(controls[0])
   }, []);
 
-  const onDelete = useCallback(e => {
-    console.log('delete called')
+  const onDelete = useCallback((e: FeaturesEvent) => {
     setFeatures(currFeatures => {
       const newFeatures = {...currFeatures};
       for (const f of e.features) {
-        delete newFeatures[f.id];
+        if (f.id) {
+          delete newFeatures[f.id];
+        }
       }
       return newFeatures;
     });
     setSelectedMode(controls[0])
+  }, []);
+
+  // manual key listener, since delete is broken in the map libre / mapbox draw combo
+  const handleKeyDown = useCallback((event: KeyboardEvent, drawControl: MapboxDraw) => {
+    const selectedFeatures = drawControl.getSelected();
+    if (event.key === 'Delete' && selectedFeatures.features.length > 0) {
+      event.preventDefault();
+      event.stopPropagation();
+      // remove features from store
+      onDelete(selectedFeatures);
+      // remove them from map
+      drawControl.trash();
+    }
   }, []);
 
   return (
@@ -180,38 +227,86 @@ const DrawControls = () => {
             </ListItemButton>
           </ListItem>
         )}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => {
+            // just simulate the delete keyboard press event on the map canvas
+            const target = document.querySelector('.maplibregl-canvas');
+            if (target) {
+              const keyboardEvent = new KeyboardEvent('keydown', {
+                key: 'Delete',
+                code: 'Delete',
+                keyCode: 46,
+                charCode: 46, 
+                bubbles: true,
+                cancelable: true
+              });
+              target.dispatchEvent(keyboardEvent);
+            }
+          }}>
+            <ListItemIcon sx={{minWidth: 40}}>
+              <DeleteIcon />
+            </ListItemIcon>
+            <ListItemText primary={t('delete')} />
+          </ListItemButton>
+        </ListItem>
       </List>
       <DrawControl 
         onCreate={onUpdate}
         onUpdate={onUpdate}
         onDelete={onDelete}
         mode={selectedMode}
+        onKeyDown={handleKeyDown}
       />
     </Paper>
   )
 }
 
+type DrawControlProps = {
+  onCreate: (e: FeaturesEvent) => void;
+  onUpdate: (e: FeaturesEvent) => void;
+  onDelete: (e: FeaturesEvent) => void;
+  mode: string;
+  onKeyDown: (e: KeyboardEvent, c: MapboxDraw) => void;
+};
+
+// Some MapboxDraw typescript issues, changed to any type for now
+
 const DrawControl = ({
   onCreate,
   onUpdate,
   onDelete,
-  mode
-}) => {
-  const control = useControl<MapboxDraw>(
+  mode,
+  onKeyDown,
+}: DrawControlProps) => {
+  const control = useControl<any>(
     () => new MapboxDraw({
+      // remove default controls
       displayControlsDefault: false,
       defaultMode: mode,
       keybindings: true,
+      clickBuffer: 5,
     }),
-    ({map}: {map: MapRef}) => {
+    ({map}: {map: any}) => {
       map.on('draw.create', onCreate);
       map.on('draw.update', onUpdate);
       map.on('draw.delete', onDelete);
+      
+      // Attach the keydown event to the map container
+      const canvas = map.getCanvas();
+      const handleKeyDownInternal = (event: KeyboardEvent) => onKeyDown(event, control);
+      canvas.addEventListener('keydown', handleKeyDownInternal);
+      // Store the reference to the internal handler for cleanup
+      map._handleKeyDownInternal = handleKeyDownInternal;
+
     },
-    ({map}: {map: MapRef}) => {
+    ({map}: {map: any}) => {
       map.off('draw.create', onCreate);
       map.off('draw.update', onUpdate);
       map.off('draw.delete', onDelete);
+
+      // Clean up the keydown event listener
+      const canvas = map.getCanvas();
+      canvas.removeEventListener('keydown', map._handleKeyDownInternal);
     }
   );
 
@@ -227,6 +322,11 @@ const GeonamesApiField = ({
   setValue,
   disabled,
   label
+}: {
+  value?: OptionsType;
+  setValue: (v: OptionsType) => void;
+  disabled: boolean;
+  label?: string;
 }) => {
   const { t } = useTranslation("metadata");
   const [inputValue, setInputValue] = useState<string>("");
@@ -279,6 +379,7 @@ const GeonamesApiField = ({
       forcePopupIcon
       clearOnBlur
       disabled={disabled}
+      getOptionKey={(option) => option.value}
     />
   );
 };

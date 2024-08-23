@@ -228,6 +228,7 @@ export interface OptionsType {
   categoryLabel?: string; // used for nested options
   categoryContent?: string; // used for nested options
   url?: string;
+  coordinates?: number[];
 }
 
 // Validation for text fields

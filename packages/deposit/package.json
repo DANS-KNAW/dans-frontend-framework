@@ -11,7 +11,7 @@
     "@emotion/styled": "^11.11.0",
     "@mapbox/mapbox-gl-draw": "^1.4.3",
     "@mui/icons-material": "^5.14.3",
-    "@mui/material": "^5.14.3",
+    "@mui/material": "^5.16.7",
     "@mui/x-date-pickers": "^6.11.0",
     "@reduxjs/toolkit": "^1.9.5",
     "axios": "^1.6.0",
@@ -41,6 +41,8 @@
   "devDependencies": {
     "@dans-framework/pages": "workspace:*",
     "@types/jest": "^29.5.3",
+    "@types/mapbox-gl": "^3.4.0",
+    "@types/mapbox__mapbox-gl-draw": "^1.4.7",
     "@types/node": "^20.4.7",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",

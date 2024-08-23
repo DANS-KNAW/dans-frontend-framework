@@ -50,13 +50,13 @@ const section: InitialSectionType = {
     {
       type: "drawmap",
       label: {
-        en: "Map",
+        en: "Find on a map and draw locations",
         nl: "Map",
       },
       name: "map",
       required: true,
       description: {
-        en: "Some desc",
+        en: "Search and select to open and focus a map on this location. Then select a shape type and start drawing.",
         nl: "Iets van beschrijving",
       },
       fullWidth: true,
