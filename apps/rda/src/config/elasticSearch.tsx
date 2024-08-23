@@ -24,7 +24,7 @@ const fieldConfig: Partial<RDTSearchUIProps> = {
 export const elasticConfig = [
   {
     name: "RDA Catalogue",
-    url: "https://es.ohsmart.dansdemo.nl/dans-rda2",
+    url: "https://tiger.laurenstobias.com/rda",
     fullTextFields: fieldConfig.fullTextFields,
     fullTextHighlight: fieldConfig.fullTextHighlight,
     resultBodyComponent: Rda2Result,
@@ -33,7 +33,7 @@ export const elasticConfig = [
       <ListFacet
         config={{
           id: "indi",
-          field: "individuals.fullname.keyword",
+          field: "individuals.fullName.keyword",
           title: {
             en: "Individuals",
             nl: "Individuen",
@@ -96,7 +96,7 @@ export const elasticConfig = [
       <ListFacet
         config={{
           id: "wf",
-          field: "workflows.workflowstate.keyword",
+          field: "workflows.WorkflowState.keyword",
           title: {
             en: "Workflows",
             nl: "Workflows",
@@ -108,7 +108,7 @@ export const elasticConfig = [
       <PieChartFacet
         config={{
           id: "uritype",
-          field: "uritype.uritype.keyword",
+          field: "uri_type.uri_type.keyword",
           title: {
             en: "URI types",
             nl: "URI types",
@@ -120,7 +120,7 @@ export const elasticConfig = [
       <PieChartFacet
         config={{
           id: "subjects",
-          field: "subjects.keyword",
+          field: "subjects.keyword.keyword",
           title: {
             en: "Subjects",
             nl: "Onderwerp",
@@ -166,6 +166,42 @@ export const elasticConfig = [
         }}
       />,
       <ListFacet
+      config={{
+        id: "keywords-vocab",
+        field: "keywords.keyword.keyword",
+        title: {
+          en: "Keywords",
+          nl: "Trefwoorden",
+        },
+        cols: 2,
+        rows: 1,
+      }}
+    />,
+      <PieChartFacet
+      config={{
+        id: "gorc-elements",
+        field: "gorc_elements.element.keyword",
+        title: {
+          en: "GORC Elements",
+          nl: "GORC Elementen",
+        },
+        cols: 3,
+        rows: 1,
+      }}
+    />,
+    <PieChartFacet
+      config={{
+        id: "gorc-attributes",
+        field: "gorc_attributes.attribute.keyword",
+        title: {
+          en: "GORC Attributes",
+          nl: "GORC Attributen",
+        },
+        cols: 3,
+        rows: 1,
+      }}
+    />,
+      <ListFacet
         config={{
           id: "pw",
           field: "pathways.pathway.keyword",
@@ -205,7 +241,7 @@ export const elasticConfig = [
       <ListFacet
         config={{
           id: "insttype",
-          field: "institutions.english_name.keyword",
+          field: "related_institutions.english_name.keyword",
           title: {
             en: "Related institutions",
             nl: "Gerelateerde instellingen",
