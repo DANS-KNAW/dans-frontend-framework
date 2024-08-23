@@ -200,7 +200,11 @@ function Metadata({
 }) {
   if (value == null) return null;
 
-  const _value = Array.isArray(value) ? value.join(" || ") : value;
+  let _value = Array.isArray(value) ? value.join(" || ") : value;
+
+  if (_value.length < 1) {
+    _value = "-"
+  }
 
   return (
     <div style={style}>
@@ -224,9 +228,9 @@ function Metadata({
 
 export function MetadataList({ record }: { record: RdaRecord | Result }) {
   const individuals =
-    record.individuals ? record.individuals.map((i: any) => i.fullname) : [];
+    record.individuals ? record.individuals.map((i: any) => i.fullName) : [];
   const workflows =
-    record.workflows ? record.workflows.map((w: any) => w.workflowstate) : [];
+    record.workflows ? record.workflows.map((w: any) => w.WorkflowState) : [];
   const rights =
     record.rights ? record.rights.map((r: any) => r.description) : [];
   const pathways =
