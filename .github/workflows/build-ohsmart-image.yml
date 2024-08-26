@@ -33,8 +33,7 @@ jobs:
   push:
 
     name: Push to registry.
-    runs-on: ohsmart-demo
-    needs: test
+    runs-on: ohsmart-production
     strategy:
       matrix:
         node-version: ["20"]
