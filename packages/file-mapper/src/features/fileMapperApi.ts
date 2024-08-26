@@ -45,6 +45,7 @@ export const submitMappingApi = createApi({
         // format headers
         const headers = {
           Authorization: `Bearer ${user?.access_token}`,
+          "auth-env-name": import.meta.env.VITE_ENV_NAME,
         };
 
         let formData = new FormData();
