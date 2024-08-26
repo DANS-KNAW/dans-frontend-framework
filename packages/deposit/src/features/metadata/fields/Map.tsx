@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, type SetStateAction, type Dispatch } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -11,9 +11,10 @@ import { StatusIcon } from "../../generic/Icons";
 import { setField } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
 import type { OptionsType } from "../../../types/MetadataFields";
+import type { DrawMapFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled } from "../../../deposit/depositSlice";
-import Map, { ScaleControl, NavigationControl, useControl } from "react-map-gl/maplibre";
+import GLMap, { ScaleControl, NavigationControl, useControl } from "react-map-gl/maplibre";
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
@@ -51,7 +52,7 @@ import PublicIcon from '@mui/icons-material/Public';
 const DrawMap = ({
   field,
   sectionIndex,
-}: any) => {
+}: DrawMapFieldProps) => {
   const dispatch = useAppDispatch();
   const status = getFieldStatus(field);
   const { t, i18n } = useTranslation("metadata");
@@ -63,16 +64,34 @@ const DrawMap = ({
     latitude: 52.080738,
     zoom: 8,
   });
+  const [ features, setFeatures ] = useState<Feature[]>([]);
+  // todo: write this to redux store, import proper geojson type from map lib
+  console.log(features)
 
-  // move map to selected GeoNames value
   useEffect(() => {
     if (geonamesValue) {
+      // move map to selected GeoNames value
       setViewState({
-        longitude: geonamesValue.coordinates![1],
-        latitude: geonamesValue.coordinates![0],
+        longitude: geonamesValue.coordinates![0],
+        latitude: geonamesValue.coordinates![1],
         zoom: 10,
       });
       setOpenMap(true);
+      // and add it to map if not added yet, checks geonames id
+      const newFeature = {
+        id: geonamesValue.id,
+        type: "Feature",
+        properties: {
+          geoNames: true,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: geonamesValue.coordinates,
+        },
+      };
+      setFeatures(
+        [...new Map([...features, newFeature].map(item => [item.id, item])).values()]
+      );
     }
   }, [geonamesValue]);
 
@@ -99,7 +118,7 @@ const DrawMap = ({
         </Button>
       </Stack>
       <Collapse unmountOnExit in={openMap}>
-        <Map
+        <GLMap
           {...viewState}
           onMove={(e) => setViewState(e.viewState)}
           style={{
@@ -108,18 +127,34 @@ const DrawMap = ({
             borderRadius: '5px',
             border: "1px solid rgba(0,0,0,0.23)"
           }}
-          mapStyle={`https://api.maptiler.com/maps/landscape/style.json?key=${import.meta.env.VITE_MAPTILER_API_KEY}`}
+          mapStyle={`https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json`}
         >
           <NavigationControl position="top-left" />
           <ScaleControl />
-          <DrawControls />
-        </Map>
+          <DrawControls features={features} setFeatures={setFeatures} />
+        </GLMap>
       </Collapse>
+      {features.length > 0 &&
+        // let's user edit features coordinates directly
+        // todo: how to present this??
+        // also, let user select a corresponding geonames option???
+        <Box>
+          {features.map(feature =>
+            <Box>
+              {feature.geometry.type}
+              {feature.geometry.coordinates.map(coord =>
+                Array.isArray(coord) ? coord.map(c => c) : coord
+              )}
+            </Box>
+          )}
+        </Box>
+      }
     </Box>
   );
 };
 
 export default DrawMap;
+
 
 const controls = ["simple_select", "draw_point", "draw_line_string", "draw_polygon"];
 
@@ -129,42 +164,28 @@ interface Feature {
 
 type FeaturesEvent = {features: Feature[], action?: string};
 
-type FeatureObject = {
-  [id: string]: Feature;
-}
-
-const DrawControls = () => {
+const DrawControls = ({ features, setFeatures }: {
+  features: Feature[];
+  setFeatures: Dispatch<SetStateAction<Feature[]>>;
+}) => {
   const { t } = useTranslation("metadata");
   const [ selectedMode, setSelectedMode ] = useState(controls[0]);
 
-  // write this to redux store
-  const [ features, setFeatures ] = useState<FeatureObject>();
-  console.log(features)
-
   const onUpdate = useCallback((e: FeaturesEvent) => {
-    setFeatures(currFeatures => {
-      const newFeatures = {...currFeatures};
-      for (const f of e.features) {
-        if (f.id) {
-          newFeatures[f.id] = f;
-        }
-      }
-      return newFeatures;
-    });
-    setSelectedMode(controls[0])
+    console.log('update called')
+    setFeatures(currFeatures => 
+      // making sure here points added from a geonames lookup cannot be moved
+      [...new Map([...currFeatures, ...e.features.filter(f => !f.properties.geoNames)].map(item => [item.id, item])).values()]
+    );
+    setSelectedMode(controls[0]);
   }, []);
 
   const onDelete = useCallback((e: FeaturesEvent) => {
-    setFeatures(currFeatures => {
-      const newFeatures = {...currFeatures};
-      for (const f of e.features) {
-        if (f.id) {
-          delete newFeatures[f.id];
-        }
-      }
-      return newFeatures;
-    });
-    setSelectedMode(controls[0])
+    const changedFeatureIds = new Set(e.features.map(feature => feature.id));
+    setFeatures(currFeatures =>
+      currFeatures.filter(feature => !changedFeatureIds.has(feature.id))
+    );
+    setSelectedMode(controls[0]);
   }, []);
 
   // manual key listener, since delete is broken in the map libre / mapbox draw combo
@@ -256,6 +277,7 @@ const DrawControls = () => {
         onDelete={onDelete}
         mode={selectedMode}
         onKeyDown={handleKeyDown}
+        features={features}
       />
     </Paper>
   )
@@ -267,6 +289,7 @@ type DrawControlProps = {
   onDelete: (e: FeaturesEvent) => void;
   mode: string;
   onKeyDown: (e: KeyboardEvent, c: MapboxDraw) => void;
+  features: Feature[];
 };
 
 // Some MapboxDraw typescript issues, changed to any type for now
@@ -277,6 +300,7 @@ const DrawControl = ({
   onDelete,
   mode,
   onKeyDown,
+  features,
 }: DrawControlProps) => {
   const control = useControl<any>(
     () => new MapboxDraw({
@@ -311,8 +335,16 @@ const DrawControl = ({
   );
 
   useEffect(() => {
+    // change drawing mode based on user selection
     control.changeMode(mode);
-  }, [mode])
+  }, [mode]);
+
+  useEffect(() => {
+    // if features prop changes, reflect that on map
+    if (control && features.length > 0) {
+      features.map(f => control.add(f))
+    }
+  }, [features, control]);
 
   return null;
 }
@@ -325,7 +357,7 @@ const GeonamesApiField = ({
 }: {
   value?: OptionsType;
   setValue: (v: OptionsType) => void;
-  disabled: boolean;
+  disabled?: boolean;
   label?: string;
 }) => {
   const { t } = useTranslation("metadata");

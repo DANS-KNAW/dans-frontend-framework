@@ -23,7 +23,8 @@ export const geonamesApi = createApi({
                   item.countryName ? `, ${item.countryName}` : ""
                 }`,
                 value: `https://www.geonames.org/${item.geonameId}`,
-                coordinates: [item.lat, item.lng],
+                coordinates: [parseFloat(item.lng), parseFloat(item.lat)],
+                id: item.geonameId.toString(),
               })),
             }
           : [];

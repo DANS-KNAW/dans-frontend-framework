@@ -166,10 +166,20 @@ export interface CheckFieldType
   maxDateField?: never;
 }
 
+interface GeoJSON {
+  id: string;
+  type: string;
+  properties: Object;
+  geometry: {
+    type: string;
+    coordinates: string[] | string[][];
+  };
+}
+
 export interface DrawMapFieldType
   extends Omit<BasisFieldType, "value"> {
   type: "drawmap";
-  value?: string[];
+  value?: GeoJSON;
   multiApiValue?: never;
   fields?: never;
   format?: never;
