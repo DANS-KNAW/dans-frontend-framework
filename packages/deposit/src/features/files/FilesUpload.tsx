@@ -88,7 +88,12 @@ const FilesUpload = () => {
     }
 
     // No files with these file names
-    if (file.name.indexOf("__generated__") !== -1) {
+    if (
+      file.name.indexOf("__generated__form-metadata") !== -1
+      // oh smart specific. todo: move this all to form config.
+      || file.name.toLowerCase() === "oral history metadata private.txt"
+      || file.name.toLowerCase() === "oral history metadata public.txt"
+    ) {
       return {
         code: "file-not-allowed",
         message: t("fileNotAllowed"),
