@@ -46,9 +46,7 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-
 
 /** 
  * Map field
@@ -91,7 +89,7 @@ const DrawMap = ({
         id: geonamesValue.id,
         type: "Feature",
         properties: {
-          geoNames: true,
+          geoNames: geonamesValue,
         },
         geometry: {
           type: "Point",
@@ -146,7 +144,7 @@ const DrawMap = ({
           // let's user edit features coordinates directly
           // todo: how to present this??
           // also, let user select a corresponding geonames option???
-          <FeatureTable features={features} />
+          <FeatureTable features={features} setFeatures={setFeatures} />
         }
       </Collapse>
     </Box>
@@ -158,7 +156,7 @@ export default DrawMap;
 interface Column {
   id: string;
   label: string;
-  minWidth?: number;
+  width?: number;
 }
 
 const columns: readonly Column[] = [
@@ -167,8 +165,37 @@ const columns: readonly Column[] = [
   { id: 'geonames', label: 'Geoname reference' },
 ];
 
-const FeatureTable = ({ features }) => {
+const FeatureTable = ({ features, setFeatures }: {
+  features: Feature[];
+  setFeatures: Dispatch<SetStateAction<Feature[]>>;
+}) => {
   const { t } = useTranslation("metadata");
+
+  const setCoordinates = (coord: string, indexes: number[], isFirst?: boolean) => {
+    // set the new coordinates
+    const newFeatures = [...features];
+    let target = newFeatures[indexes[0]].geometry.coordinates;
+    for (let i = 1; i < indexes.length - 1; i++) {
+      target = target[indexes[i]];
+    }
+    target[indexes[indexes.length - 1]] = parseFloat(coord);
+
+    // For a polygon, we need to set the last coordinate pair to the first one, to close the shape
+    // This is not editable by the user
+    if (isFirst) {
+      const lastIndex = newFeatures[indexes[0]].geometry.coordinates[0].length - 1;
+      newFeatures[indexes[0]].geometry.coordinates[0][lastIndex] = target;
+    }
+    setFeatures(newFeatures);
+    setGeonames(undefined, indexes[0]);
+  }
+
+  const setGeonames = (geonamesValue: OptionsType | undefined, index: number) => {
+    // set the new geonames value
+    const newFeatures = [...features];
+    newFeatures[index].properties.geoNames = geonamesValue;
+    setFeatures(newFeatures);
+  }
 
   return (
     <TableContainer sx={{ maxHeight: 440 }}>
@@ -178,7 +205,6 @@ const FeatureTable = ({ features }) => {
             {columns.map((column) => (
               <TableCell
                 key={column.id}
-                align={column.align}
                 style={{ width: column.width }}
               >
                 {column.label}
@@ -204,28 +230,30 @@ const FeatureTable = ({ features }) => {
                 {
                   feature.geometry.type === "Point" && 
                   <Stack spacing={1} direction="row">
-                    {feature.geometry.coordinates.map((coord, i) =>
+                    {feature.geometry.coordinates.map((coord: number, j: number) =>
                       <TextField 
                         type="number"
-                        key={i} 
+                        key={j} 
                         size="small" 
                         value={coord} 
                         label={i === 1 ? t("lat") : t("lon")} 
+                        onChange={(e) => setCoordinates(e.target.value, [i, j])}
                       />
                     )}
                   </Stack>
                 }
                 { 
                   feature.geometry.type === "LineString" &&
-                  feature.geometry.coordinates.map((coord, i) =>
-                    <Stack spacing={1} direction="row" mb={1} key={i}>
-                      {coord.map((c, j) => 
+                  feature.geometry.coordinates.map((coord: number[], j:number) =>
+                    <Stack spacing={1} direction="row" mb={1} key={j}>
+                      {coord.map((c, k) => 
                         <TextField 
                           type="number"
                           size="small" 
                           value={c} 
-                          key={i + j}
+                          key={k}
                           label={j === 1 ? t("lat") : t("lon")}
+                          onChange={(e) => setCoordinates(e.target.value, [i, j, k])}
                         />
                       )}
                     </Stack>
@@ -233,15 +261,17 @@ const FeatureTable = ({ features }) => {
                 }
                 {
                   feature.geometry.type === "Polygon" &&
-                  feature.geometry.coordinates[0].map((coord, i) =>
-                    <Stack spacing={1} direction="row" mb={1} key={i}>
-                      {coord.map((c, j) => 
+                  feature.geometry.coordinates[0].map((coord: number[], j: number) =>
+                    <Stack spacing={1} direction="row" mb={1} key={j}>
+                      {coord.map((c, k) => 
                         <TextField 
+                          disabled={j === feature.geometry.coordinates[0].length - 1}
                           type="number"
                           size="small" 
                           value={c} 
-                          key={i + j}
+                          key={k}
                           label={j === 1 ? t("lat") : t("lon")}
+                          onChange={(e) => setCoordinates(e.target.value, [i, 0, j, k], j === 0)}
                         />
                       )}
                     </Stack>
@@ -250,6 +280,9 @@ const FeatureTable = ({ features }) => {
               </TableCell>
               <TableCell>
                 <ReverseLookupGeonamesField 
+                  setValue={setGeonames}
+                  value={feature.properties?.geoNames}
+                  featureIndex={i}
                   lat={
                     feature.geometry.type === "Point" ?
                     feature.geometry.coordinates[1] :
@@ -278,7 +311,14 @@ const FeatureTable = ({ features }) => {
 const controls = ["simple_select", "draw_point", "draw_line_string", "draw_polygon"];
 
 interface Feature {
-  id?: string | number;
+  id: string;
+  geometry: {
+    type: string;
+    coordinates: number[] | number[][] | number[][][];
+  };
+  properties: {
+    geoNames?: OptionsType;
+  }
 }
 
 type FeaturesEvent = {features: Feature[], action?: string};
@@ -292,18 +332,26 @@ const DrawControls = ({ features, setFeatures }: {
 
   const onUpdate = useCallback((e: FeaturesEvent) => {
     console.log('update called')
+
+    // Clear 'properties' key for each feature in the new array
+    // So geonames reference is removed when points change
+    const updatedFeatures = e.features.map(feature => ({
+      ...feature,
+      properties: {},
+    }));
+
     setFeatures(currFeatures => 
-      [...new Map([...currFeatures, ...e.features].map(item => [item.id, item])).values()]
+      [...new Map([...currFeatures, ...updatedFeatures].map(item => [item.id, item])).values()]
     );
     setSelectedMode(controls[0]);
   }, []);
 
   const onDelete = useCallback((e: FeaturesEvent) => {
+    console.log('delete called')
     const changedFeatureIds = new Set(e.features.map(feature => feature.id));
     setFeatures(currFeatures =>
       currFeatures.filter(feature => !changedFeatureIds.has(feature.id))
     );
-    // todo: clear the geonames reference (if present) when a feature is edited
     setSelectedMode(controls[0]);
   }, []);
 
@@ -468,20 +516,37 @@ const DrawControl = ({
   return null;
 }
 
-const ReverseLookupGeonamesField = ({lat, lng, disabled}) => {
-  // todo: fetch op open, not directly on prop change
+const ReverseLookupGeonamesField = ({
+  lat, 
+  lng, 
+  featureIndex,
+  value,
+  setValue,
+  disabled
+}: {
+  lat: number;
+  lng: number;
+  featureIndex: number;
+  value: OptionsType | null;
+  setValue: (option: OptionsType | null, index: number) => void;
+  disabled?: boolean;
+}) => {
   // geonames info, where to save
   const { t } = useTranslation("metadata");
-  const [value, setValue] = useState<any>();
   const [inputValue, setInputValue] = useState<string>("");
+  // fetch on open, not directly on prop change
+  const [open, setOpen] = useState(false);
   // Fetch data right away, based on coordinates
   const { data, isFetching, isLoading } =
-    useFetchPlaceReverseLookupQuery<QueryReturnType>({lat: lat, lng: lng});
+    useFetchPlaceReverseLookupQuery<QueryReturnType>({lat: lat, lng: lng}, {skip: !open});
 
   return (
     <Autocomplete
       fullWidth
       includeInputInList
+      open={open}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
       options={data?.response || []}
       value={value || null}
       inputValue={inputValue || value?.label as string || ""}
@@ -492,13 +557,13 @@ const ReverseLookupGeonamesField = ({lat, lng, disabled}) => {
           size="small"
         />
       )}
-      onChange={(_e, newValue, _reason) => setValue(newValue as OptionsType)}
+      onChange={(_e, newValue, _reason) => setValue(newValue as OptionsType, featureIndex)}
       filterOptions={(x) => x}
       onInputChange={(e, newValue) => {
         e && e.type === "change" && setInputValue(newValue);
         e && (e.type === "click" || e.type === "blur") && setInputValue("");
       }}
-      noOptionsText={!inputValue ? t("startTyping", {api: t("geonames")}) : t("noResults")}
+      noOptionsText={t("noResults")}
       loading={isLoading || isFetching}
       loadingText={
         <Stack

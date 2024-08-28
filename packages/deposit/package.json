@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@dans-framework/pages": "workspace:*",
+    "@types/geojson": "^7946.0.14",
     "@types/jest": "^29.5.3",
     "@types/mapbox-gl": "^3.4.0",
     "@types/mapbox__mapbox-gl-draw": "^1.4.7",
@@ -47,6 +48,7 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/react-transition-group": "^4.4.6",
-    "@types/uuid": "^9.0.2"
+    "@types/uuid": "^9.0.2",
+    "geojson": "^0.5.0"
   }
 }

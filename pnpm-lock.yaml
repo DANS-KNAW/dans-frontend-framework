@@ -632,6 +632,9 @@ importers:
       '@dans-framework/pages':
         specifier: workspace:*
         version: link:../pages
+      '@types/geojson':
+        specifier: ^7946.0.14
+        version: 7946.0.14
       '@types/jest':
         specifier: ^29.5.3
         version: 29.5.3
@@ -656,6 +659,9 @@ importers:
       '@types/uuid':
         specifier: ^9.0.2
         version: 9.0.2
+      geojson:
+        specifier: ^0.5.0
+        version: 0.5.0
 
   packages/file-mapper:
     dependencies:
@@ -810,7 +816,7 @@ importers:
         specifier: ^5.14.3
         version: 5.14.3(@mui/material@5.16.7(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@types/react@18.2.15)(react@18.2.0)
       '@mui/material':
-        specifier: ^5.14.3
+        specifier: ^5.16.7
         version: 5.16.7(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       clsx:
         specifier: ^2.0.0
@@ -2658,6 +2664,10 @@ packages:
 
   geojson-vt@4.0.2:
     resolution: {integrity: sha512-AV9ROqlNqoZEIJGfm1ncNjEXfkz2hdFlZf0qkVfmkwdKa8vj7H16YUOT81rJw1rdFhyEDlN2Tds91p/glzbl5A==}
+
+  geojson@0.5.0:
+    resolution: {integrity: sha512-/Bx5lEn+qRF4TfQ5aLu6NH+UKtvIv7Lhc487y/c8BdludrCTpiWf9wyI0RTyqg49MFefIAvFDuEi5Dfd/zgNxQ==}
+    engines: {node: '>= 0.10'}
 
   geotiff@2.0.7:
     resolution: {integrity: sha512-FKvFTNowMU5K6lHYY2f83d4lS2rsCNdpUC28AX61x9ZzzqPNaWFElWv93xj0eJFaNyOYA63ic5OzJ88dHpoA5Q==}
@@ -5696,6 +5706,8 @@ snapshots:
   geojson-flatten@1.1.1: {}
 
   geojson-vt@4.0.2: {}
+
+  geojson@0.5.0: {}
 
   geotiff@2.0.7:
     dependencies:
