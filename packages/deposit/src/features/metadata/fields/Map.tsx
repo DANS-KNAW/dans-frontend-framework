@@ -32,7 +32,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PlaceIcon from '@mui/icons-material/Place';
 import HighlightAltIcon from '@mui/icons-material/HighlightAlt';
 import PentagonIcon from '@mui/icons-material/Pentagon';
-import { useFetchGeonamesFreeTextQuery } from "../api/geonames";
+import { useFetchGeonamesFreeTextQuery, useFetchPlaceReverseLookupQuery } from "../api/geonames";
 import type { QueryReturnType } from "../../../types/Api";
 import CircularProgress from "@mui/material/CircularProgress";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -40,6 +40,15 @@ import Typography from "@mui/material/Typography";
 import { useDebounce } from "use-debounce";
 import Collapse from '@mui/material/Collapse';
 import PublicIcon from '@mui/icons-material/Public';
+
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+
 
 /** 
  * Map field
@@ -133,27 +142,137 @@ const DrawMap = ({
           <ScaleControl />
           <DrawControls features={features} setFeatures={setFeatures} />
         </GLMap>
+        {features.length > 0 &&
+          // let's user edit features coordinates directly
+          // todo: how to present this??
+          // also, let user select a corresponding geonames option???
+          <FeatureTable features={features} />
+        }
       </Collapse>
-      {features.length > 0 &&
-        // let's user edit features coordinates directly
-        // todo: how to present this??
-        // also, let user select a corresponding geonames option???
-        <Box>
-          {features.map(feature =>
-            <Box>
-              {feature.geometry.type}
-              {feature.geometry.coordinates.map(coord =>
-                Array.isArray(coord) ? coord.map(c => c) : coord
-              )}
-            </Box>
-          )}
-        </Box>
-      }
     </Box>
   );
 };
 
 export default DrawMap;
+
+interface Column {
+  id: string;
+  label: string;
+  minWidth?: number;
+}
+
+const columns: readonly Column[] = [
+  { id: 'feature', label: 'Type', width: 50 },
+  { id: 'coordinates', label: 'Coordinates', width: 500 },
+  { id: 'geonames', label: 'Geoname reference' },
+];
+
+const FeatureTable = ({ features }) => {
+  const { t } = useTranslation("metadata");
+
+  return (
+    <TableContainer sx={{ maxHeight: 440 }}>
+      <Table stickyHeader aria-label="sticky table">
+        <TableHead>
+          <TableRow>
+            {columns.map((column) => (
+              <TableCell
+                key={column.id}
+                align={column.align}
+                style={{ width: column.width }}
+              >
+                {column.label}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {features.map((feature, i) =>
+            <TableRow hover key={i}>
+              <TableCell>
+                {
+                  feature.geometry.type === "Point" 
+                  ? <PlaceIcon />
+                  : feature.geometry.type === "LineString" 
+                  ? <PolylineIcon />
+                  : feature.geometry.type === "Polygon"
+                  ? <PentagonIcon />
+                  : null
+                }
+              </TableCell>
+              <TableCell>
+                {
+                  feature.geometry.type === "Point" && 
+                  <Stack spacing={1} direction="row">
+                    {feature.geometry.coordinates.map((coord, i) =>
+                      <TextField 
+                        type="number"
+                        key={i} 
+                        size="small" 
+                        value={coord} 
+                        label={i === 1 ? t("lat") : t("lon")} 
+                      />
+                    )}
+                  </Stack>
+                }
+                { 
+                  feature.geometry.type === "LineString" &&
+                  feature.geometry.coordinates.map((coord, i) =>
+                    <Stack spacing={1} direction="row" mb={1} key={i}>
+                      {coord.map((c, j) => 
+                        <TextField 
+                          type="number"
+                          size="small" 
+                          value={c} 
+                          key={i + j}
+                          label={j === 1 ? t("lat") : t("lon")}
+                        />
+                      )}
+                    </Stack>
+                  )
+                }
+                {
+                  feature.geometry.type === "Polygon" &&
+                  feature.geometry.coordinates[0].map((coord, i) =>
+                    <Stack spacing={1} direction="row" mb={1} key={i}>
+                      {coord.map((c, j) => 
+                        <TextField 
+                          type="number"
+                          size="small" 
+                          value={c} 
+                          key={i + j}
+                          label={j === 1 ? t("lat") : t("lon")}
+                        />
+                      )}
+                    </Stack>
+                  )
+                }
+              </TableCell>
+              <TableCell>
+                <ReverseLookupGeonamesField 
+                  lat={
+                    feature.geometry.type === "Point" ?
+                    feature.geometry.coordinates[1] :
+                    feature.geometry.type === "LineString" ?
+                    feature.geometry.coordinates[Math.floor(feature.geometry.coordinates.length / 2)][1] :
+                    feature.geometry.coordinates[0][Math.floor(feature.geometry.coordinates[0].length / 2)][1]
+                  } 
+                  lng={
+                    feature.geometry.type === "Point" ?
+                    feature.geometry.coordinates["0"] :
+                    feature.geometry.type === "LineString" ?
+                    feature.geometry.coordinates[Math.floor(feature.geometry.coordinates.length / 2)][0] :
+                    feature.geometry.coordinates[0][Math.floor(feature.geometry.coordinates[0].length / 2)][0]
+                  } 
+                />
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  )
+}
 
 
 const controls = ["simple_select", "draw_point", "draw_line_string", "draw_polygon"];
@@ -174,8 +293,7 @@ const DrawControls = ({ features, setFeatures }: {
   const onUpdate = useCallback((e: FeaturesEvent) => {
     console.log('update called')
     setFeatures(currFeatures => 
-      // making sure here points added from a geonames lookup cannot be moved
-      [...new Map([...currFeatures, ...e.features.filter(f => !f.properties.geoNames)].map(item => [item.id, item])).values()]
+      [...new Map([...currFeatures, ...e.features].map(item => [item.id, item])).values()]
     );
     setSelectedMode(controls[0]);
   }, []);
@@ -185,6 +303,7 @@ const DrawControls = ({ features, setFeatures }: {
     setFeatures(currFeatures =>
       currFeatures.filter(feature => !changedFeatureIds.has(feature.id))
     );
+    // todo: clear the geonames reference (if present) when a feature is edited
     setSelectedMode(controls[0]);
   }, []);
 
@@ -347,6 +466,55 @@ const DrawControl = ({
   }, [features, control]);
 
   return null;
+}
+
+const ReverseLookupGeonamesField = ({lat, lng, disabled}) => {
+  // todo: fetch op open, not directly on prop change
+  // geonames info, where to save
+  const { t } = useTranslation("metadata");
+  const [value, setValue] = useState<any>();
+  const [inputValue, setInputValue] = useState<string>("");
+  // Fetch data right away, based on coordinates
+  const { data, isFetching, isLoading } =
+    useFetchPlaceReverseLookupQuery<QueryReturnType>({lat: lat, lng: lng});
+
+  return (
+    <Autocomplete
+      fullWidth
+      includeInputInList
+      options={data?.response || []}
+      value={value || null}
+      inputValue={inputValue || value?.label as string || ""}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label={t("findPlace")}
+          size="small"
+        />
+      )}
+      onChange={(_e, newValue, _reason) => setValue(newValue as OptionsType)}
+      filterOptions={(x) => x}
+      onInputChange={(e, newValue) => {
+        e && e.type === "change" && setInputValue(newValue);
+        e && (e.type === "click" || e.type === "blur") && setInputValue("");
+      }}
+      noOptionsText={!inputValue ? t("startTyping", {api: t("geonames")}) : t("noResults")}
+      loading={isLoading || isFetching}
+      loadingText={
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="end"
+        >
+          {t("loading")} <CircularProgress size={18} />
+        </Stack>
+      }
+      forcePopupIcon
+      clearOnBlur
+      disabled={disabled}
+      getOptionKey={(option) => option.value}
+    />
+  )
 }
 
 const GeonamesApiField = ({
