@@ -17,7 +17,7 @@ import type { DateFieldProps, DateRangeFieldProps } from "../../../types/Metadat
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled } from "../../../deposit/depositSlice";
 import type { DateValidationError, TimeValidationError } from "@mui/x-date-pickers/models";
-import type { DateFieldType, DateRangeFieldType } from "../../../types/MetadataFields";
+import type { DateFieldType, DateRangeFieldType, DateTimeFormat } from "../../../types/MetadataFields";
 
 // Date and time selection component
 // Allows a user to select input type (date and time, date, month and year, year) if specified in config
@@ -366,7 +366,7 @@ const DateTypeWrapper = ({field, sectionIndex, currentField}: {
               setDateTypeField({
                 sectionIndex: sectionIndex,
                 id: field.id,
-                value: e.target.value,
+                value: e.target.value as DateTimeFormat,
               }),
             );
             // and reset the currently selected value if there is one

@@ -50,7 +50,7 @@ const section: InitialSectionType = {
     {
       type: "drawmap",
       label: {
-        en: "Find on a map and draw locations",
+        en: "Indicate location",
         nl: "Map",
       },
       name: "map",

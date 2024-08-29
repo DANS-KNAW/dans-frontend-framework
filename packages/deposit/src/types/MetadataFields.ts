@@ -1,5 +1,6 @@
 import type { LanguageStrings } from "@dans-framework/utils";
 import type { AuthProperty } from "@dans-framework/user-auth";
+import type { Feature, Point, Polygon, LineString, Geometry } from 'geojson';
 
 // All user input field types
 export type InputField =
@@ -166,20 +167,17 @@ export interface CheckFieldType
   maxDateField?: never;
 }
 
-interface GeoJSON {
-  id: string;
-  type: string;
-  properties: Object;
-  geometry: {
-    type: string;
-    coordinates: string[] | string[][];
-  };
+export type MapFeatureType = Point | Polygon | LineString;
+export interface ExtendedMapFeature<G extends Geometry = Geometry, P = any> extends Feature<G, P> {
+  geonames?: OptionsType | undefined;
+  label?: never;
+  value?: never;
 }
 
 export interface DrawMapFieldType
   extends Omit<BasisFieldType, "value"> {
   type: "drawmap";
-  value?: GeoJSON;
+  value?: ExtendedMapFeature[];
   multiApiValue?: never;
   fields?: never;
   format?: never;

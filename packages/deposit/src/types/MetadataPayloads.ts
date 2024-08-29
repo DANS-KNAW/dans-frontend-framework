@@ -1,23 +1,30 @@
 import type {
-  ValidationType,
   OptionsType,
   TypeaheadAPI,
+  ExtendedMapFeature,
+  DateTimeFormat,
 } from "./MetadataFields";
 
 // Payloads and types for redux slices
-export type FieldValue = 
-    | string
-    | string[]
-    | OptionsType
-    | OptionsType[]
-    | null
-    | ValidationType;
-
-export interface SetFieldPayload {
+interface Payload {
   sectionIndex: number;
   id: string;
-  value: FieldValue | boolean;
-  typeaheadApi?: TypeaheadAPI;
+}
+
+export interface SetFieldValuePayload extends Payload {
+  value: string | string[] | OptionsType | OptionsType[] | ExtendedMapFeature[] | null;
+}
+
+export interface SetFieldMultiApiPayload extends Payload {
+  value: TypeaheadAPI;
+}
+
+export interface SetFieldFormatPayload extends Payload {
+  value: DateTimeFormat;
+}
+
+export interface SetFieldValidPayload extends Payload {
+  value: boolean;
 }
 
 export interface AddFieldPayload {

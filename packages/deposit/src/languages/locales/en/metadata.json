@@ -44,12 +44,18 @@
   "apiFetchError": "Could not get data from {{api}}",
   "generate": "Regenerate value",
   "generateDisabled": "Cannot generate value, as not all required fields have been filled in or are public data.",
+  "initialLocation": "Search on geonames and create a point on your selected location",
   "draw": "Draw",
   "simple_select": "Select",
   "draw_point": "Point",
   "draw_line_string": "Line",
   "draw_polygon": "Polygon",
-  "drawExplanation": "<0>Select a shape type and click on the map to start drawing. In case of a multipoint shape, double click or press 'Enter' to finish drawing.</0><0>To edit a shape, click on it to select it, and drag it around, or add or move individual points.</0><0>To delete a shape, select it and press 'Delete' on your keyboard.</0>",
-  "delete": "Delete",
-  "toggleMap": "Toggle map"
+  "drawExplanation": "<p>Select a shape type and click on the map to start drawing. In case of a multipoint shape, double click or press 'Enter' to finish drawing.</p><p>To edit a shape, click on it to select it, and drag it around, or add or move individual points.</p><p>To delete a shape, select it and press 'Delete' on your keyboard.</p>",
+  "toggleMap": "Toggle map",
+  "featureType": "Type",
+  "featureCoordinates": "Coordinates",
+  "featureGeonameRef": "Geonames reference",
+  "lat": "Latitude",
+  "lng": "Longitude",
+  "findPlace": "Select corresponding location"
 }
