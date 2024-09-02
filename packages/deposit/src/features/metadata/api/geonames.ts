@@ -35,14 +35,14 @@ export const geonamesApi = createApi({
     }),
     fetchPlaceReverseLookup: build.query({
       query: ({lat, lng}) => ({
-        url: `findNearbyPlaceName?lat=${lat}&lng=${lng}&radius=10&maxRows=100&username=${
+        url: `extendedFindNearby?lat=${lat}&lng=${lng}&radius=1&maxRows=100&username=${
           import.meta.env.VITE_GEONAMES_API_KEY
         }`,
         headers: { Accept: "application/json" },
       }),
       transformResponse: (response: GeonamesResponse, _meta, arg) => {
         // Return an empty array when no results, which is what the Autocomplete field expects
-        return response.geonames.length > 0 ?
+        return response.geonames?.length > 0 ?
             {
               arg: arg,
               response: response.geonames.map((item) => ({
@@ -54,6 +54,15 @@ export const geonamesApi = createApi({
                 id: item.geonameId.toString(),
               })),
             }
+          : response.ocean ?
+          {
+            arg: arg,
+            response: [{
+              label: response.ocean.name,
+              value: `https://www.geonames.org/${response.ocean.geonameId}`,
+              id: response.ocean.geonameId,
+            }]
+          }
           : [];
       },
       transformErrorResponse: () => ({

@@ -108,6 +108,7 @@ interface GeonamesItem {
 export interface GeonamesResponse {
   totalResultsCount: number;
   geonames: GeonamesItem[];
+  ocean?: GeonamesItem;
 }
 
 export interface ProxyResponse {
