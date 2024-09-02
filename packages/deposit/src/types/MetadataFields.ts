@@ -170,6 +170,8 @@ export interface CheckFieldType
 export type MapFeatureType = Point | Polygon | LineString;
 export interface ExtendedMapFeature<G extends Geometry = Geometry, P = any> extends Feature<G, P> {
   geonames?: OptionsType | undefined;
+  originalCoordinates?: number[] | number[][] | number[][][];
+  coordinateSystem?: string;
   label?: never;
   value?: never;
 }

@@ -21,7 +21,7 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import './Map.css';
-import type { Point, Polygon } from 'geojson';
+import type { Point, Polygon, LineString } from 'geojson';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -33,6 +33,7 @@ import PlaceIcon from '@mui/icons-material/Place';
 import HighlightAltIcon from '@mui/icons-material/HighlightAlt';
 import PentagonIcon from '@mui/icons-material/Pentagon';
 import { useFetchGeonamesFreeTextQuery, useFetchPlaceReverseLookupQuery } from "../api/geonames";
+import { useFetchCoordinateSystemsQuery } from "../api/maptiler";
 import type { QueryReturnType } from "../../../types/Api";
 import CircularProgress from "@mui/material/CircularProgress";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -66,6 +67,7 @@ const DrawMap = ({
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
   const [geonamesValue, setGeonamesValue] = useState<OptionsType>();
+  const [coordinateSystem, setCoordinateSystem] = useState<OptionsType>();
   const [openMap, setOpenMap] = useState<boolean>(false);
   const [viewState, setViewState] = useState({
     longitude: 4.342779,
@@ -139,12 +141,25 @@ const DrawMap = ({
         sx={{ pb: 0, pl: 2.25, pr: 2.25 }}
       />
       <CardContent>
-        <Stack direction="row" alignItems="center" sx={{ flex: 1 }} spacing={2}>
+        <Stack 
+          direction="row" 
+          justifyContent="space-between" 
+          alignItems="center" 
+          sx={{ flex: 1 }} 
+          spacing={2}
+        >
           <GeonamesApiField 
             value={geonamesValue}
             setValue={setGeonamesValue}
             disabled={formDisabled || field.disabled}
             label={t("initialLocation")}
+          />
+          <FindCoordinateSystemField 
+            value={coordinateSystem}
+            setValue={setCoordinateSystem}
+            disabled={formDisabled || field.disabled}
+            label={t("findCoordinateSystem")}
+            width="30%"
           />
           <StatusIcon
             status={status}
@@ -180,7 +195,7 @@ const DrawMap = ({
               // let's user edit features coordinates directly
               // todo: how to present this??
               // also, let user select a corresponding geonames option???
-              <FeatureTable features={features} setFeatures={setFeatures} selectedFeatures={selectedFeatures} />
+              <FeatureTable features={features} setFeatures={setFeatures} selectedFeatures={selectedFeatures} coordinateSystem={coordinateSystem} />
             }
           </Box>
         </Collapse>
@@ -197,43 +212,83 @@ interface Column {
   width?: number;
 }
 
-const FeatureTable = ({ features, setFeatures, selectedFeatures }: {
+const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSystem }: {
   features: ExtendedMapFeature[];
   setFeatures: Dispatch<SetStateAction<ExtendedMapFeature[]>>;
   selectedFeatures: (string | number | undefined)[];
+  coordinateSystem?: OptionsType;
 }) => {
   const { t } = useTranslation("metadata");
 
   const columns: readonly Column[] = [
     { id: 'feature', label: t('featureType'), width: 50 },
-    { id: 'coordinates', label: t('featureCoordinates'), width: 500 },
+    { id: 'coordinates', label: t('featureCoordinates'), width: coordinateSystem === undefined ? 500 : 300 },
+    ...(coordinateSystem !== undefined ? [{id: 'transposedCoordinates', label: t('transposedCoordinates'), width: 300}] : []),
     { id: 'geonames', label: t('featureGeonameRef') },
     { id: 'delete', label: t('delete'), width: 50 },
   ];
 
-  const setCoordinates = (coord: string, featureIndex: number, coordIndexes: number[], isFirst?: boolean) => {
+  const setCoordinates = (value: number, featureIndex: number, type: string, coordinateIndex: number, groupIndex?: number) => {
+    // TODO: Expand this to optionally set two coord objects, with call to conversion service maptiler
+
     // set the new coordinates
-    let newFeatures = [...features];
-    let target: any = (newFeatures[featureIndex].geometry as MapFeatureType).coordinates;
+    const newFeatures = features.map((feature, index) => 
+      index === featureIndex ? ({
+        ...feature,
+        geometry: {
+          ...feature.geometry,
+          coordinates: 
+            type === 'Point' ? 
+              (feature.geometry as Point).coordinates.map((coordinate, i) => 
+                i === coordinateIndex ? value : coordinate
+              ) :
+            type === 'LineString' ?
+              (feature.geometry as LineString).coordinates.map((coordinateGroup, i) => 
+                i === groupIndex ? coordinateGroup.map((coordinate, j) => 
+                  j === coordinateIndex ? value : coordinate
+                ) : coordinateGroup
+              ) :
+            type === 'Polygon' ? (() => {
+              // First, update the first set of coordinates
+              const updatedCoordinates = (feature.geometry as Polygon).coordinates[0].map((coordinateGroup, i) => 
+                i === groupIndex ? coordinateGroup.map((coordinate, j) => 
+                  j === coordinateIndex ? value : coordinate
+                ) : coordinateGroup
+              );
+              // Ensure the last set of coordinates is the same as the first one
+              const firstSet = updatedCoordinates[0];
+              updatedCoordinates[updatedCoordinates.length - 1] = firstSet;
 
-    // Traverse the array up to the point where you're modifying a single number
-    for (let i = 0; i < coordIndexes.length - 1; i++) {
-      target = target[coordIndexes[i]];
-    }
+              return [updatedCoordinates];
+            })() : 
+            (feature.geometry as any).coordinates,
+        },
+        geonames: undefined,
+      }) 
+      : feature
+    );
 
-    // Modify the specific coordinate (either lat or lng)
-    target[coordIndexes[coordIndexes.length - 1]] = parseFloat(coord);
+
+    // let newFeatures = [...features];
+    // let target: any = (newFeatures[featureIndex].geometry as MapFeatureType).coordinates;
+
+    // // Traverse the array up to the point where you're modifying a single number
+    // for (let i = 0; i < coordIndexes.length - 1; i++) {
+    //   target = target[coordIndexes[i]];
+    // }
+
+    // // Modify the specific coordinate (either lat or lng)
+    // target[coordIndexes[coordIndexes.length - 1]] = parseFloat(coord);
 
     // Close the polygon if necessary
-    if (isFirst && (newFeatures[featureIndex].geometry as Polygon).type === 'Polygon') {
-      const polygon = newFeatures[featureIndex].geometry as Polygon;
-      const firstCoordinate = polygon.coordinates[0][0];
-      polygon.coordinates[0][polygon.coordinates[0].length - 1] = [...firstCoordinate];
-    }
+    // if (isFirst && (newFeatures[featureIndex].geometry as Polygon).type === 'Polygon') {
+    //   const polygon = newFeatures[featureIndex].geometry as Polygon;
+    //   const firstCoordinate = polygon.coordinates[0][0];
+    //   polygon.coordinates[0][polygon.coordinates[0].length - 1] = [...firstCoordinate];
+    // }
 
     // Update the features and geoNames
     setFeatures(newFeatures);
-    setGeonames(undefined, featureIndex);
   }
 
   const setGeonames = (geonamesValue: OptionsType | undefined, index: number) => {
@@ -286,57 +341,13 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures }: {
                 }
               </TableCell>
               <TableCell>
-                {
-                  feature.geometry.type === "Point" && 
-                  <Stack spacing={1} direction="row">
-                    {feature.geometry.coordinates.map((coord, j) =>
-                      <TextField 
-                        type="number"
-                        key={j} 
-                        size="small" 
-                        value={coord} 
-                        label={j === 1 ? t("lat") : t("lng")} 
-                        onChange={(e) => setCoordinates(e.target.value, i, [j])}
-                      />
-                    )}
-                  </Stack>
-                }
-                { 
-                  feature.geometry.type === "LineString" &&
-                  feature.geometry.coordinates.map((coord, j) =>
-                    <Stack spacing={1} direction="row" mb={1} key={j}>
-                      {coord.map((c, k) => 
-                        <TextField 
-                          type="number"
-                          size="small" 
-                          value={c} 
-                          key={k}
-                          label={k === 1 ? t("lat") : t("lng")}
-                          onChange={(e) => setCoordinates(e.target.value, i, [j, k])}
-                        />
-                      )}
-                    </Stack>
-                  )
-                }
-                {
-                  feature.geometry.type === "Polygon" &&
-                  feature.geometry.coordinates[0].map((coord, j) =>
-                    <Stack spacing={1} direction="row" mb={1} key={j}>
-                      {coord.map((c, k) => 
-                        <TextField 
-                          disabled={j === (feature.geometry as Polygon).coordinates[0].length - 1}
-                          type="number"
-                          size="small" 
-                          value={c} 
-                          key={k}
-                          label={k === 1 ? t("lat") : t("lng")}
-                          onChange={(e) => setCoordinates(e.target.value, i, [0, j, k], j === 0)}
-                        />
-                      )}
-                    </Stack>
-                  )
-                }
+                <FeatureCoordinateCell feature={feature} onChange={setCoordinates} featureIndex={i} />
               </TableCell>
+              {coordinateSystem && 
+                <TableCell>
+                  <FeatureCoordinateCell feature={feature} onChange={setCoordinates} featureIndex={i} />
+                </TableCell>
+              }
               <TableCell>
                 <ReverseLookupGeonamesField 
                   setValue={setGeonames}
@@ -373,6 +384,63 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures }: {
         </TableBody>
       </Table>
     </TableContainer>
+  )
+}
+
+const FeatureCoordinateCell = ({feature, onChange, featureIndex}: {
+  feature: ExtendedMapFeature;
+  featureIndex: number;
+  onChange: (value: number, featureIndex: number, type: string, coordinateIndex: number, groupIndex?: number) => void;
+}) => {
+  const { t } = useTranslation("metadata");
+  console.log(feature)
+
+  return (
+    feature.geometry.type === "Point" ? 
+      <Stack spacing={1} direction="row">
+        {feature.geometry.coordinates.map((coord, coordinateIndex) =>
+          <TextField 
+            type="number"
+            key={coordinateIndex} 
+            size="small" 
+            value={coord} 
+            label={coordinateIndex === 1 ? t("lat") : t("lng")} 
+            onChange={(e) => onChange(parseFloat(e.target.value), featureIndex, feature.geometry.type, coordinateIndex)}
+          />
+        )}
+      </Stack>
+    : feature.geometry.type === "LineString" ?
+      feature.geometry.coordinates.map((coordGroup, groupIndex) =>
+        <Stack spacing={1} direction="row" mb={1} key={groupIndex}>
+          {coordGroup.map((coord, coordinateIndex) => 
+            <TextField 
+              type="number"
+              size="small" 
+              value={coord} 
+              key={coordinateIndex}
+              label={coordinateIndex === 1 ? t("lat") : t("lng")}
+              onChange={(e) => onChange(parseFloat(e.target.value), featureIndex, feature.geometry.type, coordinateIndex, groupIndex)}
+            />
+          )}
+        </Stack>
+      )
+    : feature.geometry.type === "Polygon" ?
+      feature.geometry.coordinates[0].map((coordGroup, groupIndex) =>
+        <Stack spacing={1} direction="row" mb={1} key={groupIndex}>
+          {coordGroup.map((coord, coordinateIndex) => 
+            <TextField 
+              disabled={groupIndex === (feature.geometry as Polygon).coordinates[0].length - 1}
+              type="number"
+              size="small" 
+              value={coord} 
+              key={coordinateIndex}
+              label={coordinateIndex === 1 ? t("lat") : t("lng")}
+              onChange={(e) => onChange(parseFloat(e.target.value), featureIndex, feature.geometry.type, coordinateIndex, groupIndex)}
+            />
+          )}
+        </Stack>
+      )
+    : null
   )
 }
 
@@ -643,14 +711,15 @@ const GeonamesApiField = ({
   value,
   setValue,
   disabled,
-  label
+  label,
+  width,
 }: {
   value?: OptionsType;
   setValue: (v: OptionsType) => void;
   disabled?: boolean;
   label?: string;
+  width?: string | number;
 }) => {
-  const { t } = useTranslation("metadata");
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   // Fetch data on input change
@@ -660,8 +729,92 @@ const GeonamesApiField = ({
     });
 
   return (
+    <TypeaheadField 
+      inputValue={inputValue}
+      setInputValue={setInputValue}
+      debouncedInputValue={debouncedInputValue}
+      data={data}
+      value={value}
+      label={label}
+      setValue={setValue}
+      disabled={disabled}
+      isLoading={isLoading}
+      isFetching={isFetching}
+      width={width}
+    />
+  );
+};
+
+const FindCoordinateSystemField = ({
+  value,
+  setValue,
+  disabled,
+  label,
+  width,
+}: {
+  value?: OptionsType;
+  setValue: (v: OptionsType) => void;
+  disabled?: boolean;
+  label?: string;
+  width?: string | number;
+}) => {
+  const [inputValue, setInputValue] = useState<string>("");
+  const debouncedInputValue = useDebounce(inputValue, 500)[0];
+  // Fetch data on input change
+  const { data, isFetching, isLoading } =
+    useFetchCoordinateSystemsQuery<QueryReturnType>(debouncedInputValue, {
+      skip: debouncedInputValue === "",
+    });
+
+  return (
+    <TypeaheadField 
+      inputValue={inputValue}
+      setInputValue={setInputValue}
+      debouncedInputValue={debouncedInputValue}
+      data={data}
+      value={value}
+      label={label}
+      setValue={setValue}
+      disabled={disabled}
+      isLoading={isLoading}
+      isFetching={isFetching}
+      width={width}
+    />
+  );
+};
+
+const TypeaheadField = ({
+  inputValue,
+  setInputValue,
+  debouncedInputValue,
+  data,
+  value,
+  label,
+  setValue,
+  disabled,
+  isLoading,
+  isFetching,
+  width,
+}: {
+  value?: OptionsType;
+  setValue: (v: OptionsType) => void;
+  disabled?: boolean;
+  label?: string;
+  width?: string | number;
+  inputValue?: string;
+  setInputValue: Dispatch<SetStateAction<string>>
+  debouncedInputValue?: string;
+  data: any;
+  isLoading: boolean;
+  isFetching: boolean;
+}) => {
+  const { t } = useTranslation("metadata");
+  return (
     <Autocomplete
-      fullWidth
+      fullWidth={width ? false : true}
+      sx={{
+        width: width,
+      }}
       includeInputInList
       options={
         (
@@ -703,5 +856,5 @@ const GeonamesApiField = ({
       disabled={disabled}
       getOptionKey={(option) => option.value}
     />
-  );
-};
+  )
+}

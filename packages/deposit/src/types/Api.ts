@@ -111,6 +111,16 @@ export interface GeonamesResponse {
   ocean?: GeonamesItem;
 }
 
+export interface MaptilerCoordinateSystemResponse {
+  results: {
+    id: {
+      authority: string;
+      code: number;
+    };
+    name: string;
+  }[];
+}
+
 export interface ProxyResponse {
   status_code: number;
   text: string;
