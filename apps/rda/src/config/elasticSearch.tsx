@@ -24,7 +24,7 @@ const fieldConfig: Partial<RDTSearchUIProps> = {
 export const elasticConfig = [
   {
     name: "RDA Catalogue",
-    url: "https://tiger.laurenstobias.com/rda",
+    url: "https://es.laurenstobias.com/rda",
     fullTextFields: fieldConfig.fullTextFields,
     fullTextHighlight: fieldConfig.fullTextHighlight,
     resultBodyComponent: Rda2Result,
