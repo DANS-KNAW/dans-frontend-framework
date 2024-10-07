@@ -217,7 +217,6 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSyste
   coordinateSystem?: OptionsType;
 }) => {
   const { t } = useTranslation("metadata");
-  const getAltCoordinates = useTransformCoordinatesQuery();
 
   const columns: readonly Column[] = [
     { id: 'feature', label: t('featureType'), width: 50 },
@@ -375,7 +374,7 @@ const FeatureCoordinateCell = ({feature, onChange, featureIndex, coordinateSyste
   featureIndex: number;
   onChange: (value: number, featureIndex: number, type: string, coordinateIndex: number, groupIndex?: number) => void;
   coordinateSystem?: any;
-  isCoordinateSystem?: boolean;
+  isWgs84?: boolean;
 }) => {
   const { t } = useTranslation("metadata");
   console.log(feature);

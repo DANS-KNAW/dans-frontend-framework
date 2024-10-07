@@ -175,6 +175,11 @@ export interface ExtendedMapFeature<G extends Geometry = Geometry, P = any> exte
   label?: never;
   value?: never;
 }
+export interface MapTilerCoordinateSystem {
+  label: string;
+  value: number;
+  id: string;
+}
 
 export interface DrawMapFieldType
   extends Omit<BasisFieldType, "value"> {
