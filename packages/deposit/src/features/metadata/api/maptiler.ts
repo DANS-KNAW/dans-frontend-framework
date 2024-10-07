@@ -27,10 +27,30 @@ export const maptilerApi = createApi({
           : [];
       },
       transformErrorResponse: () => ({
-        error: i18n.t("metadata:apiFetchError", { api: "Maptiler" }),
+        error: i18n.t("metadata:apiFetchError", { api: "maptiler" }),
+      }),
+    }),
+    transformCoordinates: build.query({
+      query: ({coordinates, from, to}) => ({
+        url: `coordinates/transform/${coordinates}.json?s_srs=${from}&t_srs=${to}&key=${
+          import.meta.env.VITE_MAPTILER_API_KEY
+        }`,
+        headers: { Accept: "application/json" },
+      }),
+      transformResponse: (response: any, _meta, arg) => {
+        // Return an empty array when no results, which is what the Autocomplete field expects
+        return response.results.length > 0 ?
+            {
+              arg: arg,
+              response: response.results,
+            }
+          : [];
+      },
+      transformErrorResponse: () => ({
+        error: i18n.t("metadata:apiFetchError", { api: "maptiler" }),
       }),
     }),
   }),
 });
 
-export const { useFetchCoordinateSystemsQuery } = maptilerApi;
+export const { useFetchCoordinateSystemsQuery, useTransformCoordinatesQuery } = maptilerApi;

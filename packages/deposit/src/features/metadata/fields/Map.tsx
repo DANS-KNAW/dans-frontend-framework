@@ -33,7 +33,7 @@ import PlaceIcon from '@mui/icons-material/Place';
 import HighlightAltIcon from '@mui/icons-material/HighlightAlt';
 import PentagonIcon from '@mui/icons-material/Pentagon';
 import { useFetchGeonamesFreeTextQuery, useFetchPlaceReverseLookupQuery } from "../api/geonames";
-import { useFetchCoordinateSystemsQuery } from "../api/maptiler";
+import { useFetchCoordinateSystemsQuery, useTransformCoordinatesQuery } from "../api/maptiler";
 import type { QueryReturnType } from "../../../types/Api";
 import CircularProgress from "@mui/material/CircularProgress";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -193,8 +193,6 @@ const DrawMap = ({
             </GLMap>
             {features.length > 0 &&
               // let's user edit features coordinates directly
-              // todo: how to present this??
-              // also, let user select a corresponding geonames option???
               <FeatureTable features={features} setFeatures={setFeatures} selectedFeatures={selectedFeatures} coordinateSystem={coordinateSystem} />
             }
           </Box>
@@ -219,17 +217,21 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSyste
   coordinateSystem?: OptionsType;
 }) => {
   const { t } = useTranslation("metadata");
+  const getAltCoordinates = useTransformCoordinatesQuery();
 
   const columns: readonly Column[] = [
     { id: 'feature', label: t('featureType'), width: 50 },
     { id: 'coordinates', label: t('featureCoordinates'), width: coordinateSystem === undefined ? 500 : 300 },
-    ...(coordinateSystem !== undefined ? [{id: 'transposedCoordinates', label: t('transposedCoordinates'), width: 300}] : []),
+    ...(coordinateSystem !== undefined ? [{id: 'transposedCoordinates', label: t('transposedCoordinates', { id: coordinateSystem.id }), width: 300}] : []),
     { id: 'geonames', label: t('featureGeonameRef') },
     { id: 'delete', label: t('delete'), width: 50 },
   ];
 
+  console.log(coordinateSystem)
+
   const setCoordinates = (value: number, featureIndex: number, type: string, coordinateIndex: number, groupIndex?: number) => {
     // TODO: Expand this to optionally set two coord objects, with call to conversion service maptiler
+    // conversion expects a lat/lon pair.
 
     // set the new coordinates
     const newFeatures = features.map((feature, index) => 
@@ -267,25 +269,6 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSyste
       }) 
       : feature
     );
-
-
-    // let newFeatures = [...features];
-    // let target: any = (newFeatures[featureIndex].geometry as MapFeatureType).coordinates;
-
-    // // Traverse the array up to the point where you're modifying a single number
-    // for (let i = 0; i < coordIndexes.length - 1; i++) {
-    //   target = target[coordIndexes[i]];
-    // }
-
-    // // Modify the specific coordinate (either lat or lng)
-    // target[coordIndexes[coordIndexes.length - 1]] = parseFloat(coord);
-
-    // Close the polygon if necessary
-    // if (isFirst && (newFeatures[featureIndex].geometry as Polygon).type === 'Polygon') {
-    //   const polygon = newFeatures[featureIndex].geometry as Polygon;
-    //   const firstCoordinate = polygon.coordinates[0][0];
-    //   polygon.coordinates[0][polygon.coordinates[0].length - 1] = [...firstCoordinate];
-    // }
 
     // Update the features and geoNames
     setFeatures(newFeatures);
@@ -341,11 +324,11 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSyste
                 }
               </TableCell>
               <TableCell>
-                <FeatureCoordinateCell feature={feature} onChange={setCoordinates} featureIndex={i} />
+                <FeatureCoordinateCell feature={feature} onChange={setCoordinates} featureIndex={i} coordinateSystem={coordinateSystem} isWgs84={true} />
               </TableCell>
               {coordinateSystem && 
                 <TableCell>
-                  <FeatureCoordinateCell feature={feature} onChange={setCoordinates} featureIndex={i} />
+                  <FeatureCoordinateCell feature={feature} onChange={setCoordinates} featureIndex={i} coordinateSystem={coordinateSystem} />
                 </TableCell>
               }
               <TableCell>
@@ -387,13 +370,15 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSyste
   )
 }
 
-const FeatureCoordinateCell = ({feature, onChange, featureIndex}: {
+const FeatureCoordinateCell = ({feature, onChange, featureIndex, coordinateSystem, isWgs84}: {
   feature: ExtendedMapFeature;
   featureIndex: number;
   onChange: (value: number, featureIndex: number, type: string, coordinateIndex: number, groupIndex?: number) => void;
+  coordinateSystem?: any;
+  isCoordinateSystem?: boolean;
 }) => {
   const { t } = useTranslation("metadata");
-  console.log(feature)
+  console.log(feature);
 
   return (
     feature.geometry.type === "Point" ? 
@@ -405,7 +390,7 @@ const FeatureCoordinateCell = ({feature, onChange, featureIndex}: {
             size="small" 
             value={coord} 
             label={coordinateIndex === 1 ? t("lat") : t("lng")} 
-            onChange={(e) => onChange(parseFloat(e.target.value), featureIndex, feature.geometry.type, coordinateIndex)}
+            onChange={(e) => onChange(parseFloat(e.target.value), featureIndex, feature.geometry.type, coordinateIndex, undefined)}
           />
         )}
       </Stack>
@@ -444,6 +429,10 @@ const FeatureCoordinateCell = ({feature, onChange, featureIndex}: {
   )
 }
 
+// TODO?? Create component representing a lat/lon group, so we can convert the coordinates using an rtk (GET) query hook directly
+// Keep local value in state, do conversion on state change
+// then call setCoordinates with both value and converted value
+// Or just do conversion in the setCoordinates function??
 
 const controls = ["simple_select", "draw_point", "draw_line_string", "draw_polygon"];
 
@@ -741,6 +730,7 @@ const GeonamesApiField = ({
       isLoading={isLoading}
       isFetching={isFetching}
       width={width}
+      api="geonames"
     />
   );
 };
@@ -779,6 +769,7 @@ const FindCoordinateSystemField = ({
       isLoading={isLoading}
       isFetching={isFetching}
       width={width}
+      api="maptiler"
     />
   );
 };
@@ -795,6 +786,7 @@ const TypeaheadField = ({
   isLoading,
   isFetching,
   width,
+  api
 }: {
   value?: OptionsType;
   setValue: (v: OptionsType) => void;
@@ -807,6 +799,7 @@ const TypeaheadField = ({
   data: any;
   isLoading: boolean;
   isFetching: boolean;
+  api: string;
 }) => {
   const { t } = useTranslation("metadata");
   return (
@@ -840,7 +833,7 @@ const TypeaheadField = ({
         e && e.type === "change" && setInputValue(newValue);
         e && (e.type === "click" || e.type === "blur") && setInputValue("");
       }}
-      noOptionsText={!inputValue ? t("startTyping", {api: t("geonames")}) : t("noResults")}
+      noOptionsText={!inputValue ? t("startTyping", {api: t(api)}) : t("noResults")}
       loading={isLoading || isFetching || inputValue !== debouncedInputValue}
       loadingText={
         <Stack
