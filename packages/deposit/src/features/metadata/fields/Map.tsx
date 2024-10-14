@@ -33,7 +33,7 @@ import PlaceIcon from '@mui/icons-material/Place';
 import HighlightAltIcon from '@mui/icons-material/HighlightAlt';
 import PentagonIcon from '@mui/icons-material/Pentagon';
 import { useFetchGeonamesFreeTextQuery, useFetchPlaceReverseLookupQuery } from "../api/geonames";
-import { useFetchCoordinateSystemsQuery, useTransformCoordinatesQuery } from "../api/maptiler";
+import { useFetchCoordinateSystemsQuery, useLazyTransformCoordinatesQuery, useTransformCoordinatesQuery } from "../api/maptiler";
 import type { QueryReturnType } from "../../../types/Api";
 import CircularProgress from "@mui/material/CircularProgress";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -128,6 +128,15 @@ const DrawMap = ({
     }
   }, [geonamesValue]);
 
+  useEffect(() => {
+    // update all feature's originalCoordinates value
+    const updatedFeatures = features.map( f => ({
+      ...f,
+      coordinateSystem: coordinateSystem
+    }))
+    setFeatures(updatedFeatures);
+  }, [coordinateSystem]);
+
   return (
     <Card>
       <CardHeader
@@ -189,11 +198,21 @@ const DrawMap = ({
             >
               <NavigationControl position="top-left" />
               <ScaleControl />
-              <DrawControls features={features} setFeatures={setFeatures} setSelectedFeatures={setSelectedFeatures} />
+              <DrawControls 
+                features={features} 
+                setFeatures={setFeatures} 
+                setSelectedFeatures={setSelectedFeatures} 
+                coordinateSystemValue={coordinateSystem?.value}
+              />
             </GLMap>
             {features.length > 0 &&
               // let's user edit features coordinates directly
-              <FeatureTable features={features} setFeatures={setFeatures} selectedFeatures={selectedFeatures} coordinateSystem={coordinateSystem} />
+              <FeatureTable 
+                features={features} 
+                setFeatures={setFeatures} 
+                selectedFeatures={selectedFeatures} 
+                coordinateSystem={coordinateSystem} 
+              />
             }
           </Box>
         </Collapse>
@@ -217,39 +236,44 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSyste
   coordinateSystem?: OptionsType;
 }) => {
   const { t } = useTranslation("metadata");
+  const [ getConvertedCoordinates ] = useLazyTransformCoordinatesQuery();
 
   const columns: readonly Column[] = [
     { id: 'feature', label: t('featureType'), width: 50 },
     { id: 'coordinates', label: t('featureCoordinates'), width: coordinateSystem === undefined ? 500 : 300 },
-    ...(coordinateSystem !== undefined ? [{id: 'transposedCoordinates', label: t('transposedCoordinates', { id: coordinateSystem.id }), width: 300}] : []),
+    ...(coordinateSystem ? [{id: 'transposedCoordinates', label: t('transposedCoordinates', { id: coordinateSystem.id }), width: 300}] : []),
     { id: 'geonames', label: t('featureGeonameRef') },
     { id: 'delete', label: t('delete'), width: 50 },
   ];
 
-  console.log(coordinateSystem)
-
-  const setCoordinates = (value: number, featureIndex: number, type: string, coordinateIndex: number, groupIndex?: number) => {
+  const setCoordinates = async ({value, featureIndex, coordinateIndex, groupIndex, coordinateSystem, isWgs84}: {
+    value: number; 
+    featureIndex: number;
+    coordinateIndex: number;
+    groupIndex?: number;
+    coordinateSystem?: OptionsType;
+    isWgs84?: boolean;
+  }) => {
     // TODO: Expand this to optionally set two coord objects, with call to conversion service maptiler
     // conversion expects a lat/lon pair.
+    console.log('changing coordinates');
 
     // set the new coordinates
-    const newFeatures = features.map((feature, index) => 
-      index === featureIndex ? ({
-        ...feature,
-        geometry: {
-          ...feature.geometry,
-          coordinates: 
-            type === 'Point' ? 
-              (feature.geometry as Point).coordinates.map((coordinate, i) => 
-                i === coordinateIndex ? value : coordinate
-              ) :
-            type === 'LineString' ?
+    const newFeatures = await Promise.all(
+      features.map(async (feature, index) => {
+        if (index === featureIndex) {
+          const updatedCoordinates = 
+            feature.geometry.type === 'Point' ? 
+            (feature.geometry as Point).coordinates.map((coordinate, i) => 
+              i === coordinateIndex ? value : coordinate
+            ) :
+            feature.geometry.type === 'LineString' ?
               (feature.geometry as LineString).coordinates.map((coordinateGroup, i) => 
                 i === groupIndex ? coordinateGroup.map((coordinate, j) => 
                   j === coordinateIndex ? value : coordinate
                 ) : coordinateGroup
               ) :
-            type === 'Polygon' ? (() => {
+            feature.geometry.type === 'Polygon' ? (() => {
               // First, update the first set of coordinates
               const updatedCoordinates = (feature.geometry as Polygon).coordinates[0].map((coordinateGroup, i) => 
                 i === groupIndex ? coordinateGroup.map((coordinate, j) => 
@@ -262,13 +286,34 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSyste
 
               return [updatedCoordinates];
             })() : 
-            (feature.geometry as any).coordinates,
-        },
-        geonames: undefined,
-      }) 
-      : feature
-    );
+            (feature.geometry as any).coordinates;
 
+          // convert coords if needed
+          const convertedCoordinates = coordinateSystem 
+            ? await getConvertedCoordinates({
+                type: feature.geometry.type,
+                coordinates: updatedCoordinates, 
+                to: isWgs84 ? coordinateSystem.value : 4326,
+                from: isWgs84 ? 4326 : coordinateSystem.value,
+              })
+            : null;
+
+          const updatedFeature = {
+            ...feature,
+            geometry: {
+              ...feature.geometry,
+              coordinates: isWgs84 ? updatedCoordinates : convertedCoordinates?.data,
+            },
+            geonames: undefined,
+            originalCoordinates: isWgs84 && coordinateSystem ? convertedCoordinates?.data : updatedCoordinates,
+          }
+          return updatedFeature;
+        }
+        else {
+          return feature;
+        }
+      })
+    );
     // Update the features and geoNames
     setFeatures(newFeatures);
   }
@@ -323,15 +368,26 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSyste
                 }
               </TableCell>
               <TableCell>
-                <FeatureCoordinateCell feature={feature} onChange={setCoordinates} featureIndex={i} coordinateSystem={coordinateSystem} isWgs84={true} />
+                <FeatureCoordinateCell 
+                  feature={feature}
+                  onChange={setCoordinates} 
+                  featureIndex={i} 
+                  coordinateSystem={coordinateSystem} 
+                  isWgs84={true} 
+                />
               </TableCell>
               {coordinateSystem && 
                 <TableCell>
-                  <FeatureCoordinateCell feature={feature} onChange={setCoordinates} featureIndex={i} coordinateSystem={coordinateSystem} />
+                  <FeatureCoordinateCell 
+                    feature={feature} 
+                    onChange={setCoordinates} 
+                    featureIndex={i} 
+                    coordinateSystem={coordinateSystem} 
+                  />
                 </TableCell>
               }
               <TableCell>
-                <ReverseLookupGeonamesField 
+                {/*<ReverseLookupGeonamesField 
                   setValue={setGeonames}
                   value={feature.geonames}
                   featureIndex={i}
@@ -349,7 +405,7 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSyste
                     feature.geometry.coordinates[Math.floor(feature.geometry.coordinates.length / 2)][0] :
                     (feature.geometry as Polygon).coordinates[0][Math.floor((feature.geometry as Polygon).coordinates[0].length / 2)][0]
                   } 
-                />
+                />*/}
               </TableCell>
               <TableCell>
                 <IconButton
@@ -372,29 +428,35 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSyste
 const FeatureCoordinateCell = ({feature, onChange, featureIndex, coordinateSystem, isWgs84}: {
   feature: ExtendedMapFeature;
   featureIndex: number;
-  onChange: (value: number, featureIndex: number, type: string, coordinateIndex: number, groupIndex?: number) => void;
+  onChange: (object: any) => void;
   coordinateSystem?: any;
   isWgs84?: boolean;
 }) => {
   const { t } = useTranslation("metadata");
-  console.log(feature);
+  const coordinates = isWgs84 ? feature.geometry.coordinates : feature.originalCoordinates;
 
   return (
     feature.geometry.type === "Point" ? 
       <Stack spacing={1} direction="row">
-        {feature.geometry.coordinates.map((coord, coordinateIndex) =>
+        {Array.isArray(coordinates) && coordinates.map((coord, coordinateIndex) =>
           <TextField 
             type="number"
             key={coordinateIndex} 
             size="small" 
             value={coord} 
-            label={coordinateIndex === 1 ? t("lat") : t("lng")} 
-            onChange={(e) => onChange(parseFloat(e.target.value), featureIndex, feature.geometry.type, coordinateIndex, undefined)}
+            label={coordinateIndex === 1 ? t(isWgs84 ? "lat" : "Y") : t(isWgs84 ? "lng" : "X")} 
+            onChange={(e) => onChange({
+              value: parseFloat(e.target.value), 
+              featureIndex: featureIndex, 
+              coordinateIndex: coordinateIndex,
+              coordinateSystem: coordinateSystem,
+              isWgs84: isWgs84,
+            })}
           />
         )}
       </Stack>
     : feature.geometry.type === "LineString" ?
-      feature.geometry.coordinates.map((coordGroup, groupIndex) =>
+      Array.isArray(coordinates) && coordinates.map((coordGroup, groupIndex) =>
         <Stack spacing={1} direction="row" mb={1} key={groupIndex}>
           {coordGroup.map((coord, coordinateIndex) => 
             <TextField 
@@ -402,14 +464,21 @@ const FeatureCoordinateCell = ({feature, onChange, featureIndex, coordinateSyste
               size="small" 
               value={coord} 
               key={coordinateIndex}
-              label={coordinateIndex === 1 ? t("lat") : t("lng")}
-              onChange={(e) => onChange(parseFloat(e.target.value), featureIndex, feature.geometry.type, coordinateIndex, groupIndex)}
+              label={coordinateIndex === 1 ? t(isWgs84 ? "lat" : "Y") : t(isWgs84 ? "lng" : "X")}
+              onChange={(e) => onChange({
+                value: parseFloat(e.target.value), 
+                featureIndex: featureIndex, 
+                coordinateIndex: coordinateIndex,
+                groupIndex: groupIndex,
+                coordinateSystem: coordinateSystem,
+                isWgs84: isWgs84,
+              })}
             />
           )}
         </Stack>
       )
     : feature.geometry.type === "Polygon" ?
-      feature.geometry.coordinates[0].map((coordGroup, groupIndex) =>
+      Array.isArray(coordinates) && coordinates[0].map((coordGroup, groupIndex) =>
         <Stack spacing={1} direction="row" mb={1} key={groupIndex}>
           {coordGroup.map((coord, coordinateIndex) => 
             <TextField 
@@ -418,8 +487,15 @@ const FeatureCoordinateCell = ({feature, onChange, featureIndex, coordinateSyste
               size="small" 
               value={coord} 
               key={coordinateIndex}
-              label={coordinateIndex === 1 ? t("lat") : t("lng")}
-              onChange={(e) => onChange(parseFloat(e.target.value), featureIndex, feature.geometry.type, coordinateIndex, groupIndex)}
+              label={coordinateIndex === 1 ? t(isWgs84 ? "lat" : "Y") : t(isWgs84 ? "lng" : "X")}
+              onChange={(e) => onChange({
+                value: parseFloat(e.target.value), 
+                featureIndex: featureIndex, 
+                coordinateIndex: coordinateIndex,
+                groupIndex: groupIndex,
+                coordinateSystem: coordinateSystem,
+                isWgs84: isWgs84,
+              })}
             />
           )}
         </Stack>
@@ -428,32 +504,51 @@ const FeatureCoordinateCell = ({feature, onChange, featureIndex, coordinateSyste
   )
 }
 
-// TODO?? Create component representing a lat/lon group, so we can convert the coordinates using an rtk (GET) query hook directly
-// Keep local value in state, do conversion on state change
-// then call setCoordinates with both value and converted value
-// Or just do conversion in the setCoordinates function??
-
 const controls = ["simple_select", "draw_point", "draw_line_string", "draw_polygon"];
 
 type FeaturesEvent = {features: ExtendedMapFeature[], action?: string};
 
-const DrawControls = ({ features, setFeatures, setSelectedFeatures }: {
+const DrawControls = ({ features, setFeatures, setSelectedFeatures, coordinateSystemValue }: {
   features: ExtendedMapFeature[];
   setFeatures: Dispatch<SetStateAction<ExtendedMapFeature[]>>;
   setSelectedFeatures: Dispatch<SetStateAction<(string | number | undefined)[]>>;
+  coordinateSystemValue?: number;
 }) => {
   const { t } = useTranslation("metadata");
   const [ selectedMode, setSelectedMode ] = useState(controls[0]);
+  const [ getConvertedCoordinates ] = useLazyTransformCoordinatesQuery();
 
-  const onUpdate = useCallback((e: FeaturesEvent) => {
-    console.log('update called')
+  console.log(coordinateSystemValue)
 
-    // Clear 'properties' key for each feature in the new array
-    // So geonames reference is removed when points change
-    const updatedFeatures = e.features.map(feature => ({
-      ...feature,
-      geonames: undefined,
-    }));
+  // TODO GET THIS TO WORK!
+  const onUpdate = useCallback(async (e: FeaturesEvent, system: number) => {
+    console.log('update called');
+    console.log(system)
+
+    // Clear geonames key for each feature in the new array,
+    // reference must be removed when points change
+    // Must also do a conversion to the optionally selected alternative coordinate system here
+    const updatedFeatures = await Promise.all(
+      e.features.map(async (feature) => {
+        console.log(feature)
+        const originalCoordinates = system 
+          ? await getConvertedCoordinates({
+              type: feature.geometry.type,
+              coordinates: feature.geometry.coordinates, 
+              to: system,
+              from: 4326,
+            })
+          : null;
+
+        console.log(originalCoordinates);
+
+        return ({
+          ...feature,
+          originalCoordinates: originalCoordinates?.data,
+          geonames: undefined,
+        })
+      })
+    );
 
     setFeatures(currFeatures => 
       [...new Map([...currFeatures, ...updatedFeatures].map(item => [item.id, item])).values()]
@@ -553,6 +648,7 @@ const DrawControls = ({ features, setFeatures, setSelectedFeatures }: {
         onKeyDown={handleKeyDown}
         features={features}
         onSelectionChange={onSelectionChange}
+        coordinateSystemValue={coordinateSystemValue}
       />
     </Paper>
   )
@@ -566,15 +662,18 @@ const DrawControl = ({
   mode,
   onKeyDown,
   features,
+  coordinateSystemValue,
 }: {
-  onCreate: (e: FeaturesEvent) => void;
-  onUpdate: (e: FeaturesEvent) => void;
+  onCreate: (e: FeaturesEvent, system: number) => void;
+  onUpdate: (e: FeaturesEvent, system: number) => void;
   onDelete: (e: FeaturesEvent) => void;
   onSelectionChange: (e: FeaturesEvent) => void;
   mode: string;
   onKeyDown: (e: KeyboardEvent, c: MapboxDraw) => void;
   features: ExtendedMapFeature[];
+  coordinateSystemValue?: number;
 }) => {
+  console.log(`systemvalue: ${coordinateSystemValue}`)
   const control = useControl<any>(
     () => new MapboxDraw({
       // remove default controls
@@ -584,8 +683,8 @@ const DrawControl = ({
       clickBuffer: 5,
     }),
     ({map}: {map: any}) => {
-      map.on('draw.create', onCreate);
-      map.on('draw.update', onUpdate);
+      map.on('draw.create', e => onCreate(e, coordinateSystemValue));
+      map.on('draw.update', e => onUpdate(e, coordinateSystemValue));
       map.on('draw.delete', onDelete);
       map.on('draw.selectionchange', onSelectionChange);
       

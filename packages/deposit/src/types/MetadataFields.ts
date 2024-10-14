@@ -171,14 +171,9 @@ export type MapFeatureType = Point | Polygon | LineString;
 export interface ExtendedMapFeature<G extends Geometry = Geometry, P = any> extends Feature<G, P> {
   geonames?: OptionsType | undefined;
   originalCoordinates?: number[] | number[][] | number[][][];
-  coordinateSystem?: string;
+  coordinateSystem?: OptionsType;
   label?: never;
   value?: never;
-}
-export interface MapTilerCoordinateSystem {
-  label: string;
-  value: number;
-  id: string;
 }
 
 export interface DrawMapFieldType

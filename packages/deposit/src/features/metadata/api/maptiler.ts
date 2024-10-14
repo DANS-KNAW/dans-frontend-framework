@@ -2,6 +2,47 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { MaptilerCoordinateSystemResponse } from "../../../types/Api";
 import i18n from "../../../languages/i18n";
 
+function geojsonToString(type, coordinates) {
+  switch (type) {
+    case 'Point':
+      return `${coordinates[0]},${coordinates[1]}`;
+
+    case 'LineString':
+      return coordinates.map(coord => `${coord[0]},${coord[1]}`).join(';');
+
+    case 'Polygon':
+      // For polygons, we join each ring with ';' and join coordinates within each ring with ' '
+      return coordinates
+        .map(ring => ring.map(coord => `${coord[0]},${coord[1]}`).join(';'))
+        .join(';');
+
+    default:
+      throw new Error('Unsupported GeoJSON type');
+  }
+}
+
+function convertToGeojsonCoordinates(coordinatesArray, type) {
+  // Map through the array to get the [x, y] coordinates.
+  const coordinates = coordinatesArray.map(({ x, y }) => [x, y]);
+
+  switch (type) {
+    case 'Point':
+      if (coordinates.length !== 1) {
+        throw new Error('A Point must have exactly one coordinate pair.');
+      }
+      return coordinates[0];
+
+    case 'LineString':
+      return coordinates;
+
+    case 'Polygon':
+      return [coordinates];
+
+    default:
+      throw new Error('Unsupported GeoJSON type');
+  }
+}
+
 export const maptilerApi = createApi({
   reducerPath: "maptiler",
   baseQuery: fetchBaseQuery({ baseUrl: "https://api.maptiler.com" }),
@@ -31,19 +72,20 @@ export const maptilerApi = createApi({
       }),
     }),
     transformCoordinates: build.query({
-      query: ({coordinates, from, to}) => ({
-        url: `coordinates/transform/${coordinates}.json?s_srs=${from}&t_srs=${to}&key=${
-          import.meta.env.VITE_MAPTILER_API_KEY
-        }`,
-        headers: { Accept: "application/json" },
-      }),
+      query: ({type, coordinates, to, from}) => {
+        const stringCoordinates = geojsonToString(type, coordinates);
+        console.log(stringCoordinates)
+        return ({
+          url: `coordinates/transform/${stringCoordinates}.json?s_srs=${from}&t_srs=${to}&key=${
+            import.meta.env.VITE_MAPTILER_API_KEY
+          }`,
+          headers: { Accept: "application/json" },
+        })
+      },
       transformResponse: (response: any, _meta, arg) => {
-        // Return an empty array when no results, which is what the Autocomplete field expects
+        // If there are results, just return the coordinates as an array. We always assume only one set of coordinates is passed along.
         return response.results.length > 0 ?
-            {
-              arg: arg,
-              response: response.results,
-            }
+          convertToGeojsonCoordinates(response.results, arg.type)
           : [];
       },
       transformErrorResponse: () => ({
@@ -53,4 +95,4 @@ export const maptilerApi = createApi({
   }),
 });
 
-export const { useFetchCoordinateSystemsQuery, useTransformCoordinatesQuery } = maptilerApi;
+export const { useFetchCoordinateSystemsQuery, useTransformCoordinatesQuery, useLazyTransformCoordinatesQuery } = maptilerApi;
