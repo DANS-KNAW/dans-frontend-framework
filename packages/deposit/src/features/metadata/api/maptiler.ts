@@ -1,18 +1,18 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { MaptilerCoordinateSystemResponse } from "../../../types/Api";
+import type { MaptilerCoordinateSystemResponse, MaptilerConversionResponse } from "../../../types/Api";
 import i18n from "../../../languages/i18n";
 
-function geojsonToString(type, coordinates) {
+function geojsonToString(type: string, coordinates: number[] | number[][] | number[][][]) {
   switch (type) {
     case 'Point':
       return `${coordinates[0]},${coordinates[1]}`;
 
     case 'LineString':
-      return coordinates.map(coord => `${coord[0]},${coord[1]}`).join(';');
+      return (coordinates as number[][]).map(coord => `${coord[0]},${coord[1]}`).join(';');
 
     case 'Polygon':
       // For polygons, we join each ring with ';' and join coordinates within each ring with ' '
-      return coordinates
+      return (coordinates as number[][][])
         .map(ring => ring.map(coord => `${coord[0]},${coord[1]}`).join(';'))
         .join(';');
 
@@ -21,7 +21,7 @@ function geojsonToString(type, coordinates) {
   }
 }
 
-function convertToGeojsonCoordinates(coordinatesArray, type) {
+function convertToGeojsonCoordinates(coordinatesArray: {x: number, y: number}[], type: string) {
   // Map through the array to get the [x, y] coordinates.
   const coordinates = coordinatesArray.map(({ x, y }) => [x, y]);
 
@@ -74,7 +74,6 @@ export const maptilerApi = createApi({
     transformCoordinates: build.query({
       query: ({type, coordinates, to, from}) => {
         const stringCoordinates = geojsonToString(type, coordinates);
-        console.log(stringCoordinates)
         return ({
           url: `coordinates/transform/${stringCoordinates}.json?s_srs=${from}&t_srs=${to}&key=${
             import.meta.env.VITE_MAPTILER_API_KEY
@@ -82,7 +81,7 @@ export const maptilerApi = createApi({
           headers: { Accept: "application/json" },
         })
       },
-      transformResponse: (response: any, _meta, arg) => {
+      transformResponse: (response: MaptilerConversionResponse, _meta, arg) => {
         // If there are results, just return the coordinates as an array. We always assume only one set of coordinates is passed along.
         return response.results.length > 0 ?
           convertToGeojsonCoordinates(response.results, arg.type)

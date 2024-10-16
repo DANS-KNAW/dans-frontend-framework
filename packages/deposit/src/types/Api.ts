@@ -121,6 +121,13 @@ export interface MaptilerCoordinateSystemResponse {
   }[];
 }
 
+export interface MaptilerConversionResponse {
+  results: {
+    x: number;
+    y: number;
+  }[]
+}
+
 export interface ProxyResponse {
   status_code: number;
   text: string;

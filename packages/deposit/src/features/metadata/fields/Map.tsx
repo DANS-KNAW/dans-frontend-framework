@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
 import { setField } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
-import type { OptionsType, ExtendedMapFeature, MapFeatureType } from "../../../types/MetadataFields";
+import type { OptionsType, ExtendedMapFeature } from "../../../types/MetadataFields";
 import type { DrawMapFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled } from "../../../deposit/depositSlice";
@@ -33,7 +33,7 @@ import PlaceIcon from '@mui/icons-material/Place';
 import HighlightAltIcon from '@mui/icons-material/HighlightAlt';
 import PentagonIcon from '@mui/icons-material/Pentagon';
 import { useFetchGeonamesFreeTextQuery, useFetchPlaceReverseLookupQuery } from "../api/geonames";
-import { useFetchCoordinateSystemsQuery, useLazyTransformCoordinatesQuery, useTransformCoordinatesQuery } from "../api/maptiler";
+import { useFetchCoordinateSystemsQuery, useLazyTransformCoordinatesQuery } from "../api/maptiler";
 import type { QueryReturnType } from "../../../types/Api";
 import CircularProgress from "@mui/material/CircularProgress";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -75,11 +75,11 @@ const DrawMap = ({
     zoom: 8,
   });
   const [ features, setFeatures ] = useState<ExtendedMapFeature[]>(field.value || []);
+  const [ getConvertedCoordinates ] = useLazyTransformCoordinatesQuery();
 
   // write this to redux store with some debouncing for performance
   const debouncedSaveToStore = useDebouncedCallback(
     () => {
-      console.log('dispatching')
       dispatch(
         setField({
           sectionIndex: sectionIndex,
@@ -98,7 +98,6 @@ const DrawMap = ({
       debouncedSaveToStore();
     }
   }, [features, field.touched])
-  console.log(features)
 
   const [ selectedFeatures, setSelectedFeatures ] = useState<(string | number | undefined)[]>([]);
 
@@ -130,11 +129,37 @@ const DrawMap = ({
 
   useEffect(() => {
     // update all feature's originalCoordinates value
-    const updatedFeatures = features.map( f => ({
-      ...f,
-      coordinateSystem: coordinateSystem
-    }))
-    setFeatures(updatedFeatures);
+    // and calculate coordinates of existing features
+    const asyncFeatures = async () => {
+      const updatedCoordinatesFeatures = await Promise.all(
+        features.map( async (f) => {
+          const convertedCoordinates = await getConvertedCoordinates({
+            type: f.geometry.type,
+            coordinates: (f.geometry as Point | Polygon | LineString).coordinates, 
+            to: coordinateSystem?.value,
+            from: 4326,
+          });
+          return ({
+            ...f,
+            coordinateSystem: coordinateSystem,
+            originalCoordinates: convertedCoordinates?.data,
+          })
+        })
+      );
+      setFeatures(updatedCoordinatesFeatures);
+    }
+    if (coordinateSystem) {
+      asyncFeatures();
+    }
+    else {
+      setFeatures(
+        features.map((f) => ({
+          ...f,
+          coordinateSystem: undefined,
+          originalCoordinates: undefined,
+        }))
+      );
+    }
   }, [coordinateSystem]);
 
   return (
@@ -168,12 +193,10 @@ const DrawMap = ({
             setValue={setCoordinateSystem}
             disabled={formDisabled || field.disabled}
             label={t("findCoordinateSystem")}
-            width="30%"
           />
           <StatusIcon
             status={status}
             title={t('drawExplanation')}
-            subtitle={t("apiValue", { api: t('geonames') }) as string}
           />
           <Button 
             sx={{ whiteSpace: "nowrap" }}
@@ -202,7 +225,7 @@ const DrawMap = ({
                 features={features} 
                 setFeatures={setFeatures} 
                 setSelectedFeatures={setSelectedFeatures} 
-                coordinateSystemValue={coordinateSystem?.value}
+                coordinateSystem={coordinateSystem}
               />
             </GLMap>
             {features.length > 0 &&
@@ -254,28 +277,30 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSyste
     coordinateSystem?: OptionsType;
     isWgs84?: boolean;
   }) => {
-    // TODO: Expand this to optionally set two coord objects, with call to conversion service maptiler
     // conversion expects a lat/lon pair.
-    console.log('changing coordinates');
-
     // set the new coordinates
     const newFeatures = await Promise.all(
       features.map(async (feature, index) => {
         if (index === featureIndex) {
+          const coordinatesToChange: number[] | number[][] | number[][][] = 
+            isWgs84 ? 
+            (feature.geometry as Point | Polygon | LineString).coordinates :
+            feature.originalCoordinates as number[] | number[][] | number[][][];
+
           const updatedCoordinates = 
             feature.geometry.type === 'Point' ? 
-            (feature.geometry as Point).coordinates.map((coordinate, i) => 
+            (coordinatesToChange as number[]).map((coordinate, i) => 
               i === coordinateIndex ? value : coordinate
             ) :
             feature.geometry.type === 'LineString' ?
-              (feature.geometry as LineString).coordinates.map((coordinateGroup, i) => 
+              (coordinatesToChange as number[][]).map((coordinateGroup, i) => 
                 i === groupIndex ? coordinateGroup.map((coordinate, j) => 
                   j === coordinateIndex ? value : coordinate
                 ) : coordinateGroup
               ) :
             feature.geometry.type === 'Polygon' ? (() => {
               // First, update the first set of coordinates
-              const updatedCoordinates = (feature.geometry as Polygon).coordinates[0].map((coordinateGroup, i) => 
+              const updatedCoordinates = (coordinatesToChange as number[][][])[0].map((coordinateGroup, i) => 
                 i === groupIndex ? coordinateGroup.map((coordinate, j) => 
                   j === coordinateIndex ? value : coordinate
                 ) : coordinateGroup
@@ -387,7 +412,7 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSyste
                 </TableCell>
               }
               <TableCell>
-                {/*<ReverseLookupGeonamesField 
+                <ReverseLookupGeonamesField 
                   setValue={setGeonames}
                   value={feature.geonames}
                   featureIndex={i}
@@ -405,7 +430,7 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSyste
                     feature.geometry.coordinates[Math.floor(feature.geometry.coordinates.length / 2)][0] :
                     (feature.geometry as Polygon).coordinates[0][Math.floor((feature.geometry as Polygon).coordinates[0].length / 2)][0]
                   } 
-                />*/}
+                />
               </TableCell>
               <TableCell>
                 <IconButton
@@ -433,12 +458,12 @@ const FeatureCoordinateCell = ({feature, onChange, featureIndex, coordinateSyste
   isWgs84?: boolean;
 }) => {
   const { t } = useTranslation("metadata");
-  const coordinates = isWgs84 ? feature.geometry.coordinates : feature.originalCoordinates;
+  const coordinates = isWgs84 ? (feature.geometry as Point | Polygon | LineString).coordinates : feature.originalCoordinates;
 
   return (
     feature.geometry.type === "Point" ? 
       <Stack spacing={1} direction="row">
-        {Array.isArray(coordinates) && coordinates.map((coord, coordinateIndex) =>
+        {Array.isArray(coordinates) && (coordinates as number[]).map((coord, coordinateIndex) =>
           <TextField 
             type="number"
             key={coordinateIndex} 
@@ -456,7 +481,7 @@ const FeatureCoordinateCell = ({feature, onChange, featureIndex, coordinateSyste
         )}
       </Stack>
     : feature.geometry.type === "LineString" ?
-      Array.isArray(coordinates) && coordinates.map((coordGroup, groupIndex) =>
+      Array.isArray(coordinates) && (coordinates as number[][]).map((coordGroup, groupIndex) =>
         <Stack spacing={1} direction="row" mb={1} key={groupIndex}>
           {coordGroup.map((coord, coordinateIndex) => 
             <TextField 
@@ -478,7 +503,7 @@ const FeatureCoordinateCell = ({feature, onChange, featureIndex, coordinateSyste
         </Stack>
       )
     : feature.geometry.type === "Polygon" ?
-      Array.isArray(coordinates) && coordinates[0].map((coordGroup, groupIndex) =>
+      Array.isArray(coordinates) && (coordinates as number[][][])[0].map((coordGroup, groupIndex) =>
         <Stack spacing={1} direction="row" mb={1} key={groupIndex}>
           {coordGroup.map((coord, coordinateIndex) => 
             <TextField 
@@ -508,56 +533,61 @@ const controls = ["simple_select", "draw_point", "draw_line_string", "draw_polyg
 
 type FeaturesEvent = {features: ExtendedMapFeature[], action?: string};
 
-const DrawControls = ({ features, setFeatures, setSelectedFeatures, coordinateSystemValue }: {
+const DrawControls = ({ features, setFeatures, setSelectedFeatures, coordinateSystem }: {
   features: ExtendedMapFeature[];
   setFeatures: Dispatch<SetStateAction<ExtendedMapFeature[]>>;
   setSelectedFeatures: Dispatch<SetStateAction<(string | number | undefined)[]>>;
-  coordinateSystemValue?: number;
+  coordinateSystem?: OptionsType;
 }) => {
   const { t } = useTranslation("metadata");
   const [ selectedMode, setSelectedMode ] = useState(controls[0]);
+  const [ updatedFeatures, setUpdatedFeatures ] = useState<ExtendedMapFeature[]>();
   const [ getConvertedCoordinates ] = useLazyTransformCoordinatesQuery();
 
-  console.log(coordinateSystemValue)
-
-  // TODO GET THIS TO WORK!
-  const onUpdate = useCallback(async (e: FeaturesEvent, system: number) => {
-    console.log('update called');
-    console.log(system)
-
+  const onUpdate = useCallback((e: FeaturesEvent) => {
     // Clear geonames key for each feature in the new array,
     // reference must be removed when points change
-    // Must also do a conversion to the optionally selected alternative coordinate system here
-    const updatedFeatures = await Promise.all(
-      e.features.map(async (feature) => {
-        console.log(feature)
-        const originalCoordinates = system 
-          ? await getConvertedCoordinates({
-              type: feature.geometry.type,
-              coordinates: feature.geometry.coordinates, 
-              to: system,
-              from: 4326,
-            })
-          : null;
+    const updatedFeatures = e.features.map((feature) => ({
+      ...feature,
+      geonames: undefined,
+    }));
 
-        console.log(originalCoordinates);
-
-        return ({
-          ...feature,
-          originalCoordinates: originalCoordinates?.data,
-          geonames: undefined,
-        })
-      })
-    );
-
-    setFeatures(currFeatures => 
-      [...new Map([...currFeatures, ...updatedFeatures].map(item => [item.id, item])).values()]
-    );
+    setUpdatedFeatures(updatedFeatures);
     setSelectedMode(controls[0]);
   }, []);
 
+  useEffect(() => {
+    // Have to pull this out of the useCallback function onUpdate, otherwise no access to current coordinate system
+    // Listens to any changes in (local) features, then applies coordinate transformation if neccessary, and updates global features.
+    const setNewFeatures = (updatedCoordinateFeatures: ExtendedMapFeature[]) => setFeatures(currFeatures => 
+      [...new Map([...currFeatures, ...updatedCoordinateFeatures].map(item => [item.id, item])).values()]
+    );
+    const updateOriginalCoordinates = async () => {
+      // Do a conversion to the optionally selected alternative coordinate system here
+      const updatedCoordinateFeatures = await Promise.all(
+        updatedFeatures!.map(async (feature) => {
+          const originalCoordinates = await getConvertedCoordinates({
+            type: feature.geometry.type,
+            coordinates: (feature.geometry as Point | Polygon | LineString).coordinates, 
+            to: coordinateSystem?.value,
+            from: 4326,
+          });
+          return ({
+            ...feature,
+            originalCoordinates: originalCoordinates?.data,
+          })
+        })
+      );
+      setNewFeatures(updatedCoordinateFeatures);
+    }
+    if ( coordinateSystem?.value ) {
+      updateOriginalCoordinates();
+    } else {
+      updatedFeatures && setNewFeatures(updatedFeatures);
+    }
+  }, [updatedFeatures]);
+
   const onDelete = useCallback((e: FeaturesEvent) => {
-    console.log('delete called')
     const changedFeatureIds = new Set(e.features.map(feature => feature.id));
     setFeatures(currFeatures =>
       currFeatures.filter(feature => !changedFeatureIds.has(feature.id))
@@ -566,8 +596,6 @@ const DrawControls = ({ features, setFeatures, setSelectedFeatures, coordinateSy
   }, []);
 
   const onSelectionChange = useCallback((e: FeaturesEvent) => {
-    console.log('selection changed');
-    console.log(e)
     // const changedFeatureIds = new Set(e.features.map(feature => feature.id));
     setSelectedFeatures(e.features.map(feature => feature.id));
   }, []);
@@ -648,7 +676,6 @@ const DrawControls = ({ features, setFeatures, setSelectedFeatures, coordinateSy
         onKeyDown={handleKeyDown}
         features={features}
         onSelectionChange={onSelectionChange}
-        coordinateSystemValue={coordinateSystemValue}
       />
     </Paper>
   )
@@ -662,7 +689,6 @@ const DrawControl = ({
   mode,
   onKeyDown,
   features,
-  coordinateSystemValue,
 }: {
   onCreate: (e: FeaturesEvent, system: number) => void;
   onUpdate: (e: FeaturesEvent, system: number) => void;
@@ -671,9 +697,7 @@ const DrawControl = ({
   mode: string;
   onKeyDown: (e: KeyboardEvent, c: MapboxDraw) => void;
   features: ExtendedMapFeature[];
-  coordinateSystemValue?: number;
 }) => {
-  console.log(`systemvalue: ${coordinateSystemValue}`)
   const control = useControl<any>(
     () => new MapboxDraw({
       // remove default controls
@@ -683,8 +707,8 @@ const DrawControl = ({
       clickBuffer: 5,
     }),
     ({map}: {map: any}) => {
-      map.on('draw.create', e => onCreate(e, coordinateSystemValue));
-      map.on('draw.update', e => onUpdate(e, coordinateSystemValue));
+      map.on('draw.create', onCreate);
+      map.on('draw.update', onUpdate);
       map.on('draw.delete', onDelete);
       map.on('draw.selectionchange', onSelectionChange);
       
