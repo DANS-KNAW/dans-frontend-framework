@@ -12,11 +12,11 @@ import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
 import { setField } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
-import type { OptionsType, ExtendedMapFeature } from "../../../types/MetadataFields";
+import type { OptionsType, ExtendedMapFeature, CoordinateSystem } from "../../../types/MetadataFields";
 import type { DrawMapFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled } from "../../../deposit/depositSlice";
-import GLMap, { ScaleControl, NavigationControl, useControl } from "react-map-gl/maplibre";
+import GLMap, { ScaleControl, NavigationControl, useControl, type LngLatBoundsLike } from "react-map-gl/maplibre";
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
@@ -67,9 +67,9 @@ const DrawMap = ({
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
   const [geonamesValue, setGeonamesValue] = useState<OptionsType>();
-  const [coordinateSystem, setCoordinateSystem] = useState<OptionsType>();
+  const [coordinateSystem, setCoordinateSystem] = useState<CoordinateSystem>();
   const [openMap, setOpenMap] = useState<boolean>(false);
-  const [viewState, setViewState] = useState({
+  const [viewState, setViewState] = useState<{longitude?: number; latitude?: number; zoom?: number; bounds?: LngLatBoundsLike}>({
     longitude: 4.342779,
     latitude: 52.080738,
     zoom: 8,
@@ -78,6 +78,7 @@ const DrawMap = ({
   const [ getConvertedCoordinates ] = useLazyTransformCoordinatesQuery();
 
   // write this to redux store with some debouncing for performance
+  // separated from all the local state changes, as the global state would get changed a bit too often otherwise
   const debouncedSaveToStore = useDebouncedCallback(
     () => {
       dispatch(
@@ -102,36 +103,53 @@ const DrawMap = ({
   const [ selectedFeatures, setSelectedFeatures ] = useState<(string | number | undefined)[]>([]);
 
   useEffect(() => {
-    if (geonamesValue) {
+    const setGeoNamesFeature = async () => {
+      // get the converted coordinates if needed
+      const convertedCoordinates = coordinateSystem ? await getConvertedCoordinates({
+        type: 'Point',
+        coordinates: geonamesValue?.coordinates, 
+        to: coordinateSystem?.value,
+        from: 4326,
+      }) : undefined;
+
       // move map to selected GeoNames value
       setViewState({
-        longitude: geonamesValue.coordinates![0],
-        latitude: geonamesValue.coordinates![1],
+        longitude: geonamesValue?.coordinates![0],
+        latitude: geonamesValue?.coordinates![1],
         zoom: 10,
       });
+
+      // open the map
       setOpenMap(true);
-      // and add it to map if not added yet, checks geonames id
+
+      // and add feature to map if not added yet, checks geonames id
       const newFeature: ExtendedMapFeature<Point> = {
-        id: geonamesValue.id,
+        id: geonamesValue?.id,
         type: "Feature",
         geometry: {
           type: "Point",
-          coordinates: geonamesValue.coordinates as number[],
+          coordinates: geonamesValue?.coordinates as number[],
         },
         properties: {},
         geonames: geonamesValue,
+        coordinateSystem: coordinateSystem,
+        originalCoordinates: convertedCoordinates?.data,
       };
       setFeatures(
         [...new Map([...features, newFeature].map(item => [item.id, item])).values()]
       );
     }
+    if (geonamesValue) {
+      setGeoNamesFeature();
+    }
   }, [geonamesValue]);
 
   useEffect(() => {
-    // update all feature's originalCoordinates value
-    // and calculate coordinates of existing features
+    // update all feature's originalCoordinates value and calculate coordinates of existing features
+    // when coordinate system selection changes
     const asyncFeatures = async () => {
       const updatedCoordinatesFeatures = await Promise.all(
+        // loop through all features and calculate new coordinates
         features.map( async (f) => {
           const convertedCoordinates = await getConvertedCoordinates({
             type: f.geometry.type,
@@ -150,6 +168,8 @@ const DrawMap = ({
     }
     if (coordinateSystem) {
       asyncFeatures();
+      // set bounding box of the selected coordinate system
+      setViewState({ bounds: coordinateSystem.bbox })
     }
     else {
       setFeatures(
@@ -218,6 +238,7 @@ const DrawMap = ({
                 border: "1px solid rgba(0,0,0,0.23)"
               }}
               mapStyle={`https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json`}
+              maxBounds={coordinateSystem?.bbox}
             >
               <NavigationControl position="top-left" />
               <ScaleControl />
@@ -279,6 +300,9 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSyste
   }) => {
     // conversion expects a lat/lon pair.
     // set the new coordinates
+    // A user can either both the WSG84 coordinates, and the coordinates from the optional alternative system
+    // We need to handle both changes and calculate the other coordinate system's values
+    // For simplicity, our originalCoordinates object has the same geoJson structure as the geometry.coordinates object
     const newFeatures = await Promise.all(
       features.map(async (feature, index) => {
         if (index === featureIndex) {
@@ -450,82 +474,86 @@ const FeatureTable = ({ features, setFeatures, selectedFeatures, coordinateSyste
   )
 }
 
-const FeatureCoordinateCell = ({feature, onChange, featureIndex, coordinateSystem, isWgs84}: {
+const FeatureCoordinateCell = ({feature, onChange, featureIndex, isWgs84, coordinateSystem}: {
   feature: ExtendedMapFeature;
   featureIndex: number;
   onChange: (object: any) => void;
-  coordinateSystem?: any;
   isWgs84?: boolean;
+  coordinateSystem?: OptionsType;
 }) => {
-  const { t } = useTranslation("metadata");
+  // Check if this input box is wsg84 or a different coordinate system
   const coordinates = isWgs84 ? (feature.geometry as Point | Polygon | LineString).coordinates : feature.originalCoordinates;
 
   return (
     feature.geometry.type === "Point" ? 
-      <Stack spacing={1} direction="row">
-        {Array.isArray(coordinates) && (coordinates as number[]).map((coord, coordinateIndex) =>
-          <TextField 
-            type="number"
-            key={coordinateIndex} 
-            size="small" 
-            value={coord} 
-            label={coordinateIndex === 1 ? t(isWgs84 ? "lat" : "Y") : t(isWgs84 ? "lng" : "X")} 
-            onChange={(e) => onChange({
-              value: parseFloat(e.target.value), 
-              featureIndex: featureIndex, 
-              coordinateIndex: coordinateIndex,
-              coordinateSystem: coordinateSystem,
-              isWgs84: isWgs84,
-            })}
-          />
-        )}
-      </Stack>
+      <CoordinateGroup 
+        onChange={onChange} 
+        coordinates={coordinates as number[]}
+        featureIndex={featureIndex} 
+        isWgs84={isWgs84} 
+        coordinateSystem={coordinateSystem}
+      />
     : feature.geometry.type === "LineString" ?
       Array.isArray(coordinates) && (coordinates as number[][]).map((coordGroup, groupIndex) =>
-        <Stack spacing={1} direction="row" mb={1} key={groupIndex}>
-          {coordGroup.map((coord, coordinateIndex) => 
-            <TextField 
-              type="number"
-              size="small" 
-              value={coord} 
-              key={coordinateIndex}
-              label={coordinateIndex === 1 ? t(isWgs84 ? "lat" : "Y") : t(isWgs84 ? "lng" : "X")}
-              onChange={(e) => onChange({
-                value: parseFloat(e.target.value), 
-                featureIndex: featureIndex, 
-                coordinateIndex: coordinateIndex,
-                groupIndex: groupIndex,
-                coordinateSystem: coordinateSystem,
-                isWgs84: isWgs84,
-              })}
-            />
-          )}
-        </Stack>
+        <CoordinateGroup 
+          key={groupIndex}
+          onChange={onChange} 
+          coordinates={coordGroup}
+          featureIndex={featureIndex} 
+          isWgs84={isWgs84} 
+          groupIndex={groupIndex}
+          coordinateSystem={coordinateSystem}
+        />
       )
     : feature.geometry.type === "Polygon" ?
       Array.isArray(coordinates) && (coordinates as number[][][])[0].map((coordGroup, groupIndex) =>
-        <Stack spacing={1} direction="row" mb={1} key={groupIndex}>
-          {coordGroup.map((coord, coordinateIndex) => 
-            <TextField 
-              disabled={groupIndex === (feature.geometry as Polygon).coordinates[0].length - 1}
-              type="number"
-              size="small" 
-              value={coord} 
-              key={coordinateIndex}
-              label={coordinateIndex === 1 ? t(isWgs84 ? "lat" : "Y") : t(isWgs84 ? "lng" : "X")}
-              onChange={(e) => onChange({
-                value: parseFloat(e.target.value), 
-                featureIndex: featureIndex, 
-                coordinateIndex: coordinateIndex,
-                groupIndex: groupIndex,
-                coordinateSystem: coordinateSystem,
-                isWgs84: isWgs84,
-              })}
-            />
-          )}
-        </Stack>
+        <CoordinateGroup 
+          key={groupIndex}
+          onChange={onChange} 
+          coordinates={coordGroup}
+          featureIndex={featureIndex} 
+          isWgs84={isWgs84} 
+          groupIndex={groupIndex}
+          disabled={groupIndex === (feature.geometry as Polygon).coordinates[0].length - 1}
+          coordinateSystem={coordinateSystem}
+        />
       )
     : null
+  )
+}
+
+const CoordinateGroup = ({ onChange, coordinates, featureIndex, isWgs84, groupIndex, disabled, coordinateSystem }: {
+  onChange: (object: any) => void;
+  coordinates?:  number[] | number[][] | number[][][];
+  featureIndex: number;
+  isWgs84?: boolean;
+  groupIndex?: number;
+  disabled?: boolean;
+  coordinateSystem?: OptionsType;
+}) => {
+  const { t } = useTranslation("metadata");
+
+  return (
+    <Stack spacing={1} direction="row" mb={1}>
+      {coordinates?.map((coord, coordinateIndex) => 
+        <TextField 
+          disabled={disabled}
+          type="number"
+          size="small" 
+          value={coord} 
+          key={coordinateIndex}
+          label={coordinateIndex === 1 ? t(isWgs84 ? "lat" : "Y") : t(isWgs84 ? "lng" : "X")}
+          onChange={(e) => onChange({
+            value: parseFloat(e.target.value), 
+            featureIndex: featureIndex, 
+            coordinateIndex: coordinateIndex,
+            groupIndex: groupIndex,
+            coordinateSystem: coordinateSystem,
+            isWgs84: isWgs84,
+          })}
+        />
+      )}
+    </Stack>
   )
 }
 
@@ -558,7 +586,7 @@ const DrawControls = ({ features, setFeatures, setSelectedFeatures, coordinateSy
 
   useEffect(() => {
     // Have to pull this out of the useCallback function onUpdate, otherwise no access to current coordinate system
-    // Listens to any changes in (local) features, then applies coordinate transformation if neccessary, and updates global features.
+    // Listens to any changes in (local state) features, then applies coordinate transformation if neccessary, and updates global features.
     const setNewFeatures = (updatedCoordinateFeatures: ExtendedMapFeature[]) => setFeatures(currFeatures => 
       [...new Map([...currFeatures, ...updatedCoordinateFeatures].map(item => [item.id, item])).values()]
     );
@@ -580,10 +608,10 @@ const DrawControls = ({ features, setFeatures, setSelectedFeatures, coordinateSy
       );
       setNewFeatures(updatedCoordinateFeatures);
     }
-    if ( coordinateSystem?.value ) {
+    if ( updatedFeatures && coordinateSystem?.value ) {
       updateOriginalCoordinates();
-    } else {
-      updatedFeatures && setNewFeatures(updatedFeatures);
+    } else if (updatedFeatures) {
+      setNewFeatures(updatedFeatures);
     }
   }, [updatedFeatures]);
 
@@ -596,7 +624,6 @@ const DrawControls = ({ features, setFeatures, setSelectedFeatures, coordinateSy
   }, []);
 
   const onSelectionChange = useCallback((e: FeaturesEvent) => {
-    // const changedFeatureIds = new Set(e.features.map(feature => feature.id));
     setSelectedFeatures(e.features.map(feature => feature.id));
   }, []);
 
@@ -750,6 +777,9 @@ const DrawControl = ({
   return null;
 }
 
+// TODO: find something else for this, as this (geonames extendedFindNearby) does not work great and does not
+// always find a relevant value. Also, for multipoint shapes, we can only check the nearby value of a single point,
+// which might not be the most relevant point.
 const ReverseLookupGeonamesField = ({
   lat, 
   lng, 
@@ -865,7 +895,7 @@ const FindCoordinateSystemField = ({
   width,
 }: {
   value?: OptionsType;
-  setValue: (v: OptionsType) => void;
+  setValue: (v: CoordinateSystem) => void;
   disabled?: boolean;
   label?: string;
   width?: string | number;
@@ -874,7 +904,7 @@ const FindCoordinateSystemField = ({
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   // Fetch data on input change
   const { data, isFetching, isLoading } =
-    useFetchCoordinateSystemsQuery<QueryReturnType>(debouncedInputValue, {
+    useFetchCoordinateSystemsQuery<QueryReturnType<CoordinateSystem>>(debouncedInputValue, {
       skip: debouncedInputValue === "",
     });
 
@@ -910,8 +940,8 @@ const TypeaheadField = ({
   width,
   api
 }: {
-  value?: OptionsType;
-  setValue: (v: OptionsType) => void;
+  value?: OptionsType | CoordinateSystem;
+  setValue: (v: OptionsType | CoordinateSystem) => void;
   disabled?: boolean;
   label?: string;
   width?: string | number;

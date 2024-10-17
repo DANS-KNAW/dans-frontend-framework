@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { MaptilerCoordinateSystemResponse, MaptilerConversionResponse } from "../../../types/Api";
 import i18n from "../../../languages/i18n";
 
+// helper function to convert geojson coordinates to maptiler input
 function geojsonToString(type: string, coordinates: number[] | number[][] | number[][][]) {
   switch (type) {
     case 'Point':
@@ -21,6 +22,7 @@ function geojsonToString(type: string, coordinates: number[] | number[][] | numb
   }
 }
 
+// converts maptiler response back to geojson
 function convertToGeojsonCoordinates(coordinatesArray: {x: number, y: number}[], type: string) {
   // Map through the array to get the [x, y] coordinates.
   const coordinates = coordinatesArray.map(({ x, y }) => [x, y]);
@@ -56,14 +58,17 @@ export const maptilerApi = createApi({
       }),
       transformResponse: (response: MaptilerCoordinateSystemResponse, _meta, arg) => {
         // Return an empty array when no results, which is what the Autocomplete field expects
+        // Remove items that don't have a transformations property, as they are no use in converting coordinates
         return response.results.length > 0 ?
             {
               arg: arg,
-              response: response.results.map((item) => ({
+              response: response.results.map((item) => item.transformations && ({
                 label: `${item.name} (${item.id.authority} ${item.id.code})`,
                 value: item.id.code,
                 id: `${item.id.authority}-${item.id.code}`,
-              })),
+                // add a bit of space around the bounding box, for features right on the border
+                bbox: [[item.bbox[0]-0.2, item.bbox[1]-0.2], [item.bbox[2]+0.2, item.bbox[3]+0.2]],
+              })).filter(Boolean),
             }
           : [];
       },

@@ -1,6 +1,7 @@
 import type { LanguageStrings } from "@dans-framework/utils";
 import type { AuthProperty } from "@dans-framework/user-auth";
 import type { Feature, Point, Polygon, LineString, Geometry } from 'geojson';
+import type { LngLatBoundsLike } from "react-map-gl";
 
 // All user input field types
 export type InputField =
@@ -176,6 +177,10 @@ export interface ExtendedMapFeature<G extends Geometry = Geometry, P = any> exte
   value?: never;
 }
 
+export interface CoordinateSystem extends OptionsType {
+  bbox?: LngLatBoundsLike;
+}
+
 export interface DrawMapFieldType
   extends Omit<BasisFieldType, "value"> {
   type: "drawmap";
@@ -245,7 +250,7 @@ export interface OptionsType {
 export type ValidationType = "email" | "uri" | "number" | "github-uri";
 
 // Format to return API response in, used by RTK's transformResponse
-export interface AutocompleteAPIFieldData {
+export interface AutocompleteAPIFieldData<T = OptionsType[]> {
   arg?: string;
-  response: OptionsType[];
+  response: T;
 }
