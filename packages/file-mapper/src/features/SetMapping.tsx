@@ -3,7 +3,6 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Alert from "@mui/material/Alert";
 import { useTranslation } from "react-i18next";
-import * as XLSX from "xlsx";
 import TableContainer from '@mui/material/TableContainer';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -41,37 +40,40 @@ export const SetMapping = () => {
   const [ loading, setLoading ] = useState<boolean>( !Array.isArray(fileData) && !fileError );
 
   useEffect(() => {
-    const reader = new FileReader();
+    const loadXLSX = async () => {
+      const XLSX = await import('xlsx'); // Lazy load the library here
 
-    reader.onload = (event) => {
-      // parse the xlsx/csv file
-      const workbook = XLSX.read(event.target?.result, { type: 'binary' });
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-      const sheetData: SheetData[] = XLSX.utils.sheet_to_json(sheet, { header: "A" });
-      // check to see if sheet doesn't have too many rows (first row is headers, so doesn't count)
-      const rowCount = sheetData.length - 1;
-      if (rowCount > maxRows) {
-        dispatch(setFileError("tooManyRows"));
-      } else {
-        // save sheet data so we only need to load and parse once
-        dispatch(setFileData(sheetData));
-      }
-      setLoading(false);
-    };
-    
-    if (file && !fileData && !fileError) {
-      dispatch(setFileError(undefined));
-      // if no file loaded yet, convert file url back to blob
-      (async () => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        // parse the xlsx/csv file
+        const workbook = XLSX.read(event.target?.result, { type: 'binary' });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const sheetData: SheetData[] = XLSX.utils.sheet_to_json(sheet, { header: "A" });
+        // check to see if sheet doesn't have too many rows (first row is headers, so doesn't count)
+        const rowCount = sheetData.length - 1;
+        if (rowCount > maxRows) {
+          dispatch(setFileError("tooManyRows"));
+        } else {
+          // save sheet data so we only need to load and parse once
+          dispatch(setFileData(sheetData));
+        }
+        setLoading(false);
+      };
+
+      if (file && !fileData && !fileError) {
+        dispatch(setFileError(undefined));
+        // if no file loaded yet, convert file url back to blob
         const fetchedFile = await fetch(file.url);
         const blob = await fetchedFile.blob();
         if (blob) {
           reader.readAsBinaryString(blob);
         }
-      })();
-    }
-  }, [file, fileData, fileError]);
+      }
+    };
+
+    loadXLSX(); // Call the lazy loading function
+  }, [file, fileData, fileError, dispatch]);
   
   return (
     <StepWrap title={t("createMapping")}>
