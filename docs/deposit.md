@@ -129,6 +129,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       // * group - a field group, this group contains another fields array
       // * radio - a radio button selection field (one option is always selected)
       // * check - a checkbox selection field (select zero or more options)
+      // * drawmap - a map that indicating location: gives user the ability to draw shapes, change and convert coordinates to different coordinate systems, requires a Maptiler and Geonames API key in the .env file: VITE_MAPTILER_API_KEY and VITE_GEONAMES_API_KEY
       type: "text",
 
       // Label can be a string or preferably a language object
