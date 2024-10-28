@@ -16,6 +16,7 @@ import { dansUtilityApi } from "../features/files/api/dansUtility";
 import { errorLogger } from "@dans-framework/utils/error";
 import { licenceApi } from "../features/metadata/api/licences";
 import { sshLicenceApi } from "../features/metadata/api/sshLicences";
+import { maptilerApi } from "../features/metadata/api/maptiler";
 import { rdaApi } from "../features/metadata/api/rdaApi";
 import { validateKeyApi } from "@dans-framework/user-auth";
 
@@ -37,6 +38,7 @@ export const store = configureStore({
     [rdaApi.reducerPath]: rdaApi.reducer,
     [languagesApi.reducerPath]: languagesApi.reducer,
     [validateKeyApi.reducerPath]: validateKeyApi.reducer,
+    [maptilerApi.reducerPath]: maptilerApi.reducer,
     submit: submitReducer,
     deposit: depositReducer,
   },
@@ -56,6 +58,7 @@ export const store = configureStore({
       .concat(rdaApi.middleware)
       .concat(languagesApi.middleware)
       .concat(validateKeyApi.middleware)
+      .concat(maptilerApi.middleware)
       .concat(errorLogger),
 });
 

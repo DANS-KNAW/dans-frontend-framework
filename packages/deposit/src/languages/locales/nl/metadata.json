@@ -41,5 +41,13 @@
   "dateEnd": "Eind",
   "apiFetchError": "Kan geen data ophalen van {{api}}",
   "generate": "Vul automatisch in",
-  "generateDisabled": "Kan dit veld niet automatisch invullen, aangezien niet alle benodigde velden zijn ingevuld of publieke data zijn."
+  "generateDisabled": "Kan dit veld niet automatisch invullen, aangezien niet alle benodigde velden zijn ingevuld of publieke data zijn.",
+  "draw": "Draw",
+  "simple_select": "Select",
+  "draw_point": "Point",
+  "draw_line_string": "Line",
+  "draw_polygon": "Polygon",
+  "drawExplanation": "<0>Select a shape type and click on the map to start drawing. In case of a multipoint shape, double click or press 'Enter' to finish drawing.</0><0>To edit a shape, click on it to select it, and drag it around, or add or move individual points.</0><0>To delete a shape, select it and press 'Delete' on your keyboard.</0>",
+  "delete": "Delete",
+  "toggleMap": "Toggle map"
 }

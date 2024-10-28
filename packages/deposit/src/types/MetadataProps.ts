@@ -12,6 +12,7 @@ import type {
   TypeaheadAPI,
   OptionsType,
   DateRangeFieldType,
+  DrawMapFieldType,
 } from "./MetadataFields";
 import type { AutocompleteRenderGetTagProps } from "@mui/material";
 
@@ -65,6 +66,10 @@ export interface AutocompleteAPIFieldProps extends AutocompleteFieldProps {
   data?: AutocompleteAPIFieldData;
   isLoading: boolean;
   isFetching: boolean;
+}
+
+export interface DrawMapFieldProps extends Omit<SingleFieldProps, "field"> {
+  field: DrawMapFieldType;
 }
 
 interface FieldButtonProps {

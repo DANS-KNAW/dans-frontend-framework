@@ -6,11 +6,11 @@
   "keywords": [],
   "author": "",
   "dependencies": {
+    "@dans-framework/utils": "workspace:*",
+    "@mui/material": "^5.16.7",
     "@reduxjs/toolkit": "^1.9.5",
-    "@mui/material": "^5.14.3",
     "notistack": "^3.0.1",
-    "react": "^18.2.0",
-    "@dans-framework/utils": "workspace:*"
+    "react": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15"

@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import * as XLSX from "xlsx";
 import type { DarwinOptions } from "../types";
 import { getUser } from "@dans-framework/utils/user";
 
@@ -12,16 +11,21 @@ export const darwinCoreApi = createApi({
         url: "terms/terms.csv",
         responseHandler: (response) => response.text(),
       }),
-      transformResponse: (response, _meta, _arg) => {
-        // convert xml text string to JSON
+      transformResponse: async (response, _meta, _arg) => {
+        // Dynamically import XLSX
+        const XLSX = await import("xlsx"); // Lazy load the library here
+
+        // Convert CSV text string to JSON
         const workbook = XLSX.read(response, { type: 'binary' });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         const sheetData: DarwinOptions[] = XLSX.utils.sheet_to_json(sheet);
+        
         const filteredData = sheetData
           .filter(d => !d.term_deprecated)
           .map(d => ({...d, header: d.tdwgutility_organizedInClass?.split('/').pop() || 'Dataset'}))
           .sort((a, b) => a.header?.localeCompare(b.header));
+
         return filteredData || [];
       },
       transformErrorResponse: () => ({

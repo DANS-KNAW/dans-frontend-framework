@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import Grid from "@mui/material/Unstable_Grid2";
 import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
@@ -41,96 +42,99 @@ import { RadioField, CheckField } from "./fields/RadioCheckField";
 import { TransitionGroup } from "react-transition-group";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
+import Skeleton from '@mui/material/Skeleton';
+// Lazy load the Draw map components, as it's quite large
+const DrawMap = lazy(() => import("./fields/Map"));
 
 // Memoized Field function, so only the affected field rerenders when form/metadata props change.
 // Loads the field specified in the type key
 const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
+  // Switch to determine which field type to render
+  const getField = () => {
+    switch (field.type) {
+      case "text":
+      case "number":
+        return <TextField field={field} sectionIndex={sectionIndex} />
+      case "date":
+        return <DateTimeField field={field} sectionIndex={sectionIndex} />
+      case "daterange":
+        return <DateRangeField field={field} sectionIndex={sectionIndex} />
+      case "repeatSingleField":
+        return (
+          <TransitionGroup id={`group-${field.name}-${field.id}`}>
+            {field.fields.map((f: TextFieldType | DateFieldType, i: number) => {
+              const commonProps = {sectionIndex: sectionIndex, groupedFieldId: field.id, currentField: i, totalFields: field.fields.length}
+              return (
+                <Collapse key={f.id}>
+                  {(f.type === "text" || f.type === "number") && 
+                    <TextField {...commonProps} field={f} />
+                  }
+                  {f.type === "date" && 
+                    <DateTimeField {...commonProps} field={f} />
+                  }
+                </Collapse>
+              )
+            })}
+          </TransitionGroup>
+        )
+      case "radio":
+        return <RadioField field={field} sectionIndex={sectionIndex} />
+      case "check":
+        return <CheckField field={field} sectionIndex={sectionIndex} />
+      case "drawmap":
+        return (
+          <Suspense fallback={<Skeleton variant="rectangular" width="100%" height={140} />}>
+            <DrawMap field={field} sectionIndex={sectionIndex} />
+          </Suspense>
+        )
+      case "autocomplete": 
+        if (field.multiApiValue) return <MultiApiField field={field} sectionIndex={sectionIndex} />
+        else {
+          switch (field.options) {
+            case "orcid":
+              return <OrcidField field={field} sectionIndex={sectionIndex} />
+            case "ror":
+              return <RorField field={field} sectionIndex={sectionIndex} />
+            case "gorc":
+              return <GorcField field={field} sectionIndex={sectionIndex} />
+            case "licenses":
+              return <LicensesField field={field} sectionIndex={sectionIndex} />
+            case "sshLicences":
+              return <SshLicencesField field={field} sectionIndex={sectionIndex} />
+            case "geonames":
+              return <GeonamesField field={field} sectionIndex={sectionIndex} />
+            case "getty":
+              return <GettyField field={field} sectionIndex={sectionIndex} />
+            case "sheets":
+              return <SheetsField field={field} sectionIndex={sectionIndex} />
+            case "dansFormats":
+              return <DansFormatsField field={field} sectionIndex={sectionIndex} />
+            case "rdaworkinggroups":
+              return <RdaWorkingGroupsField field={field} sectionIndex={sectionIndex} />
+            case "pathways":
+              return <RdaPathwaysField field={field} sectionIndex={sectionIndex} />
+            case "domains":
+              return <RdaDomainsField field={field} sectionIndex={sectionIndex} />
+            case "interest groups":
+              return <RdaInterestGroupsField field={field} sectionIndex={sectionIndex} />
+            case "languageList":
+              return <LanguagesField field={field} sectionIndex={sectionIndex} />
+            case "elsst":
+            case "narcis":
+            case "dansCollections":
+              return <DatastationsField field={field} sectionIndex={sectionIndex} />
+            default:
+              return <AutocompleteField field={field} sectionIndex={sectionIndex} />
+          }
+        }
+      default:
+        return null
+    }
+  }
+
   return (
     <Grid xs={12} md={field.fullWidth ? 12 : 6}>
-      {(field.type === "text" || field.type === "number") && (
-        <TextField field={field} sectionIndex={sectionIndex} />
-      )}
-      {field.type === "date" && (
-        <DateTimeField field={field} sectionIndex={sectionIndex} />
-      )}
-      {field.type === "daterange" && (
-        <DateRangeField field={field} sectionIndex={sectionIndex} />
-      )}
-      {field.type === "repeatSingleField" && (
-        <TransitionGroup id={`group-${field.name}-${field.id}`}>
-          {field.fields.map((f: TextFieldType | DateFieldType, i: number) => (
-            <Collapse key={f.id}>
-              {(f.type === "text" || f.type === "number") && (
-                <TextField
-                  field={f}
-                  sectionIndex={sectionIndex}
-                  groupedFieldId={field.id}
-                  currentField={i}
-                  totalFields={field.fields.length}
-                />
-              )}
-              {f.type === "date" && (
-                <DateTimeField
-                  field={f}
-                  sectionIndex={sectionIndex}
-                  groupedFieldId={field.id}
-                  currentField={i}
-                  totalFields={field.fields.length}
-                />
-              )}
-            </Collapse>
-          ))}
-        </TransitionGroup>
-      )}
-      {field.type === "autocomplete" &&
-        Array.isArray(field.options) &&
-        !field.multiApiValue && (
-          <AutocompleteField field={field} sectionIndex={sectionIndex} />
-        )}
-      {field.type === "autocomplete" &&
-        (field.options === "orcid" ?
-          <OrcidField field={field} sectionIndex={sectionIndex} />
-        : field.options === "ror" ?
-          <RorField field={field} sectionIndex={sectionIndex} />
-        : field.options === "gorc" ?
-          <GorcField field={field} sectionIndex={sectionIndex} />
-        : field.options === "licenses" ?
-          <LicensesField field={field} sectionIndex={sectionIndex} />
-        : field.options === "sshLicences" ?
-          <SshLicencesField field={field} sectionIndex={sectionIndex} />
-        : field.options === "geonames" ?
-          <GeonamesField field={field} sectionIndex={sectionIndex} />
-        : field.options === "getty" ?
-          <GettyField field={field} sectionIndex={sectionIndex} />
-        : field.options === "sheets" ?
-          <SheetsField field={field} sectionIndex={sectionIndex} />
-        : (
-          field.options === "elsst" ||
-          field.options === "narcis" ||
-          field.options === "dansCollections"
-        ) ?
-          <DatastationsField field={field} sectionIndex={sectionIndex} />
-        : field.options === "dansFormats" ?
-          <DansFormatsField field={field} sectionIndex={sectionIndex} />
-        : field.options === "rdaworkinggroups" ?
-          <RdaWorkingGroupsField field={field} sectionIndex={sectionIndex} />
-        : field.options === "pathways" ?
-          <RdaPathwaysField field={field} sectionIndex={sectionIndex} />
-        : field.options === "domains" ?
-          <RdaDomainsField field={field} sectionIndex={sectionIndex} />
-        : field.options === "interest groups" ?
-          <RdaInterestGroupsField field={field} sectionIndex={sectionIndex} />
-        : field.options === "languageList" ?
-          <LanguagesField field={field} sectionIndex={sectionIndex} />
-        : field.multiApiValue ?
-          <MultiApiField field={field} sectionIndex={sectionIndex} />
-        : null)}
-      {field.type === "radio" && (
-        <RadioField field={field} sectionIndex={sectionIndex} />
-      )}
-      {field.type === "check" && (
-        <CheckField field={field} sectionIndex={sectionIndex} />
-      )}
+      { getField() }
     </Grid>
   );
 });

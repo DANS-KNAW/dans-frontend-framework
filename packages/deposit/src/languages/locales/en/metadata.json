@@ -43,5 +43,22 @@
   "dateMaxRange": "Date must be before end date, or date too far in the future",
   "apiFetchError": "Could not get data from {{api}}",
   "generate": "Regenerate value",
-  "generateDisabled": "Cannot generate value, as not all required fields have been filled in or are public data."
+  "generateDisabled": "Cannot generate value, as not all required fields have been filled in or are public data.",
+  "initialLocation": "Search Geonames to draw a point on the map",
+  "draw": "Draw",
+  "simple_select": "Select",
+  "draw_point": "Point",
+  "draw_line_string": "Line",
+  "draw_polygon": "Polygon",
+  "drawExplanation": "<p>Select a shape type and click on the map to start drawing. In case of a multipoint shape, double click or press 'Enter' to finish drawing.</p><p>To edit a shape, click on it to select it, and drag it around, or add or move individual points.</p><p>To delete a shape, select it and press 'Delete' on your keyboard.</p>",
+  "toggleMap": "Map",
+  "featureType": "Type",
+  "featureCoordinates": "Coordinates (WGS84)",
+  "featureGeonameRef": "Geonames reference",
+  "lat": "Latitude",
+  "lng": "Longitude",
+  "findPlace": "Select corresponding location",
+  "findCoordinateSystem": "Use alternate coordinate system (default WGS84)",
+  "transposedCoordinates": "Coordinates ({{id}})",
+  "maptiler": "MapTiler"
 }

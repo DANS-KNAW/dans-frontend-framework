@@ -48,19 +48,18 @@ const section: InitialSectionType = {
       },
     },
     {
-      type: "autocomplete",
+      type: "drawmap",
       label: {
-        en: "Publisher",
-        nl: "Uitgever",
+        en: "Indicate location",
+        nl: "Map",
       },
-      name: "publisher",
+      name: "map",
       required: true,
       description: {
-        en: "Institution - often the rights holder",
-        nl: "Instituut - vaak de rechthebbende",
+        en: "Search and select to open and focus a map on this location. Then select a shape type and start drawing.",
+        nl: "Iets van beschrijving",
       },
-      options: "ror",
-      allowFreeText: true,
+      fullWidth: true,
     },
     {
       type: "group",

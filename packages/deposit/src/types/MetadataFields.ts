@@ -1,5 +1,7 @@
 import type { LanguageStrings } from "@dans-framework/utils";
 import type { AuthProperty } from "@dans-framework/user-auth";
+import type { Feature, Point, Polygon, LineString, Geometry } from 'geojson';
+import type { LngLatBoundsLike } from "react-map-gl";
 
 // All user input field types
 export type InputField =
@@ -9,7 +11,8 @@ export type InputField =
   | AutocompleteFieldType
   | RadioFieldType
   | CheckFieldType
-  | RepeatTextFieldType;
+  | RepeatTextFieldType
+  | DrawMapFieldType;
 
 // General field, can be input or group
 export type Field = InputField | GroupedFieldType | RepeatGroupedFieldType;
@@ -165,6 +168,31 @@ export interface CheckFieldType
   maxDateField?: never;
 }
 
+export type MapFeatureType = Point | Polygon | LineString;
+export interface ExtendedMapFeature<G extends Geometry = Geometry, P = any> extends Feature<G, P> {
+  geonames?: OptionsType | undefined;
+  originalCoordinates?: number[] | number[][] | number[][][];
+  coordinateSystem?: OptionsType;
+  label?: never;
+  value?: never;
+}
+
+export interface CoordinateSystem extends OptionsType {
+  bbox?: LngLatBoundsLike;
+}
+
+export interface DrawMapFieldType
+  extends Omit<BasisFieldType, "value"> {
+  type: "drawmap";
+  value?: ExtendedMapFeature[];
+  multiApiValue?: never;
+  fields?: never;
+  format?: never;
+  autofill?: never;
+  minDateField?: never;
+  maxDateField?: never;
+}
+
 // Date and time formats to be used in a Date field
 export type DateTimeFormat =
   | "DD-MM-YYYY HH:mm"
@@ -215,13 +243,14 @@ export interface OptionsType {
   categoryLabel?: string; // used for nested options
   categoryContent?: string; // used for nested options
   url?: string;
+  coordinates?: number[];
 }
 
 // Validation for text fields
 export type ValidationType = "email" | "uri" | "number" | "github-uri";
 
 // Format to return API response in, used by RTK's transformResponse
-export interface AutocompleteAPIFieldData {
+export interface AutocompleteAPIFieldData<T = OptionsType[]> {
   arg?: string;
-  response: OptionsType[];
+  response: T;
 }

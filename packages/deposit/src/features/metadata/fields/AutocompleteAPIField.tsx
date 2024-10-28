@@ -421,7 +421,7 @@ export const MultiApiField = ({
               setMultiApiField({
                 sectionIndex: sectionIndex,
                 id: field.id,
-                value: e.target.value,
+                value: e.target.value as TypeaheadAPI,
               }),
             );
             // and reset the currently selected value if there is one

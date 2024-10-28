@@ -1,19 +1,19 @@
 import { createSlice, PayloadAction, /*current*/ } from "@reduxjs/toolkit";
 import { RootState } from "../../redux/store";
 import type {
-  SetFieldPayload,
+  SetFieldValuePayload,
+  SetFieldMultiApiPayload,
+  SetFieldFormatPayload,
+  SetFieldValidPayload,
   AddFieldPayload,
   DeleteFieldPayload,
   SectionStatusPayload,
-  FieldValue,
 } from "../../types/MetadataPayloads";
 import type {
   RepeatTextFieldType,
   RepeatGroupedFieldType,
   TextFieldType,
   InputField,
-  TypeaheadAPI,
-  DateTimeFormat,
 } from "../../types/MetadataFields";
 import type {
   InitialStateType,
@@ -68,7 +68,7 @@ export const metadataSlice = createSlice({
       }
     },
     // keep track of form state
-    setField: (state, action: PayloadAction<SetFieldPayload>) => {
+    setField: (state, action: PayloadAction<SetFieldValuePayload>) => {
       const section = state.form[action.payload.sectionIndex];
       const field = findByIdOrName(action.payload.id, section.fields);
 
@@ -78,7 +78,7 @@ export const metadataSlice = createSlice({
 
       // field is found, lets set it
       if (field) {
-        field.value = action.payload.value as FieldValue;
+        field.value = action.payload.value;
         field.touched = true;
 
         // For setting required state of 'conditional' fields,
@@ -110,28 +110,28 @@ export const metadataSlice = createSlice({
 
         // After every input, we need to update field valid status and section status as well.
         field.valid = getValid(
-          action.payload.value as string,
+          action.payload.value,
           field
         );
         // then set the section/accordion
         metadataSlice.caseReducers.setSectionStatus(state, action);
       }
     },
-    setMultiApiField: (state, action: PayloadAction<SetFieldPayload>) => {
+    setMultiApiField: (state, action: PayloadAction<SetFieldMultiApiPayload>) => {
       const section = state.form[action.payload.sectionIndex];
       const field = findByIdOrName(action.payload.id, section.fields);
       if (field) {
-        field.multiApiValue = action.payload.value as TypeaheadAPI;
+        field.multiApiValue = action.payload.value;
       }
     },
-    setDateTypeField: (state, action: PayloadAction<SetFieldPayload>) => {
+    setDateTypeField: (state, action: PayloadAction<SetFieldFormatPayload>) => {
       const section = state.form[action.payload.sectionIndex];
       const field = findByIdOrName(action.payload.id, section.fields);
       if (field) {
-        field.format = action.payload.value as DateTimeFormat;
+        field.format = action.payload.value;
       }
     },
-    setFieldValid: (state, action: PayloadAction<SetFieldPayload>) => {
+    setFieldValid: (state, action: PayloadAction<SetFieldValidPayload>) => {
       const section = state.form[action.payload.sectionIndex];
       const field = findByIdOrName(action.payload.id, section.fields);
       if (field) {

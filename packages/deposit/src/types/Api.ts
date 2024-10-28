@@ -1,4 +1,4 @@
-import type { AutocompleteAPIFieldData } from "./MetadataFields";
+import type { AutocompleteAPIFieldData, OptionsType } from "./MetadataFields";
 
 export interface GorcResponse {
   id: string;
@@ -108,6 +108,26 @@ interface GeonamesItem {
 export interface GeonamesResponse {
   totalResultsCount: number;
   geonames: GeonamesItem[];
+  ocean?: GeonamesItem;
+}
+
+export interface MaptilerCoordinateSystemResponse {
+  results: {
+    id: {
+      authority: string;
+      code: number;
+    };
+    name: string;
+    transformations: number[] | null;
+    bbox: number[];
+  }[];
+}
+
+export interface MaptilerConversionResponse {
+  results: {
+    x: number;
+    y: number;
+  }[]
 }
 
 export interface ProxyResponse {
@@ -129,8 +149,8 @@ export interface GettyItem {
   Subject_ID: number;
 }
 
-export interface QueryReturnType {
-  data: AutocompleteAPIFieldData;
+export interface QueryReturnType<T = OptionsType[]> {
+  data: AutocompleteAPIFieldData<T>;
   isLoading: boolean;
   isFetching: boolean;
 }
