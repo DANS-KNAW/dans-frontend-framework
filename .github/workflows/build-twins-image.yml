@@ -1,0 +1,59 @@
+name: Docker Image CI
+
+on:
+  push:
+    paths:
+      - 'apps/digitaltwins/**'
+
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ["18"]
+    name: Run tests
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+    - name: Set node version
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install git
+        npm i -g turbo
+        npm i -g pnpm
+    - name: Run tests
+      run: "echo 'setup complete' "
+
+  push:
+
+    name: Push to registry.
+    runs-on: ohsmart-demo
+    needs: test
+    strategy:
+      matrix:
+        node-version: ["18"]
+    env:
+      IMAGE_TAG: ${{ github.ref_name }}
+      USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      IMAGE_NAME: "dans-frontend-framework-digital-twins"
+      ORG: "dansknaw"
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+    - name: Copy file
+      run: "cp /data/secrets/digitaltwins/.env.production apps/swh/."
+    - name: Login to registry
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+    - name: Push to dockerhub
+      run: |
+        docker build -f apps/swh/Dockerfile . -t $ORG/$IMAGE_NAME:$IMAGE_TAG
+        docker push $ORG/$IMAGE_NAME:$IMAGE_TAG
