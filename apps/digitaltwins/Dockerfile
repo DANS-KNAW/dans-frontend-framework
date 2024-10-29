@@ -7,7 +7,7 @@ WORKDIR /app
 
 COPY . .
 RUN git submodule update --init --recursive
-## RUN turbo prune --scope=@dans-framework/digitaltwins --docker
+
 RUN pnpm i && pnpm build --filter=@dans-framework/digitaltwins
 
 # Fetching the latest nginx image
