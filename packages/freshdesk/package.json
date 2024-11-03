@@ -1,0 +1,13 @@
+{
+  "name": "@dans-framework/freshdesk",
+  "type": "module",
+  "private": true,
+  "main": "lib/index.tsx",
+  "dependencies": {
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@dans-framework/typescript-config": "workspace:*",
+    "@types/react": "^18.2.15"
+  }
+}
