@@ -27,6 +27,7 @@ import authProvider from "./config/auth";
 import form from "./config/form";
 import { elasticConfig } from "./config/elasticSearch";
 import { FacetedWrapper, FacetedSearchProvider } from "@dans-framework/rdt-search-ui";
+import { Freshdesk } from "@dans-framework/freshdesk"
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -101,6 +102,7 @@ const App = () => {
           </BrowserRouter>
         </FacetedSearchProvider>
         <Footer {...footer} />
+        <Freshdesk widgetId={80000010123} />
       </ThemeWrapper>
     </AuthWrapper>
   );

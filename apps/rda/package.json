@@ -17,6 +17,7 @@
     "@dans-framework/theme": "workspace:*",
     "@dans-framework/user-auth": "workspace:*",
     "@dans-framework/utils": "workspace:*",
+    "@dans-framework/freshdesk": "workspace:*",
     "@fontsource/roboto": "^5.0.7",
     "@mui/icons-material": "^5.14.3",
     "@mui/material": "^5.16.7",
