@@ -60,5 +60,6 @@
   "findPlace": "Select corresponding location",
   "findCoordinateSystem": "Use alternate coordinate system (default WGS84)",
   "transposedCoordinates": "Coordinates ({{id}})",
-  "maptiler": "MapTiler"
+  "maptiler": "MapTiler",
+  "layers": "Layers and legend"
 }
