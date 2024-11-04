@@ -60,6 +60,16 @@ const section: InitialSectionType = {
         nl: "Iets van beschrijving",
       },
       fullWidth: true,
+      wmsLayers: [
+        {
+          name: "natura2000",
+          source: 'https://service.pdok.nl/rvo/natura2000/wms/v1_0?service=WMS&version=1.3.0&layers=natura2000',
+        },
+        {
+          name: "nationaleparken",
+          source: "https://service.pdok.nl/rvo/nationaleparken/wms/v2_0?service=WMS&version=1.3.0&layers=nationaleparken",
+        }
+      ],
     },
     {
       type: "group",

@@ -7,6 +7,7 @@ import CardContent from "@mui/material/CardContent";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
@@ -16,7 +17,7 @@ import type { OptionsType, ExtendedMapFeature, CoordinateSystem } from "../../..
 import type { DrawMapFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled } from "../../../deposit/depositSlice";
-import GLMap, { ScaleControl, NavigationControl, useControl, type LngLatBoundsLike } from "react-map-gl/maplibre";
+import GLMap, { ScaleControl, NavigationControl, useControl, Source, Layer, type LngLatBoundsLike } from "react-map-gl/maplibre";
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
@@ -34,12 +35,15 @@ import HighlightAltIcon from '@mui/icons-material/HighlightAlt';
 import PentagonIcon from '@mui/icons-material/Pentagon';
 import { useFetchGeonamesFreeTextQuery, useFetchPlaceReverseLookupQuery } from "../api/geonames";
 import { useFetchCoordinateSystemsQuery, useLazyTransformCoordinatesQuery } from "../api/maptiler";
+import { useFetchCapabilitiesQuery } from "../api/wms";
 import type { QueryReturnType } from "../../../types/Api";
 import CircularProgress from "@mui/material/CircularProgress";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useDebounce, useDebouncedCallback } from "use-debounce";
 import Collapse from '@mui/material/Collapse';
 import PublicIcon from '@mui/icons-material/Public';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -76,6 +80,7 @@ const DrawMap = ({
   });
   const [ features, setFeatures ] = useState<ExtendedMapFeature[]>(field.value || []);
   const [ getConvertedCoordinates ] = useLazyTransformCoordinatesQuery();
+  const [ hiddenLayers, setHiddenLayers ] = useState<string[]>([]);
 
   // write this to redux store with some debouncing for performance
   // separated from all the local state changes, as the global state would get changed a bit too often otherwise
@@ -167,6 +172,7 @@ const DrawMap = ({
       setFeatures(updatedCoordinatesFeatures);
     }
     if (coordinateSystem) {
+      console.log(coordinateSystem.bbox)
       asyncFeatures();
       // set bounding box of the selected coordinate system
       setViewState({ bounds: coordinateSystem.bbox })
@@ -248,7 +254,44 @@ const DrawMap = ({
                 setSelectedFeatures={setSelectedFeatures} 
                 coordinateSystem={coordinateSystem}
               />
+              {field.wmsLayers?.map(layer => hiddenLayers.indexOf(layer.name) === -1 && [
+                <Source
+                  key="source"
+                  id={`${layer.name}-wms`}
+                  type="raster"
+                  tiles={[`${layer.source}&request=GetMap&format=image%2Fpng&styles=&transparent=true&dpi=135&map_resolution=135&format_options=dpi%3A256&width=500&height=500&crs=EPSG%3A3857&BBOX={bbox-epsg-3857}`]}
+                />,
+                <Layer 
+                  key="layer"
+                  id={`${layer.name}-layer`}
+                  type="raster"
+                  source={`${layer.name}-wms`}
+                  paint={{
+                    'raster-opacity': 0.4,
+                  }}
+                />
+              ])}
             </GLMap>
+            {field.wmsLayers &&
+              <Box sx={{ 
+                mt: 1,
+                border: "1px solid rgba(224, 224, 224, 1)",
+                p: 2,
+                borderRadius: 1,
+              }}>
+                <Typography variant="h6">{t('layers')}</Typography>
+                <Stack direction="row" spacing={4}>
+                  {field.wmsLayers.map(layer => 
+                    <WMSLegend 
+                      layer={layer} 
+                      key={layer.name} 
+                      toggleLayer={() => setHiddenLayers((hiddenLayers.includes(layer.name) ? hiddenLayers.filter(item => item !== layer.name) : [...hiddenLayers, layer.name]))}
+                      isActive={hiddenLayers.indexOf(layer.name) === -1}
+                    />
+                  )}
+                </Stack>
+              </Box>
+            }
             {features.length > 0 &&
               // let's user edit features coordinates directly
               <FeatureTable 
@@ -266,6 +309,21 @@ const DrawMap = ({
 };
 
 export default DrawMap;
+
+const WMSLegend = ({layer, toggleLayer, isActive}: {layer: any; toggleLayer: () => void; isActive: boolean;}) => {
+  const { data } = useFetchCapabilitiesQuery(layer.source);
+  const images = data && (Array.isArray(data?.Capability.Layer.Layer.Style) ? data.Capability.Layer.Layer.Style : [data.Capability.Layer.Layer.Style]) || undefined;
+  return (
+    <Box>
+      <FormControlLabel 
+        control={<Switch onClick={toggleLayer} checked={isActive} size="small" />} 
+        label={data && data.Capability.Layer.Layer.Title} 
+        sx={{mb: 1}}
+      />
+      {images && images.map((img: any, i: number) => <Box><img key={i} src={img.LegendURL.OnlineResource['@_xlink:href']} /></Box>)}
+    </Box>
+  )
+}
 
 interface Column {
   id: string;

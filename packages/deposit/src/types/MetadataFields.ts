@@ -185,6 +185,11 @@ export interface DrawMapFieldType
   extends Omit<BasisFieldType, "value"> {
   type: "drawmap";
   value?: ExtendedMapFeature[];
+  wmsLayers?: {
+    id: string;
+    name: string;
+    source: string;
+  }[];
   multiApiValue?: never;
   fields?: never;
   format?: never;
