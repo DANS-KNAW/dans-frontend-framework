@@ -9,7 +9,7 @@
   "multiApiSelectLabel": "Select type",
   "institutions": "Institutions",
   "country": "Country",
-  "apiValue": "Looks up data from the {{api}} API as you type.",
+  "apiValue": "Looks up data from {{api}} as you type.",
   "checkApi": "Double-check your selected value in the {{api}} registry (opens in new tab)",
   "checkValue": "Read more about {{value}} (opens in new tab)",
   "orcid": "ORCID",
@@ -61,5 +61,7 @@
   "findCoordinateSystem": "Use alternate coordinate system (default WGS84)",
   "transposedCoordinates": "Coordinates ({{id}})",
   "maptiler": "MapTiler",
-  "layers": "Layers and legend"
+  "layers": "Layers and legend",
+  "biodiversity": "Naturalis Biodiversity Database",
+  "vernacularName": "Vernacular name"
 }

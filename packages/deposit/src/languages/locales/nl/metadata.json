@@ -9,7 +9,7 @@
   "multiApiSelectLabel": "Selecteer type",
   "institutions": "Instellingen",
   "country": "Land",
-  "apiValue": "Haalt data uit de {{api}} API terwijl je typt.",
+  "apiValue": "Haalt data uit {{api}} terwijl je typt.",
   "checkApi": "Double-check je geselecteerde waarde in de {{api}} database (opent in nieuwe tab)",
   "checkValue": "Lees meer over {{value}} (opent in nieuwe tab)",
   "orcid": "ORCID",
@@ -49,5 +49,17 @@
   "draw_polygon": "Polygon",
   "drawExplanation": "<0>Select a shape type and click on the map to start drawing. In case of a multipoint shape, double click or press 'Enter' to finish drawing.</0><0>To edit a shape, click on it to select it, and drag it around, or add or move individual points.</0><0>To delete a shape, select it and press 'Delete' on your keyboard.</0>",
   "delete": "Delete",
-  "toggleMap": "Toggle map"
+  "toggleMap": "Toggle map",
+  "featureType": "Type",
+  "featureCoordinates": "Coordinaten (WGS84)",
+  "featureGeonameRef": "Geonames referentie",
+  "lat": "Latitude",
+  "lng": "Longitude",
+  "findPlace": "Selecteer bijbehorende locatie",
+  "findCoordinateSystem": "Gebruik ander coördinatenstelsel (default WGS84)",
+  "transposedCoordinates": "Coördinaten ({{id}})",
+  "maptiler": "MapTiler",
+  "layers": "Lagen en legenda",
+  "biodiversity": "Naturalis Biodiversiteitsdatabase",
+  "vernacularName": "Algemene naam"
 }

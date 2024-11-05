@@ -170,3 +170,21 @@ export interface DatastationsItem {
 export interface DatastationsResponse {
   results: DatastationsItem[];
 }
+
+export interface BiodiversityItem {
+  item: {
+    sourceSystemId: string;
+    recordURI: string;
+    acceptedName: {
+      fullScientificName: string;
+    };
+    vernacularNames?: {
+      name: string;
+      language: string;
+    }[];
+  };
+}
+
+export interface BiodiversityResponse {
+  resultSet: BiodiversityItem[];
+}

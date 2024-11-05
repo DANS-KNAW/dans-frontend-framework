@@ -34,6 +34,7 @@ import {
   RdaInterestGroupsField,
   SshLicencesField,
   LanguagesField,
+  BiodiversityField,
 } from "./fields/AutocompleteAPIField";
 import AutocompleteField from "./fields/AutocompleteField";
 import TextField from "./fields/TextField";
@@ -123,6 +124,8 @@ const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
             case "narcis":
             case "dansCollections":
               return <DatastationsField field={field} sectionIndex={sectionIndex} />
+            case "biodiversity":
+              return <BiodiversityField field={field} sectionIndex={sectionIndex} />
             default:
               return <AutocompleteField field={field} sectionIndex={sectionIndex} />
           }

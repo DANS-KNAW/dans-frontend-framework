@@ -33,6 +33,7 @@ import { getFormDisabled } from "../../../deposit/depositSlice";
 import { useFetchLicencesQuery } from "../api/licences";
 import { useFetchSshLicencesQuery } from "../api/sshLicences";
 import { useFetchLanguagesQuery } from "../api/languages";
+import { useFetchSpeciesQuery } from "../api/biodiversity";
 import {
   useFetchGorcQuery,
   useFetchRdaWorkingGroupQuery,
@@ -160,6 +161,29 @@ export const DatastationsField = ({
       },
       { skip: debouncedInputValue === "" },
     );
+
+  return (
+    <AutocompleteAPIField
+      field={field}
+      sectionIndex={sectionIndex}
+      inputValue={inputValue}
+      setInputValue={setInputValue}
+      debouncedInputValue={debouncedInputValue}
+      data={data}
+      isLoading={isLoading}
+      isFetching={isFetching}
+    />
+  );
+};
+
+export const BiodiversityField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
+  const [inputValue, setInputValue] = useState<string>("");
+  const debouncedInputValue = useDebounce(inputValue, 500)[0];
+  // Fetch data on input change
+  const { data, isFetching, isLoading } = useFetchSpeciesQuery<QueryReturnType>(
+    debouncedInputValue,
+    { skip: debouncedInputValue === "" },
+  );
 
   return (
     <AutocompleteAPIField

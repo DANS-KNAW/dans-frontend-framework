@@ -222,7 +222,8 @@ export type TypeaheadAPI =
   | "interest groups"
   | Datastations
   | "sshLicences"
-  | "languageList";
+  | "languageList"
+  | "biodiversity";
 
 // Options that should be specified if Google Sheet API is used in Autocomplete
 interface SheetOptions {
