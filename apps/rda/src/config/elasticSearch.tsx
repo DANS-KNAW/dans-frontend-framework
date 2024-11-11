@@ -47,8 +47,8 @@ export const elasticConfig = [
           id: "date",
           field: "dc_date",
           title: {
-            en: "Year",
-            nl: "Jaar",
+            en: "Timeline",
+            nl: "Tijdlijn",
           },
           interval: "year",
           cols: 6,
