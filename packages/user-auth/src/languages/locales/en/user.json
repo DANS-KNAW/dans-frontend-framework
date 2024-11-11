@@ -12,7 +12,7 @@
 	"loginProvider": "Log in with {{provider}}",
 	"save": "Save",
 	"saving": "Saving...",
-	"apiKeyDescription": "<0>Get you key here</0> and paste it below.",
+	"apiKeyDescription": "<0>Get your key here</0> and paste it below.",
 	"apiKeyHeader": "{{type}} API key",
 	"apiKeyLabel": "Your personal {{type}} API key",
 	"keyError": "This API key is invalid",
