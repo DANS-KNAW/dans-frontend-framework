@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, type SetStateAction, type Dispatch } from "react";
+import { useEffect, useState, useCallback, useRef, type SetStateAction, type Dispatch } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Card from "@mui/material/Card";
@@ -35,7 +35,7 @@ import HighlightAltIcon from '@mui/icons-material/HighlightAlt';
 import PentagonIcon from '@mui/icons-material/Pentagon';
 import { useFetchGeonamesFreeTextQuery, useFetchPlaceReverseLookupQuery } from "../api/geonames";
 import { useFetchCoordinateSystemsQuery, useLazyTransformCoordinatesQuery } from "../api/maptiler";
-import { useFetchCapabilitiesQuery } from "../api/wms";
+import { useFetchCapabilitiesQuery, useLazyFetchFeatureQuery } from "../api/wms";
 import type { QueryReturnType } from "../../../types/Api";
 import CircularProgress from "@mui/material/CircularProgress";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -44,7 +44,6 @@ import Collapse from '@mui/material/Collapse';
 import PublicIcon from '@mui/icons-material/Public';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
-
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -81,6 +80,9 @@ const DrawMap = ({
   const [ features, setFeatures ] = useState<ExtendedMapFeature[]>(field.value || []);
   const [ getConvertedCoordinates ] = useLazyTransformCoordinatesQuery();
   const [ hiddenLayers, setHiddenLayers ] = useState<string[]>([]);
+
+  const mapRef = useRef(null);
+  const [ fetchWmsFeature, { data: wmsFeatureData } ] = useLazyFetchFeatureQuery();
 
   // write this to redux store with some debouncing for performance
   // separated from all the local state changes, as the global state would get changed a bit too often otherwise
@@ -188,6 +190,8 @@ const DrawMap = ({
     }
   }, [coordinateSystem]);
 
+  console.log(wmsFeatureData)
+
   return (
     <Card>
       <CardHeader
@@ -236,6 +240,7 @@ const DrawMap = ({
           <Box pt={1}>
             <GLMap
               {...viewState}
+              ref={mapRef}
               onMove={(e) => setViewState(e.viewState)}
               style={{
                 width: '100%', 
@@ -245,6 +250,17 @@ const DrawMap = ({
               }}
               mapStyle={`https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json`}
               maxBounds={coordinateSystem?.bbox}
+              onClick={(e) => {
+                console.log(e)
+                if (field.wmsLayers && hiddenLayers.length !== field.wmsLayers.length) {
+                  const activeLayers = field.wmsLayers.filter(layer => hiddenLayers.indexOf(layer.name) === -1);
+                  fetchWmsFeature({
+                    url: activeLayers.map(layer => layer.source),
+                    layerName: activeLayers.map(layer => layer.name), 
+                    lngLat: e.lngLat, 
+                  });
+                }
+              }}
             >
               <NavigationControl position="top-left" />
               <ScaleControl />
