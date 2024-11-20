@@ -70,9 +70,13 @@ const SingleTextField = ({
               // if field type is date, just convert it to DD-MM-YYYY for every value
               // TODO: should any other app than ohsmart want to use this, modify this where necessary
             : field.type === "date" ?
-              moment(field.value, field.format).startOf("day").format("DD-MM-YYYY")
+              moment(field.value, field.format)
+                .startOf("day")
+                .format("DD-MM-YYYY")
             : field.type === "daterange" ?
-              moment(field.value[0], field.format).startOf("day").format("DD-MM-YYYY")
+              moment(field.value[0], field.format)
+                .startOf("day")
+                .format("DD-MM-YYYY")
             : field.value
           : null
         );
@@ -104,7 +108,6 @@ const SingleTextField = ({
       generatedValue && !field.value && setValue();
     }
   }, [generatedValue]);
-
 
   return (
     <Stack direction="row" alignItems="center">
@@ -170,7 +173,7 @@ const SingleTextField = ({
           </span>
         </Tooltip>
       )}
-      <AddDeleteControls 
+      <AddDeleteControls
         groupedFieldId={groupedFieldId}
         totalFields={totalFields}
         sectionIndex={sectionIndex}

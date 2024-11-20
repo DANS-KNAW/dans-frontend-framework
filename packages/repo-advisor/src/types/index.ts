@@ -8,10 +8,11 @@ export interface RepoResponse {
     description: LanguageStrings;
     form?: FormConfig;
     external?: string;
-  }[]
+  }[];
 }
 
-export interface AutocompleteProps extends Omit<AutocompleteAPIFieldProps, 'field' | 'sectionIndex'> {
+export interface AutocompleteProps
+  extends Omit<AutocompleteAPIFieldProps, "field" | "sectionIndex"> {
   disabled?: boolean;
   label: string;
   setValue: (val: OptionsType | null) => void;

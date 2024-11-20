@@ -83,13 +83,13 @@ import { Deposit } from "@dans-framework/deposit"
             en: "Create thumbnail",
             nl: "Genereer thumbnail",
           },
-          for: ["video", "images"], 
+          for: ["video", "images"],
         },
         // etc
       ],
       // enable/disable these columns (default value specified)
       embargoDate: false,
-      displayRoles: true, 
+      displayRoles: true,
       displayProcesses: true,
       // set an optional maximum file upload size in bytes
       maxSize: 10737418240, // e.g. 10 GB

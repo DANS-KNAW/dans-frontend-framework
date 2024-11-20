@@ -61,7 +61,7 @@ interface RdaRecord {
     _taxonomy_terms: string;
     uuid_parent: string;
     url: string;
-  }[]
+  }[];
   pid_lod: string;
   pid_lod_type: string;
   relation_types: string;
@@ -150,7 +150,9 @@ export function RdaRecord() {
           <Metadata
             name="Domains"
             value={
-              record.disciplines?.map((discipline) => discipline.list_item) ?? ["-"]
+              record.disciplines?.map((discipline) => discipline.list_item) ?? [
+                "-",
+              ]
             }
             options={{ turnicate: false }}
           />
@@ -203,7 +205,7 @@ function Metadata({
   let _value = Array.isArray(value) ? value.join(" || ") : value;
 
   if (_value.length < 1) {
-    _value = "-"
+    _value = "-";
   }
 
   return (

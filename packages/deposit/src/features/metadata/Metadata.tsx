@@ -32,20 +32,20 @@ const Form = () => {
           key={`section-${section.id}`}
           expanded={openPanel === section.id}
           onChange={handleChange(section.id)}
-          TransitionProps={{ 
+          TransitionProps={{
             unmountOnExit: true,
             timeout: 200,
             onEntered: (el) => {
-              // make sure accordion scrolls into view after expanding, 
+              // make sure accordion scrolls into view after expanding,
               // if not in view yet, including header
               const rect = el.getBoundingClientRect();
-              if ( rect.top < 0 ) {
+              if (rect.top < 0) {
                 window.scrollBy({
                   top: rect.bottom - rect.height - 80,
                   behavior: "smooth",
                 });
               }
-            }
+            },
           }}
           // todo: update mui, change TransitionProps to the following:
           // slotProps={{ transition: { unmountOnExit: true, etc... } }}
@@ -63,13 +63,18 @@ const Form = () => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={2}>
-              {section.description &&
+              {section.description && (
                 <Grid xs={12} md={9} lg={8} xl={7}>
-                  <Typography variant="body2" mt={-1} gutterBottom sx={{color: 'rgba(0, 0, 0, 0.6)'}}>
+                  <Typography
+                    variant="body2"
+                    mt={-1}
+                    gutterBottom
+                    sx={{ color: "rgba(0, 0, 0, 0.6)" }}
+                  >
                     {lookupLanguageString(section.description, i18n.language)}
                   </Typography>
                 </Grid>
-              }
+              )}
               {section.fields.map((field, i) =>
                 field.type === "group" ?
                   <GroupedField

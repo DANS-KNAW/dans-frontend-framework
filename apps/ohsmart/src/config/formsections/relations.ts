@@ -87,7 +87,10 @@ const section: InitialSectionType = {
             nl: "Het type relatie tussen dit interview en een ander object (interview, dataset, publicatie, project).",
           },
           noIndicator: true,
-          options: relationships.map((r: string) => ({ label: r, value: r.toLowerCase() })),
+          options: relationships.map((r: string) => ({
+            label: r,
+            value: r.toLowerCase(),
+          })),
           toggleRequired: ["relation_item", "relation_reference"],
         },
         {

@@ -13,11 +13,21 @@ import { StatusIcon } from "../../generic/Icons";
 import { AddDeleteControls } from "../MetadataButtons";
 import { setField, setDateTypeField, setFieldValid } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
-import type { DateFieldProps, DateRangeFieldProps } from "../../../types/MetadataProps";
+import type {
+  DateFieldProps,
+  DateRangeFieldProps,
+} from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled } from "../../../deposit/depositSlice";
-import type { DateValidationError, TimeValidationError } from "@mui/x-date-pickers/models";
-import type { DateFieldType, DateRangeFieldType, DateTimeFormat } from "../../../types/MetadataFields";
+import type {
+  DateValidationError,
+  TimeValidationError,
+} from "@mui/x-date-pickers/models";
+import type {
+  DateFieldType,
+  DateRangeFieldType,
+  DateTimeFormat,
+} from "../../../types/MetadataFields";
 
 // Date and time selection component
 // Allows a user to select input type (date and time, date, month and year, year) if specified in config
@@ -29,9 +39,10 @@ export const DateTimeField = ({
   currentField = 0,
   totalFields = 1,
 }: DateFieldProps) => {
-
   const { t, i18n } = useTranslation("metadata");
-  const [error, setError] = useState<DateValidationError | TimeValidationError | null>(null);
+  const [error, setError] = useState<
+    DateValidationError | TimeValidationError | null
+  >(null);
   const formDisabled = useAppSelector(getFormDisabled);
   const status = getFieldStatus(field);
   const dispatch = useAppDispatch();
@@ -42,7 +53,7 @@ export const DateTimeField = ({
       case "maxTime": {
         return t("dateMax");
       }
-      case "minTime": 
+      case "minTime":
       case "minDate": {
         return t("dateMin");
       }
@@ -58,7 +69,7 @@ export const DateTimeField = ({
 
   return (
     <Stack direction="row" alignItems="start">
-      <DateTypeWrapper 
+      <DateTypeWrapper
         field={field}
         sectionIndex={sectionIndex}
         currentField={currentField}
@@ -94,7 +105,9 @@ export const DateTimeField = ({
             }),
           );
         }}
-        onError={(newError) => setError(newError as DateValidationError | TimeValidationError)}
+        onError={(newError) =>
+          setError(newError as DateValidationError | TimeValidationError)
+        }
         sx={{
           mt: groupedFieldId && currentField !== 0 ? 1 : 0,
         }}
@@ -121,7 +134,7 @@ export const DateTimeField = ({
         }}
       />
 
-      <AddDeleteControls 
+      <AddDeleteControls
         groupedFieldId={groupedFieldId}
         totalFields={totalFields}
         sectionIndex={sectionIndex}
@@ -143,35 +156,37 @@ export const DateRangeField = ({
   currentField = 0,
   totalFields = 1,
 }: DateRangeFieldProps) => {
-
-  const [range, setRange] = useState<(string | null)[]>(field.value || [null, null]);
+  const [range, setRange] = useState<(string | null)[]>(
+    field.value || [null, null],
+  );
   const [format, setFormat] = useState<string>(field.format);
   const dispatch = useAppDispatch();
 
   const setStart = (dateString: string) => {
     setRange([dateString, range[1]]);
-  }
+  };
 
   const setEnd = (dateString: string) => {
     setRange([range[0], dateString]);
-  }
+  };
 
   // Dispatch form action when range is changed
   // Don't dispatch when range is still null, to keep initial
   // 'touched' status of field
   useEffect(() => {
-    !range.every(el => el === null) && dispatch(
-      setField({
-        sectionIndex: sectionIndex,
-        id: field.id,
-        value: range as string[],
-      }),
-    );
+    !range.every((el) => el === null) &&
+      dispatch(
+        setField({
+          sectionIndex: sectionIndex,
+          id: field.id,
+          value: range as string[],
+        }),
+      );
   }, [range]);
 
   // and reset when format is changed
   useEffect(() => {
-    if (format !== field.format){
+    if (format !== field.format) {
       setRange(["", ""]);
       setFormat(field.format);
     }
@@ -179,7 +194,7 @@ export const DateRangeField = ({
 
   return (
     <Stack direction="row" alignItems="start">
-      <DateTypeWrapper 
+      <DateTypeWrapper
         field={field}
         sectionIndex={sectionIndex}
         currentField={currentField}
@@ -207,7 +222,7 @@ export const DateRangeField = ({
         sectionIndex={sectionIndex}
       />
 
-      <AddDeleteControls 
+      <AddDeleteControls
         groupedFieldId={groupedFieldId}
         totalFields={totalFields}
         sectionIndex={sectionIndex}
@@ -218,18 +233,18 @@ export const DateRangeField = ({
   );
 };
 
-const RangeFieldWrapper = ({ 
-  field, 
-  range, 
-  setRange, 
-  index, 
+const RangeFieldWrapper = ({
+  field,
+  range,
+  setRange,
+  index,
   sectionIndex,
-  groupedFieldId, 
+  groupedFieldId,
   currentField,
   minDate,
   maxDate,
 }: {
-  field: DateRangeFieldType; 
+  field: DateRangeFieldType;
   range: (string | null)[];
   setRange: (v: string) => void;
   index: number;
@@ -240,16 +255,26 @@ const RangeFieldWrapper = ({
   maxDate?: string;
 }) => {
   const { t, i18n } = useTranslation("metadata");
-  const [error, setError] = useState<DateValidationError | TimeValidationError | null>(null);
+  const [error, setError] = useState<
+    DateValidationError | TimeValidationError | null
+  >(null);
   const formDisabled = useAppSelector(getFormDisabled);
   // Need to set this separately, as the field has a global status for the entire range,
   // but also needs a split status for user interaction, per start/end of range
-  const status = 
-    ((!field.required && !range[0]) || (field.optionalEndDate && index === 1 && !range[1])) && !error ?
-    "warning" :
-    (field.required && !range[0]) || (!field.optionalEndDate && !range[1]) || error ?
-    "error" :
-    "success";
+  const status =
+    (
+      ((!field.required && !range[0]) ||
+        (field.optionalEndDate && index === 1 && !range[1])) &&
+      !error
+    ) ?
+      "warning"
+    : (
+      (field.required && !range[0]) ||
+      (!field.optionalEndDate && !range[1]) ||
+      error
+    ) ?
+      "error"
+    : "success";
 
   const errorMessage = useMemo(() => {
     switch (error) {
@@ -277,42 +302,42 @@ const RangeFieldWrapper = ({
       id: field.id,
       value: status !== "error",
     });
-  }, [status])
+  }, [status]);
 
   return (
     <MUIDateTimeField
       fullWidth
       format={field.format}
       helperText={status === "error" && field.touched && t("incorrect")}
-      label={
-        t('dateRange', {
-          label: lookupLanguageString(field.label, i18n.language),
-          startEnd: t(index === 0 ? 'dateStart' : 'dateEnd')
-        })
+      label={t("dateRange", {
+        label: lookupLanguageString(field.label, i18n.language),
+        startEnd: t(index === 0 ? "dateStart" : "dateEnd"),
+      })}
+      required={
+        (field.required && index === 0) ||
+        (!field.optionalEndDate && index === 1)
       }
-      required={(field.required && index === 0) || (!field.optionalEndDate && index === 1)}
       value={(range[index] && moment(range[index], field.format)) || null}
       disabled={field.disabled || formDisabled}
       minDateTime={
-        minDate ?
-        moment(minDate, field.format) :
-        field.minDate ?
-        moment(field.minDate, field.format) :
-        moment().subtract(273790, "year")
+        minDate ? moment(minDate, field.format)
+        : field.minDate ?
+          moment(field.minDate, field.format)
+        : moment().subtract(273790, "year")
       }
       maxDateTime={
-        maxDate ?
-        moment(maxDate, field.format) :
-        field.maxDate ?
-        moment(field.maxDate, field.format) :
-        moment().add(100, "year")
+        maxDate ? moment(maxDate, field.format)
+        : field.maxDate ?
+          moment(field.maxDate, field.format)
+        : moment().add(100, "year")
       }
       onChange={(value: Moment | null) => {
-        const formattedValue = value && value.isValid() ? value.format(field.format) : "";
+        const formattedValue =
+          value && value.isValid() ? value.format(field.format) : "";
         setRange(formattedValue);
       }}
       onError={(newError) => {
-        setError(newError)
+        setError(newError);
       }}
       sx={{
         mt: groupedFieldId && currentField !== 0 ? 1 : 0,
@@ -334,16 +359,19 @@ const RangeFieldWrapper = ({
       inputProps={{ "data-testid": `${field.name}-${field.id}` }}
       slotProps={{
         textField: {
-          error:
-            (status === "error" && field.touched) || error ? true : false,
+          error: (status === "error" && field.touched) || error ? true : false,
           helperText: errorMessage,
         },
       }}
     />
-  )
-}
+  );
+};
 
-const DateTypeWrapper = ({field, sectionIndex, currentField}: {
+const DateTypeWrapper = ({
+  field,
+  sectionIndex,
+  currentField,
+}: {
   field: DateFieldType | DateRangeFieldType;
   sectionIndex: number;
   currentField: number;
@@ -352,11 +380,8 @@ const DateTypeWrapper = ({field, sectionIndex, currentField}: {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
 
-  return (
-    field.formatOptions ?
-      <FormControl
-        sx={{ minWidth: 110, mr: 1, mt: currentField > 0 ? 1 : 0 }}
-      >
+  return field.formatOptions ?
+      <FormControl sx={{ minWidth: 110, mr: 1, mt: currentField > 0 ? 1 : 0 }}>
         <InputLabel>{t("selectDateType")}</InputLabel>
         <Select
           label={t("selectDateType")}
@@ -389,7 +414,6 @@ const DateTypeWrapper = ({field, sectionIndex, currentField}: {
             </MenuItem>
           ))}
         </Select>
-      </FormControl> 
-      : null
-  )
-}
+      </FormControl>
+    : null;
+};

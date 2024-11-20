@@ -107,8 +107,7 @@ const footer: Footer = {
     },
     {
       header: "CAT Tiger",
-      freetext:
-        "CAT Fair Assesment Tool",
+      freetext: "CAT Fair Assesment Tool",
       links: [
         {
           name: "Contact CAT TIGER",

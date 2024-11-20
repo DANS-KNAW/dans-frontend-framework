@@ -12,7 +12,8 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 export function Cat2Result(props: ResultBodyProps) {
   const { result: item } = props;
 
-  const title = `${item.pid_stack} - ${item.entity} - ${item.role}` || "<i>empty</i>";
+  const title =
+    `${item.pid_stack} - ${item.entity} - ${item.role}` || "<i>empty</i>";
 
   return (
     <>

@@ -42,6 +42,10 @@ export interface SelectedFile {
   submittedFile?: boolean;
   errors?: never;
   file?: never;
+  // for translating xls/csv file columns
+  mapping?: {
+    [key: string]: any;
+  };
 }
 
 interface FileError {

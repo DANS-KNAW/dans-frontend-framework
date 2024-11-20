@@ -51,10 +51,15 @@ const FilesUpload = () => {
     }
 
     // No files over the file size limit set in formConfig
-    if (formConfig?.filesUpload?.maxSize && file.size > formConfig?.filesUpload?.maxSize) {
+    if (
+      formConfig?.filesUpload?.maxSize &&
+      file.size > formConfig?.filesUpload?.maxSize
+    ) {
       return {
         code: "file-too-large",
-        message: t("fileTooLarge", { size: (formConfig?.filesUpload?.maxSize / 1073741824).toFixed(2) }),
+        message: t("fileTooLarge", {
+          size: (formConfig?.filesUpload?.maxSize / 1073741824).toFixed(2),
+        }),
       };
     }
 
@@ -89,10 +94,10 @@ const FilesUpload = () => {
 
     // No files with these file names
     if (
-      file.name.indexOf("__generated__form-metadata") !== -1
+      file.name.indexOf("__generated__form-metadata") !== -1 ||
       // oh smart specific. todo: move this all to form config.
-      || file.name.toLowerCase() === "oral history metadata private.txt"
-      || file.name.toLowerCase() === "oral history metadata public.txt"
+      file.name.toLowerCase() === "oral history metadata private.txt" ||
+      file.name.toLowerCase() === "oral history metadata public.txt"
     ) {
       return {
         code: "file-not-allowed",

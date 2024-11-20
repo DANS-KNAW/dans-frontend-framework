@@ -2,9 +2,9 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { XMLParser } from "fast-xml-parser";
 
 export const wmsApi = createApi({
-  reducerPath: 'wms',
+  reducerPath: "wms",
   baseQuery: fetchBaseQuery({
-    baseUrl: '',
+    baseUrl: "",
   }),
   endpoints: (build) => ({
     fetchCapabilities: build.query({

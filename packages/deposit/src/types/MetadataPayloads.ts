@@ -12,7 +12,13 @@ interface Payload {
 }
 
 export interface SetFieldValuePayload extends Payload {
-  value: string | string[] | OptionsType | OptionsType[] | ExtendedMapFeature[] | null;
+  value:
+    | string
+    | string[]
+    | OptionsType
+    | OptionsType[]
+    | ExtendedMapFeature[]
+    | null;
 }
 
 export interface SetFieldMultiApiPayload extends Payload {

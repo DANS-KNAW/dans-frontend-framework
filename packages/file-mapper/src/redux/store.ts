@@ -13,7 +13,7 @@ export const store = configureStore({
     getDefaultMiddleware()
       .concat(darwinCoreApi.middleware)
       .concat(submitMappingApi.middleware)
-      .concat(errorLogger)
+      .concat(errorLogger),
 });
 
 export type AppDispatch = typeof store.dispatch;

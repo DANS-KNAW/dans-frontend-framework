@@ -149,7 +149,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     // Show a message when data's been entered previously.
     // Give option to clear form and start again.
     ((sessionId && formTouched) || formAction.id) && setDataMessage(true);
-    // Update user on initial render, makes sure all target credentials are up-to-date. 
+    // Update user on initial render, makes sure all target credentials are up-to-date.
     // Also remove user immediately, should there be an error..
     auth.signinSilent().catch(() => auth.removeUser());
     // Set init form props in redux, all props without the form metadata config itself
@@ -159,15 +159,13 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // For external form selection from the pre-form advisor without reloading the app,
   // we listen for changes to the form object, and initiate a new form when it changes
   useEffect(() => {
-    if (config.displayName && (
-      !currentConfig.displayName || 
-        (
-          typeof currentConfig.displayName !== 'string' && 
-          typeof config.displayName !== 'string' && 
-          currentConfig.displayName.en !== config.displayName.en
-        ) ||
-        (currentConfig.displayName !== config.displayName)
-      )
+    if (
+      config.displayName &&
+      (!currentConfig.displayName ||
+        (typeof currentConfig.displayName !== "string" &&
+          typeof config.displayName !== "string" &&
+          currentConfig.displayName.en !== config.displayName.en) ||
+        currentConfig.displayName !== config.displayName)
     ) {
       dispatch(resetMetadataSubmitStatus());
       dispatch(resetFilesSubmitStatus());
@@ -195,7 +193,9 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     skip: !targetCredentials,
   });
 
-  const hasTargetCredentials = (targetCredentials && !apiKeyError) || import.meta.env.VITE_DISABLE_API_KEY_MESSAGE;
+  const hasTargetCredentials =
+    (targetCredentials && !apiKeyError) ||
+    import.meta.env.VITE_DISABLE_API_KEY_MESSAGE;
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
@@ -203,9 +203,9 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
         <Grid container>
           <Grid xs={12} mt={4}>
             {/* Shows user a message about current form state */}
-            <ActionMessage 
+            <ActionMessage
               dataMessage={dataMessage}
-              setDataMessage={setDataMessage} 
+              setDataMessage={setDataMessage}
             />
             {/* The form. Show an overlay if there's no API key filled in */}
             <Box sx={{ position: "relative" }}>
@@ -225,7 +225,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
                       alignItems: "flex-start",
                     }}
                   >
-                    <Paper elevation={15} sx={{mt: 15}}>
+                    <Paper elevation={15} sx={{ mt: 15 }}>
                       <Alert
                         severity="warning"
                         data-testid="invalid-api-keys"
@@ -310,8 +310,8 @@ const TabPanel = ({ children, value, index }: TabPanelProps) => {
 };
 
 const ActionMessage = ({
-  dataMessage, 
-  setDataMessage, 
+  dataMessage,
+  setDataMessage,
 }: {
   dataMessage: boolean;
   setDataMessage: (arg: boolean) => void;
@@ -319,8 +319,8 @@ const ActionMessage = ({
   const { t } = useTranslation("generic");
   const dispatch = useAppDispatch();
   const formAction = getFormActions();
-  const { data } = useFetchSavedMetadataQuery(formAction.id, { 
-    skip: !formAction.id 
+  const { data } = useFetchSavedMetadataQuery(formAction.id, {
+    skip: !formAction.id,
   });
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
 
@@ -347,27 +347,19 @@ const ActionMessage = ({
         <AlertTitle>
           {formAction.action === "resubmit" ?
             t("dataMessageHeaderResubmit", {
-              title:
-                (data && data.title) ||
-                t("untitled"),
+              title: (data && data.title) || t("untitled"),
             })
           : formAction.action === "copy" ?
             t("dataMessageHeaderCopy", {
-              title:
-                (data && data.title) ||
-                t("untitled"),
+              title: (data && data.title) || t("untitled"),
             })
           : formAction.action === "load" ?
             t("dataMessageHeaderLoad", {
-              title:
-                (data && data.title) ||
-                t("untitled"),
+              title: (data && data.title) || t("untitled"),
             })
           : formAction.action === "view" ?
             t("dataMessageHeaderView", {
-              title:
-                (data && data.title) ||
-                t("untitled"),
+              title: (data && data.title) || t("untitled"),
             })
           : metadataSubmitStatus === "submitted" ?
             t("dataMessageHeaderSubmitted")
@@ -386,11 +378,7 @@ const ActionMessage = ({
             t("dataMessageContentSubmitted")
           : t("dataMessageContent")}
         </Typography>
-        <Stack
-          justifyContent="flex-end"
-          direction="row"
-          alignItems="center"
-        >
+        <Stack justifyContent="flex-end" direction="row" alignItems="center">
           <Typography mb={0} mr={2} variant="h6">
             {formAction.action === "view" ?
               t("dataResetHeaderView")
@@ -410,7 +398,7 @@ const ActionMessage = ({
         </Stack>
       </Alert>
     </Collapse>
-  )
-}
+  );
+};
 
 export default Deposit;

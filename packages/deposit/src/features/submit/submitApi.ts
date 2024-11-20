@@ -19,7 +19,7 @@ export const submitApi = createApi({
   endpoints: (build) => ({
     submitData: build.mutation({
       query: ({ user, actionType, id, metadata, config, files }) => {
-        console.log(metadata)
+        console.log(metadata);
         // format data
         const data = formatFormData(id, metadata, files, config.formTitle);
         console.log("Submit metadata:");
@@ -27,9 +27,7 @@ export const submitApi = createApi({
 
         // format headers
         const headers = {
-          Authorization: `Bearer ${
-            config.submitKey || user?.access_token
-          }`,
+          Authorization: `Bearer ${config.submitKey || user?.access_token}`,
           "user-id": user?.profile.sub,
           "auth-env-name": config.target?.envName,
           "assistant-config-name": config.target?.configName,
@@ -56,18 +54,20 @@ export const submitApi = createApi({
             `resubmit/${data.id}`
           : `dataset/${actionType === "save" ? "DRAFT" : "PUBLISH"}`;
 
-        return ({
+        return {
           url: `inbox/${submitUrl}`,
           method: "POST",
           headers: headers,
           body: data,
-        })
+        };
       },
-      invalidatesTags: (_res, _err, arg ) => [{ type: "Forms", id: arg.id }],
+      invalidatesTags: (_res, _err, arg) => [{ type: "Forms", id: arg.id }],
       transformResponse: (response, _meta, arg) => {
-        store.dispatch(setMetadataSubmitStatus(
-          arg.actionType === "save" ? "saved" : "submitted",
-        ));
+        store.dispatch(
+          setMetadataSubmitStatus(
+            arg.actionType === "save" ? "saved" : "submitted",
+          ),
+        );
         if (arg.actionType === "save" && !arg.autoSave) {
           // show notice and enable form again after successful save
           enqueueSnackbar(
@@ -87,9 +87,11 @@ export const submitApi = createApi({
         store.dispatch(setMetadataSubmitStatus("error"));
         // enable form again, so user can try and resubmit
         store.dispatch(setFormDisabled(false));
-        return ({
-          error: i18n.t("submit:submitMetadataError", { error: response.status })
-        });
+        return {
+          error: i18n.t("submit:submitMetadataError", {
+            error: response.status,
+          }),
+        };
       },
     }),
     fetchSavedMetadata: build.query({
@@ -119,7 +121,4 @@ export const submitApi = createApi({
   }),
 });
 
-export const { 
-  useSubmitDataMutation,
-  useFetchSavedMetadataQuery
-} = submitApi;
+export const { useSubmitDataMutation, useFetchSavedMetadataQuery } = submitApi;

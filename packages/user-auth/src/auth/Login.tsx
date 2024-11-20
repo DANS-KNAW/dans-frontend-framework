@@ -8,13 +8,13 @@ import { LoginButton } from "../user/Buttons";
 import { useSearchParams } from "react-router-dom";
 
 export const LoginPage = () => {
-  const [ searchParams ] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     // save data params to session storage to get them back after Keycloak login
     const data = searchParams.get("data");
     if (data) {
-      sessionStorage.setItem('preloadData', data);
+      sessionStorage.setItem("preloadData", data);
     }
   }, [searchParams]);
 

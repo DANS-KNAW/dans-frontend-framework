@@ -668,6 +668,9 @@ importers:
 
   packages/file-mapper:
     dependencies:
+      '@dans-framework/deposit':
+        specifier: workspace:*
+        version: link:../deposit
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../utils
@@ -704,13 +707,16 @@ importers:
       react-redux:
         specifier: ^8.1.2
         version: 8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
+      react-router-dom:
+        specifier: ^6.14.2
+        version: 6.14.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      uuid:
+        specifier: ^9.0.0
+        version: 9.0.0
       xlsx:
         specifier: ^0.18.5
         version: 0.18.5
     devDependencies:
-      '@dans-framework/deposit':
-        specifier: workspace:*
-        version: link:../deposit
       '@dans-framework/pages':
         specifier: workspace:*
         version: link:../pages
@@ -720,6 +726,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.7
         version: 18.2.7
+      '@types/uuid':
+        specifier: ^9.0.2
+        version: 9.0.2
 
   packages/freshdesk:
     dependencies:
@@ -832,7 +841,7 @@ importers:
         specifier: ^5.14.3
         version: 5.14.3(@mui/material@5.16.7(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@types/react@18.2.15)(react@18.2.0)
       '@mui/material':
-        specifier: ^5.14.3
+        specifier: ^5.16.7
         version: 5.16.7(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       clsx:
         specifier: ^2.0.0

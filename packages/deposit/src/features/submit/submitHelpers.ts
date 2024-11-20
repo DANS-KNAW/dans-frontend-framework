@@ -7,7 +7,7 @@ export const formatFormData = (
   sessionId: string,
   metadata: SectionType[],
   files?: SelectedFile[],
-  formTitle: string = '',
+  formTitle: string = "",
 ) => {
   // Create the file metadata array
   const fileMetadata =
@@ -26,20 +26,22 @@ export const formatFormData = (
   // since the title field is unique, we can assume we only find one value
   // so lets return that
   let foundTitle = false;
-  const title = metadata.map(section => {
-    if (foundTitle) return false;
-    const toFind = findByIdOrName(formTitle, section.fields, "name")?.value;
-    if (toFind) {
-      foundTitle = true;
-    }
-    return toFind;
-  }).filter(Boolean)[0];
+  const title = metadata
+    .map((section) => {
+      if (foundTitle) return false;
+      const toFind = findByIdOrName(formTitle, section.fields, "name")?.value;
+      if (toFind) {
+        foundTitle = true;
+      }
+      return toFind;
+    })
+    .filter(Boolean)[0];
 
   return {
     id: sessionId,
     metadata: metadata,
     "file-metadata": fileMetadata,
-    title: title || '',
+    title: title || "",
   };
 };
 

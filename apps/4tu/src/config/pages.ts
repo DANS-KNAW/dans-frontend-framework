@@ -30,4 +30,4 @@ const advisorPage: Page = {
   },
 };
 
-export default [ advisorPage, depositPage ];
+export default [advisorPage, depositPage];

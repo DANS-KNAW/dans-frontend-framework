@@ -8,7 +8,7 @@ const sections: InitialSectionType[] = [administrative];
 
 const form: FormConfig = {
   form: sections,
-  formTitle: "title", 
+  formTitle: "title",
   filesUpload: {
     convertFiles: false,
     displayRoles: false,

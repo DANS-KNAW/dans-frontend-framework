@@ -1,5 +1,5 @@
 // Little helper to extract form data from an LZ compressed string
-import LZString from 'lz-string';
+import LZString from "lz-string";
 
 /*
 // format some fake data for testing purposes
@@ -22,10 +22,13 @@ console.log(fakeData);
 */
 
 const uri = new URL(document.location.toString());
-const searchParams = uri.searchParams.get("data") || sessionStorage.getItem("preloadData");
-const json = 
+const searchParams =
+  uri.searchParams.get("data") || sessionStorage.getItem("preloadData");
+const json =
   searchParams ?
-  JSON.parse(LZString.decompressFromEncodedURIComponent(searchParams as string)) :
-  null;
+    JSON.parse(
+      LZString.decompressFromEncodedURIComponent(searchParams as string),
+    )
+  : null;
 
 export default json;
