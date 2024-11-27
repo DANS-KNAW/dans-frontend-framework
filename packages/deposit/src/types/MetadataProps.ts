@@ -57,6 +57,7 @@ export interface AutocompleteFieldProps
   field: AutocompleteFieldType;
   onOpen?: () => void;
   isLoading?: boolean;
+  variant?: string;
 }
 
 export interface AutocompleteAPIFieldProps extends AutocompleteFieldProps {

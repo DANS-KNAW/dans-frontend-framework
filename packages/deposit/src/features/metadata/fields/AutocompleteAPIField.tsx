@@ -179,14 +179,17 @@ export const DatastationsField = ({
 export const BiodiversityField = ({
   field,
   sectionIndex,
+  variant
 }: AutocompleteFieldProps) => {
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   // Fetch data on input change
   const { data, isFetching, isLoading } = useFetchSpeciesQuery<QueryReturnType>(
-    debouncedInputValue,
+    { value: debouncedInputValue, variant: variant }, 
     { skip: debouncedInputValue === "" },
   );
+
+  console.log(data)
 
   return (
     <AutocompleteAPIField
@@ -510,6 +513,12 @@ export const MultiApiField = ({
       )}
       {field.multiApiValue === "interest groups" && (
         <RdaInterestGroupsField field={field} sectionIndex={sectionIndex} />
+      )}
+      {field.multiApiValue === "biodiversity_species_vernacular" && (
+        <BiodiversityField field={field} sectionIndex={sectionIndex} variant="vernacular" />
+      )}
+      {field.multiApiValue === "biodiversity_species_scientific" && (
+        <BiodiversityField field={field} sectionIndex={sectionIndex} variant="scientific" />
       )}
     </Stack>
   );
