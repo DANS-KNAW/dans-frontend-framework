@@ -101,7 +101,8 @@ export const maptilerApi = createApi({
     }),
     transformCoordinates: build.query({
       query: ({ type, coordinates, to, from }) => {
-        const stringCoordinates = geojsonToString(type, coordinates);
+        const stringCoordinates =
+          type !== undefined ? geojsonToString(type, coordinates) : coordinates;
         return {
           url: `coordinates/transform/${stringCoordinates}.json?s_srs=${from}&t_srs=${to}&key=${
             import.meta.env.VITE_MAPTILER_API_KEY
@@ -111,9 +112,13 @@ export const maptilerApi = createApi({
       },
       transformResponse: (response: MaptilerConversionResponse, _meta, arg) => {
         // If there are results, just return the coordinates as an array. We always assume only one set of coordinates is passed along.
-        return response.results.length > 0 ?
-            convertToGeojsonCoordinates(response.results, arg.type)
-          : [];
+        return (
+          response.results.length > 0 ?
+            arg.type ?
+              convertToGeojsonCoordinates(response.results, arg.type)
+            : response.results
+          : []
+        );
       },
       transformErrorResponse: () => ({
         error: i18n.t("metadata:apiFetchError", { api: "maptiler" }),
