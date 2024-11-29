@@ -29,6 +29,7 @@ export const darwinCoreApi = createApi({
             ...d,
             header:
               d.tdwgutility_organizedInClass?.split("/").pop() || "Dataset",
+            url: `https://dwc.tdwg.org/list/#dwc_${d.term_localName}`,
           }))
           .sort((a, b) => a.header?.localeCompare(b.header));
 

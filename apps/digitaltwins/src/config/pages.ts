@@ -18,15 +18,15 @@ const depositPage: Page = {
 const advisorPage: Page = {
   id: "mapper",
   name: {
-    en: "Map your data",
-    nl: "Map your data",
+    en: "Start mapping terms",
+    nl: "Start mapping terms",
   },
   slug: "map",
   template: "mapper",
   inMenu: true,
   menuTitle: {
-    en: "Map data",
-    nl: "Map data",
+    en: "Term mapping",
+    nl: "Term mapping",
   },
 };
 

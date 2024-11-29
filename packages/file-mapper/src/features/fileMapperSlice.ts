@@ -55,6 +55,7 @@ export const fileMapperSlice = createSlice({
     resetFileError: (state) => {
       state.fileError = initialState.fileError;
     },
+    reset: () => initialState,
   },
 });
 
@@ -69,6 +70,7 @@ export const {
   resetFileData,
   setFileError,
   resetFileError,
+  reset,
 } = fileMapperSlice.actions;
 
 export const getActiveStep = (state: RootState) => state.fileMapper.activeStep;

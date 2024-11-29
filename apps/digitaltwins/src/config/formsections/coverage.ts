@@ -36,7 +36,7 @@ const section: InitialSectionType = {
     {
       type: "autocomplete",
       label: {
-        en: "Species",
+        en: "Species covered",
         nl: "Soorten",
       },
       name: "species",
@@ -46,7 +46,8 @@ const section: InitialSectionType = {
         en: "Something here",
         nl: "Iets hier",
       },
-      options: "biodiversity",
+      multiApiValue: "biodiversity_species_scientific",
+      options: [ "biodiversity_species_scientific", "biodiversity_species_vernacular" ],
     },
     {
       type: "group",

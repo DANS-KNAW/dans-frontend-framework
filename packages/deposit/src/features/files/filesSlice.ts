@@ -10,6 +10,8 @@ export const filesSlice = createSlice({
   reducers: {
     // keep track of file selection
     addFiles: (state, action: PayloadAction<SelectedFile[]>) => {
+      console.log("adding");
+      console.log(action);
       state.push(...action.payload);
     },
     removeFile: (state, action: PayloadAction<SelectedFile>) => {

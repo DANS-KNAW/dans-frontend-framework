@@ -3,7 +3,10 @@ export type DarwinTerms =
   | "tdwgutility_organizedInClass"
   | "label"
   | "header"
-  | "term_deprecated";
+  | "term_deprecated"
+  | "term_isDefinedBy"
+  | "term_localName"
+  | "url";
 
 export type DarwinOptions = {
   [key in DarwinTerms]: string;

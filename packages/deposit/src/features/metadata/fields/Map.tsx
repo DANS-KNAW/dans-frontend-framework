@@ -114,7 +114,6 @@ const DrawMap = ({ field, sectionIndex }: DrawMapFieldProps) => {
   );
   const [getConvertedCoordinates] = useLazyTransformCoordinatesQuery();
   const [hiddenLayers, setHiddenLayers] = useState<string[]>([]);
-
   const mapRef = useRef<MapRef>(null);
   const [fetchWmsFeature] = useLazyFetchFeatureQuery();
 

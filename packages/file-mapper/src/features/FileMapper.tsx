@@ -1,8 +1,8 @@
-import { useEffect, type Dispatch, type SetStateAction } from "react";
+import { useEffect /*type Dispatch, type SetStateAction*/ } from "react";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Unstable_Grid2";
 import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
+// import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Stepper from "@mui/material/Stepper";
@@ -19,22 +19,34 @@ import {
   getSavedMap,
   getMapping,
   getFileError,
+  reset,
 } from "./fileMapperSlice";
-import { useSubmitMapMutation } from "./fileMapperApi";
+// import { useSubmitMapMutation } from './fileMapperApi';
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
-import CircularProgress from "@mui/material/CircularProgress";
+// import CircularProgress from '@mui/material/CircularProgress';
 import { useSiteTitle, setSiteTitle } from "@dans-framework/utils/sitetitle";
 import { lookupLanguageString } from "@dans-framework/utils/language";
-import { type Page } from "@dans-framework/pages";
-import type { FormConfig } from "@dans-framework/deposit";
+import type { Page } from "@dans-framework/pages";
+import {
+  addFiles,
+  initForm,
+  depositStore,
+  type FormConfig,
+  type FileLocation,
+} from "@dans-framework/deposit";
 import { steps } from "./Steps";
+import { v4 as uuidv4 } from "uuid";
+import { useNavigate } from "react-router-dom";
 
 const FileMapper = ({
-  setMappedForm,
-  page,
+  config,
+  /*setMappedForm,*/ page,
+  depositPageSlug,
 }: {
-  setMappedForm: Dispatch<SetStateAction<FormConfig | undefined>>;
+  config: FormConfig;
+  // setMappedForm?: Dispatch<SetStateAction<FormConfig | undefined>>;
   page: Page;
+  depositPageSlug?: string;
 }) => {
   const dispatch = useAppDispatch();
   const siteTitle = useSiteTitle();
@@ -44,31 +56,58 @@ const FileMapper = ({
   const savedMap = useAppSelector(getSavedMap);
   const mapping = useAppSelector(getMapping);
   const fileError = useAppSelector(getFileError);
-  const [submitMap, { isLoading, data }] = useSubmitMapMutation();
+  const navigate = useNavigate();
+
+  // submit to server, disabled for now
+  // const [ submitMap, { isLoading, data } ] = useSubmitMapMutation();
 
   // set page title
   useEffect(() => {
     setSiteTitle(siteTitle, lookupLanguageString(page.name, i18n.language));
   }, [siteTitle, page.name]);
 
-  useEffect(() => {
-    // save server return data to state
-    setMappedForm(data);
-  }, [data]);
+  // useEffect(() => {
+  //   // save server returned data to state
+  //   setMappedForm(data);
+  // }, [data]);
 
   const handleNext = () => {
     if (activeStep !== steps.length - 1 && (!file || !savedMap)) {
       dispatch(setActiveStep(activeStep + 1));
     } else if (file) {
-      (async () => {
-        const fetchedFile = await fetch(file.url);
-        const blob = await fetchedFile.blob();
-        submitMap({
-          savedMap: savedMap,
-          newMap: mapping,
-          file: blob,
-        });
-      })();
+      // submit to server
+      // let's disable this for now, and just load the file and the selected mapping into the Deposit package redux store
+      // (async () => {
+      //   const fetchedFile = await fetch(file.url);
+      //   const blob = await fetchedFile.blob();
+      //   submitMap({
+      //     savedMap: savedMap,
+      //     newMap: mapping,
+      //     file: blob,
+      //   });
+      // })();
+
+      // add file to deposit form directly
+      const serializedFile = {
+        id: uuidv4(),
+        name: file.name,
+        size: file.size,
+        type: file.name.substring(file.name.lastIndexOf(".") + 1),
+        location: "local" as FileLocation,
+        url: file.url,
+        private: false,
+        lastModified: 0,
+        mapping: mapping,
+      };
+
+      // must initialize the form here, otherwise files will get overwritten
+      depositStore.dispatch(initForm(config.form));
+      // add files to initialized form
+      depositStore.dispatch(addFiles([serializedFile]));
+      // navigate to form
+      depositPageSlug && navigate(depositPageSlug);
+      // reset file mapper
+      dispatch(reset());
     }
   };
 
@@ -115,23 +154,26 @@ const FileMapper = ({
               <Box sx={{ flex: "1 1 auto" }} />
               <Button
                 onClick={handleNext}
-                disabled={!file || isLoading || fileError !== undefined}
+                disabled={
+                  !file ||
+                  /*isLoading ||*/
+                  fileError !== undefined ||
+                  (activeStep === steps.length - 1 &&
+                    file &&
+                    Object.keys(mapping).length === 0)
+                }
                 variant="contained"
               >
-                {activeStep === steps.length - 1 || (file && savedMap) ?
-                  t("buttonLast")
-                : isLoading ?
-                  <Stack
-                    direction="row"
-                    spacing={1}
-                    alignItems="center"
-                    justifyContent="center"
-                    display="flex"
-                  >
-                    <span>{t("isLoading")}</span>
-                    <CircularProgress size={18} />
-                  </Stack>
-                : t("buttonNext")}
+                {
+                  activeStep === steps.length - 1 || (file && savedMap) ?
+                    t("buttonLast")
+                    // : isLoading ?
+                    // <Stack direction="row" spacing={1} alignItems="center" justifyContent="center" display="flex">
+                    //   <span>{t("isLoading")}</span>
+                    //   <CircularProgress size={18} />
+                    // </Stack>
+                  : t("buttonNext")
+                }
               </Button>
             </Box>
           </Paper>

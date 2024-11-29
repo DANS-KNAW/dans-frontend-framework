@@ -7,23 +7,25 @@ export const biodiversityApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "https://api.biodiversitydata.nl/v2" }),
   endpoints: (build) => ({
     fetchSpecies: build.query({
-      query: (keyword) => {
+      query: ({ value, variant }) => {
         // Format a query to search both for scientific as well as more common matches
         const formattedQuery = encodeURIComponent(
           JSON.stringify({
             conditions: [
               {
-                field: "acceptedName.fullScientificName",
+                field: variant === "scientific" ? "acceptedName.fullScientificName" : "vernacularNames.name",
                 operator: "CONTAINS",
-                value: keyword,
+                value: value,
               },
+              // For now, Dutch species registry only (NSR)
+              // Catalog of life is code COL
               {
-                field: "vernacularNames.name",
-                operator: "CONTAINS",
-                value: keyword,
-              },
+                field: "sourceSystem.code",
+                operator: "EQUALS",
+                value: "NSR",
+              }
             ],
-            logicalOperator: "OR",
+            logicalOperator: "AND",
             size: 1000,
           }),
         );
@@ -40,7 +42,7 @@ export const biodiversityApi = createApi({
         console.log(response);
         return response.resultSet?.length > 0 ?
             {
-              arg: arg,
+              arg: arg.value,
               response: response.resultSet.map((result) => ({
                 label: result.item.acceptedName.fullScientificName,
                 value: result.item.recordURI,
@@ -48,7 +50,7 @@ export const biodiversityApi = createApi({
                 extraContent: result.item.vernacularNames
                   ?.filter(
                     (item) =>
-                      item.language === "English" || item.language === "Dutch",
+                      item.language === "English" || item.language === "Dutch"  || item.language === "Flemish",
                   )
                   .map((item) => item.name)
                   .join(", "),

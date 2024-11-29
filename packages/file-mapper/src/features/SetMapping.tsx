@@ -14,6 +14,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
 import Collapse from "@mui/material/Collapse";
+import Tooltip from "@mui/material/Tooltip";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import type { DarwinOptions, FileError, SheetData } from "../types";
@@ -29,6 +30,8 @@ import {
 import { useFetchDarwinTermsQuery } from "./fileMapperApi";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { StepWrap, maxRows } from "./Steps";
+import LaunchIcon from "@mui/icons-material/Launch";
+import InputAdornment from "@mui/material/InputAdornment";
 
 export const SetMapping = () => {
   const { t } = useTranslation("steps");
@@ -124,7 +127,6 @@ const Row = ({ rowKey, row }: { rowKey: string; row: string }) => {
   const fileData = useAppSelector(getFileData);
   const columnData = fileData && fileData.slice(1).map((data) => data[rowKey]);
   const [open, setOpen] = useState<boolean>(false);
-  console.log(columnData);
 
   const { data, isLoading } = useFetchDarwinTermsQuery("");
 
@@ -165,7 +167,19 @@ const Row = ({ rowKey, row }: { rowKey: string; row: string }) => {
             groupBy={(option) => option.header}
             sx={{ width: 300 }}
             renderInput={(params) => (
-              <TextField {...params} label={t("selectOption")} />
+              <TextField
+                {...params}
+                label={t("selectOption")}
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment:
+                    mapping.hasOwnProperty(row) ?
+                      <InputAdornment position="start">
+                        <InfoLink url={mapping[row].url} />
+                      </InputAdornment>
+                    : undefined,
+                }}
+              />
             )}
             onChange={(_e, value) => selectValue(row, value)}
             value={(mapping.hasOwnProperty(row) && mapping[row]) || null}
@@ -178,6 +192,12 @@ const Row = ({ rowKey, row }: { rowKey: string; row: string }) => {
             }}
             loading={isLoading}
             size="small"
+            renderOption={(props, option) => (
+              <li {...props} key={option.label} style={{ flexWrap: "wrap" }}>
+                <InfoLink url={option.url} margin />
+                {option.label}
+              </li>
+            )}
           />
         </TableCell>
       </TableRow>
@@ -188,7 +208,7 @@ const Row = ({ rowKey, row }: { rowKey: string; row: string }) => {
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Typography variant="h6">{t("dataHeader")}</Typography>
               {columnData.map((item, i) => (
-                <Typography mb={i === columnData.length - 1 ? 3 : 0.5}>
+                <Typography key={i} mb={i === columnData.length - 1 ? 3 : 0.5}>
                   {item}
                 </Typography>
               ))}
@@ -197,5 +217,25 @@ const Row = ({ rowKey, row }: { rowKey: string; row: string }) => {
         </TableRow>
       )}
     </>
+  );
+};
+
+const InfoLink = ({ url, margin }: { url: string; margin?: boolean }) => {
+  const { t } = useTranslation("steps");
+
+  return (
+    <Tooltip title={t("moreInfo")}>
+      <a
+        href={url}
+        target="_blank"
+        rel="norefferer"
+        style={{ marginRight: margin ? "0.5rem" : 0, lineHeight: 0 }}
+      >
+        <LaunchIcon
+          color="primary"
+          sx={{ fontSize: 16, "&:hover": { color: "primary.dark" } }}
+        />
+      </a>
+    </Tooltip>
   );
 };

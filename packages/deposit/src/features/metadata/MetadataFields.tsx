@@ -160,9 +160,13 @@ const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
               return (
                 <DatastationsField field={field} sectionIndex={sectionIndex} />
               );
-            case "biodiversity":
+            case "biodiversity_species_vernacular":
               return (
-                <BiodiversityField field={field} sectionIndex={sectionIndex} />
+                <BiodiversityField field={field} sectionIndex={sectionIndex} variant="vernacular" />
+              );
+            case "biodiversity_species_scientific":
+              return (
+                <BiodiversityField field={field} sectionIndex={sectionIndex} variant="scientific" />
               );
             default:
               return (

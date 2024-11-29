@@ -31,6 +31,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
+import Chip from "@mui/material/Chip";
 import {
   getSingleFileSubmitStatus,
   setFilesSubmitStatus,
@@ -96,7 +97,7 @@ const FilesTable = () => {
           <TableBody>
             <AnimatePresence initial={false}>
               {selectedFiles.map((file) => (
-                <FileTableRow key={file.name} file={file} />
+                <FileTableRow key={file.id} file={file} />
               ))}
             </AnimatePresence>
           </TableBody>
@@ -312,6 +313,25 @@ const FileTableRow = ({ file }: FileItemProps) => {
               )}
               <motion.div layout key="name">
                 {file.name}
+                {file.mapping && (
+                  <Tooltip
+                    title={
+                      <Box>
+                        {Object.entries(file.mapping).map(([key, value], i) => (
+                          <Typography variant="body2" key={i}>
+                            {key}: {value.label}
+                          </Typography>
+                        ))}
+                      </Box>
+                    }
+                  >
+                    <Chip
+                      sx={{ ml: 1, fontSize: "80%" }}
+                      label={t("termsMapped")}
+                      size="small"
+                    />
+                  </Tooltip>
+                )}
               </motion.div>
             </AnimatePresence>
           </Box>
@@ -370,7 +390,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
         exit={{ opacity: 0 }}
       >
         <AnimatePresence>
-          <UploadProgress file={file} key={`progress-${file.name}`} />
+          <UploadProgress file={file} key={`progress-${file.id}`} />
         </AnimatePresence>
       </MotionRow>
     </>
