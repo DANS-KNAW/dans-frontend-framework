@@ -34,7 +34,7 @@ export const LoginButton = ({ variant }: { variant?: "contained" }) => {
             enqueueSnackbar("Error redirecting to sign-in server", {
               variant: "customError",
             }),
-          )
+          );
         }
       }
     >

@@ -20,5 +20,7 @@ export function findFileGroup(
   data?: GroupedDataObject,
 ): string | null {
   if (!ext || !data) return null;
-  return Object.keys(data).find((key: string) => data[key].includes(ext)) || null;
+  return (
+    Object.keys(data).find((key: string) => data[key].includes(ext)) || null
+  );
 }

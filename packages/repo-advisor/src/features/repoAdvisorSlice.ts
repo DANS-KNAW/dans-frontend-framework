@@ -13,8 +13,8 @@ const initialState: {
   activeStep: 0,
   ror: null,
   narcis: null,
-  depositType: '',
-  fileType: '',
+  depositType: "",
+  fileType: "",
   repo: undefined,
 };
 
@@ -39,16 +39,24 @@ export const repoAdvisorSlice = createSlice({
     },
     setRepo: (state, action: PayloadAction<FormConfig>) => {
       state.repo = action.payload;
-    }
+    },
   },
 });
 
-export const { setActiveStep, setRor, setNarcis, setFileType, setDepositType, setRepo } = repoAdvisorSlice.actions;
+export const {
+  setActiveStep,
+  setRor,
+  setNarcis,
+  setFileType,
+  setDepositType,
+  setRepo,
+} = repoAdvisorSlice.actions;
 
 export const getActiveStep = (state: RootState) => state.repoAdvisor.activeStep;
 export const getRor = (state: RootState) => state.repoAdvisor.ror;
 export const getNarcis = (state: RootState) => state.repoAdvisor.narcis;
-export const getDepositType = (state: RootState) => state.repoAdvisor.depositType;
+export const getDepositType = (state: RootState) =>
+  state.repoAdvisor.depositType;
 export const getFileType = (state: RootState) => state.repoAdvisor.fileType;
 export const getRepo = (state: RootState) => state.repoAdvisor.repo;
 

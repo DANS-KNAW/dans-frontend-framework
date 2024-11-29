@@ -1,6 +1,6 @@
 import type { LanguageStrings } from "@dans-framework/utils";
 import type { AuthProperty } from "@dans-framework/user-auth";
-import type { Feature, Point, Polygon, LineString, Geometry } from 'geojson';
+import type { Feature, Point, Polygon, LineString, Geometry } from "geojson";
 import type { LngLatBoundsLike } from "react-map-gl";
 
 // All user input field types
@@ -71,7 +71,8 @@ export interface DateFieldType extends BasisFieldType {
   maxDateField?: string;
 }
 
-export interface DateRangeFieldType extends Omit<DateFieldType, "type" | "value"> {
+export interface DateRangeFieldType
+  extends Omit<DateFieldType, "type" | "value"> {
   type: "daterange";
   value?: (string | null)[];
   optionalEndDate?: boolean;
@@ -169,7 +170,8 @@ export interface CheckFieldType
 }
 
 export type MapFeatureType = Point | Polygon | LineString;
-export interface ExtendedMapFeature<G extends Geometry = Geometry, P = any> extends Feature<G, P> {
+export interface ExtendedMapFeature<G extends Geometry = Geometry, P = any>
+  extends Feature<G, P> {
   geonames?: OptionsType | undefined;
   originalCoordinates?: number[] | number[][] | number[][][];
   coordinateSystem?: OptionsType;
@@ -181,8 +183,7 @@ export interface CoordinateSystem extends OptionsType {
   bbox?: LngLatBoundsLike;
 }
 
-export interface DrawMapFieldType
-  extends Omit<BasisFieldType, "value"> {
+export interface DrawMapFieldType extends Omit<BasisFieldType, "value"> {
   type: "drawmap";
   value?: ExtendedMapFeature[];
   wmsLayers?: {

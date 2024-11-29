@@ -154,22 +154,30 @@ export const getFieldStatus = (field: InputField): SectionStatus => {
   const fieldEmpty =
     !field.value ||
     (typeof field.value === "string" && !field.value.trim()) ||
-    (Array.isArray(field.value) && field.value.length === 0 ) ||
-    (field.type === 'daterange' && Array.isArray(field.value) && field.value.every(v => v === null || v === "")) ||
-    (field.type === 'drawmap' && Array.isArray(field.value) && field.value.some(v => v.geonames === null || v.geonames === undefined));
+    (Array.isArray(field.value) && field.value.length === 0) ||
+    (field.type === "daterange" &&
+      Array.isArray(field.value) &&
+      field.value.every((v) => v === null || v === "")) ||
+    (field.type === "drawmap" &&
+      Array.isArray(field.value) &&
+      field.value.some((v) => v.geonames === null || v.geonames === undefined));
 
   if (field.noIndicator && !field.required && fieldEmpty) {
     return "neutral";
   } else if (
     (!field.required && fieldEmpty) ||
     // daterange should also give a warning state if end date is optional and not filled in
-    (field.type === 'daterange' && field.optionalEndDate && Array.isArray(field.value) && !field.value[1] && field.valid)
+    (field.type === "daterange" &&
+      field.optionalEndDate &&
+      Array.isArray(field.value) &&
+      !field.value[1] &&
+      field.valid)
   ) {
     return "warning";
   } else if (
     (field.required && fieldEmpty) ||
     (!fieldEmpty && field.validation && !field.valid) ||
-    (field.type === 'daterange' && !fieldEmpty && !field.valid)
+    (field.type === "daterange" && !fieldEmpty && !field.valid)
   ) {
     return "error";
   } else {
@@ -187,21 +195,26 @@ export const getSectionStatus = (section: SectionStatus[]): SectionStatus => {
 };
 
 // Check if a field conforms to validation type specified
-export const getValid = (
-  value: any,
-  field: Field,
-): boolean => {
+export const getValid = (value: any, field: Field): boolean => {
   if (field.validation) {
     return validateData(field.validation, value);
   } else if (
-    ( value && value.length !== 0 && field.type !== 'daterange' && field.type !== 'drawmap' ) || 
+    (value &&
+      value.length !== 0 &&
+      field.type !== "daterange" &&
+      field.type !== "drawmap") ||
     // special check for date range: start date must be before or equal to end date,
     // or if end date not required, end date can be empty
-    (field.type === 'daterange' && value && (
-      moment(value[0], field.format).isSameOrBefore(moment(value[1], field.format)) ||
-      (field.optionalEndDate && value[0] && !value[1]) 
-    )) ||
-    (field.type === 'drawmap' && value.every((item: any) => item.geonames !== null && item.geonames !== undefined))
+    (field.type === "daterange" &&
+      value &&
+      (moment(value[0], field.format).isSameOrBefore(
+        moment(value[1], field.format),
+      ) ||
+        (field.optionalEndDate && value[0] && !value[1]))) ||
+    (field.type === "drawmap" &&
+      value.every(
+        (item: any) => item.geonames !== null && item.geonames !== undefined,
+      ))
   ) {
     return true;
   }

@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, /*current*/ } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction /*current*/ } from "@reduxjs/toolkit";
 import { RootState } from "../../redux/store";
 import type {
   SetFieldValuePayload,
@@ -109,15 +109,15 @@ export const metadataSlice = createSlice({
         }
 
         // After every input, we need to update field valid status and section status as well.
-        field.valid = getValid(
-          action.payload.value,
-          field
-        );
+        field.valid = getValid(action.payload.value, field);
         // then set the section/accordion
         metadataSlice.caseReducers.setSectionStatus(state, action);
       }
     },
-    setMultiApiField: (state, action: PayloadAction<SetFieldMultiApiPayload>) => {
+    setMultiApiField: (
+      state,
+      action: PayloadAction<SetFieldMultiApiPayload>,
+    ) => {
       const section = state.form[action.payload.sectionIndex];
       const field = findByIdOrName(action.payload.id, section.fields);
       if (field) {

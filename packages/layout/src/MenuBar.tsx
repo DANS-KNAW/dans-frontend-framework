@@ -91,7 +91,7 @@ const MenuBar = ({
                           {lookupLanguageString(page.menuTitle, i18n.language)}
                         </Link>
                       </MenuItem>
-                    )
+                    ),
                 )}
             </Menu>
             <Link
@@ -139,7 +139,7 @@ const MenuBar = ({
                     >
                       {lookupLanguageString(page.menuTitle, i18n.language)}
                     </Button>
-                  )
+                  ),
               )}
           </Box>
 

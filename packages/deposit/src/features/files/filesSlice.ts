@@ -18,7 +18,7 @@ export const filesSlice = createSlice({
       );
     },
     setFileMeta: (state, action: PayloadAction<ReduxFileActions>) => {
-      console.log(action)
+      console.log(action);
       // set extra metadata for this file: restricted status, role, processing, validity
       const file = state.find(
         (file: SelectedFile) => file.id === action.payload.id,

@@ -16,7 +16,7 @@ export const store = configureStore({
       .concat(repoAdvisorApi.middleware)
       .concat(datastationsApi.middleware)
       .concat(rorApi.middleware)
-      .concat(errorLogger)
+      .concat(errorLogger),
 });
 
 export type AppDispatch = typeof store.dispatch;

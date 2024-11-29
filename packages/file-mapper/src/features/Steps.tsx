@@ -20,11 +20,18 @@ export const saves = [
 export const maxRows = 10;
 
 // define steps
-export const steps = ['selectFile', 'createMapping', 'finish'];
+export const steps = ["selectFile", "createMapping", "finish"];
 
 // wrapper for individual steps
-export const StepWrap = ({ title, children }: { title: string; children: ReactNode }) => 
-  <Box sx={{pt: 2, pb: 1}}>
+export const StepWrap = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) => (
+  <Box sx={{ pt: 2, pb: 1 }}>
     <Typography variant="h2">{title}</Typography>
     {children}
   </Box>
+);

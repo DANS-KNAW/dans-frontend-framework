@@ -26,7 +26,13 @@ export const UserMenu = ({
   // keep user signed in, and try to sign in automatically
   const [hasTriedSignin, setHasTriedSignin] = useState(false);
   useEffect(() => {
-    if (!hasAuthParams() && !auth.isAuthenticated && !auth.activeNavigator && !auth.isLoading && !hasTriedSignin) {
+    if (
+      !hasAuthParams() &&
+      !auth.isAuthenticated &&
+      !auth.activeNavigator &&
+      !auth.isLoading &&
+      !hasTriedSignin
+    ) {
       auth.signinSilent();
       setHasTriedSignin(true);
     }
@@ -35,7 +41,7 @@ export const UserMenu = ({
   // if we get an error renewing the token, just sign the user out
   useEffect(() => {
     auth.events.addSilentRenewError(() => {
-      console.error('Auth event: silent renew error. Signing user out.');
+      console.error("Auth event: silent renew error. Signing user out.");
       auth.removeUser();
     });
   }, [auth.events, auth.removeUser]);

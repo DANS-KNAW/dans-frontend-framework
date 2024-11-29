@@ -1,4 +1,4 @@
-export type DarwinTerms = 
+export type DarwinTerms =
   | "term_localName"
   | "tdwgutility_organizedInClass"
   | "label"
@@ -7,7 +7,7 @@ export type DarwinTerms =
 
 export type DarwinOptions = {
   [key in DarwinTerms]: string;
-}
+};
 
 export interface Mapping {
   [key: string]: DarwinOptions;
@@ -25,8 +25,7 @@ export interface SerializedFile {
   url: string;
 }
 
-export type FileError = 
-  | "tooManyRows";
+export type FileError = "tooManyRows";
 
 export interface SheetData {
   [key: string]: string;

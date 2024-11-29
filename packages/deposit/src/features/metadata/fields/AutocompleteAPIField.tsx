@@ -176,7 +176,10 @@ export const DatastationsField = ({
   );
 };
 
-export const BiodiversityField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
+export const BiodiversityField = ({
+  field,
+  sectionIndex,
+}: AutocompleteFieldProps) => {
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   // Fetch data on input change

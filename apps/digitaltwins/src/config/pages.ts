@@ -30,7 +30,6 @@ const advisorPage: Page = {
   },
 };
 
-
 const homePage: Page = {
   id: "home",
   name: "Home",
@@ -52,5 +51,4 @@ const homePage: Page = {
   },
 };
 
-
-export default [ advisorPage, depositPage, homePage ];
+export default [advisorPage, depositPage, homePage];

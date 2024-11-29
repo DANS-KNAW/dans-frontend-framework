@@ -13,7 +13,11 @@ import {
   UserSubmissions,
   SignInCallback,
 } from "@dans-framework/user-auth";
-import { RepoAdvisor, RepoBar, NoRepoSelected } from '@dans-framework/repo-advisor';
+import {
+  RepoAdvisor,
+  RepoBar,
+  NoRepoSelected,
+} from "@dans-framework/repo-advisor";
 import { Generic, type Page } from "@dans-framework/pages";
 
 // Load config variables
@@ -27,8 +31,8 @@ import { AnimatePresence, motion } from "framer-motion";
 
 const App = () => {
   const { i18n } = useTranslation();
-  const [ repoConfig, setRepoConfig ] = useState<FormConfig>();
-  const configIsSet = repoConfig?.hasOwnProperty('form') || false;
+  const [repoConfig, setRepoConfig] = useState<FormConfig>();
+  const configIsSet = repoConfig?.hasOwnProperty("form") || false;
   return (
     <AuthWrapper authProvider={authProvider}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
@@ -36,7 +40,7 @@ const App = () => {
           {/* Suspense to make sure languages can load first */}
           <Suspense>
             <AnimatePresence>
-              { configIsSet && 
+              {configIsSet && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -45,14 +49,14 @@ const App = () => {
                 >
                   <RepoBar repo={repoConfig?.displayName} />
                 </motion.div>
-              }
+              )}
             </AnimatePresence>
           </Suspense>
           <LanguageBar
             languages={languages}
             changeLanguage={i18n.changeLanguage}
           />
-          <MenuBar 
+          <MenuBar
             pages={pages}
             userSettings={configIsSet}
             userSubmissions={configIsSet}
@@ -75,9 +79,8 @@ const App = () => {
                       <UserSettings
                         target={repoConfig.targetCredentials}
                         depositSlug=""
-                      /> :
-                      <NoRepoSelected advisorLocation="/" />
-                    }
+                      />
+                    : <NoRepoSelected advisorLocation="/" />}
                   </AuthRoute>
                 }
               />
@@ -86,9 +89,8 @@ const App = () => {
                 element={
                   <AuthRoute>
                     {repoConfig ?
-                      <UserSubmissions depositSlug="" /> :
-                      <NoRepoSelected advisorLocation="/" />
-                    }
+                      <UserSubmissions depositSlug="" />
+                    : <NoRepoSelected advisorLocation="/" />}
                   </AuthRoute>
                 }
               />
@@ -102,13 +104,16 @@ const App = () => {
                       page.template === "deposit" ?
                         <AuthRoute>
                           {repoConfig ?
-                            <Deposit config={repoConfig} page={page} /> :
-                            <NoRepoSelected advisorLocation="/" />
-                          }
+                            <Deposit config={repoConfig} page={page} />
+                          : <NoRepoSelected advisorLocation="/" />}
                         </AuthRoute>
                       : page.template === "advisor" ?
                         <AuthRoute>
-                          <RepoAdvisor page={page} setRepoConfig={setRepoConfig} depositLocation="/deposit" />
+                          <RepoAdvisor
+                            page={page}
+                            setRepoConfig={setRepoConfig}
+                            depositLocation="/deposit"
+                          />
                         </AuthRoute>
                       : <Generic {...page} />
                     }
@@ -122,16 +127,15 @@ const App = () => {
                 element={
                   <AuthRoute>
                     {repoConfig ?
-                      <Deposit 
-                        config={repoConfig} 
-                        page={{ 
+                      <Deposit
+                        config={repoConfig}
+                        page={{
                           name: "Deposit",
                           id: "deposit",
                           inMenu: true,
-                        }} 
-                      /> :
-                      <NoRepoSelected advisorLocation="/" />
-                    }
+                        }}
+                      />
+                    : <NoRepoSelected advisorLocation="/" />}
                   </AuthRoute>
                 }
               />

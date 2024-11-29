@@ -17,8 +17,8 @@ export const repoAdvisorApi = createApi({
           "auth-env-name": import.meta.env.VITE_ENV_NAME,
         };
 
-        return ({
-          url: 'seek-advice',
+        return {
+          url: "seek-advice",
           method: "POST",
           headers: headers,
           body: JSON.stringify({
@@ -27,13 +27,13 @@ export const repoAdvisorApi = createApi({
             "deposit-type": depositType,
             ...(fileType && { "file-type": fileType }),
           }),
-        });
+        };
       },
       transformResponse: (response: RepoResponse) => response.advice,
       transformErrorResponse: () => {
-        return ({
-          error: "Error connecting to server"
-        });
+        return {
+          error: "Error connecting to server",
+        };
       },
     }),
   }),

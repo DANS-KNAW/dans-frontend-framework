@@ -15,7 +15,7 @@ const initialState: {
   activeStep: 0,
   mapping: {},
   file: undefined,
-  savedMap: '',
+  savedMap: "",
   form: undefined,
   fileError: undefined,
   fileData: undefined,
@@ -58,16 +58,16 @@ export const fileMapperSlice = createSlice({
   },
 });
 
-export const { 
-  setActiveStep, 
-  setMapping, 
-  resetMapping, 
-  setSavedMap, 
-  setFile, 
-  saveData, 
+export const {
+  setActiveStep,
+  setMapping,
+  resetMapping,
+  setSavedMap,
+  setFile,
+  saveData,
   setFileData,
-  resetFileData, 
-  setFileError, 
+  resetFileData,
+  setFileError,
   resetFileError,
 } = fileMapperSlice.actions;
 

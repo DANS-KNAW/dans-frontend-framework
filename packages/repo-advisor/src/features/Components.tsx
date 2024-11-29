@@ -1,15 +1,20 @@
 import { useState } from "react";
-import Stack from '@mui/material/Stack';
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
+import Stack from "@mui/material/Stack";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 import { useDebounce } from "use-debounce";
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import { useFetchRorByNameQuery, useFetchDatastationsTermQuery, type OptionsType, type QueryReturnType } from "@dans-framework/deposit";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import {
+  useFetchRorByNameQuery,
+  useFetchDatastationsTermQuery,
+  type OptionsType,
+  type QueryReturnType,
+} from "@dans-framework/deposit";
 import { useTranslation } from "react-i18next";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { getRor, getNarcis, setRor, setNarcis } from "./repoAdvisorSlice";
@@ -20,27 +25,36 @@ type Option = {
   label: string;
 };
 
-export const SelectField = ({label, value, onChange, options, disabled}: {
+export const SelectField = ({
+  label,
+  value,
+  onChange,
+  options,
+  disabled,
+}: {
   label: string;
   value: string;
   onChange: (val: string) => void;
   options: Option[];
   disabled?: boolean;
-}) => 
+}) => (
   <Box mb={2}>
     <FormControl fullWidth disabled={disabled}>
       <InputLabel>{label}</InputLabel>
       <Select
-        value={value || ''}
+        value={value || ""}
         label={label}
         onChange={(e: SelectChangeEvent) => onChange(e.target.value)}
       >
-        {options.map( option => 
-          <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
-        )}
+        {options.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
       </Select>
     </FormControl>
   </Box>
+);
 
 // Derived from the API field in the Deposit package
 export const RorField = () => {
@@ -109,11 +123,11 @@ const ApiField = ({
   data,
   isLoading,
   isFetching,
-  label, 
+  label,
   setValue,
   value,
   disabled,
-}: AutocompleteProps ) => {
+}: AutocompleteProps) => {
   const { t } = useTranslation("steps");
 
   return (
@@ -132,13 +146,9 @@ const ApiField = ({
           : []
         }
         value={value || null}
-        inputValue={inputValue || value?.label as string || ""}
+        inputValue={inputValue || (value?.label as string) || ""}
         renderInput={(params) => (
-          <TextField
-            {...params}
-            label={label}
-            placeholder=""
-          />
+          <TextField {...params} label={label} placeholder="" />
         )}
         onChange={(_e, newValue, _reason) => setValue(newValue as OptionsType)}
         filterOptions={(x) => x}

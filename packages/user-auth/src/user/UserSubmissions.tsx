@@ -88,27 +88,27 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
   // are there any targets that have been submitted not complete yet?
   const allTargetsComplete =
     (data &&
-    data
-      .filter(
-        (d) =>
-          d["release-version"] === "PUBLISHED" ||
-          d["release-version"] === "PUBLISH",
-      )
-      .every(
-        // if all are finished, or one has an error, stop checking
-        (d) =>
-          d.targets.every(
-            (t) => depositStatus.success.indexOf(t["deposit-status"]) !== -1,
-          ) ||
-          d.targets.some(
-            (t) => depositStatus.error.indexOf(t["deposit-status"]) !== -1,
-          ) ||
-          d.targets.some(
-            // Something went wrong if status is null.
-            // Todo: modify API to give more consistent output
-            (t) => t["deposit-status"] === null,
-          ),
-      )) || 
+      data
+        .filter(
+          (d) =>
+            d["release-version"] === "PUBLISHED" ||
+            d["release-version"] === "PUBLISH",
+        )
+        .every(
+          // if all are finished, or one has an error, stop checking
+          (d) =>
+            d.targets.every(
+              (t) => depositStatus.success.indexOf(t["deposit-status"]) !== -1,
+            ) ||
+            d.targets.some(
+              (t) => depositStatus.error.indexOf(t["deposit-status"]) !== -1,
+            ) ||
+            d.targets.some(
+              // Something went wrong if status is null.
+              // Todo: modify API to give more consistent output
+              (t) => t["deposit-status"] === null,
+            ),
+        )) ||
     // or when fetch is complete but there's no data for this user
     (data === undefined && !isLoading);
 
@@ -346,7 +346,8 @@ const SubmissionList = ({
         width: 200,
         type: "dateTime",
         valueGetter: (params) => moment.utc(params.value).toDate(),
-        renderCell: (params) => moment(params.value).local().format("D-M-Y - HH:mm"),
+        renderCell: (params) =>
+          moment(params.value).local().format("D-M-Y - HH:mm"),
       },
       ...(type === "published" ?
         [
@@ -378,7 +379,8 @@ const SubmissionList = ({
       // Todo: API needs work and standardisation, also see types.
       error: d["targets"].some(
         // If there's an error, allow deletion
-        (t) => t["deposit-status"] === "rejected" || t["deposit-status"] === "error",
+        (t) =>
+          t["deposit-status"] === "rejected" || t["deposit-status"] === "error",
       ),
       processing: d["targets"].some(
         (t) => depositStatus.processing.indexOf(t["deposit-status"]) !== -1,
@@ -615,7 +617,8 @@ const ViewAction = ({
           (target, i) =>
             target["output-response"] &&
             target["output-response"].response?.identifiers &&
-            (target["deposit-status"] === "accepted" || target["deposit-status"] === "finish") && (
+            (target["deposit-status"] === "accepted" ||
+              target["deposit-status"] === "finish") && (
               <Link
                 href={target["output-response"].response.identifiers[0].url}
                 color="inherit"

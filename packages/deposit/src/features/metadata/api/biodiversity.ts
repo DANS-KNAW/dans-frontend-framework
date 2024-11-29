@@ -9,33 +9,35 @@ export const biodiversityApi = createApi({
     fetchSpecies: build.query({
       query: (keyword) => {
         // Format a query to search both for scientific as well as more common matches
-        const formattedQuery = encodeURIComponent(JSON.stringify({
-          conditions: [
-            {
-               field: "acceptedName.fullScientificName",
-               operator: "CONTAINS",
-               value: keyword,
-            },
-            {
-               field: "vernacularNames.name",
-               operator: "CONTAINS",
-               value: keyword,
-            },
-          ],
-          logicalOperator: "OR",
-          size: 1000,
-        }));
+        const formattedQuery = encodeURIComponent(
+          JSON.stringify({
+            conditions: [
+              {
+                field: "acceptedName.fullScientificName",
+                operator: "CONTAINS",
+                value: keyword,
+              },
+              {
+                field: "vernacularNames.name",
+                operator: "CONTAINS",
+                value: keyword,
+              },
+            ],
+            logicalOperator: "OR",
+            size: 1000,
+          }),
+        );
 
-        return ({
+        return {
           url: `taxon/query/?_querySpec=${formattedQuery}`,
           headers: { Accept: "application/json" },
-        })
+        };
       },
       transformResponse: (response: BiodiversityResponse, _meta, arg) => {
         // Return an empty array when no results, which is what the Autocomplete field expects
         // Otherwise, format the set of results to something useful
         // Todo: language
-        console.log(response)
+        console.log(response);
         return response.resultSet?.length > 0 ?
             {
               arg: arg,
@@ -43,7 +45,13 @@ export const biodiversityApi = createApi({
                 label: result.item.acceptedName.fullScientificName,
                 value: result.item.recordURI,
                 extraLabel: "vernacularName",
-                extraContent: result.item.vernacularNames?.filter(item => item.language === "English" || item.language === "Dutch").map(item => item.name).join(", "),
+                extraContent: result.item.vernacularNames
+                  ?.filter(
+                    (item) =>
+                      item.language === "English" || item.language === "Dutch",
+                  )
+                  .map((item) => item.name)
+                  .join(", "),
               })),
             }
           : [];

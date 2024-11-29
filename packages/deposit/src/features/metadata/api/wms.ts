@@ -2,9 +2,9 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { XMLParser } from "fast-xml-parser";
 
 export const wmsApi = createApi({
-  reducerPath: 'wms',
+  reducerPath: "wms",
   baseQuery: fetchBaseQuery({
-    baseUrl: '',
+    baseUrl: "",
   }),
   endpoints: (build) => ({
     fetchCapabilities: build.query({
@@ -26,7 +26,7 @@ export const wmsApi = createApi({
     }),
     fetchFeature: build.query({
       // custom query that can handle an array of layers
-      query: ({url, layerName, x, y, bbox, width, height}) => {
+      query: ({ url, layerName, x, y, bbox, width, height }) => {
         const params = new URLSearchParams({
           request: "GetFeatureInfo",
           dpi: "135",

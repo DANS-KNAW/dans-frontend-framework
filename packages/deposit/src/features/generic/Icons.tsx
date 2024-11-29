@@ -10,31 +10,23 @@ import parse, { domToReact } from "html-react-parser";
 
 const titleStyle = {
   fontSize: 14,
-}
+};
 
 // Convert a HTML string to MUI components using html react parser
 export const parseOptions = {
   replace: ({ name, children, data }: any) => {
-    if (name === 'ul') {
-      return (
-        <ul>
-          {domToReact(children, parseOptions)}
-        </ul>
-      )
+    if (name === "ul") {
+      return <ul>{domToReact(children, parseOptions)}</ul>;
     }
-    if (name === 'li') {
-      return (
-        <li>
-          {domToReact(children, parseOptions)}
-        </li>
-      )
+    if (name === "li") {
+      return <li>{domToReact(children, parseOptions)}</li>;
     }
-    if (name === 'p') {
+    if (name === "p") {
       return (
         <Typography sx={titleStyle} gutterBottom>
           {domToReact(children)}
         </Typography>
-      )
+      );
     }
     return (
       <Typography sx={titleStyle} gutterBottom>
@@ -63,13 +55,15 @@ export const StatusIcon = ({
       title={
         <>
           {title && (
-            <Box sx={{
-              pt: 2,
-              pl: 2,
-              pr: 2,
-              pb: 1,
-              fontSize: 14,
-            }}>
+            <Box
+              sx={{
+                pt: 2,
+                pl: 2,
+                pr: 2,
+                pb: 1,
+                fontSize: 14,
+              }}
+            >
               {parse(title, parseOptions)}
             </Box>
           )}

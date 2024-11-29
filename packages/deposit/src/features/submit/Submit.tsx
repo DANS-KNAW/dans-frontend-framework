@@ -19,7 +19,7 @@ import {
   getSessionId,
 } from "../metadata/metadataSlice";
 import { getFiles, resetFiles } from "../files/filesSlice";
-import { useSubmitDataMutation, /*useSubmitFilesMutation*/ } from "./submitApi";
+import { useSubmitDataMutation /*useSubmitFilesMutation*/ } from "./submitApi";
 import { uploadFile } from "./submitFile";
 import {
   setMetadataSubmitStatus,
@@ -77,7 +77,11 @@ const Submit = ({
   const fileStatusArray = [...new Set(filesSubmitStatus.map((f) => f.status))];
   const fileStatus =
     fileStatusArray.indexOf("error") !== -1 ? "error"
-    : fileStatusArray.indexOf("submitting") !== -1 || fileStatusArray.indexOf("queued") !== -1 ? "submitting"
+    : (
+      fileStatusArray.indexOf("submitting") !== -1 ||
+      fileStatusArray.indexOf("queued") !== -1
+    ) ?
+      "submitting"
     : fileStatusArray.indexOf("success") !== -1 ? "success"
     : "";
 
@@ -88,11 +92,7 @@ const Submit = ({
 
   const [
     submitData,
-    {
-      isLoading: isLoadingMeta,
-      isError: isErrorMeta,
-      reset: resetMeta,
-    },
+    { isLoading: isLoadingMeta, isError: isErrorMeta, reset: resetMeta },
   ] = useSubmitDataMutation();
 
   // Access token might just be expiring, or user settings just changed
@@ -141,22 +141,26 @@ const Submit = ({
         user: user,
         actionType: actionType,
         id: sessionId,
-        metadata: metadata, 
+        metadata: metadata,
         config: formConfig,
         files: selectedFiles,
       }).then((result: { data?: any; error?: any }) => {
         if (result.data?.status === "OK") {
           // if metadata has been submitted ok, we start the file submit
-          selectedFiles.map( file => {
-            const hasStatus = filesSubmitStatus.find( f => f.id === file.id);
+          selectedFiles.map((file) => {
+            const hasStatus = filesSubmitStatus.find((f) => f.id === file.id);
             // make sure file is not already submitted or currently submitting
-            return !file.submittedFile && (!hasStatus || hasStatus?.status === 'error') && dispatch(
-              setFilesSubmitStatus({
-                id: file.id,
-                progress: 0,
-                status: "queued",
-              }),
-            )
+            return (
+              !file.submittedFile &&
+              (!hasStatus || hasStatus?.status === "error") &&
+              dispatch(
+                setFilesSubmitStatus({
+                  id: file.id,
+                  progress: 0,
+                  status: "queued",
+                }),
+              )
+            );
           });
         }
       }),
@@ -167,11 +171,11 @@ const Submit = ({
   const autoSave = useDebouncedCallback(() => {
     // on autosave, we send along file metadata, but not the actual files
     if (!formDisabled && isTouched) {
-      submitData({ 
-        user: auth.user, 
+      submitData({
+        user: auth.user,
         actionType: "save",
         id: sessionId,
-        metadata: metadata, 
+        metadata: metadata,
         config: formConfig,
         files: selectedFiles,
         // set flag autoSave, so we don't show a snackbar each time
@@ -228,8 +232,9 @@ const Submit = ({
             {
               (
                 !metadataSubmitStatus ||
-                (metadataSubmitStatus === "saved" && !formDisabled) &&
-                fileStatus !== "submitting"
+                (metadataSubmitStatus === "saved" &&
+                  !formDisabled &&
+                  fileStatus !== "submitting")
               ) ?
                 // metadata has not yet been submitted, so let's just indicate metadata completeness
                 metadataStatus === "error" ?
@@ -403,19 +408,23 @@ const FileUploader = () => {
   const formConfig = useAppSelector(getData);
 
   useEffect(() => {
-    const currentlyUploading = filesSubmitStatus.filter(file => file.status === 'submitting');
+    const currentlyUploading = filesSubmitStatus.filter(
+      (file) => file.status === "submitting",
+    );
     if (currentlyUploading.length < maxConcurrentUploads) {
       // add first file of selectedFiles that is not currently uploading to the active uploads
-      selectedFiles.find(file => {
+      selectedFiles.find((file) => {
         // only call the upload function if file is queued
-        const hasStatus = filesSubmitStatus.find( f => f.id === file.id);
-        return hasStatus?.status === "queued" && uploadFile(file, sessionId, formConfig.target?.envName);
+        const hasStatus = filesSubmitStatus.find((f) => f.id === file.id);
+        return (
+          hasStatus?.status === "queued" &&
+          uploadFile(file, sessionId, formConfig.target?.envName)
+        );
       });
     }
-  }, [filesSubmitStatus, selectedFiles, sessionId, formConfig])
+  }, [filesSubmitStatus, selectedFiles, sessionId, formConfig]);
 
   return null;
-
 };
 
 export default Submit;

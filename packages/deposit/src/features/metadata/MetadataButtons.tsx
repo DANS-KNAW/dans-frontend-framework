@@ -116,42 +116,48 @@ export const AddButtonText = ({
   );
 };
 
-export const AddDeleteControls = ({ groupedFieldId, totalFields, sectionIndex, currentField, field }: {
+export const AddDeleteControls = ({
+  groupedFieldId,
+  totalFields,
+  sectionIndex,
+  currentField,
+  field,
+}: {
   groupedFieldId?: string;
   totalFields: number;
   sectionIndex: number;
   currentField: number;
   field: any;
 }) => {
-  return (
-    groupedFieldId ? [
-      totalFields > 1 && (
-        <DeleteButton
-          key="delete"
-          sectionIndex={sectionIndex}
-          groupedFieldId={groupedFieldId}
-          deleteFieldIndex={currentField}
-          mt={
-            (status === "error" && field.touched ? -3 : 0) +
-            (currentField === 0 ? 0 : 1)
-          }
-          deleteGroupId={field.id}
-          groupedFieldName={field.name}
-        />
-      ),
-      currentField + 1 === totalFields && (
-        <AddButton
-          key="add"
-          sectionIndex={sectionIndex}
-          groupedFieldId={groupedFieldId}
-          type="single"
-          mt={
-            (status === "error" && field.touched ? -3 : 0) +
-            (currentField === 0 ? 0 : 1)
-          }
-          groupedFieldName={field.name}
-        />
-      ),
-    ] : null
-  )
-}
+  return groupedFieldId ?
+      [
+        totalFields > 1 && (
+          <DeleteButton
+            key="delete"
+            sectionIndex={sectionIndex}
+            groupedFieldId={groupedFieldId}
+            deleteFieldIndex={currentField}
+            mt={
+              (status === "error" && field.touched ? -3 : 0) +
+              (currentField === 0 ? 0 : 1)
+            }
+            deleteGroupId={field.id}
+            groupedFieldName={field.name}
+          />
+        ),
+        currentField + 1 === totalFields && (
+          <AddButton
+            key="add"
+            sectionIndex={sectionIndex}
+            groupedFieldId={groupedFieldId}
+            type="single"
+            mt={
+              (status === "error" && field.touched ? -3 : 0) +
+              (currentField === 0 ? 0 : 1)
+            }
+            groupedFieldName={field.name}
+          />
+        ),
+      ]
+    : null;
+};

@@ -127,7 +127,7 @@ export interface MaptilerConversionResponse {
   results: {
     x: number;
     y: number;
-  }[]
+  }[];
 }
 
 export interface ProxyResponse {
