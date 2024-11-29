@@ -13,11 +13,11 @@ import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
 import { setField } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
-import type { OptionsType, ExtendedMapFeature, CoordinateSystem } from "../../../types/MetadataFields";
+import type { OptionsType, ExtendedMapFeature, CoordinateSystem, DrawMapFieldType } from "../../../types/MetadataFields";
 import type { DrawMapFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled } from "../../../deposit/depositSlice";
-import GLMap, { ScaleControl, NavigationControl, useControl, Source, Layer, type LngLatBoundsLike } from "react-map-gl/maplibre";
+import GLMap, { ScaleControl, NavigationControl, useControl, Source, Layer, useMap, type LngLatBoundsLike, type MapRef } from "react-map-gl/maplibre";
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
@@ -81,8 +81,8 @@ const DrawMap = ({
   const [ getConvertedCoordinates ] = useLazyTransformCoordinatesQuery();
   const [ hiddenLayers, setHiddenLayers ] = useState<string[]>([]);
 
-  const mapRef = useRef(null);
-  const [ fetchWmsFeature, { data: wmsFeatureData } ] = useLazyFetchFeatureQuery();
+  const mapRef = useRef<MapRef>(null);
+  const [ fetchWmsFeature ] = useLazyFetchFeatureQuery();
 
   // write this to redux store with some debouncing for performance
   // separated from all the local state changes, as the global state would get changed a bit too often otherwise
@@ -140,7 +140,7 @@ const DrawMap = ({
         properties: {},
         geonames: geonamesValue,
         coordinateSystem: coordinateSystem,
-        originalCoordinates: convertedCoordinates?.data,
+        originalCoordinates: convertedCoordinates?.data as number[] | number[][] | number[][][],
       };
       setFeatures(
         [...new Map([...features, newFeature].map(item => [item.id, item])).values()]
@@ -167,7 +167,7 @@ const DrawMap = ({
           return ({
             ...f,
             coordinateSystem: coordinateSystem,
-            originalCoordinates: convertedCoordinates?.data,
+            originalCoordinates: convertedCoordinates?.data as number[] | number[][] | number[][][],
           })
         })
       );
@@ -189,8 +189,6 @@ const DrawMap = ({
       );
     }
   }, [coordinateSystem]);
-
-  console.log(wmsFeatureData)
 
   return (
     <Card>
@@ -250,15 +248,36 @@ const DrawMap = ({
               }}
               mapStyle={`https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json`}
               maxBounds={coordinateSystem?.bbox}
-              onClick={(e) => {
-                console.log(e)
+              onClick={async (e) => {
+                /* Gets shape info for active WMS layers when clicked on. WMS service returns a GeoJSON object. Not further implemented yet. */
                 if (field.wmsLayers && hiddenLayers.length !== field.wmsLayers.length) {
+                  const map = mapRef.current!.getMap();
+                  const { width, height } = map.getContainer().getBoundingClientRect();
+                  const { _sw, _ne } = map.getBounds();
                   const activeLayers = field.wmsLayers.filter(layer => hiddenLayers.indexOf(layer.name) === -1);
-                  fetchWmsFeature({
-                    url: activeLayers.map(layer => layer.source),
-                    layerName: activeLayers.map(layer => layer.name), 
-                    lngLat: e.lngLat, 
-                  });
+                  // GeoJSON is in EPSG 4326, but we need 3857 for the map. Maybe use a converting lib like proj4? 
+                  const { data } = await getConvertedCoordinates({
+                    coordinates: `${_sw.lng},${_sw.lat};${_ne.lng},${_ne.lat}`, 
+                    to: 3857,
+                    from: 4326,
+                  }) as {data: {x: number; y: number}[]};
+                  // Now we're ready to query the WMS service, 
+                  // with the x/y pixel coords of the point we clicked (needs to be and Int), 
+                  // the epsg 3857 bbox and the map pixel width and height.
+                  const wmsFeatureData = await Promise.all(activeLayers.map(layer =>
+                    fetchWmsFeature({
+                      url: layer.source,
+                      layerName: layer.name, 
+                      x: Math.round(e.point.x),
+                      y: Math.round(e.point.y),
+                      bbox: `${data[0].x},${data[0].y},${data[1].x},${data[1].y}`,
+                      width: width,
+                      height: height,
+                    })
+                  ));
+                  // Just log the result for now. We could draw the shape on the map, display a tooltip, do something in the legend, etc.
+                  // Needs some thinking, keep in mind we can have multiple active layers.
+                  console.log(wmsFeatureData)
                 }
               }}
             >
@@ -270,23 +289,7 @@ const DrawMap = ({
                 setSelectedFeatures={setSelectedFeatures} 
                 coordinateSystem={coordinateSystem}
               />
-              {field.wmsLayers?.map(layer => hiddenLayers.indexOf(layer.name) === -1 && [
-                <Source
-                  key="source"
-                  id={`${layer.name}-wms`}
-                  type="raster"
-                  tiles={[`${layer.source}&request=GetMap&format=image%2Fpng&styles=&transparent=true&dpi=135&map_resolution=135&format_options=dpi%3A256&width=500&height=500&crs=EPSG%3A3857&BBOX={bbox-epsg-3857}`]}
-                />,
-                <Layer 
-                  key="layer"
-                  id={`${layer.name}-layer`}
-                  type="raster"
-                  source={`${layer.name}-wms`}
-                  paint={{
-                    'raster-opacity': 0.4,
-                  }}
-                />
-              ])}
+              <WMSLayers field={field} hiddenLayers={hiddenLayers} />
             </GLMap>
             {field.wmsLayers &&
               <Box sx={{ 
@@ -326,6 +329,34 @@ const DrawMap = ({
 
 export default DrawMap;
 
+/* Draws WMS image tiles on the map */
+const WMSLayers = ({field, hiddenLayers}: {field: DrawMapFieldType; hiddenLayers: string[] }) => {
+  const map = useMap();
+  const { width, height } = map.current!.getContainer().getBoundingClientRect();
+
+  return (
+    <>
+      {field.wmsLayers?.map(layer => hiddenLayers.indexOf(layer.name) === -1 && [
+        <Source
+          key="source"
+          id={`${layer.name}-wms`}
+          type="raster"
+          tiles={[`${layer.source}&request=GetMap&format=image%2Fpng&styles=&transparent=true&dpi=135&map_resolution=135&format_options=dpi%3A256&width=${width}&height=${height}&crs=EPSG%3A3857&BBOX={bbox-epsg-3857}`]}
+        />,
+        <Layer 
+          key="layer"
+          id={`${layer.name}-layer`}
+          type="raster"
+          source={`${layer.name}-wms`}
+          paint={{
+            'raster-opacity': 0.4,
+          }}
+        />
+      ])}
+    </>
+  )
+}
+
 const WMSLegend = ({layer, toggleLayer, isActive}: {layer: any; toggleLayer: () => void; isActive: boolean;}) => {
   const { data } = useFetchCapabilitiesQuery(layer.source);
   const images = data && (Array.isArray(data?.Capability.Layer.Layer.Style) ? data.Capability.Layer.Layer.Style : [data.Capability.Layer.Layer.Style]) || undefined;
@@ -336,7 +367,7 @@ const WMSLegend = ({layer, toggleLayer, isActive}: {layer: any; toggleLayer: () 
         label={data && data.Capability.Layer.Layer.Title} 
         sx={{mb: 1}}
       />
-      {images && images.map((img: any, i: number) => <Box><img key={i} src={img.LegendURL.OnlineResource['@_xlink:href']} /></Box>)}
+      {images && images.map((img: any, i: number) => <Box key={i}><img src={img.LegendURL.OnlineResource['@_xlink:href']} /></Box>)}
     </Box>
   )
 }
@@ -676,7 +707,7 @@ const DrawControls = ({ features, setFeatures, setSelectedFeatures, coordinateSy
           });
           return ({
             ...feature,
-            originalCoordinates: originalCoordinates?.data,
+            originalCoordinates: originalCoordinates?.data as number[] | number[][] | number[][][],
           })
         })
       );
