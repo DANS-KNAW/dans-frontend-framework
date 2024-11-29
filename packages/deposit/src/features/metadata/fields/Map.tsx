@@ -116,6 +116,9 @@ const DrawMap = ({ field, sectionIndex }: DrawMapFieldProps) => {
   const [hiddenLayers, setHiddenLayers] = useState<string[]>([]);
   const mapRef = useRef<MapRef>(null);
   const [fetchWmsFeature] = useLazyFetchFeatureQuery();
+  // Probably cleaner to do move the draw mode state keeping here, and remove from DrawControls
+  // Need it here to disable/enable WMS feature click listener
+  const [activeDrawMode, setActiveDrawMode] = useState('');
 
   // write this to redux store with some debouncing for performance
   // separated from all the local state changes, as the global state would get changed a bit too often otherwise
@@ -292,10 +295,15 @@ const DrawMap = ({ field, sectionIndex }: DrawMapFieldProps) => {
               mapStyle={`https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json`}
               maxBounds={coordinateSystem?.bbox}
               onClick={async (e) => {
-                /* Gets shape info for active WMS layers when clicked on. WMS service returns a GeoJSON object. Not further implemented yet. */
+                /* 
+                Gets shape info for active WMS layers when clicked on. 
+                WMS service returns a GeoJSON object. Not further implemented yet. 
+                Needs some work too as ideally we only fetch this data when no drawing control is activated.
+                */
                 if (
                   field.wmsLayers &&
-                  hiddenLayers.length !== field.wmsLayers.length
+                  hiddenLayers.length !== field.wmsLayers.length &&
+                  activeDrawMode === 'simple_select'
                 ) {
                   const map = mapRef.current!.getMap();
                   const { width, height } = map
@@ -340,6 +348,7 @@ const DrawMap = ({ field, sectionIndex }: DrawMapFieldProps) => {
                 setFeatures={setFeatures}
                 setSelectedFeatures={setSelectedFeatures}
                 coordinateSystem={coordinateSystem}
+                setActiveDrawMode={setActiveDrawMode}
               />
               <WMSLayers field={field} hiddenLayers={hiddenLayers} />
             </GLMap>
@@ -860,6 +869,7 @@ const DrawControls = ({
   setFeatures,
   setSelectedFeatures,
   coordinateSystem,
+  setActiveDrawMode,
 }: {
   features: ExtendedMapFeature[];
   setFeatures: Dispatch<SetStateAction<ExtendedMapFeature[]>>;
@@ -867,6 +877,7 @@ const DrawControls = ({
     SetStateAction<(string | number | undefined)[]>
   >;
   coordinateSystem?: OptionsType;
+  setActiveDrawMode: Dispatch<SetStateAction<string>>;
 }) => {
   const { t } = useTranslation("metadata");
   const [selectedMode, setSelectedMode] = useState(controls[0]);
@@ -885,6 +896,8 @@ const DrawControls = ({
     setUpdatedFeatures(updatedFeatures);
     setSelectedMode(controls[0]);
   }, []);
+
+  useEffect(() => { setActiveDrawMode(selectedMode) }, [selectedMode])
 
   useEffect(() => {
     // Have to pull this out of the useCallback function onUpdate, otherwise no access to current coordinate system
