@@ -61,7 +61,8 @@ export const userSubmissionsApi = createApi({
   endpoints: (build) => ({
     fetchUserSubmissions: build.query({
       query: ({userId: userId, targetCredentials: targetCredentials}) => {
-        // TODO: we need to pass on endpoint api keys with this call, like submitApi.ts does
+        // We need to pass on endpoint api keys with this call, like submitApi.ts does, 
+        // for server to compare data with data on target repo 
         const user = getUser();
         const targets = targetCredentials.map((t: { repo: string; auth: string; authKey: string; }) => ({
           "target-repo-name": t.repo,
