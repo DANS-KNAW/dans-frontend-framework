@@ -87,9 +87,10 @@ export const submitApi = createApi({
         store.dispatch(setMetadataSubmitStatus("error"));
         // enable form again, so user can try and resubmit
         store.dispatch(setFormDisabled(false));
+        console.log(response)
         return {
           error: i18n.t("submit:submitMetadataError", {
-            error: response.status,
+            error: response.status === "FETCH_ERROR" ? i18n.t("submit:serverConnectionError") : response.status,
           }),
         };
       },

@@ -74,16 +74,23 @@ const depositStatus: DepositStatus = {
   success: ["finish", "accepted", "success"],
 };
 
-export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
+export const UserSubmissions = ({ 
+  depositSlug, 
+  targetCredentials 
+}: { 
+  depositSlug?: string;
+  targetCredentials?: { repo: string; auth: string; authKey: string; }[];
+}) => {
   const { t } = useTranslation("user");
   const siteTitle = useSiteTitle();
   const auth = useAuth();
   const dispatch = useAppDispatch();
 
   // Fetch the users submitted/saved forms, every 10 sec, to update submission status
-  const { data, isLoading } = useFetchUserSubmissionsQuery(
-    auth.user?.profile.sub,
-  );
+  const { data, isLoading } = useFetchUserSubmissionsQuery({
+    userId: auth.user?.profile.sub,
+    targetCredentials: targetCredentials,
+  });
 
   // are there any targets that have been submitted not complete yet?
   const allTargetsComplete =

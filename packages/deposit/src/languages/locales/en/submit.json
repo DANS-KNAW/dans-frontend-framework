@@ -22,5 +22,6 @@
   "saveFileErrorNotification": "Failed to save files - {{error}}",
   "submitFileErrorNotification": "Failed to submit files - {{error}}",
   "submitMetadataError": "Failed to send metadata to the server - {{error}}",
-  "submitFileError": "Failed to send files to the server - {{error}}"
+  "submitFileError": "Failed to send files to the server - {{error}}",
+  "serverConnectionError": "Couldn't connect, please try again in a few moments."
 }

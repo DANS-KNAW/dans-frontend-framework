@@ -22,5 +22,6 @@
   "saveFileErrorNotification": "Kan bestanden niet opslaan - {{error}}",
   "submitFileErrorNotification": "Kan bestanden niet submitten - {{error}}",
   "submitMetadataError": "Fout bij versturen metadata naar de server - {{error}}",
-  "submitFileError": "Fout bij versturen bestanden naar de server - {{error}}"
+  "submitFileError": "Fout bij versturen bestanden naar de server - {{error}}",
+  "serverConnectionError": "Kan niet verbinden, probeer het nog eens."
 }
