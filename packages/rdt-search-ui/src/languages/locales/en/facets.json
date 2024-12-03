@@ -1,0 +1,9 @@
+{
+  "active": "{{value}} active",
+  "viewMore": "More ({{value}})",
+  "viewLess": "Less",
+  "filter": "Filter",
+  "noData": "No data found",
+  "sortAz": "Sort alphabetically",
+  "sortCount": "Sort by count"
+}

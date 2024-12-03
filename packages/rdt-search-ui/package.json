@@ -1,0 +1,51 @@
+{
+  "name": "@dans-framework/rdt-search-ui",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "lib/index.tsx",
+  "scripts": {
+    "watch": "node ./scripts/watch.js",
+    "watch:types": "tsc --emitDeclarationOnly --declaration -w",
+    "build": "node ./scripts/build.js && tsc --emitDeclarationOnly --declaration"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@dans-framework/utils": "workspace:*",
+    "@elastic/elasticsearch": "^8.10.0",
+    "@mui/icons-material": "^5.14.3",
+    "@mui/material": "^5.16.7",
+    "clsx": "^2.0.0",
+    "echarts": "^5.4.2",
+    "framer-motion": "^10.15.0",
+    "html-react-parser": "^4.2.2",
+    "i18next": "^23.4.1",
+    "i18next-resources-to-backend": "^1.1.4",
+    "lodash.debounce": "^4.0.8",
+    "lz-string": "^1.5.0",
+    "md5": "^2.3.0",
+    "ngeohash": "^0.6.3",
+    "notistack": "^3.0.1",
+    "ol": "^7.3.0",
+    "react-i18next": "^13.0.3",
+    "react-router-dom": "^6.14.2",
+    "styled-components": "^5.3.10"
+  },
+  "devDependencies": {
+    "@types/lodash.debounce": "^4.0.7",
+    "@types/md5": "^2.3.2",
+    "@types/ngeohash": "^0.6.4",
+    "@types/react": "^18.0.33",
+    "@types/styled-components": "^5.1.26",
+    "esbuild": "^0.17.15",
+    "esbuild-css-modules-plugin": "^3.0.2",
+    "tslib": "^2.5.0",
+    "typescript": "^5.0.3",
+    "vite": "^4.4.5"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  },
+  "sideEffects": false
+}

@@ -1,0 +1,9 @@
+{
+  "error": {
+    "header": "Uh oh",
+    "p1": "Onverwachte fout: {{message}}",
+    "p2": "Herlaad de pagina om het nog eens te proberen. Blijft de fout aanwezig, contacteer dan DANS."
+  },
+  "swipeUp": "Swipe omhoog om te filteren",
+  "swipeDown": "Swipe omlaag om te sluiten"
+}
