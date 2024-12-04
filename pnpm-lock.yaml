@@ -20,6 +20,9 @@ importers:
       turbo:
         specifier: ^1.13.4
         version: 1.13.4
+      typescript:
+        specifier: ^5.7.2
+        version: 5.7.2
 
   apps/4tu:
     dependencies:
