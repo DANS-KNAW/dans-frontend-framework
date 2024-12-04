@@ -231,7 +231,7 @@ const FileAlert = ({
 }: {
   color: "warning" | "error";
   title: string;
-  files: SelectedFile[] | RejectedFiles[];
+  files: SelectedFile[] | readonly RejectedFiles[];
   description?: string;
 }) => {
   const [open, setOpen] = useState(true);

@@ -1,5 +1,4 @@
 import type { Target } from "@dans-framework/user-auth";
-import type { AxiosHeaders } from "axios";
 import type { SelectedFile } from "./Files";
 import type { SectionType, FormConfig } from "./Metadata";
 
@@ -47,15 +46,6 @@ export interface HeaderData {
   targetKeys: {
     [k: string]: string;
   };
-  title?: string;
-}
-
-export interface SubmitHeaders extends AxiosHeaders {
-  Authorization: string;
-  "user-id": string;
-  "auth-env-name": string;
-  "assistant-config-name": string;
-  "targets-credentials": string;
   title?: string;
 }
 

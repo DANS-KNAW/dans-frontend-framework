@@ -1,4 +1,5 @@
 import type { LanguageStrings } from "@dans-framework/utils";
+import type { FileRejection } from "react-dropzone";
 
 export interface FileActions {
   label: string | LanguageStrings;
@@ -48,14 +49,7 @@ export interface SelectedFile {
   };
 }
 
-interface FileError {
-  code: string;
-  message: string;
-}
-
-export interface RejectedFiles {
-  file: File;
-  errors: FileError[];
+export interface RejectedFiles extends FileRejection {
   name?: never;
 }
 

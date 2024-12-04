@@ -3,6 +3,7 @@ import {
   PieChartFacet,
   ListFacet,
   type RDTSearchUIProps,
+  type EndpointProps,
 } from "@dans-framework/rdt-search-ui";
 import { Rda2Result } from "../pages/search/result";
 
@@ -21,7 +22,7 @@ const fieldConfig: Partial<RDTSearchUIProps> = {
  * The config is for larger screens. For mobile, we use half width and full width cols.
  */
 
-export const elasticConfig = [
+export const elasticConfig: EndpointProps[] = [
   {
     name: "RDA Catalogue",
     url: "https://es.laurenstobias.com/rda",

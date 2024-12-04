@@ -1,4 +1,4 @@
-import type { SearchHighlight } from "@elastic/elasticsearch/lib/api/types";
+import type { estypes } from "@elastic/elasticsearch";
 
 import React from "react";
 import { ResultBodyProps, SortOrder } from "../state/use-search/types";
@@ -62,7 +62,7 @@ interface OptionalSearchProps {
 
   // Set the ES highlight directly from the config,
   // gives more finegrained control over returned snippets
-  fullTextHighlight?: SearchHighlight;
+  fullTextHighlight?: estypes.SearchHighlight;
 
   SearchHomeComponent?: React.FC<any>;
 }
@@ -75,7 +75,7 @@ export interface EndpointBaseProps {
 
 export interface EndpointProps extends EndpointBaseProps {
   fullTextFields?: string[];
-  fullTextHighlight?: SearchHighlight;
+  fullTextHighlight?: estypes.SearchHighlight;
   onClickResultPath?: string;
   dashboard: React.ReactElement[];
   resultBodyComponent: React.FC<ResultBodyProps>;

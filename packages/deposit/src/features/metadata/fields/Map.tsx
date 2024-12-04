@@ -227,7 +227,7 @@ const DrawMap = ({ field, sectionIndex }: DrawMapFieldProps) => {
       console.log(coordinateSystem.bbox);
       asyncFeatures();
       // set bounding box of the selected coordinate system
-      setViewState({ bounds: coordinateSystem.bbox });
+      setViewState({ bounds: coordinateSystem.bbox as LngLatBoundsLike });
     } else {
       setFeatures(
         features.map((f) => ({
@@ -293,7 +293,7 @@ const DrawMap = ({ field, sectionIndex }: DrawMapFieldProps) => {
                 border: "1px solid rgba(0,0,0,0.23)",
               }}
               mapStyle={`https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json`}
-              maxBounds={coordinateSystem?.bbox}
+              maxBounds={coordinateSystem?.bbox as LngLatBoundsLike}
               onClick={async (e) => {
                 /* 
                 Gets shape info for active WMS layers when clicked on. 
