@@ -1,6 +1,7 @@
 import {
   PieChartFacet,
   ListFacet,
+  type EndpointProps,
   type RDTSearchUIProps,
 } from "@dans-framework/rdt-search-ui";
 import { Cat2Result } from "../pages/search/result";
@@ -20,7 +21,7 @@ const fieldConfig: Partial<RDTSearchUIProps> = {
  * The config is for larger screens. For mobile, we use half width and full width cols.
  */
 
-export const elasticConfig = [
+export const elasticConfig: EndpointProps[] = [
   {
     name: "CAT Catalogue",
     url: "https://es.ohsmart.dansdemo.nl/fc4e-cat",
