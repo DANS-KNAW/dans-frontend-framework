@@ -89,7 +89,7 @@ const App = () => {
                 element={
                   <AuthRoute>
                     {repoConfig ?
-                      <UserSubmissions depositSlug="" />
+                      <UserSubmissions depositSlug="" targetCredentials={repoConfig.targetCredentials} />
                     : <NoRepoSelected advisorLocation="/" />}
                   </AuthRoute>
                 }

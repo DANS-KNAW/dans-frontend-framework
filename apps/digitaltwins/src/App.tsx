@@ -67,7 +67,7 @@ const App = () => {
                 path="user-submissions"
                 element={
                   <AuthRoute>
-                    <UserSubmissions />
+                    <UserSubmissions targetCredentials={form.targetCredentials} />
                   </AuthRoute>
                 }
               />
