@@ -223,65 +223,103 @@ export const getValid = (value: any, field: Field): boolean => {
 
 /*
 Format the initial state loaded from the ./config files
-for repeatable fields/fieldgroups functionality.
-We also add a unique ID so we can keep track of everything.
-Structure we want:
-[
-  {singlefield},
-  {groupfield: fields: [
-    {field}, 
-    {field},
-  ]},
-  {repeatSingleField: fields:[
-    {repeatablefield}, 
-    {repeatablefield},
-  ]}, 
-  {repeatGroupField: fields: [
-    [{field}, {field}],
-    [{field}, {field}],
-  ]},
-]
+We separate this state into different objects that can change independently:
+sections, values, validity, touched, required, private status
+{
+  config: [ the original form config ],
+  sections: {
+    section_name: {
+      field: ['field1', 'field2'],
+      valid: false,
+    },
+    ...etc
+  },
+  values: {
+    field1: '',
+    field2: '',
+    ...etc
+  },
+  valid: {
+    field1: false,
+    field2: false,
+    ...etc
+  },
+  touched: {
+    field1: false,
+    field2: false,
+    ...etc
+  },
+  required, private, ...
+}
 */
 export const formatInitialState = (form: InitialSectionType[]) => {
-  const newForm = form.map((section) => ({
-    ...section,
-    fields: section.fields.map((field) => {
-      if (field.type === "group" && field.fields) {
-        const newFieldGroup = field.fields.map((f) =>
-          (
-            !Array.isArray(f) &&
-            (f.type === "text" || f.type === "number" || f.type === "date") &&
-            f.repeatable
-          ) ?
-            {
-              id: uuidv4(),
-              type: "repeatSingleField",
-              name: f.name,
-              private: f.private,
-              fields: [{ ...f, id: uuidv4(), touched: false }],
-            }
-          : { ...f, id: uuidv4() },
-        );
-        return {
-          ...field,
-          id: uuidv4(),
-          fields: !field.repeatable ? newFieldGroup : [newFieldGroup],
-        };
-      }
-      if (field.repeatable) {
-        return {
-          id: uuidv4(),
-          type: "repeatSingleField",
-          name: field.name,
-          private: field.private,
-          fields: [{ ...field, id: uuidv4(), touched: false }],
-        };
-      } else {
-        return { ...field, id: uuidv4(), touched: false };
-      }
-    }),
-  }));
-  return newForm as SectionType[];
+  const initialState = form.reduce((state, section) => {
+    // Add the section to the `sections` state immutably
+    const sectionState = {
+      ...state.sections,
+      [section.id]: {
+        fields: section.fields.map((field) => field.name),
+        valid: false,  // Section validity starts as false
+      },
+    };
+  
+    // Create a new values, valid, and touched state based on the fields
+    const valuesState = section.fields.reduce((values, field) => {
+      return {
+        ...values,
+        [field.name]: field.value || null,  // Default value can be set here (null, "" etc.)
+      };
+    }, state.values);
+  
+    const validState = section.fields.reduce((valid, field) => {
+      return {
+        ...valid,
+        [field.name]: field.hasOwnProperty('value') || false,  // Initial validity as false if not specified yet in config (then we assume valid)
+      };
+    }, state.valid);
+  
+    const touchedState = section.fields.reduce((touched, field) => {
+      return {
+        ...touched,
+        [field.name]: false,  // Touched status as false
+      };
+    }, state.touched);
+  
+    const requiredState = section.fields.reduce((required, field) => {
+      return {
+        ...required,
+        [field.name]: field.required || false,  // Default to field's 'required' property
+      };
+    }, state.required);
+
+    const privateState = section.fields.reduce((privateFields, field) => {
+      return {
+        ...privateFields,
+        [field.name]: field.private || false,  // Default to 'private' if available
+      };
+    }, state.private);
+
+    return {
+      config: form,
+      sections: sectionState,
+      values: valuesState,
+      valid: validState,
+      touched: touchedState,
+      required: requiredState,
+      private: privateState,
+    };
+  }, {
+    config: [],
+    sections: {},
+    values: {},
+    valid: {},
+    touched: {},
+    required: {},
+    private: {},
+  });
+
+  console.log(initialState)
+  return initialState;
 };
 
 // Debounce function for autosaving on form change

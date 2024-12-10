@@ -24,9 +24,9 @@ import {
   getValid,
   getFieldStatus,
   getSectionStatus,
-  formatInitialState,
   findByIdOrName,
   changeConditionalState,
+  formatInitialState,
   // findFieldInGroup,
 } from "./metadataHelpers";
 import { v4 as uuidv4 } from "uuid";
@@ -48,24 +48,14 @@ export const metadataSlice = createSlice({
       state,
       action: PayloadAction<InitialFormType | InitialSectionType[]>,
     ) => {
-      if (!Array.isArray(action.payload) && action.payload.id) {
-        // form is loaded from existing data
-        state.id = action.payload.id;
-        state.form = action.payload.metadata;
-        state.panel = action.payload.metadata[0].id;
-      } else {
-        // otherwise initialize a brand new form
-        state.id = uuidv4();
-        state.form = formatInitialState(action.payload as InitialSectionType[]);
-        state.touched = false;
-        // open up the first panel by default
-        state.panel = (action.payload as InitialSectionType[])[0].id;
-        // and set initial validation status
-        metadataSlice.caseReducers.setSectionStatus(state, {
-          payload: null,
-          type: "",
-        });
-      }
+      // initialize a brand new form
+      state.id = uuidv4();
+      state.form = formatInitialState(action.payload as InitialSectionType[]);
+      state.touched = false;
+      // open up the first panel by default
+      state.panel = (action.payload as InitialSectionType[])[0].id;
+      // and set initial validation status
+      
     },
     // keep track of form state
     setField: (state, action: PayloadAction<SetFieldValuePayload>) => {
