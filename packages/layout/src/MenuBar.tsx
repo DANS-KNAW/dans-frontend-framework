@@ -23,14 +23,16 @@ const MenuBar = ({
   logo = dansLogoWhite,
   userSettings = true,
   userSubmissions = true,
+  userMenu = true,
 }: {
   pages: Page[];
   logo?: any;
   userSettings?: boolean;
   userSubmissions?: boolean;
+  userMenu?: boolean;
 }) => {
   const { i18n } = useTranslation();
-  const auth = useAuth();
+  const auth = userMenu ? useAuth() : undefined;
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -78,7 +80,7 @@ const MenuBar = ({
                   (page, i) =>
                     page.inMenu &&
                     page.menuTitle &&
-                    ((page.restricted && auth.isAuthenticated) ||
+                    ((page.restricted && auth && auth.isAuthenticated) ||
                       !page.restricted) && (
                       <MenuItem key={i} onClick={handleCloseNavMenu}>
                         <Link
@@ -127,7 +129,7 @@ const MenuBar = ({
                 (page, i) =>
                   page.inMenu &&
                   page.menuTitle &&
-                  ((page.restricted && auth.isAuthenticated) ||
+                  ((page.restricted && auth && auth.isAuthenticated) ||
                     !page.restricted) && (
                     <Button
                       key={i}
@@ -142,11 +144,12 @@ const MenuBar = ({
                   ),
               )}
           </Box>
-
-          <UserMenu
-            userSettings={userSettings}
-            userSubmissions={userSubmissions}
-          />
+          {userMenu &&
+            <UserMenu
+              userSettings={userSettings}
+              userSubmissions={userSubmissions}
+            />
+          }
         </Toolbar>
       </Container>
     </AppBar>

@@ -5,11 +5,15 @@ interface FCProps {
   config: EndpointProps[];
   endpoint: string;
   setEndpoint: (e: string) => void;
+  fixedFacets: any[];
+  setFixedFacets: (e: string) => void;
 }
 export const FacetedSearchContext = createContext<FCProps>({
   config: [],
   endpoint: "",
   setEndpoint: () => null,
+  fixedFacets: [],
+  setFixedFacets: () => null,
 });
 export const FacetedSearchProvider = ({
   config,
@@ -19,8 +23,10 @@ export const FacetedSearchProvider = ({
   children: any;
 }) => {
   const [endpoint, setEndpoint] = useState<string>(config[0].url);
+  const [fixedFacets, setFixedFacets] = useState([]);
+
   return (
-    <FacetedSearchContext.Provider value={{ config, endpoint, setEndpoint }}>
+    <FacetedSearchContext.Provider value={{ config, endpoint, setEndpoint, fixedFacets, setFixedFacets }}>
       {children}
     </FacetedSearchContext.Provider>
   );

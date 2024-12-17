@@ -32,7 +32,7 @@ import {
   serializeObject,
   deserializeObject,
 } from "./views/active-filters/save-search/use-saved-searches";
-import { EndpointSelector } from "./views/ui/endpoints";
+import { EndpointSelector, FixedFacetSelector } from "./views/ui/endpoints";
 import { useNavigate } from "react-router-dom";
 import type { Result } from "./context/state/use-search/types";
 import { motion, AnimatePresence } from "framer-motion";
@@ -81,6 +81,7 @@ export function FacetedSearch(props: ExternalSearchProps) {
         dashboard: "/",
         results: "/search",
       },
+      fixedFacets: props.fixedFacets,
     };
 
     Object.keys(sp.style).forEach((key) => {
@@ -140,6 +141,8 @@ function AppLoader({ children, controllers, searchProps }: AppLoaderProps) {
     dispatch,
     controllers,
   });
+
+  console.log(searchProps)
 
   const Component = searchProps.dashboard ? Dashboard : App;
   const { t } = useTranslation("app");
@@ -262,9 +265,12 @@ export const FacetedWrapper = ({
   dashRoute?: string;
   resultRoute?: string;
 }) => {
-  const { config, endpoint } = React.useContext(FacetedSearchContext);
+  const { config, endpoint, fixedFacets } = React.useContext(FacetedSearchContext);
   const navigate = useNavigate();
   const currentConfig = config.find((e) => e.url === endpoint) as EndpointProps;
+  console.log(fixedFacets)
+
+  // need to modify the endpoint URL to pre-filter for fixed facets
 
   return (
     <I18nextProvider i18n={i18nProvider}>
@@ -273,6 +279,9 @@ export const FacetedWrapper = ({
           // show selector if there's more than 1 endpoint
           <EndpointSelector />
         )}
+        {currentConfig.fixedFacets?.length > 0 &&
+          <FixedFacetSelector initialFixedFacets={currentConfig.fixedFacets} />
+        }
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={currentConfig.url}
@@ -293,6 +302,7 @@ export const FacetedWrapper = ({
                 results: resultRoute,
                 dashboard: dashRoute,
               }}
+              fixedFacets={fixedFacets}
             >
               {currentConfig?.dashboard.map((node, i) =>
                 React.cloneElement(node, { key: i }),

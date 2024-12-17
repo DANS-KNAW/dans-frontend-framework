@@ -3,15 +3,56 @@ import { enqueueSnackbar } from "notistack";
 
 const cache = new Map();
 
+// Builds the query for fixed facets
+function addFixedFacetsToQuery(query, fixedFacets) {
+  const filters = fixedFacets.map(({ type, location, value }) => {
+    if (type === "keyword" || type === "client") {
+      return {
+        match: {
+          [location]: value,
+        },
+      };
+    } else if (type === "url") {
+      return {
+        wildcard: {
+          [location]: {
+            value: `*${value}*`,
+          },
+        },
+      };
+    }
+    return null; // Ignore unsupported types
+  });
+
+  // Filter out nulls
+  const validFilters = filters.filter((filter) => filter !== null);
+
+  // Add the OR filter (should clause) to the existing query
+  return {
+    ...query,
+    query: {
+      bool: {
+        should: validFilters,
+        minimum_should_match: 1, // Ensure at least one filter matches
+      },
+    },
+  };
+}
+
 export async function fetchSearchResult(
   url: string,
   payload: Payload,
   dispatch: any,
+  fixedFacets: any,
 ) {
   let fetchResponse: Response;
   let response: any;
 
-  const body = JSON.stringify(payload);
+  const updatedQuery = addFixedFacetsToQuery(payload, fixedFacets);
+
+  const body = JSON.stringify(updatedQuery);
+
+  console.log(payload)
 
   if (cache.has(body)) {
     return cache.get(body);
@@ -32,7 +73,7 @@ export async function fetchSearchResult(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
+      body: body,
     });
     response = await fetchResponse.json();
     cache.set(body, response);

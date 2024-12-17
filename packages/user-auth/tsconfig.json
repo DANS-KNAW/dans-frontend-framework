@@ -1,0 +1,4 @@
+{
+    "extends": "@dans-framework/typescript-config/react-library.json",
+  }
+  
