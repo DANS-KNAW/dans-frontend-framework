@@ -5,6 +5,7 @@ export { MapFacet } from "../src/facets/map/view";
 export type {
   ExternalSearchProps as RDTSearchUIProps,
   EndpointProps,
+  FixedFacetsProps,
 } from "../src/context/props";
 export type {
   Result,

@@ -152,6 +152,7 @@ export class MapFacetController extends FacetController<
     buckets: Bucket[],
     _response: ElasticSearchResponse,
   ): MapFacetValue[] {
+    console.log(_response)
     return buckets.map((bucket) => {
       const point = ngeohash.decode(bucket.key as string);
       return {

@@ -142,8 +142,6 @@ function AppLoader({ children, controllers, searchProps }: AppLoaderProps) {
     controllers,
   });
 
-  console.log(searchProps)
-
   const Component = searchProps.dashboard ? Dashboard : App;
   const { t } = useTranslation("app");
 
@@ -268,7 +266,6 @@ export const FacetedWrapper = ({
   const { config, endpoint, fixedFacets } = React.useContext(FacetedSearchContext);
   const navigate = useNavigate();
   const currentConfig = config.find((e) => e.url === endpoint) as EndpointProps;
-  console.log(fixedFacets)
 
   // need to modify the endpoint URL to pre-filter for fixed facets
 
@@ -279,7 +276,7 @@ export const FacetedWrapper = ({
           // show selector if there's more than 1 endpoint
           <EndpointSelector />
         )}
-        {currentConfig.fixedFacets?.length > 0 &&
+        {currentConfig.fixedFacets && currentConfig.fixedFacets.length > 0 &&
           <FixedFacetSelector initialFixedFacets={currentConfig.fixedFacets} />
         }
         <AnimatePresence mode="wait" initial={false}>

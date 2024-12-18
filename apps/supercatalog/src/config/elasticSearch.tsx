@@ -2,8 +2,10 @@ import {
   DateChartFacet,
   PieChartFacet,
   ListFacet,
+  MapFacet,
   type RDTSearchUIProps,
   type EndpointProps,
+  type FixedFacetsProps,
 } from "@dans-framework/rdt-search-ui";
 import { Rda2Result } from "../pages/search/result";
 
@@ -25,13 +27,14 @@ const fieldConfig: Partial<RDTSearchUIProps> = {
  * for 'client', the relationships.client.data.id value.
  */
 
-const fixedFacets = [
+const fixedFacets: FixedFacetsProps[] = [
   {
     name: "DataverseNL",
     type: "client",
     location: "relationships.client.data.id.keyword",
     value: "dans.dataversenl",
     group: "DANS",
+    defaultEnabled: true,
   }, 
   {
     name: "Data Station SSH",
@@ -39,6 +42,7 @@ const fixedFacets = [
     location: "attributes.url",
     value: "ssh.datastations.nl",
     group: "DANS",
+    defaultEnabled: true,
   }, 
   {
     name: "Data Station Archaeology",
@@ -46,6 +50,7 @@ const fixedFacets = [
     location: "attributes.url",
     value: "archaeology.datastations.nl",
     group: "DANS",
+    defaultEnabled: true,
   }, 
   {
     name: "Data Station Life Sciences",
@@ -53,6 +58,7 @@ const fixedFacets = [
     location: "attributes.url",
     value: "lifesciences.datastations.nl",
     group: "DANS",
+    defaultEnabled: true,
   }, 
   {
     name: "Data Station Natural and Engineering Sciences",
@@ -60,6 +66,7 @@ const fixedFacets = [
     location: "attributes.url",
     value: "phys-techsciences.datastations.nl",
     group: "DANS",
+    defaultEnabled: true,
   }, 
   {
     name: "4TU",
@@ -67,6 +74,7 @@ const fixedFacets = [
     location: "relationships.client.data.id.keyword",
     value: "delft.data4tu",
     group: "External",
+    defaultEnabled: false,
   }, 
   {
     name: "Archaeology",
@@ -74,6 +82,7 @@ const fixedFacets = [
     location: "attributes.subjects.subject",
     value: "archaeology",
     group: "Subject",
+    defaultEnabled: false,
   }, 
 ]
 
@@ -95,10 +104,10 @@ export const elasticConfig: EndpointProps[] = [
       <ListFacet
         config={{
           id: "pw",
-          field: "pathways.pathway.keyword",
+          field: "attributes.subjects.subject.keyword",
           title: {
-            en: "Pathways",
-            nl: "Paden",
+            en: "Subject",
+            nl: "Onderwerp",
           },
           cols: 2,
           rows: 1,
@@ -107,16 +116,40 @@ export const elasticConfig: EndpointProps[] = [
       <DateChartFacet
         config={{
           id: "date",
-          field: "attributes.publicationYear",
+          field: "attributes.registered",
           title: {
-            en: "Timeline",
-            nl: "Tijdlijn",
+            en: "Year published",
+            nl: "Publicatiejaar",
           },
           interval: "year",
           cols: 6,
           rows: 1,
         }}
       />,
+      // <PieChartFacet
+      //   config={{
+      //     id: "source",
+      //     field: "attributes.url.keyword",
+      //     title: {
+      //       en: "Sources",
+      //       nl: "Sources",
+      //     },
+      //     cols: 4,
+      //     rows: 1,
+      //   }}
+      // />,
+      // <MapFacet
+      //   config={{
+      //     id: "source",
+      //     field: "location_dev",
+      //     title: {
+      //       en: "Sources",
+      //       nl: "Sources",
+      //     },
+      //     cols: 4,
+      //     rows: 1,
+      //   }}
+      // />,
       <ListFacet
         config={{
           id: "creators",
@@ -130,73 +163,39 @@ export const elasticConfig: EndpointProps[] = [
           rows: 1,
         }}
       />,
-      <PieChartFacet
-        config={{
-          id: "wf",
-          field: "workflows.WorkflowState.keyword",
-          title: {
-            en: "Workflows",
-            nl: "Workflows",
-          },
-          cols: 3,
-          rows: 1,
-        }}
-      />,
-      <PieChartFacet
-        config={{
-          id: "subjects",
-          field: "subjects.keyword.keyword",
-          title: {
-            en: "Subjects",
-            nl: "Onderwerp",
-          },
-          cols: 3,
-          rows: 1,
-        }}
-      />,
       <ListFacet
         config={{
-          id: "insttype",
-          field: "related_institutions.english_name.keyword",
+          id: "creators_affiliations",
+          field: "attributes.creators.affiliation.keyword",
           title: {
-            en: "Related institutions",
-            nl: "Gerelateerde instellingen",
+            en: "Creator affiliations",
+            nl: "Creator affiliations",
           },
+          size: 10,
           cols: 2,
           rows: 1,
         }}
       />,
       <ListFacet
         config={{
-          id: "wgs",
-          field: "working_groups.title.keyword",
+          id: "contributors",
+          field: "attributes.contributors.name.keyword",
           title: {
-            en: "Working groups",
-            nl: "Werkgroepen",
+            en: "Contributors",
+            nl: "Contributors",
           },
+          size: 10,
           cols: 2,
           rows: 1,
         }}
       />,
       <ListFacet
         config={{
-          id: "igs",
-          field: "interest_groups.title.keyword",
+          id: "contributors_affiliations",
+          field: "attributes.contributors.affiliation.keyword",
           title: {
-            en: "Interest groups",
-            nl: "Interesse groepen",
-          },
-          cols: 2,
-          rows: 1,
-        }}
-      />,
-      <ListFacet
-        config={{
-          id: "so",
-          field: "source.keyword",
-          title: {
-            en: "Source",
-            nl: "Bron",
+            en: "Contributor affiliations",
+            nl: "Contributor affiliations",
           },
           size: 10,
           cols: 2,

@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { ThemeWrapper } from "@dans-framework/theme";
 import { LanguageBar, MenuBar, Footer } from "@dans-framework/layout";
 import { Generic, Page } from "@dans-framework/pages";
-import logo from "./config/images/logo.png";
 
 // Load config variables
 import theme from "./config/theme";
@@ -43,7 +42,7 @@ const App = () => {
             languages={languages}
             changeLanguage={i18n.changeLanguage}
           />
-          <MenuBar pages={pages} logo={logo} userMenu={false} />
+          <MenuBar pages={pages} userMenu={false} />
           {/* Suspense to make sure languages can load first */}
           <Suspense
             fallback={

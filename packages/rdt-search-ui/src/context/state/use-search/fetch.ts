@@ -1,11 +1,12 @@
 import type { Payload } from "./request-creator";
 import { enqueueSnackbar } from "notistack";
+import type { FixedFacetsProps } from "../../props";
 
 const cache = new Map();
 
 // Builds the query for fixed facets
-function addFixedFacetsToQuery(query, fixedFacets) {
-  const filters = fixedFacets.map(({ type, location, value }) => {
+function addFixedFacetsToQuery(query: Payload, fixedFacets?: FixedFacetsProps[]) {
+  const filters = fixedFacets?.map(({ type, location, value }) => {
     if (type === "keyword" || type === "client") {
       return {
         match: {
@@ -25,7 +26,7 @@ function addFixedFacetsToQuery(query, fixedFacets) {
   });
 
   // Filter out nulls
-  const validFilters = filters.filter((filter) => filter !== null);
+  const validFilters = filters?.filter((filter) => filter !== null);
 
   // Add the OR filter (should clause) to the existing query
   return {
@@ -43,7 +44,7 @@ export async function fetchSearchResult(
   url: string,
   payload: Payload,
   dispatch: any,
-  fixedFacets: any,
+  fixedFacets?: FixedFacetsProps[],
 ) {
   let fetchResponse: Response;
   let response: any;
@@ -52,7 +53,7 @@ export async function fetchSearchResult(
 
   const body = JSON.stringify(updatedQuery);
 
-  console.log(payload)
+  console.log(body)
 
   if (cache.has(body)) {
     return cache.get(body);

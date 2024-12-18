@@ -1,3 +1,3 @@
-const siteTitle = "RDA";
+const siteTitle = "DANS Super Catalogue";
 
 export default siteTitle;

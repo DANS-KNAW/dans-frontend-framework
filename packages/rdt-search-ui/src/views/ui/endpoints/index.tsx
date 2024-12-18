@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react";
+import { useContext } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -10,6 +10,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "react-i18next";
 import { FacetedSearchContext } from "../../../context/Provider";
+import type { FixedFacetsProps } from "../../../context/props";
 
 export const EndpointSelector = () => {
   const { t } = useTranslation("views");
@@ -44,38 +45,25 @@ export const EndpointSelector = () => {
   );
 };
 
-export const FixedFacetSelector = ({initialFixedFacets}) => {
+export const FixedFacetSelector = ({initialFixedFacets}: {initialFixedFacets: FixedFacetsProps[]}) => {
   const { t } = useTranslation("views");
   const { fixedFacets, setFixedFacets } = useContext(FacetedSearchContext);
 
-  // Filter the facets to exclude 'keyword' type when all are "active"
-  const allActiveFacets = useMemo(
-    () => initialFixedFacets.filter((facet) => facet.type !== "keyword"),
-    []
-  );
+  const buttonColors: Record<FixedFacetsProps['group'], 'warning' | 'secondary' | 'info'> = {
+    DANS: 'secondary',
+    External: 'info',
+    Subject: 'warning',
+  };
 
   // console.log(initialFixedFacets)
   // console.log(fixedFacets)
 
-  // Compute active facets based on current fixedFacets
-  const activeFacets = fixedFacets.length === 0 ? allActiveFacets : fixedFacets;
-
-  // Group the facets by group key
-  const groupedFacets = useMemo(() => {
-    const groups = {};
-    initialFixedFacets.forEach((facet) => {
-      groups[facet.group] = groups[facet.group] || [];
-      groups[facet.group].push(facet);
-    });
-    return groups;
-  }, []);
-
-  const handleToggle = (event, newValues) => {
+  const handleToggle = (_event: any, newValues: string[]) => {
     // Update fixedFacets to represent the currently active buttons
     setFixedFacets(
-      newValues.length === 0 || newValues.length === allActiveFacets.length
-        ? [] // All active if no selection or all non-keyword selected
-        : initialFixedFacets.filter((facet) => newValues.includes(facet.value))
+      newValues.length === 0
+        ? initialFixedFacets.filter(facet => facet.defaultEnabled) // Reset to all facets if no selection
+        : initialFixedFacets.filter(facet => newValues.includes(facet.value))
     );
   };
 
@@ -85,21 +73,37 @@ export const FixedFacetSelector = ({initialFixedFacets}) => {
         {t("selectSources")}
       </Typography>
       <Stack direction="row" alignItems="center" spacing={3}>
-      {Object.entries(groupedFacets).map(([groupName, facets]) => (
-        <Box key={groupName}>
-          <Typography variant="body2">{groupName}</Typography>
-          <ToggleButtonGroup
-            value={activeFacets.map((facet) => facet.value)} // Active values
-            onChange={handleToggle}  
-          >
-            {facets.map(({ name, value }) => (
-              <ToggleButton key={value} value={value} size="small" sx={{ fontSize: 10, }}>
-                {name}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
-        </Box>
-      ))}
+        <ToggleButtonGroup
+          value={fixedFacets.map((facet) => facet.value)} // Active values
+          onChange={handleToggle}  
+        >
+          {initialFixedFacets.map(({ name, value, group }) => (
+            <ToggleButton 
+              key={value} 
+              value={value} 
+              size="small" 
+              sx={{
+                fontSize: 10,
+                color: theme => theme.palette[buttonColors[group]].contrastText,
+                backgroundColor: theme => theme.palette[buttonColors[group]].main,
+                opacity: 0.5,
+                '&:hover': {
+                  backgroundColor: theme => theme.palette[buttonColors[group]].dark, // Darker on hover
+                },
+                '&.Mui-selected': {
+                  backgroundColor: theme => theme.palette[buttonColors[group]].main,
+                  color: theme => theme.palette[buttonColors[group]].contrastText,
+                  opacity: 1,
+                  '&:hover': {
+                    backgroundColor: theme => theme.palette[buttonColors[group]].dark, // Darker on hover
+                  },
+                }
+              }}
+            >
+              {name}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
       </Stack>
     </Box>
   );

@@ -30,7 +30,6 @@ export function useSearch({
   controllers,
 }: UseSearchProps) {
   const prev = usePrevious(state);
-  console.log(props)
 
   React.useEffect(() => {
     if (props.url == null || props.url.length === 0 || controllers.size === 0)

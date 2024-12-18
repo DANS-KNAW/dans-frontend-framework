@@ -7,16 +7,16 @@ import { createTheme } from "@mui/material/styles";
 const customTheme = createTheme({
   palette: {
     primary: {
-      light: "#bed3ba",
-      main: "#4F8E31",
-      dark: "#4F8E31;",
+      light: "#80CBC4",
+      main: "#00796B",
+      dark: "#004D40;",
       contrastText: "#fff",
     },
     secondary: {
-      light: "#ff7961",
-      main: "#f44336",
-      dark: "#ba000d",
-      contrastText: "#000",
+      light: "#9FA8DA",
+      main: "#3F51B5",
+      dark: "#4527A0",
+      contrastText: "#fff",
     },
   },
   typography: {
@@ -50,24 +50,6 @@ const customTheme = createTheme({
       fontSize: "1rem",
       fontWeight: 500,
       marginBottom: "0.25rem",
-    },
-  },
-  components: {
-    MuiAppBar: {
-      styleOverrides: {
-        colorPrimary: {
-          backgroundColor: "#bed3ba",
-          color: "#222",
-        },
-      },
-    },
-    MuiAvatar: {
-      styleOverrides: {
-        colorDefault: {
-          backgroundColor: "#6A1D0D",
-          color: "#fff",
-        },
-      },
     },
   },
 });
