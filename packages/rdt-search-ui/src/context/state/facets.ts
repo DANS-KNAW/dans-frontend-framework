@@ -5,6 +5,7 @@ import {
 import { ListFacetFilter } from "../../facets/list/state";
 import type { MapFacetFilter } from "../../facets/map/state";
 import type { LanguageStrings } from "@dans-framework/utils";
+import type { FixedFacetsProps  } from "../props";
 
 export interface BaseFacetConfig {
   readonly field: string;
@@ -12,6 +13,7 @@ export interface BaseFacetConfig {
   readonly title?: string | LanguageStrings;
   readonly description?: string;
   readonly collapse?: boolean;
+  readonly groupBy?: Partial<FixedFacetsProps>[];
   cols?: number;
   rows?: number;
 }

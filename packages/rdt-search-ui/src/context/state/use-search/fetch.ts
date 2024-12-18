@@ -53,8 +53,6 @@ export async function fetchSearchResult(
 
   const body = JSON.stringify(updatedQuery);
 
-  console.log(body)
-
   if (cache.has(body)) {
     return cache.get(body);
   }

@@ -9,15 +9,9 @@ import Point from "ol/geom/Point";
 import { fromLonLat, transformExtent } from "ol/proj";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import styled from "styled-components";
 import { MapFacetFilter } from "../state";
 import { MapFacetAction } from "../actions";
-// import { FACETS_WIDTH } from '../../../constants'
-
-// height: ${FACETS_WIDTH * .75}px;
-const Wrapper = styled.div`
-  width: 100%;
-`;
+import Box from "@mui/material/Box"
 
 export function MapView(
   props: MapFacetProps & { dispatch: React.Dispatch<MapFacetAction> },
@@ -165,5 +159,18 @@ export function MapView(
     vectorSource.addFeatures(features);
   }, [props.values, map, vectorSource]);
 
-  return <Wrapper ref={mapRef}></Wrapper>;
+  return (
+    <Box 
+      ref={mapRef} 
+      sx={{ 
+        width: '100%', 
+        height: '20rem', 
+        borderRadius: 1, 
+        overflow: 'hidden', 
+        border: '1px solid', 
+        borderColor: 'neutral.light'
+      }} 
+      mb={1}
+    />
+  );
 }

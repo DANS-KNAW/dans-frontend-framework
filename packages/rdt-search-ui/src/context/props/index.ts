@@ -81,6 +81,7 @@ export interface FixedFacetsProps {
   value: string;
   group: "DANS" | "External" | "Subject";
   defaultEnabled: boolean;
+  altValue?: string;
 }
 
 export interface EndpointProps extends EndpointBaseProps {

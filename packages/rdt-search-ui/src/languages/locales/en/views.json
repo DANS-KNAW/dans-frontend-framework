@@ -24,5 +24,6 @@
   "activeFilters": "Active filters",
   "dataset": "Dataset",
   "selectDataset": "Select your dataset",
-  "selectSources": "Filter by data set or subject"
+  "selectSources": "Filter by data set or subject",
+  "searchOnZoom": "Search on zoom"
 }

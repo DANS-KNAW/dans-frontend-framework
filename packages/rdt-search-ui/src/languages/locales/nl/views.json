@@ -24,5 +24,6 @@
   "activeFilters": "Actieve filters",
   "dataset": "Dataset",
   "selectDataset": "Selecteer je dataset",
-  "selectSources": "Filter op dataset of onderwerp"
+  "selectSources": "Filter op dataset of onderwerp",
+  "searchOnZoom": "Zoek bij zoomen"
 }

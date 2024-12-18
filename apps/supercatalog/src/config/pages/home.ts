@@ -1,4 +1,3 @@
-import logo from "../images/logo.png";
 import type { Page } from "@dans-framework/pages";
 
 const page: Page = {
@@ -20,7 +19,6 @@ const page: Page = {
     },
     restricted: true,
   },
-  logo: logo,
 };
 
 export default page;

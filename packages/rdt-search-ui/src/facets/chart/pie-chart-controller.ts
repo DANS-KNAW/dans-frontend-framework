@@ -99,7 +99,30 @@ export class PieChartController extends FacetController<
   }
 
   createAggregation(postFilters: any) {
-    const values = {
+    // For a quick hack, we add a function to the query that groupes data by url match and name
+    const fixedFacets = this.config.groupBy;
+    const values = fixedFacets ? 
+    {
+      terms: {
+        script: {
+          source: `
+            def url = doc['${this.config.field}'].value;
+            def facets = params.facets;
+            for (def facet : facets) {
+              if (url != null && url.contains(facet.value)) {
+                return facet.name;
+              }
+            }
+            return 'Other';
+          `.trim(),
+          params: {
+            facets: fixedFacets.map(({ name, value }) => ({ name, value })),
+          },
+        },
+      },
+    }
+    :
+    {
       terms: {
         field: this.config.field,
       },

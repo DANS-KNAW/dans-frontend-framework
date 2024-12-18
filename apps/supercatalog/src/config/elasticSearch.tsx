@@ -33,6 +33,7 @@ const fixedFacets: FixedFacetsProps[] = [
     type: "client",
     location: "relationships.client.data.id.keyword",
     value: "dans.dataversenl",
+    altValue: "dataverse.nl",
     group: "DANS",
     defaultEnabled: true,
   }, 
@@ -73,6 +74,7 @@ const fixedFacets: FixedFacetsProps[] = [
     type: "client",
     location: "relationships.client.data.id.keyword",
     value: "delft.data4tu",
+    altValue: "4tu",
     group: "External",
     defaultEnabled: false,
   }, 
@@ -126,30 +128,36 @@ export const elasticConfig: EndpointProps[] = [
           rows: 1,
         }}
       />,
-      // <PieChartFacet
-      //   config={{
-      //     id: "source",
-      //     field: "attributes.url.keyword",
-      //     title: {
-      //       en: "Sources",
-      //       nl: "Sources",
-      //     },
-      //     cols: 4,
-      //     rows: 1,
-      //   }}
-      // />,
-      // <MapFacet
-      //   config={{
-      //     id: "source",
-      //     field: "location_dev",
-      //     title: {
-      //       en: "Sources",
-      //       nl: "Sources",
-      //     },
-      //     cols: 4,
-      //     rows: 1,
-      //   }}
-      // />,
+      // Note that this groupBy function doesnt play well when actually filtering on this grouped data
+      <PieChartFacet
+        config={{
+          id: "source",
+          field: "attributes.url.keyword",
+          groupBy: fixedFacets.filter(f => f.type !== 'keyword').map(f => ({
+            name: f.name,
+            location: "attributes.url",
+            value: f.location === "attributes.url" ? f.value : f.altValue,
+          })),
+          title: {
+            en: "Sources",
+            nl: "Sources",
+          },
+          cols: 4,
+          rows: 1,
+        }}
+      />,
+      <MapFacet
+        config={{
+          id: "map",
+          field: "location",
+          title: {
+            en: "Locations",
+            nl: "Locaties",
+          },
+          cols: 4,
+          rows: 1,
+        }}
+      />,
       <ListFacet
         config={{
           id: "creators",
