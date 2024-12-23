@@ -49,15 +49,6 @@ export const FixedFacetSelector = ({initialFixedFacets}: {initialFixedFacets: Fi
   const { t } = useTranslation("views");
   const { fixedFacets, setFixedFacets } = useContext(FacetedSearchContext);
 
-  const buttonColors: Record<FixedFacetsProps['group'], 'warning' | 'secondary' | 'info'> = {
-    DANS: 'secondary',
-    External: 'info',
-    Subject: 'warning',
-  };
-
-  // console.log(initialFixedFacets)
-  // console.log(fixedFacets)
-
   const handleToggle = (_event: any, newValues: string[]) => {
     // Update fixedFacets to represent the currently active buttons
     setFixedFacets(
@@ -77,27 +68,13 @@ export const FixedFacetSelector = ({initialFixedFacets}: {initialFixedFacets: Fi
           value={fixedFacets.map((facet) => facet.value)} // Active values
           onChange={handleToggle}  
         >
-          {initialFixedFacets.map(({ name, value, group }) => (
+          {initialFixedFacets.map(({ name, value }) => (
             <ToggleButton 
               key={value} 
               value={value} 
               size="small" 
               sx={{
                 fontSize: 10,
-                color: theme => theme.palette[buttonColors[group]].contrastText,
-                backgroundColor: theme => theme.palette[buttonColors[group]].main,
-                opacity: 0.5,
-                '&:hover': {
-                  backgroundColor: theme => theme.palette[buttonColors[group]].dark, // Darker on hover
-                },
-                '&.Mui-selected': {
-                  backgroundColor: theme => theme.palette[buttonColors[group]].main,
-                  color: theme => theme.palette[buttonColors[group]].contrastText,
-                  opacity: 1,
-                  '&:hover': {
-                    backgroundColor: theme => theme.palette[buttonColors[group]].dark, // Darker on hover
-                  },
-                }
               }}
             >
               {name}

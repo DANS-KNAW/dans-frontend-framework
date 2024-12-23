@@ -91,6 +91,30 @@ export class PieChartController extends FacetController<
   createPostFilter(filter: PieChartFacetFilter) {
     if (filter == null) return;
 
+    // Check for grouped fields, then we need to do a wildcard match (or ngram if we implement that in mapping TODO)
+    // For "Other", we must remove all the urls in config.groupBy that match 
+    if (this.config.groupBy && this.config.groupBy.length > 0) {
+      if (filter !== "Other") {
+        return {
+          wildcard: {
+            [this.config.field]: {
+              value: `*${filter}*`,
+              case_insensitive: true
+            }
+          }
+        }
+      }
+      return {
+        bool: {
+          must_not: this.config.groupBy.map( f => ({
+            wildcard: {
+              [this.config.field]: `*${f.value}*`
+            }
+          }))
+        }
+      }
+    }
+
     return {
       term: {
         [this.config.field]: filter,
