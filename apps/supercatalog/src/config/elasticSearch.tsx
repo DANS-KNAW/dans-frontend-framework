@@ -7,7 +7,7 @@ import {
   type EndpointProps,
   type FixedFacetsProps,
 } from "@dans-framework/rdt-search-ui";
-import { Rda2Result } from "../pages/search/result";
+import { SingleResult } from "../pages/search/result";
 
 const fieldConfig: Partial<RDTSearchUIProps> = {
   fullTextFields: ["title^2", "dc_description"],
@@ -99,7 +99,7 @@ export const elasticConfig: EndpointProps[] = [
     url: import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT,
     fullTextFields: fieldConfig.fullTextFields,
     fullTextHighlight: fieldConfig.fullTextHighlight,
-    resultBodyComponent: Rda2Result,
+    resultBodyComponent: SingleResult,
     onClickResultPath: "record",
     fixedFacets: fixedFacets,
     dashboard: [
@@ -128,7 +128,7 @@ export const elasticConfig: EndpointProps[] = [
           rows: 1,
         }}
       />,
-      // Note that this groupBy function doesnt play well when actually filtering on this grouped data
+      // To keep it simple(r), we focus on filtering by URL wildcards only in the pie chart
       <PieChartFacet
         config={{
           id: "source",

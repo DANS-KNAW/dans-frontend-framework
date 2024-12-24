@@ -11,6 +11,7 @@ import { Generic, Page } from "@dans-framework/pages";
 import theme from "./config/theme";
 import footer from "./config/footer";
 import pages from "./config/pages";
+import { SingleRecord } from "./pages/record";
 import siteTitle from "./config/siteTitle";
 import languages from "./config/languages";
 import { elasticConfig } from "./config/elasticSearch";
@@ -28,6 +29,8 @@ const App = () => {
         return <FacetedWrapper dashboard dashRoute="/" resultRoute="/search" />;
       case "search":
         return <FacetedWrapper dashRoute="/" resultRoute="/search" />;
+      case "record":
+        return <SingleRecord />;
       default:
         return <Generic {...page} />;
     }

@@ -9,17 +9,16 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 /* Custom component for search results */
 
-export function Rda2Result(props: ResultBodyProps) {
+export function SingleResult(props: ResultBodyProps) {
   const { result: item } = props;
-
-  const title = item.highlight?.title?.[0] || item.title || "<i>empty</i>";
+  const title = item.attributes.titles[0]?.title || "<i>Untitled</i>";
 
   return (
     <>
       <Typography variant="h5">{parse(title)}</Typography>
-      {item.dc_date && (
+      {item.attributes.registered && (
         <Typography variant="body2" gutterBottom>
-          {new Date(item.dc_date).toDateString()}
+          {new Date(item.attributes.registered).toDateString()}
         </Typography>
       )}
       <ReadMore item={item} />
@@ -31,7 +30,7 @@ export function Rda2Result(props: ResultBodyProps) {
 function ReadMore({ item }: { item: ResultBodyProps["result"] }) {
   const [active, setActive] = useState(false);
 
-  const description = item.dc_description || "";
+  const description = item.attributes.descriptions[0]?.description || "";
 
   const [visibleText, hiddenText] = [
     description.substring(0, 180),

@@ -291,7 +291,7 @@ export const FacetedWrapper = ({
               fullTextFields={currentConfig.fullTextFields}
               fullTextHighlight={currentConfig.fullTextHighlight}
               onClickResult={(result: Result) =>
-                navigate(`/${currentConfig.onClickResultPath}/${result.id}`)
+                navigate(`/${currentConfig.onClickResultPath}/${encodeURIComponent(result.id)}`)
               }
               ResultBodyComponent={currentConfig.resultBodyComponent}
               url={currentConfig.url}
