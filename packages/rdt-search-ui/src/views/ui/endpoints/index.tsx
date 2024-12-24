@@ -2,15 +2,20 @@ import { useContext } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import Checkbox from "@mui/material/Checkbox";
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
+import ListItemButton from '@mui/material/ListItemButton';
 import Select, { type SelectChangeEvent } from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "react-i18next";
 import { FacetedSearchContext } from "../../../context/Provider";
 import type { FixedFacetsProps } from "../../../context/props";
+import { DropDown } from "../drop-down";
 
 export const EndpointSelector = () => {
   const { t } = useTranslation("views");
@@ -49,39 +54,53 @@ export const FixedFacetSelector = ({initialFixedFacets}: {initialFixedFacets: Fi
   const { t } = useTranslation("views");
   const { fixedFacets, setFixedFacets } = useContext(FacetedSearchContext);
 
-  const handleToggle = (_event: any, newValues: string[]) => {
-    // Update fixedFacets to represent the currently active buttons
-    setFixedFacets(
-      newValues.length === 0
-        ? initialFixedFacets.filter(facet => facet.defaultEnabled) // Reset to all facets if no selection
-        : initialFixedFacets.filter(facet => newValues.includes(facet.value))
-    );
+  const groupedFacets = Object.values(
+    initialFixedFacets.reduce((acc, facet) => {
+      // Initialize the group if it doesn't exist
+      if (!acc[facet.group]) {
+        acc[facet.group] = { group: facet.group, facets: [] };
+      }
+      // Push the current facet into the `facets` array of the group
+      acc[facet.group].facets.push(facet);
+      return acc;
+    }, {} as Record<string, { group: string; facets: FixedFacetsProps[] }>)
+  );
+
+  const handleToggle = (facet: FixedFacetsProps) => {
+    const updatedFacets = fixedFacets.some(existingFacet => existingFacet.value === facet.value) ? 
+      fixedFacets.filter(f => !(f.value === facet.value))
+      : [...fixedFacets, facet];
+    setFixedFacets(updatedFacets);
   };
 
   return (
-    <Box mb={2}>
+    <Stack direction="row" mb={2} spacing={1} alignItems="center">
       <Typography variant="h6">
         {t("selectSources")}
       </Typography>
-      <Stack direction="row" alignItems="center" spacing={3}>
-        <ToggleButtonGroup
-          value={fixedFacets.map((facet) => facet.value)} // Active values
-          onChange={handleToggle}  
-        >
-          {initialFixedFacets.map(({ name, value }) => (
-            <ToggleButton 
-              key={value} 
-              value={value} 
-              size="small" 
-              sx={{
-                fontSize: 10,
-              }}
-            >
-              {name}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-      </Stack>
-    </Box>
+      <DropDown label={t('select')}>
+        {groupedFacets.map(({ group, facets }) => 
+          <List key={group} dense subheader={<ListSubheader sx={{ lineHeight: 2, mt: 1 }}>{group}</ListSubheader>}>
+            {facets.map(f =>
+              <ListItem
+                key={f.value}
+                disablePadding
+              >
+                <ListItemButton role={undefined} onClick={() => handleToggle(f)} sx={{pb: 0, pt: 0}}>
+                  <ListItemIcon sx={{ minWidth: '2rem' }}>
+                    <Checkbox
+                      edge="start"
+                      checked={fixedFacets.some(existingFacet => existingFacet.value === f.value)}
+                      disableRipple
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary={f.name} />
+                </ListItemButton>
+              </ListItem>
+            )}
+          </List>
+        )}
+      </DropDown>
+    </Stack>
   );
 };

@@ -49,7 +49,7 @@ export default function FacetedSearch({
           <FullTextSearch />
           {(searchState.query ||
             searchState.facetFilters.entries().next().value) && (
-            <ActiveFilters />
+            <ActiveFilters mb={2} />
           )}
           <Facets
             controllers={controllers}
