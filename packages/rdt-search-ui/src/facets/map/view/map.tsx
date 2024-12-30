@@ -12,6 +12,9 @@ import VectorSource from "ol/source/Vector";
 import { MapFacetFilter } from "../state";
 import { MapFacetAction } from "../actions";
 import Box from "@mui/material/Box"
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
+import { useTranslation } from "react-i18next";
 
 export function MapView(
   props: MapFacetProps & { dispatch: React.Dispatch<MapFacetAction> },
@@ -20,6 +23,7 @@ export function MapView(
   const [vectorSource, setVectorSource] = React.useState<VectorSource>();
   const [map, setMap] = React.useState<OLMap>();
   const mapRef = React.useRef<HTMLDivElement>(null);
+  const { t } = useTranslation("facets");
 
   React.useEffect(() => {
     if (map != null) return;
@@ -159,18 +163,39 @@ export function MapView(
     vectorSource.addFeatures(features);
   }, [props.values, map, vectorSource]);
 
-  return (
-    <Box 
-      ref={mapRef} 
-      sx={{ 
-        width: '100%', 
-        height: '18rem', 
-        borderRadius: 1, 
-        overflow: 'hidden', 
-        border: '1px solid', 
-        borderColor: 'neutral.light'
-      }} 
-      mb={1}
-    />
+  return ( 
+      <Box 
+        ref={mapRef} 
+        sx={{ 
+          width: '100%', 
+          height: '18rem', 
+          borderRadius: 1, 
+          overflow: 'hidden', 
+          border: '1px solid', 
+          borderColor: 'neutral.light',
+          position: 'relative',
+        }} 
+        mb={1}
+      >
+        {(props.values === undefined || props.values.length === 0) &&
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            height: '100%', 
+            position: 'absolute', 
+            zIndex: 3, 
+            width: '100%',
+            backgroundColor: 'rgba(255,255,255,0.75)' 
+          }}>
+            { props.values === undefined ? 
+              <CircularProgress /> : 
+              <Typography variant="body2" sx={{ color: "neutral.dark" }}>
+                {t("noData")}
+              </Typography>
+            }
+          </Box>
+        }
+      </Box>
   );
 }

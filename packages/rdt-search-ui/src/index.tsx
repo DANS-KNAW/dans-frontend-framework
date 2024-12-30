@@ -159,7 +159,7 @@ function AppLoader({ children, controllers, searchProps }: AppLoaderProps) {
 
     // clear uri search string
     const url = new URL(window.location.href);
-    url.search = "";
+    url.searchParams.delete("search"); // Remove 'search' parameter
     history.replaceState(null, "", url);
   }, [controllers]);
 

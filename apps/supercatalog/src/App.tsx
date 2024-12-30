@@ -1,5 +1,5 @@
-import { Suspense } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Suspense, useMemo, useEffect } from "react";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
@@ -20,8 +20,32 @@ import {
   FacetedSearchProvider,
 } from "@dans-framework/rdt-search-ui";
 
+// Helper to preserve ?embed=true in the url, when present
+const useEmbedHandler = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // on first render, check if embed=true is present in the url
+  const isEmbed = useMemo(() => {
+    const queryParams = new URLSearchParams(location.search);
+    return queryParams.get("embed") === "true";
+  }, []);
+
+  // Ensure ?embed=true is always preserved
+  useEffect(() => {
+    if (isEmbed && !location.search.includes("embed=true")) {
+      const queryParams = new URLSearchParams(location.search);
+      queryParams.set("embed", "true");
+      navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true });
+    }
+  }, [isEmbed, location.search, location.pathname, navigate]);
+
+  return { isEmbed };
+};
+
 const App = () => {
   const { i18n } = useTranslation();
+  const { isEmbed } = useEmbedHandler();
 
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
@@ -39,13 +63,12 @@ const App = () => {
   return (
     <ThemeWrapper theme={theme} siteTitle={siteTitle}>
       <FacetedSearchProvider config={elasticConfig}>
-        <BrowserRouter>
           {/* Need to pass along root i18n functions to the language bar */}
-          <LanguageBar
+          {!isEmbed && <LanguageBar
             languages={languages}
             changeLanguage={i18n.changeLanguage}
-          />
-          <MenuBar pages={pages} userMenu={false} />
+          />}
+          <MenuBar pages={pages} userMenu={false} {...(isEmbed && { logo: false })} />
           {/* Suspense to make sure languages can load first */}
           <Suspense
             fallback={
@@ -66,11 +89,18 @@ const App = () => {
               })}
             </Routes>
           </Suspense>
-        </BrowserRouter>
       </FacetedSearchProvider>
-      <Footer {...footer} />
+      {!isEmbed && <Footer {...footer} /> }
     </ThemeWrapper>
   );
 };
 
-export default App;
+const RouterApp = () => {
+  return (
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  );
+};
+
+export default RouterApp;

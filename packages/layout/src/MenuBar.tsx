@@ -96,7 +96,7 @@ const MenuBar = ({
                     ),
                 )}
             </Menu>
-            <Link
+            {logo && <Link
               component={RouterLink}
               to="/"
               sx={{
@@ -109,10 +109,11 @@ const MenuBar = ({
             >
               {Logo(logo)}
             </Link>
+            }
           </Box>
 
           {/* desktop menu */}
-          <Link
+          {logo && <Link
             component={RouterLink}
             to="/"
             sx={{ mr: 2, width: 100, display: { xs: "none", md: "flex" } }}
@@ -123,6 +124,7 @@ const MenuBar = ({
           >
             {Logo(logo)}
           </Link>
+          }
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages &&
               pages.map(
