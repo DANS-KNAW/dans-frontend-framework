@@ -1,4 +1,4 @@
-import { Suspense, useMemo, useEffect } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
@@ -19,11 +19,11 @@ import {
   FacetedWrapper,
   FacetedSearchProvider,
 } from "@dans-framework/rdt-search-ui";
+import { AnimatePresence } from "framer-motion";
 
 // Helper to preserve ?embed=true in the url, when present
 const useEmbedHandler = () => {
   const location = useLocation();
-  const navigate = useNavigate();
 
   // on first render, check if embed=true is present in the url
   const isEmbed = useMemo(() => {
@@ -31,14 +31,15 @@ const useEmbedHandler = () => {
     return queryParams.get("embed") === "true";
   }, []);
 
-  // Ensure ?embed=true is always preserved
-  useEffect(() => {
-    if (isEmbed && !location.search.includes("embed=true")) {
-      const queryParams = new URLSearchParams(location.search);
-      queryParams.set("embed", "true");
-      navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true });
-    }
-  }, [isEmbed, location.search, location.pathname, navigate]);
+  // Ensure ?embed=true is always preserved ... not needed, as this should never rerender
+  // const navigate = useNavigate();
+  // useEffect(() => {
+  //   if (isEmbed && !location.search.includes("embed=true")) {
+  //     const queryParams = new URLSearchParams(location.search);
+  //     queryParams.set("embed", "true");
+  //     navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true });
+  //   }
+  // }, [isEmbed, location.search, location.pathname, navigate]);
 
   return { isEmbed };
 };
@@ -46,6 +47,17 @@ const useEmbedHandler = () => {
 const App = () => {
   const { i18n } = useTranslation();
   const { isEmbed } = useEmbedHandler();
+  const navigate = useNavigate();
+
+  const [isExiting, setIsExiting] = useState(false); // Track exit state
+
+  const handleExit = () => {
+    setIsExiting(true);
+    setTimeout(() => {
+      setIsExiting(false);
+      navigate("/search"); // Redirect after animation completes
+    }, 300); // Match this duration to your animation's exit duration
+  };
 
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
@@ -54,7 +66,13 @@ const App = () => {
       case "search":
         return <FacetedWrapper dashRoute="/" resultRoute="/search" />;
       case "record":
-        return <SingleRecord />;
+        return (
+          <FacetedWrapper dashRoute="/" resultRoute="/search">
+            <AnimatePresence>
+              {!isExiting && <SingleRecord onClose={handleExit} />}
+            </AnimatePresence>
+          </FacetedWrapper>
+        );
       default:
         return <Generic {...page} />;
     }
@@ -63,32 +81,32 @@ const App = () => {
   return (
     <ThemeWrapper theme={theme} siteTitle={siteTitle}>
       <FacetedSearchProvider config={elasticConfig}>
-          {/* Need to pass along root i18n functions to the language bar */}
-          {!isEmbed && <LanguageBar
-            languages={languages}
-            changeLanguage={i18n.changeLanguage}
-          />}
-          <MenuBar pages={pages} userMenu={false} {...(isEmbed && { logo: false })} />
-          {/* Suspense to make sure languages can load first */}
-          <Suspense
-            fallback={
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
-                <Skeleton height={600} width={900} />
-              </Box>
-            }
-          >
-            <Routes>
-              {(pages as Page[]).map((page) => {
-                return (
-                  <Route
-                    key={page.id}
-                    path={page.slug}
-                    element={createElementByTemplate(page)}
-                  />
-                );
-              })}
-            </Routes>
-          </Suspense>
+        {/* Need to pass along root i18n functions to the language bar */}
+        {!isEmbed && <LanguageBar
+          languages={languages}
+          changeLanguage={i18n.changeLanguage}
+        />}
+        <MenuBar pages={pages} userMenu={false} embed={isEmbed} />
+        {/* Suspense to make sure languages can load first */}
+        <Suspense
+          fallback={
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Skeleton height={600} width={900} />
+            </Box>
+          }
+        >
+          <Routes>
+            {(pages as Page[]).map((page) => {
+              return (
+                <Route
+                  key={page.id}
+                  path={page.slug}
+                  element={createElementByTemplate(page)}
+                />
+              );
+            })}
+          </Routes>
+        </Suspense>
       </FacetedSearchProvider>
       {!isEmbed && <Footer {...footer} /> }
     </ThemeWrapper>

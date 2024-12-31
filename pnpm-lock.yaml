@@ -445,6 +445,9 @@ importers:
       '@mui/material':
         specifier: ^5.16.7
         version: 5.16.8(@emotion/react@11.13.5(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.13.5(@emotion/react@11.13.5(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      framer-motion:
+        specifier: ^10.15.0
+        version: 10.18.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       html-react-parser:
         specifier: ^4.2.2
         version: 4.2.10(react@18.3.1)

@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useState, type SyntheticEvent } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -10,13 +10,15 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import dansLogoWhite from "./images/logo-dans-white.svg";
-import { NavLink as RouterLink } from "react-router-dom";
+import { NavLink as RouterLink, useNavigate, useLocation } from "react-router-dom";
 import type { Page } from "@dans-framework/pages";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 import { UserMenu } from "@dans-framework/user-auth";
 import { useAuth } from "react-oidc-context";
 import { Typography } from "@mui/material";
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
 const MenuBar = ({
   pages,
@@ -24,12 +26,14 @@ const MenuBar = ({
   userSettings = true,
   userSubmissions = true,
   userMenu = true,
+  embed = false,
 }: {
   pages: Page[];
   logo?: any;
   userSettings?: boolean;
   userSubmissions?: boolean;
   userMenu?: boolean;
+  embed?: boolean;
 }) => {
   const { i18n } = useTranslation();
   const auth = userMenu ? useAuth() : undefined;
@@ -42,6 +46,7 @@ const MenuBar = ({
   };
 
   return (
+    !embed ?
     <AppBar position="static">
       <Container>
         <Toolbar disableGutters>
@@ -155,8 +160,39 @@ const MenuBar = ({
         </Toolbar>
       </Container>
     </AppBar>
+    :
+    <TabBar pages={pages} />
   );
 };
+
+const TabBar = ({ pages }: { pages: Page[] }) => {
+  const { i18n } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const locationValue = location.pathname === "/" ? "/" : location.pathname.replace(/^\//, "")
+  const [value, setValue] = useState(locationValue);
+  const handleTabChange = (_event: SyntheticEvent, newValue: string) => {
+    navigate(newValue);
+    setValue(newValue);
+  };
+
+  return (
+    <Container>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs onChange={handleTabChange} value={value}>
+          {pages && pages.map(
+            (page, i) =>
+              page.inMenu &&
+              page.menuTitle &&
+              !page.restricted && (
+                <Tab key={i} value={(page.slug || page.link) as string} label={lookupLanguageString(page.menuTitle, i18n.language)} />
+              ),
+          )}
+        </Tabs>
+      </Box>
+    </Container>
+  )
+}
 
 /**
  * Renders the logo based on the provided input.

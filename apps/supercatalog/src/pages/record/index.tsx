@@ -1,4 +1,4 @@
-import { Chip, Container } from "@mui/material";
+import { Chip, CircularProgress, Container } from "@mui/material";
 import { getCurrentEndpoint, type Result } from "@dans-framework/rdt-search-ui";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -7,6 +7,9 @@ import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2";
+import { motion } from "framer-motion";
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 
 interface SingleRecord {
   id: string;
@@ -94,17 +97,17 @@ interface SingleRecord {
   prefix: string;
 }
 
-export function SingleRecord() {
+export function SingleRecord({ onClose }: { onClose: () => void }) {
   const { id } = useParams();
   const [record, setRecord] = useState<SingleRecord | null>(null);
   const endpoint = getCurrentEndpoint();
-
-  console.log(record)
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (id) {
       fetch(`${endpoint}/_source/${encodeURIComponent(id)}`)
         .then((res) => {
+          setLoading(false);
           if (!res.ok) {
             throw new Error(`Error: ${res.statusText}`);
           }
@@ -120,74 +123,131 @@ export function SingleRecord() {
   }, [id]);
 
   return (
-    <Container>
-      <Grid container>
-        <Grid
-          sm={10}
-          md={8}
-          lg={7}
-          smOffset={1}
-          mdOffset={2}
-          lgOffset={2.5}
-          pt={4}
-        >
-          {record !== null ? 
-          <Box>
-            <Typography variant="h3">
-              {record.attributes?.titles[0]?.title || <i>Untitled</i>}
-            </Typography>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        top: 0,
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'flex-end',
+      }}
+    >
+      <Box 
+        sx={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          top: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+        }} 
+        onClick={onClose}
+      /> 
+      <motion.div
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{ duration: 0.3 }}
+        style={{width: '100%',}}
+      >
+        <Box sx={{
+          maxHeight: '90vh',
+          pb: 4,
+          pt: 4,
+          backgroundColor: 'neutral.light',
+          overflow: 'auto',
+          position: 'relative',
+        }}>
+          <IconButton aria-label="close" size="large"  sx={{ position: 'absolute', right: '1rem', top: '1rem' }} onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+          <Container>
+            <Grid container>
+              <Grid
+                sm={10}
+                md={8}
+                lg={7}
+                smOffset={1}
+                mdOffset={2}
+                lgOffset={2.5}
+                pt={4}
+              >
+                {loading ?
+                <Box sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '10rem',
+                }}>
+                  <CircularProgress />
+                </Box>
+                :
+                record !== null ? 
+                <Box>
+                  <Typography variant="h3">
+                    {record.attributes?.titles[0]?.title || <i>Untitled</i>}
+                  </Typography>
 
-            <Typography gutterBottom>{record.attributes.descriptions[0]?.description || ""}</Typography>
+                  <Typography gutterBottom>{record.attributes.descriptions[0]?.description || ""}</Typography>
 
-            <Box mt={2}>
-              <Metadata
-                name="Created"
-                value={new Date(record.attributes.registered).toDateString() ?? ["-"]}
-                options={{ turnicate: false }}
-              />
-              <Metadata
-                name="Updated"
-                value={new Date(record.attributes.updated).toDateString() ?? ["-"]}
-                options={{ turnicate: false }}
-              />
-              <Metadata
-                name="Creators"
-                value={record.attributes.creators?.map((i: any) => i.name) ?? ["-"]}
-                options={{ turnicate: false }}
-              />
-              <Metadata
-                name="Contributors"
-                value={record.attributes.contributors?.map((i: any) => i.name) ?? ["-"]}
-                options={{ turnicate: false }}
-              />
-              <Metadata
-                name="Subjects"
-                value={record.attributes.subjects?.map((i: any) => i.subject)}
-                options={{ turnicate: false }}
-              />
+                  <Box mt={2}>
+                    <Metadata
+                      name="Created"
+                      value={new Date(record.attributes.registered).toDateString() ?? ["-"]}
+                      options={{ turnicate: false }}
+                    />
+                    <Metadata
+                      name="Updated"
+                      value={new Date(record.attributes.updated).toDateString() ?? ["-"]}
+                      options={{ turnicate: false }}
+                    />
+                    <Metadata
+                      name="Creators"
+                      value={record.attributes.creators?.map((i: any) => i.name) ?? ["-"]}
+                      options={{ turnicate: false }}
+                    />
+                    <Metadata
+                      name="Contributors"
+                      value={record.attributes.contributors?.map((i: any) => i.name) ?? ["-"]}
+                      options={{ turnicate: false }}
+                    />
+                    <Metadata
+                      name="Subjects"
+                      value={record.attributes.subjects?.map((i: any) => i.subject)}
+                      options={{ turnicate: false }}
+                    />
 
-              {/* <MetadataList record={record} /> */}
+                    {/* <MetadataList record={record} /> */}
 
-              <Box sx={{ mt: 2, mb: 2 }}>
-                {record.attributes.url && (
-                  <Link href={record.attributes.url} target="_blank">
-                    <Chip label="DOI" />
-                  </Link>
-                )}
-              </Box>
-              <ShowJSON record={record} />
-            </Box>
-          </Box> :
-          <Box>
-            <Typography variant="h3">
-              Record not found
-            </Typography>
-            <Typography gutterBottom>Please go back and try again</Typography>
-            </Box>
-          }
-        </Grid>
-      </Grid>
-    </Container>
+                    <Box sx={{ mt: 2, mb: 2 }}>
+                      {record.attributes.url && (
+                        <Link href={record.attributes.url} target="_blank">
+                          <Chip label="DOI" />
+                        </Link>
+                      )}
+                    </Box>
+                    <ShowJSON record={record} />
+                  </Box>
+                </Box> :
+                <Box>
+                  <Typography variant="h3">
+                    Record not found
+                  </Typography>
+                  <Typography gutterBottom>Please go back and try again</Typography>
+                  </Box>
+                }
+              </Grid>
+            </Grid>
+          </Container>
+        </Box>
+      </motion.div>
+    </motion.div>
   );
 }
 

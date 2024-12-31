@@ -1,4 +1,4 @@
-import React, { Children, isValidElement } from "react";
+import React, { Children, isValidElement, ReactNode } from "react";
 import {
   SearchStateContext,
   SearchStateDispatchContext,
@@ -258,10 +258,12 @@ export const FacetedWrapper = ({
   dashboard,
   dashRoute,
   resultRoute,
+  children,
 }: {
   dashboard?: boolean;
   dashRoute?: string;
   resultRoute?: string;
+  children?: ReactNode;
 }) => {
   const { config, endpoint, fixedFacets } = React.useContext(FacetedSearchContext);
   const navigate = useNavigate();
@@ -308,6 +310,7 @@ export const FacetedWrapper = ({
           </motion.div>
         </AnimatePresence>
       </Container>
+      {children}
     </I18nextProvider>
   );
 };
