@@ -198,10 +198,14 @@ export class DateChartController extends FacetController<
         new Map()
       : new Map(Array.from(this.values.keys()).map((x) => [x, 0]));
 
-    this.values = buckets.reduce(
-      (prev, curr) =>
-        prev.set(curr.key_as_string || curr.key.toString(), curr.doc_count),
-      emptyMap,
+    this.values = new Map(
+      Array.from(
+        buckets.reduce(
+          (prev, curr) =>
+            prev.set(curr.key_as_string || curr.key.toString(), curr.doc_count),
+          emptyMap
+        )
+      ).sort((a, b) => parseInt(a[0]) - parseInt(b[0])) // Ensure final sorting by year!
     );
 
     return this.values;
@@ -235,7 +239,7 @@ export class DateChartController extends FacetController<
     }
 
     this.range = {
-      min: this.range?.min || currentMin,
+      min: currentMin !== this.range?.min ? currentMin : this.range?.min, // todo check this, how does this function exactly? Filters don't work all that properly!!
       currentMin,
       currentMax: currentMax - 1, // subtract 1ms to get the last ms of the year/quarter/month/day/hour/minute
       max: this.range?.max || currentMax - 1,
