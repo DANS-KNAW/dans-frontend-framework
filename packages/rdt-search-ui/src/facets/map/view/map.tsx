@@ -1,7 +1,5 @@
 import type { MapFacetProps } from ".";
-
 import React from "react";
-
 import { getMapInstance, markerStyle } from "./map-instance";
 import OLMap from "ol/Map";
 import Feature from "ol/Feature";
@@ -20,7 +18,7 @@ export function MapView(
   props: MapFacetProps & { dispatch: React.Dispatch<MapFacetAction> },
 ) {
   const initialZoom = React.useRef(0);
-  const [vectorSource, setVectorSource] = React.useState<VectorSource>();
+  const [vectorSource, setVectorSource] = React.useState<VectorSource<Feature<Point>>>();
   const [map, setMap] = React.useState<OLMap>();
   const mapRef = React.useRef<HTMLDivElement>(null);
   const { t } = useTranslation("facets");
@@ -32,7 +30,7 @@ export function MapView(
 
     const _map = getMapInstance(div);
 
-    const vectorSource = new VectorSource({
+    const vectorSource = new VectorSource<Feature<Point>>({
       features: [],
     });
 

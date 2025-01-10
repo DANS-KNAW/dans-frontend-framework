@@ -1,6 +1,6 @@
 import OLMap from "ol/Map";
 import View from "ol/View";
-import TileLayer from "ol/layer/WebGLTile";
+import { Tile as TileLayer } from "ol/layer";
 import Style from "ol/style/Style";
 import CircleStyle from "ol/style/Circle";
 import Stroke from "ol/style/Stroke";
@@ -9,6 +9,9 @@ import Text from "ol/style/Text";
 import OSM from "ol/source/OSM";
 import Feature from "ol/Feature";
 import { transformExtent } from "ol/proj";
+import { defaults as defaultControls } from 'ol/control/defaults';
+import { defaults as defaultInteractions } from 'ol/interaction/defaults';
+import "ol/ol.css";
 
 // export function getAnnotationCoordinate(annotation: Annotation) {
 //     const [lat, lon] = annotation.value.coordinates
@@ -45,7 +48,7 @@ export const markerStyle = (feature: Feature) => {
 
   (style.getImage() as CircleStyle).setRadius(radius);
   style
-    .getText()
+    .getText()!
     .setText(
       feature.get("count") > 1 ? feature.get("count").toString() : undefined,
     );
@@ -86,7 +89,12 @@ export const markerStyle = (feature: Feature) => {
 
 export function getMapInstance(target?: HTMLElement) {
   return new OLMap({
-    controls: [],
+    controls: defaultControls({
+      rotate: false,
+    }),
+    interactions: defaultInteractions({
+      mouseWheelZoom: false,
+    }),
     target,
     layers: [
       // new VectorTileLayer({
