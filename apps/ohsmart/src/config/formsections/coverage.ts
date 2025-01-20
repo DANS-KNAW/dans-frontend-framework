@@ -10,15 +10,16 @@ const section: InitialSectionType = {
     {
       type: "autocomplete",
       label: {
-        en: "Subject keywords",
-        nl: "Onderwerpstrefwoorden",
+        en: "Subject keywords from Getty AAT or free text",
+        nl: "Onderwerpstrefwoorden uit Getty AAT of vrije tekst",
       },
+
       name: "subject_keywords",
       required: true,
       multiselect: true,
       description: {
-        en: "Enter keywords that describe the content of your dataset in terms of artistic or architectural subject matter. Keywords may either be selected from the Getty Art & Architecture Thesaurus (AAT), or entered as free text.",
-        nl: "Voer trefwoorden in die de inhoud van de dataset beschrijven voor wat betreft artistieke of architectonische onderwerpen. Trefwoorden kunnen worden geselecteerd uit de Getty Art & Architecture Thesaurus (AAT) of worden ingevoerd als vrije tekst.",
+        en: "<p>Enter keywords that describe the content of your dataset in terms of artistic or architectural subject matter.</p><p>Keywords may either be selected from the Getty Art & Architecture Thesaurus (AAT), or entered as free text.</p>",
+        nl: "<p>Voer trefwoorden in die de inhoud van de dataset beschrijven voor wat betreft artistieke of architectonische onderwerpen.</p><p>Trefwoorden kunnen worden geselecteerd uit de Getty Art & Architecture Thesaurus (AAT) of worden ingevoerd als vrije tekst.</p>",
       },
       options: "getty",
       allowFreeText: true,

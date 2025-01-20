@@ -41,6 +41,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getFormActions, clearFormActions } from "@dans-framework/user-auth";
 import { useDebouncedCallback } from "use-debounce";
 import { enqueueSnackbar } from "notistack";
+import { lookupLanguageString } from "@dans-framework/utils";
 
 const Submit = ({
   hasTargetCredentials,
@@ -48,7 +49,7 @@ const Submit = ({
   hasTargetCredentials: boolean;
 }) => {
   const dispatch = useAppDispatch();
-  const { t } = useTranslation("submit");
+  const { t, i18n } = useTranslation("submit");
   const auth = useAuth();
   const metadataStatus = useAppSelector(getMetadataStatus);
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
@@ -115,7 +116,7 @@ const Submit = ({
   const handleButtonClick = (actionType: "submit" | "save" | "resubmit") => {
     // check to see if any files have been added.
     // If not, and there is no warning yet, show a warning to confirm actual submission first
-    if (selectedFiles.length === 0 && !fileWarning && actionType === "submit") {
+    if (selectedFiles.length === 0 && !formConfig.filesUpload?.disableFileWarning && !fileWarning && actionType === "submit") {
       setFileWarning(true);
       // move to files tab
       dispatch(setOpenTab(1));
@@ -220,7 +221,7 @@ const Submit = ({
             exit={{ x: "100%" }}
           >
             <Alert severity="warning" sx={{ mb: 2 }}>
-              {t("fileWarning")}
+              {lookupLanguageString(formConfig.filesUpload?.customFileWarning, i18n.language) || t("fileWarning")}
             </Alert>
           </motion.div>
         )}

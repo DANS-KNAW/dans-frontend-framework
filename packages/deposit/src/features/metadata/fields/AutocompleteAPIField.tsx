@@ -664,7 +664,7 @@ const AutocompleteAPIField = ({
           e && (e.type === "click" || e.type === "blur") && setInputValue("");
         }}
         noOptionsText={
-          !inputValue ? t("startTyping", { api: t(apiValue) }) : t("noResults")
+          !inputValue ? t("startTyping", { api: t(apiValue), freeText: field.allowFreeText ? t('freeText') : '' }) : t("noResults")
         }
         loading={
           isFetching ||
@@ -681,7 +681,7 @@ const AutocompleteAPIField = ({
             debouncedInputValue === inputValue
           ) ?
             // for freesolo, display the dropdown message when not searching
-            t("startTyping", { api: t(apiValue) })
+            t("startTyping", { api: t(apiValue), freeText: field.allowFreeText ? t('freeText') : '' })
             // otherwise the loading indicator
           : <Stack
               direction="row"

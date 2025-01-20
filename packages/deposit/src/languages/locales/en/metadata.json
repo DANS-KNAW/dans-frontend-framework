@@ -1,7 +1,8 @@
 {
   "heading": "Metadata",
   "incorrect": "Incorrectly entered",
-  "startTyping": "Start typing to search in {{api}}",
+  "startTyping": "Start typing to search in {{api}}{{freeText}}",
+  "freeText": ". If your input cannot be found, you can add it as free text.",
   "loading": "Loading...",
   "noResults": "No results",
   "add": "Add another",

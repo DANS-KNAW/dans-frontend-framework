@@ -161,6 +161,25 @@ const section: InitialSectionType = {
           private: true,
         },
         {
+          type: "check",
+          name: "interviewer_public",
+          description: {
+            en: "First and last name of interviewer will be publicy viewable if checked.",
+            nl: "Voor- en achternaam zijn openbaar als dit is aangevinkt.",
+          },
+          options: [
+            {
+              value: "interviewer_public_data",
+              label: {
+                en: "First and last name are public data",
+                nl: "Voor- en achternaam zijn openbaar",
+              },
+            },
+          ],
+          togglePrivate: ["interviewer_first_name", "interviewer_last_name"],
+          fullWidth: true,
+        },
+        {
           type: "text",
           label: {
             en: "Preferred name",
@@ -264,6 +283,26 @@ const section: InitialSectionType = {
           toggleRequired: ["interpreter_consent", "interpreter_first_name"],
         },
         {
+          type: "check",
+          name: "interpreter_public",
+          description: {
+            en: "First and last name of interpreter will be publicy viewable if checked.",
+            nl: "Voor- en achternaam zijn openbaar als dit is aangevinkt.",
+          },
+          options: [
+            {
+              value: "interpreter_public_data",
+              label: {
+                en: "First and last name are public data",
+                nl: "Voor- en achternaam zijn openbaar",
+              },
+            },
+          ],
+          togglePrivate: ["interpreter_first_name", "interpreter_last_name"],
+          noIndicator: true,
+          fullWidth: true,
+        },
+        {
           type: "text",
           label: {
             en: "Function",
@@ -352,6 +391,26 @@ const section: InitialSectionType = {
           private: true,
           noIndicator: true,
           toggleRequired: ["others_consent", "others_first_name"],
+        },
+        {
+          type: "check",
+          name: "others_public",
+          description: {
+            en: "First and last name of other person present will be publicy viewable if checked.",
+            nl: "Voor- en achternaam zijn openbaar als dit is aangevinkt.",
+          },
+          options: [
+            {
+              value: "others_public_data",
+              label: {
+                en: "First and last name are public data",
+                nl: "Voor- en achternaam zijn openbaar",
+              },
+            },
+          ],
+          togglePrivate: ["others_first_name", "others_last_name"],
+          noIndicator: true,
+          fullWidth: true,
         },
         {
           type: "text",

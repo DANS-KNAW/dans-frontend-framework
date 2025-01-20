@@ -1,7 +1,8 @@
 {
   "heading": "Metadata",
   "incorrect": "Verkeerd ingevoerd",
-  "startTyping": "Start met typen om te zoeken",
+  "startTyping": "Start met typen om te zoeken in {{api}}{{freeText}}",
+  "freeText": ". Als er geen geschikt resultaat bij zit, kun je je invoer als vrije tekst toevoegen.",
   "loading": "Laden...",
   "noResults": "Geen resultaten",
   "add": "Voeg toe",
