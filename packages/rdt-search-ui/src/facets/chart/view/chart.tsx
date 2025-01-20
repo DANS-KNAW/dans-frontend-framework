@@ -11,8 +11,10 @@ import FacetWrapper from "../../wrapper";
 import debounce from "lodash.debounce";
 import { FacetFilter } from "../../../context/state/facets";
 import Typography from "@mui/material/Typography";
-
+import { useTranslation } from "react-i18next";
 import styles from "./index.module.css";
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from "@mui/material/Box";
 
 export function ChartFacet<
   Config extends ChartFacetConfig,
@@ -21,6 +23,7 @@ export function ChartFacet<
 >(props: ChartFacetProps<Config, State, Filter> & { className: string }) {
   // Ref to the chart instance
   const chart = React.useRef<echarts.ECharts | null>(null);
+  const { t } = useTranslation("facets");
 
   // Ref to the container element
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -83,19 +86,22 @@ export function ChartFacet<
       {
         // some logic to check if there's actually data available
         // if it's an array, check if it has any values
-        (
+        props.values === undefined ?
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '5rem', height: '100%' }}>
+          <CircularProgress />
+        </Box>
+        : (
           (props.values &&
             Array.isArray(props.values) &&
             props.values.length === 0) ||
           // if it's a map, check if there are values other than 0
           (props.values &&
             props.values instanceof Map &&
-            [...props.values.values()].every((value) => value === 0)) ||
-          props.values === undefined
+            [...props.values.values()].every((value) => value === 0))
         ) ?
-          <Typography variant="body2" sx={{ color: "neutral.dark" }}>
-            No data found
-          </Typography>
+        <Typography variant="body2" sx={{ color: "neutral.dark" }}>
+          {t("noData")}
+        </Typography>
         : <div className={styles.innerContainer} ref={containerRef} />
       }
     </FacetWrapper>

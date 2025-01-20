@@ -65,6 +65,7 @@ interface OptionalSearchProps {
   fullTextHighlight?: estypes.SearchHighlight;
 
   SearchHomeComponent?: React.FC<any>;
+  fixedFacets?: FixedFacetsProps[];
 }
 
 // Endpoints for search/endpoint urls
@@ -73,12 +74,23 @@ export interface EndpointBaseProps {
   url: string;
 }
 
+export interface FixedFacetsProps {
+  name: string;
+  type: "client" | "keyword" | "url";
+  location: string;
+  value: string;
+  group: "DANS" | "External" | "Subject";
+  defaultEnabled: boolean;
+  altValue?: string;
+}
+
 export interface EndpointProps extends EndpointBaseProps {
   fullTextFields?: string[];
   fullTextHighlight?: estypes.SearchHighlight;
   onClickResultPath?: string;
   dashboard: React.ReactElement[];
   resultBodyComponent: React.FC<ResultBodyProps>;
+  fixedFacets?: FixedFacetsProps[];
 }
 
 /**

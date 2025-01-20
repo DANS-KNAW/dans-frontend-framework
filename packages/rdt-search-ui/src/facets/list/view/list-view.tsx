@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
+import CircularProgress from '@mui/material/CircularProgress';
 
 export const LIST_FACET_SCROLL_CUT_OFF = 50;
 
@@ -46,16 +47,24 @@ export function ListView(props: ListFacetProps) {
     });
   }, [props.values?.total]);
 
-  if (!values.length)
+  if (!values.length && props.values !== undefined )
     return (
       <Typography variant="body2" sx={{ color: "neutral.dark" }}>
         {t("noData")}
       </Typography>
     );
 
+  // if props.values is undefined, we can assume data is still loading, so lets show a loader 
+  if (!values.length && props.values === undefined )
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '5rem', height: '100%' }}>
+        <CircularProgress />
+      </Box>
+    );
+
   return (
     <>
-      <Box className="values" ref={ulRef} style={{ overflow: "auto" }}>
+      <Box ref={ulRef} style={{ overflow: "auto" }}>
         {values.map((value) => (
           <ListFacetValue
             active={

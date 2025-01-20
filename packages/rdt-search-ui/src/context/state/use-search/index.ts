@@ -109,6 +109,9 @@ export function useSearch({
     state.sortOrder,
 
     state.facetStates,
+
+    // for fixed facets
+    props.fixedFacets,
   ]);
 }
 
@@ -119,7 +122,7 @@ async function fetchSearchResultOnly(
   dispatch: any,
 ) {
   const { payload } = new ESRequest(searchState, searchProps, controllers);
-  const response = await fetchSearchResult(searchProps.url, payload, dispatch);
+  const response = await fetchSearchResult(searchProps.url, payload, dispatch, searchProps.fixedFacets);
   const result = ESResponseParser(response);
   return result;
 }
@@ -135,7 +138,7 @@ async function fetchSearchResultWithFacets(
     searchProps,
     controllers,
   );
-  const response = await fetchSearchResult(searchProps.url, payload, dispatch);
+  const response = await fetchSearchResult(searchProps.url, payload, dispatch, searchProps.fixedFacets);
   const result = ESResponseWithFacetsParser(response, controllers);
   return result;
 }
@@ -169,7 +172,7 @@ async function fetchFacetValuesOnly(
   payload.track_total_hits = false;
 
   // Fetch the response
-  const response = await fetchSearchResult(searchProps.url, payload, dispatch);
+  const response = await fetchSearchResult(searchProps.url, payload, dispatch, searchProps.fixedFacets);
 
   // Parse only the facet values of the requested facet
   let buckets = getBuckets(response, controller.ID);

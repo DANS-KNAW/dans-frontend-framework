@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useState, type SyntheticEvent } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -10,27 +10,33 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import dansLogoWhite from "./images/logo-dans-white.svg";
-import { NavLink as RouterLink } from "react-router-dom";
+import { NavLink as RouterLink, useNavigate, useLocation } from "react-router-dom";
 import type { Page } from "@dans-framework/pages";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 import { UserMenu } from "@dans-framework/user-auth";
 import { useAuth } from "react-oidc-context";
 import { Typography } from "@mui/material";
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
 const MenuBar = ({
   pages,
   logo = dansLogoWhite,
   userSettings = true,
   userSubmissions = true,
+  userMenu = true,
+  embed = false,
 }: {
   pages: Page[];
   logo?: any;
   userSettings?: boolean;
   userSubmissions?: boolean;
+  userMenu?: boolean;
+  embed?: boolean;
 }) => {
   const { i18n } = useTranslation();
-  const auth = useAuth();
+  const auth = userMenu ? useAuth() : undefined;
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -40,6 +46,7 @@ const MenuBar = ({
   };
 
   return (
+    !embed ?
     <AppBar position="static">
       <Container>
         <Toolbar disableGutters>
@@ -78,7 +85,7 @@ const MenuBar = ({
                   (page, i) =>
                     page.inMenu &&
                     page.menuTitle &&
-                    ((page.restricted && auth.isAuthenticated) ||
+                    ((page.restricted && auth && auth.isAuthenticated) ||
                       !page.restricted) && (
                       <MenuItem key={i} onClick={handleCloseNavMenu}>
                         <Link
@@ -94,7 +101,7 @@ const MenuBar = ({
                     ),
                 )}
             </Menu>
-            <Link
+            {logo && <Link
               component={RouterLink}
               to="/"
               sx={{
@@ -107,10 +114,11 @@ const MenuBar = ({
             >
               {Logo(logo)}
             </Link>
+            }
           </Box>
 
           {/* desktop menu */}
-          <Link
+          {logo && <Link
             component={RouterLink}
             to="/"
             sx={{ mr: 2, width: 100, display: { xs: "none", md: "flex" } }}
@@ -121,13 +129,14 @@ const MenuBar = ({
           >
             {Logo(logo)}
           </Link>
+          }
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages &&
               pages.map(
                 (page, i) =>
                   page.inMenu &&
                   page.menuTitle &&
-                  ((page.restricted && auth.isAuthenticated) ||
+                  ((page.restricted && auth && auth.isAuthenticated) ||
                     !page.restricted) && (
                     <Button
                       key={i}
@@ -142,16 +151,48 @@ const MenuBar = ({
                   ),
               )}
           </Box>
-
-          <UserMenu
-            userSettings={userSettings}
-            userSubmissions={userSubmissions}
-          />
+          {userMenu &&
+            <UserMenu
+              userSettings={userSettings}
+              userSubmissions={userSubmissions}
+            />
+          }
         </Toolbar>
       </Container>
     </AppBar>
+    :
+    <TabBar pages={pages} />
   );
 };
+
+const TabBar = ({ pages }: { pages: Page[] }) => {
+  const { i18n } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const locationValue = location.pathname === "/" ? "/" : location.pathname.replace(/^\//, "")
+  const [value, setValue] = useState(locationValue);
+  const handleTabChange = (_event: SyntheticEvent, newValue: string) => {
+    navigate(newValue);
+    setValue(newValue);
+  };
+
+  return (
+    <Container>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs onChange={handleTabChange} value={value}>
+          {pages && pages.map(
+            (page, i) =>
+              page.inMenu &&
+              page.menuTitle &&
+              !page.restricted && (
+                <Tab key={i} value={(page.slug || page.link) as string} label={lookupLanguageString(page.menuTitle, i18n.language)} />
+              ),
+          )}
+        </Tabs>
+      </Box>
+    </Container>
+  )
+}
 
 /**
  * Renders the logo based on the provided input.

@@ -19,7 +19,9 @@
     "dev:4tu": "turbo dev --filter=@dans-framework/4tu",
     "build:4tu": "turbo build --filter=@dans-framework/4tu",
     "dev:digitaltwins": "turbo dev --filter=@dans-framework/digitaltwins",
-    "build:digitaltwins": "turbo build --filter=@dans-framework/digitaltwins"
+    "build:digitaltwins": "turbo build --filter=@dans-framework/digitaltwins",
+    "dev:supercatalog": "turbo dev --filter=@dans-framework/supercatalog",
+    "build:supercatalog": "turbo build --filter=@dans-framework/supercatalog"
   },
   "keywords": [],
   "author": "",

@@ -23,5 +23,7 @@
   "noResults": "Sorry, no results found",
   "activeFilters": "Active filters",
   "dataset": "Dataset",
-  "selectDataset": "Select your dataset"
+  "selectDataset": "Select your dataset",
+  "selectSources": "Filter by data set or subject",
+  "searchOnZoom": "Search on zoom"
 }

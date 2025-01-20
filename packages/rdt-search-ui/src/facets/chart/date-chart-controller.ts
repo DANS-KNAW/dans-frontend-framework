@@ -198,10 +198,14 @@ export class DateChartController extends FacetController<
         new Map()
       : new Map(Array.from(this.values.keys()).map((x) => [x, 0]));
 
-    this.values = buckets.reduce(
-      (prev, curr) =>
-        prev.set(curr.key_as_string || curr.key.toString(), curr.doc_count),
-      emptyMap,
+    this.values = new Map(
+      Array.from(
+        buckets.reduce(
+          (prev, curr) =>
+            prev.set(curr.key_as_string || curr.key.toString(), curr.doc_count),
+          emptyMap
+        )
+      ).sort((a, b) => parseInt(a[0]) - parseInt(b[0])) // Ensure final sorting by year!
     );
 
     return this.values;
@@ -211,13 +215,12 @@ export class DateChartController extends FacetController<
 
   private updateRange(buckets: Bucket[], config: DateChartFacetConfig) {
     const currentMin = buckets[0].key as number;
-    let lastKey = buckets[buckets.length - 1].key as number;
+    const lastKey = buckets[buckets.length - 1].key as number;
+
     let currentMax: number;
 
     if (config.interval === "year") {
-      currentMax = new Date(lastKey).setFullYear(
-        new Date(lastKey).getFullYear() + 1,
-      );
+      currentMax = new Date(lastKey).setFullYear(new Date(lastKey).getFullYear() + 1);
     } else if (config.interval === "quarter") {
       currentMax = new Date(lastKey).setMonth(new Date(lastKey).getMonth() + 3);
     } else if (config.interval === "month") {
@@ -227,19 +230,17 @@ export class DateChartController extends FacetController<
     } else if (config.interval === "hour") {
       currentMax = new Date(lastKey).setHours(new Date(lastKey).getHours() + 1);
     } else if (config.interval === "minute") {
-      currentMax = new Date(lastKey).setMinutes(
-        new Date(lastKey).getMinutes() + 1,
-      );
+      currentMax = new Date(lastKey).setMinutes(new Date(lastKey).getMinutes() + 1);
     } else {
       throw new Error(`Unknown interval: ${config.interval}`);
     }
 
     this.range = {
-      min: this.range?.min || currentMin,
+      min: Math.min(this.range?.min ?? Infinity, currentMin), // Always take the smallest value
       currentMin,
-      currentMax: currentMax - 1, // subtract 1ms to get the last ms of the year/quarter/month/day/hour/minute
-      max: this.range?.max || currentMax - 1,
-    };
+      currentMax: currentMax - 1, // Subtract 1ms to get the last ms of the interval
+      max: Math.max(this.range?.max ?? -Infinity, currentMax - 1), // Always take the largest value
+    }
   }
 }
 

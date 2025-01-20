@@ -65,13 +65,14 @@ export abstract class FacetController<
 
   updateFacetFilter(filter: Filter | undefined, state: SearchState) {
     const facetFilters = new Map(state.facetFilters);
+    const groupedFilter =  this.config?.groupBy?.find(facet => facet.name === filter)?.value;
 
     if (filter == null) {
       facetFilters.delete(this.ID);
     } else {
       facetFilters.set(this.ID, {
         title: lookupLanguageString(this.config.title, i18n.language) || "",
-        value: filter,
+        value: groupedFilter || filter,
         formatted: this.formatFilter(filter),
       });
     }

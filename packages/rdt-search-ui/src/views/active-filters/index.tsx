@@ -18,7 +18,7 @@ import Box from "@mui/material/Box";
 
 import { useTranslation } from "react-i18next";
 
-export function ActiveFilters() {
+export function ActiveFilters({mb}: {mb?: number}) {
   const controllers = React.useContext(FacetControllersContext);
   const { url } = React.useContext(SearchPropsContext);
   const state = React.useContext(SearchStateContext);
@@ -39,7 +39,7 @@ export function ActiveFilters() {
   const { t } = useTranslation("views");
 
   return (
-    <Paper sx={{ p: 2, mb: 2 }}>
+    <Paper sx={{ p: 2, mb }}>
       <Typography variant="h6">{t("activeFilters")}</Typography>
       <Stack direction="column" spacing={1}>
         {state.query?.length > 0 && (

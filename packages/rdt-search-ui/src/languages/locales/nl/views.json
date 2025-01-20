@@ -23,5 +23,7 @@
   "noResults": "Sorry, niets gevonden",
   "activeFilters": "Actieve filters",
   "dataset": "Dataset",
-  "selectDataset": "Selecteer je dataset"
+  "selectDataset": "Selecteer je dataset",
+  "selectSources": "Filter op dataset of onderwerp",
+  "searchOnZoom": "Zoek bij zoomen"
 }

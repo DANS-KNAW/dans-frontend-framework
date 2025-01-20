@@ -1,4 +1,4 @@
-import React, { Children, isValidElement } from "react";
+import React, { Children, isValidElement, ReactNode } from "react";
 import {
   SearchStateContext,
   SearchStateDispatchContext,
@@ -32,7 +32,7 @@ import {
   serializeObject,
   deserializeObject,
 } from "./views/active-filters/save-search/use-saved-searches";
-import { EndpointSelector } from "./views/ui/endpoints";
+import { EndpointSelector, FixedFacetSelector } from "./views/ui/endpoints";
 import { useNavigate } from "react-router-dom";
 import type { Result } from "./context/state/use-search/types";
 import { motion, AnimatePresence } from "framer-motion";
@@ -81,6 +81,7 @@ export function FacetedSearch(props: ExternalSearchProps) {
         dashboard: "/",
         results: "/search",
       },
+      fixedFacets: props.fixedFacets,
     };
 
     Object.keys(sp.style).forEach((key) => {
@@ -158,7 +159,7 @@ function AppLoader({ children, controllers, searchProps }: AppLoaderProps) {
 
     // clear uri search string
     const url = new URL(window.location.href);
-    url.search = "";
+    url.searchParams.delete("search"); // Remove 'search' parameter
     history.replaceState(null, "", url);
   }, [controllers]);
 
@@ -257,14 +258,18 @@ export const FacetedWrapper = ({
   dashboard,
   dashRoute,
   resultRoute,
+  children,
 }: {
   dashboard?: boolean;
   dashRoute?: string;
   resultRoute?: string;
+  children?: ReactNode;
 }) => {
-  const { config, endpoint } = React.useContext(FacetedSearchContext);
+  const { config, endpoint, fixedFacets } = React.useContext(FacetedSearchContext);
   const navigate = useNavigate();
   const currentConfig = config.find((e) => e.url === endpoint) as EndpointProps;
+
+  // need to modify the endpoint URL to pre-filter for fixed facets
 
   return (
     <I18nextProvider i18n={i18nProvider}>
@@ -273,6 +278,9 @@ export const FacetedWrapper = ({
           // show selector if there's more than 1 endpoint
           <EndpointSelector />
         )}
+        {currentConfig.fixedFacets && currentConfig.fixedFacets.length > 0 &&
+          <FixedFacetSelector initialFixedFacets={currentConfig.fixedFacets} />
+        }
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={currentConfig.url}
@@ -285,7 +293,7 @@ export const FacetedWrapper = ({
               fullTextFields={currentConfig.fullTextFields}
               fullTextHighlight={currentConfig.fullTextHighlight}
               onClickResult={(result: Result) =>
-                navigate(`/${currentConfig.onClickResultPath}/${result.id}`)
+                navigate(`/${currentConfig.onClickResultPath}/${encodeURIComponent(result.id)}`)
               }
               ResultBodyComponent={currentConfig.resultBodyComponent}
               url={currentConfig.url}
@@ -293,6 +301,7 @@ export const FacetedWrapper = ({
                 results: resultRoute,
                 dashboard: dashRoute,
               }}
+              fixedFacets={fixedFacets}
             >
               {currentConfig?.dashboard.map((node, i) =>
                 React.cloneElement(node, { key: i }),
@@ -301,6 +310,7 @@ export const FacetedWrapper = ({
           </motion.div>
         </AnimatePresence>
       </Container>
+      {children}
     </I18nextProvider>
   );
 };
