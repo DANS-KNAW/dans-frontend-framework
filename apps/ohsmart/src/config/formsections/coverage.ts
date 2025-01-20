@@ -13,7 +13,6 @@ const section: InitialSectionType = {
         en: "Subject keywords from Getty AAT or free text",
         nl: "Onderwerpstrefwoorden uit Getty AAT of vrije tekst",
       },
-
       name: "subject_keywords",
       required: true,
       multiselect: true,
