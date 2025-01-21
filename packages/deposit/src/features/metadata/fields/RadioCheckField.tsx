@@ -7,7 +7,7 @@ import FormLabel from "@mui/material/FormLabel";
 import FormGroup from "@mui/material/FormGroup";
 import Checkbox from "@mui/material/Checkbox";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { setField, getFieldValue } from "../metadataSlice";
+import { setField, getField } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
 import { StatusIcon } from "../../generic/Icons";
 import { lookupLanguageString } from "@dans-framework/utils";
@@ -22,9 +22,9 @@ import { getFormDisabled } from "../../../deposit/depositSlice";
 export const RadioField = ({ field, sectionIndex }: RadioFieldProps) => {
   const dispatch = useAppDispatch();
   const { i18n } = useTranslation();
-  const status = getFieldStatus(field);
   const formDisabled = useAppSelector(getFormDisabled);
-  const fieldValue = useAppSelector(getFieldValue(field.name));
+  const fieldValue = useAppSelector(getField(field.name));
+  const status = getFieldStatus(field, fieldValue);
 
   return (
     <FormControl>
@@ -43,11 +43,11 @@ export const RadioField = ({ field, sectionIndex }: RadioFieldProps) => {
         aria-labelledby={field.id}
         data-testid={`${field.name}-${field.id}`}
         name={field.name}
-        value={fieldValue || ""}
+        value={fieldValue?.value || ""}
         onChange={(e) =>
           dispatch(
             setField({
-              name: field.name,
+              field: field,
               value: e.target.value,
             }),
           )
@@ -77,7 +77,7 @@ export const CheckField = ({ field, sectionIndex }: CheckFieldProps) => {
   return (
     <FormControl
       required={field.required}
-      error={field.required && fieldValue?.length === 0}
+      error={field.required && fieldValue?.value.length === 0}
       component="fieldset"
     >
       {field.label && (
@@ -98,16 +98,16 @@ export const CheckField = ({ field, sectionIndex }: CheckFieldProps) => {
                 <Checkbox
                   sx={{ mr: 0.15 }}
                   checked={Boolean(
-                    fieldValue && fieldValue.indexOf(option.value) !== -1,
+                    fieldValue?.value && fieldValue.value.indexOf(option.value) !== -1,
                   )}
                   onChange={(e) =>
                     dispatch(
                       setField({
-                        name: field.name,
+                        field: field,
                         value:
                           e.target.checked ?
-                            [...(fieldValue || ""), e.target.name]
-                          : fieldValue!.filter(
+                            [...(fieldValue.value || ""), e.target.name]
+                          : fieldValue.value!.filter(
                               (item) => item !== e.target.name,
                             ),
                       }),

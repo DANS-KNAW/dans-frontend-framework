@@ -30,6 +30,7 @@ import {
   // findFieldInGroup,
 } from "./metadataHelpers";
 import { v4 as uuidv4 } from "uuid";
+import { FileDownload } from "@mui/icons-material";
 
 // load the imported form and close all accordion panels by default
 const initialState: InitialStateType = {
@@ -70,7 +71,12 @@ export const metadataSlice = createSlice({
     // keep track of form state
     setField: (state, action: PayloadAction<SetFieldValuePayload>) => {
       console.log(action.payload);
-      state.fields[action.payload.name] = action.payload.value;
+      state.fields[action.payload.field.name] = { 
+        ...state.fields[action.payload.field.name],
+        touched: true,
+        value: action.payload.value,
+        valid: getValid(action.payload.value, action.payload.field),
+      };
       // const section = state.form[action.payload.sectionIndex];
       // const field = findByIdOrName(action.payload.id, section.fields);
 
@@ -285,7 +291,7 @@ export const getMetadataStatus = (state: RootState) => {
   // const statusArray = state.metadata.form.map((section) => section.status);
   return undefined;
 };
-export const getFieldValue = (name: string) => (state: RootState) => state.metadata.fields[name];
+export const getField = (name: string) => (state: RootState) => state.metadata.fields[name];
 export const getSection = (state: RootState) => state.metadata.sections;
 export const getTouchedStatus = (state: RootState) => state.metadata.touched;
 

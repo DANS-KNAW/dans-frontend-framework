@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
@@ -16,7 +16,7 @@ import { useFetchDansFormatsQuery } from "../../files/api/dansFormats";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { getFieldStatus } from "../metadataHelpers";
 import { StatusIcon } from "../../generic/Icons";
-import { setField, setMultiApiField, getFieldValue } from "../metadataSlice";
+import { setField, setMultiApiField, getField } from "../metadataSlice";
 import type {
   AutocompleteFieldProps,
   AutocompleteAPIFieldProps,
@@ -534,14 +534,26 @@ const AutocompleteAPIField = ({
   isFetching,
 }: AutocompleteAPIFieldProps) => {
   const dispatch = useAppDispatch();
-  const status = getFieldStatus(field);
   const { t, i18n } = useTranslation("metadata");
   const apiValue = (
     Array.isArray(field.options) ?
       field.multiApiValue
     : field.options) as TypeaheadAPI;
   const formDisabled = useAppSelector(getFormDisabled);
-  const fieldValue = useAppSelector(getFieldValue(field.name));
+  const fieldValue = useAppSelector(getField(field.name));
+  const status = getFieldStatus(field, fieldValue);
+
+  // on initial render, check if field has a default value, and if so, add it to the value state
+  useEffect(() => {
+    if (field.value && !fieldValue) {
+      dispatch(
+        setField({
+          field: field,
+          value: field.value,
+        }),
+      );
+    }
+  }, []);
 
   return (
     <Stack direction="row" alignItems="start" sx={{ flex: 1 }}>
@@ -560,13 +572,13 @@ const AutocompleteAPIField = ({
             data.response
           : []
         }
-        value={fieldValue || (field.multiselect ? [] : null)}
+        value={fieldValue?.value || (field.multiselect ? [] : null)}
         inputValue={
           inputValue ||
           (!inputValue &&
-            fieldValue &&
-            !Array.isArray(fieldValue) &&
-            lookupLanguageString(fieldValue.label, i18n.language)) ||
+            fieldValue?.value &&
+            !Array.isArray(fieldValue?.value) &&
+            lookupLanguageString(fieldValue?.value.label, i18n.language)) ||
           ""
         }
         renderInput={(params) => (
@@ -583,12 +595,12 @@ const AutocompleteAPIField = ({
               startAdornment:
                 (
                   !field.multiselect &&
-                  fieldValue &&
-                  !Array.isArray(fieldValue) &&
-                  fieldValue.value &&
-                  fieldValue.value.startsWith("http")
+                  fieldValue?.value &&
+                  !Array.isArray(fieldValue?.value) &&
+                  fieldValue?.value.value &&
+                  fieldValue?.value.value.startsWith("http")
                 ) ?
-                  <InfoLink link={fieldValue.value} apiValue={apiValue} />
+                  <InfoLink link={fieldValue?.value.value} apiValue={apiValue} />
                 : params.InputProps.startAdornment,
             }}
             inputProps={{
@@ -613,9 +625,9 @@ const AutocompleteAPIField = ({
           // Make sure a mandatory value cannot get erased from a multiselect
           const saveValues = (reason === "clear" ||
             reason === "removeOption") &&
-            Array.isArray(fieldValue) &&
+            Array.isArray(fieldValue.value) &&
             Array.isArray(newValue) && [
-              ...fieldValue.filter((v) => v.mandatory),
+              ...fieldValue.value.filter((v) => v.mandatory),
               ...newValue.filter((v) => !v.hasOwnProperty("mandatory")),
             ];
 
@@ -645,7 +657,7 @@ const AutocompleteAPIField = ({
           // Set the field
           dispatch(
             setField({
-              name: field.name,
+              field: field,
               value: (saveValues || setValue) as OptionsType | OptionsType[],
             }),
           );

@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
 import { AddDeleteControls } from "../MetadataButtons";
-import { setField, getMetadata, getFieldValue } from "../metadataSlice";
+import { setField, getMetadata, getField } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
 import type { TextFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
@@ -25,19 +25,19 @@ const SingleTextField = ({
 }: TextFieldProps) => {
   const dispatch = useAppDispatch();
   const auth = useAuth();
-  const status = getFieldStatus(field);
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
   const metadata = useAppSelector(getMetadata);
   const [generatedValue, setGeneratedValue] = useState<string>("");
-  const fieldValue = useAppSelector(getFieldValue(field.name));
+  const fieldValue = useAppSelector(getField(field.name));
+  const status = getFieldStatus(field, fieldValue);
 
   useEffect(() => {
     // if requested, auto fill user data from oidc, if field has no (manually) set value
     if (field.autofill && auth.user && !fieldValue) {
       dispatch(
         setField({
-          name: field.name,
+          field: field,
           value: auth.user.profile[field.autofill] as string,
         }),
       );
@@ -91,7 +91,7 @@ const SingleTextField = ({
   const setValue = () => {
     dispatch(
       setField({
-        name: field.name,
+        field: field,
         value: generatedValue,
       }),
     );
@@ -103,7 +103,7 @@ const SingleTextField = ({
       // generate value if it hasn't been do so yet
       !generatedValue && generateValue();
       // if there's no value set yet, set value to generated value
-      generatedValue && !fieldValue && setValue();
+      generatedValue && !fieldValue?.value && setValue();
     }
   }, [generatedValue]);
 
@@ -111,15 +111,15 @@ const SingleTextField = ({
     <Stack direction="row" alignItems="center">
       <TextField
         fullWidth
-        error={status === "error" && field.touched}
-        helperText={status === "error" && field.touched && t("incorrect")}
+        error={status === "error" && fieldValue?.touched}
+        helperText={status === "error" && fieldValue?.touched && t("incorrect")}
         variant="outlined"
         type={field.type}
         label={lookupLanguageString(field.label, i18n.language)}
         required={field.required}
         multiline={field.multiline}
         rows={field.multiline ? 4 : ""}
-        value={fieldValue || ""}
+        value={fieldValue?.value || ""}
         disabled={
           (field.disabled &&
             !(field.autofill && !auth.user?.profile[field.autofill])) ||
@@ -128,7 +128,7 @@ const SingleTextField = ({
         onChange={(e) =>
           dispatch(
             setField({
-              name: field.name,
+              field: field,
               value: e.target.value,
             }),
           )

@@ -150,17 +150,19 @@ export const changeConditionalState = (
 
 // Get the status of a single field
 // Some specific checking for dateranges needed
-export const getFieldStatus = (field: InputField): SectionStatus => {
+export const getFieldStatus = (field: InputField, fieldValue): SectionStatus => {
   const fieldEmpty =
-    !field.value ||
-    (typeof field.value === "string" && !field.value.trim()) ||
-    (Array.isArray(field.value) && field.value.length === 0) ||
+    !fieldValue?.value ||
+    (typeof fieldValue.value === "string" && !fieldValue.value.trim()) ||
+    (Array.isArray(fieldValue.value) && fieldValue.value.length === 0) ||
     (field.type === "daterange" &&
-      Array.isArray(field.value) &&
-      field.value.every((v) => v === null || v === "")) ||
+      Array.isArray(fieldValue.value) &&
+      fieldValue.value.every((v) => v === null || v === "")) ||
     (field.type === "drawmap" &&
-      Array.isArray(field.value) &&
-      field.value.some((v) => v.geonames === null || v.geonames === undefined));
+      Array.isArray(fieldValue.value) &&
+      fieldValue.value.some((v) => v.geonames === null || v.geonames === undefined));
+
+  console.log(fieldEmpty)
 
   if (field.noIndicator && !field.required && fieldEmpty) {
     return "neutral";
@@ -169,15 +171,15 @@ export const getFieldStatus = (field: InputField): SectionStatus => {
     // daterange should also give a warning state if end date is optional and not filled in
     (field.type === "daterange" &&
       field.optionalEndDate &&
-      Array.isArray(field.value) &&
-      !field.value[1] &&
-      field.valid)
+      Array.isArray(fieldValue.value) &&
+      !fieldValue.value[1] &&
+      fieldValue.valid)
   ) {
     return "warning";
   } else if (
     (field.required && fieldEmpty) ||
-    (!fieldEmpty && field.validation && !field.valid) ||
-    (field.type === "daterange" && !fieldEmpty && !field.valid)
+    (!fieldEmpty && field.validation && !fieldValue.valid) ||
+    (field.type === "daterange" && !fieldEmpty && !fieldValue.valid)
   ) {
     return "error";
   } else {
@@ -216,8 +218,10 @@ export const getValid = (value: any, field: Field): boolean => {
         (item: any) => item.geonames !== null && item.geonames !== undefined,
       ))
   ) {
+    console.log('getValid true');
     return true;
   }
+  console.log('getValid false');
   return false;
 };
 
