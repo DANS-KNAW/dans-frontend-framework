@@ -78,10 +78,15 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // load: loaded data from a saved form, to edit
   // copy: copy data from saved form to a new sessionId
   // resubmit: resubmit existing and already submitted data (save disabled), set submit button target to resubmit action in API
-  const { data: serverFormData, isSuccess } = useFetchSavedMetadataQuery(
-    formAction.id,
-    { skip: !formAction.id },
-  );
+  // const { data: serverFormData, isSuccess } = useFetchSavedMetadataQuery(
+  //   formAction.id,
+  //   { skip: !formAction.id },
+  // );
+
+  // set config
+  useEffect(() => {
+    dispatch(setData(config));
+  }, [config]);
 
   // set page title
   useEffect(() => {
@@ -90,91 +95,91 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
 
   // Initialize form on initial render when there's no sessionId yet or when form gets reset
   // Or initialize saved data (overwrites the previously set sessionId)
-  useEffect(() => {
-    if (!sessionId || (sessionId && serverFormData && formAction.id)) {
-      // We need to reset the form status first, in case data had been previously entered
-      dispatch(resetMetadataSubmitStatus());
-      dispatch(resetFilesSubmitStatus());
-      dispatch(resetFiles());
-      // Enable the form
-      dispatch(
-        formAction.action === "view" ?
-          setFormDisabled(true)
-        : setFormDisabled(false),
-      );
-      // Then we create a fresh form if there's no id to load
-      if (!sessionId && !formAction.id) {
-        dispatch(initForm(config.form));
-      }
-      // If there's server data available, load that into the form
-      // For copying a form, we create a new uuid as sessionId.
-      else if (serverFormData && formAction && !formAction.actionDone) {
-        dispatch(
-          initForm(
-            formAction.action === "copy" ?
-              {
-                ...serverFormData.md,
-                id: uuidv4(),
-              }
-            : serverFormData.md,
-          ),
-        );
-        // Make sure we only do this once, otherwise it's an infinite loop
-        setFormActions({
-          ...formAction,
-          actionDone: true,
-        });
-      }
-      // Load the files if there are any, but not when copying form
-      if (
-        formAction.id &&
-        serverFormData &&
-        serverFormData.md["file-metadata"] &&
-        formAction.action !== "copy"
-      ) {
-        dispatch(addFiles(serverFormData.md["file-metadata"]));
-      }
-    }
-  }, [
-    dispatch,
-    sessionId,
-    config.form,
-    serverFormData,
-    formAction.id,
-    isSuccess,
-  ]);
+  // useEffect(() => {
+  //   if (!sessionId || (sessionId && serverFormData && formAction.id)) {
+  //     // We need to reset the form status first, in case data had been previously entered
+  //     dispatch(resetMetadataSubmitStatus());
+  //     dispatch(resetFilesSubmitStatus());
+  //     dispatch(resetFiles());
+  //     // Enable the form
+  //     dispatch(
+  //       formAction.action === "view" ?
+  //         setFormDisabled(true)
+  //       : setFormDisabled(false),
+  //     );
+  //     // Then we create a fresh form if there's no id to load
+  //     if (!sessionId && !formAction.id) {
+  //       dispatch(initForm(config.form));
+  //     }
+  //     // If there's server data available, load that into the form
+  //     // For copying a form, we create a new uuid as sessionId.
+  //     else if (serverFormData && formAction && !formAction.actionDone) {
+  //       dispatch(
+  //         initForm(
+  //           formAction.action === "copy" ?
+  //             {
+  //               ...serverFormData.md,
+  //               id: uuidv4(),
+  //             }
+  //           : serverFormData.md,
+  //         ),
+  //       );
+  //       // Make sure we only do this once, otherwise it's an infinite loop
+  //       setFormActions({
+  //         ...formAction,
+  //         actionDone: true,
+  //       });
+  //     }
+  //     // Load the files if there are any, but not when copying form
+  //     if (
+  //       formAction.id &&
+  //       serverFormData &&
+  //       serverFormData.md["file-metadata"] &&
+  //       formAction.action !== "copy"
+  //     ) {
+  //       dispatch(addFiles(serverFormData.md["file-metadata"]));
+  //     }
+  //   }
+  // }, [
+  //   dispatch,
+  //   sessionId,
+  //   config.form,
+  //   serverFormData,
+  //   formAction.id,
+  //   isSuccess,
+  // ]);
 
-  useEffect(() => {
-    // Show a message when a saved form is loaded.
-    // Show a message when data's been entered previously.
-    // Give option to clear form and start again.
-    ((sessionId && formTouched) || formAction.id) && setDataMessage(true);
-    // Update user on initial render, makes sure all target credentials are up-to-date.
-    // Also remove user immediately, should there be an error..
-    auth.signinSilent().catch(() => auth.removeUser());
-    // Set init form props in redux, all props without the form metadata config itself
-    dispatch(setData(config));
-  }, []);
+  // useEffect(() => {
+  //   // Show a message when a saved form is loaded.
+  //   // Show a message when data's been entered previously.
+  //   // Give option to clear form and start again.
+  //   ((sessionId && formTouched) || formAction.id) && setDataMessage(true);
+  //   // Update user on initial render, makes sure all target credentials are up-to-date.
+  //   // Also remove user immediately, should there be an error..
+  //   auth.signinSilent().catch(() => auth.removeUser());
+  //   // Set init form props in redux, all props without the form metadata config itself
+  //   dispatch(setData(config));
+  // }, []);
 
   // For external form selection from the pre-form advisor without reloading the app,
   // we listen for changes to the form object, and initiate a new form when it changes
-  useEffect(() => {
-    if (
-      config.displayName &&
-      (!currentConfig.displayName ||
-        (typeof currentConfig.displayName !== "string" &&
-          typeof config.displayName !== "string" &&
-          currentConfig.displayName.en !== config.displayName.en) ||
-        currentConfig.displayName !== config.displayName)
-    ) {
-      dispatch(resetMetadataSubmitStatus());
-      dispatch(resetFilesSubmitStatus());
-      dispatch(resetFiles());
-      dispatch(setFormDisabled(false));
-      dispatch(initForm(config.form));
-      setDataMessage(false);
-    }
-  }, [config, currentConfig]);
+  // useEffect(() => {
+  //   if (
+  //     config.displayName &&
+  //     (!currentConfig.displayName ||
+  //       (typeof currentConfig.displayName !== "string" &&
+  //         typeof config.displayName !== "string" &&
+  //         currentConfig.displayName.en !== config.displayName.en) ||
+  //       currentConfig.displayName !== config.displayName)
+  //   ) {
+  //     dispatch(resetMetadataSubmitStatus());
+  //     dispatch(resetFilesSubmitStatus());
+  //     dispatch(resetFiles());
+  //     dispatch(setFormDisabled(false));
+  //     dispatch(initForm(config.form));
+  //     setDataMessage(false);
+  //   }
+  // }, [config, currentConfig]);
 
   // Check the user object if target credentials are filled in
   const targetCredentials =

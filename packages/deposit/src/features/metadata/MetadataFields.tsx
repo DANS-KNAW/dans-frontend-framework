@@ -49,44 +49,43 @@ const DrawMap = lazy(() => import("./fields/Map"));
 
 // Memoized Field function, so only the affected field rerenders when form/metadata props change.
 // Loads the field specified in the type key
-const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
+const SingleField = memo(({ field }: SingleFieldProps) => {
   // Switch to determine which field type to render
   const getField = () => {
     switch (field.type) {
       case "text":
       case "number":
-        return <TextField field={field} sectionIndex={sectionIndex} />;
+        return <TextField field={field} />;
       case "date":
-        return <DateTimeField field={field} sectionIndex={sectionIndex} />;
+        return <DateTimeField field={field} />;
       case "daterange":
-        return <DateRangeField field={field} sectionIndex={sectionIndex} />;
-      case "repeatSingleField":
-        return (
-          <TransitionGroup id={`group-${field.name}-${field.id}`}>
-            {field.fields.map((f: TextFieldType | DateFieldType, i: number) => {
-              const commonProps = {
-                sectionIndex: sectionIndex,
-                groupedFieldId: field.id,
-                currentField: i,
-                totalFields: field.fields.length,
-              };
-              return (
-                <Collapse key={f.id}>
-                  {(f.type === "text" || f.type === "number") && (
-                    <TextField {...commonProps} field={f} />
-                  )}
-                  {f.type === "date" && (
-                    <DateTimeField {...commonProps} field={f} />
-                  )}
-                </Collapse>
-              );
-            })}
-          </TransitionGroup>
-        );
+        return <DateRangeField field={field} />;
+      // case "repeatSingleField":
+      //   return (
+      //     <TransitionGroup id={`group-${field.name}-${field.id}`}>
+      //       {field.fields.map((f: TextFieldType | DateFieldType, i: number) => {
+      //         const commonProps = {
+      //           groupedFieldId: field.id,
+      //           currentField: i,
+      //           totalFields: field.fields.length,
+      //         };
+      //         return (
+      //           <Collapse key={f.id}>
+      //             {(f.type === "text" || f.type === "number") && (
+      //               <TextField {...commonProps} field={f} />
+      //             )}
+      //             {f.type === "date" && (
+      //               <DateTimeField {...commonProps} field={f} />
+      //             )}
+      //           </Collapse>
+      //         );
+      //       })}
+      //     </TransitionGroup>
+      //   );
       case "radio":
-        return <RadioField field={field} sectionIndex={sectionIndex} />;
+        return <RadioField field={field} />;
       case "check":
-        return <CheckField field={field} sectionIndex={sectionIndex} />;
+        return <CheckField field={field} />;
       case "drawmap":
         return (
           <Suspense
@@ -94,83 +93,77 @@ const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
               <Skeleton variant="rectangular" width="100%" height={140} />
             }
           >
-            <DrawMap field={field} sectionIndex={sectionIndex} />
+            <DrawMap field={field} />
           </Suspense>
         );
       case "autocomplete":
         if (field.multiApiValue)
-          return <MultiApiField field={field} sectionIndex={sectionIndex} />;
+          return <MultiApiField field={field} />;
         else {
           switch (field.options) {
             case "orcid":
-              return <OrcidField field={field} sectionIndex={sectionIndex} />;
+              return <OrcidField field={field} />;
             case "ror":
-              return <RorField field={field} sectionIndex={sectionIndex} />;
+              return <RorField field={field} />;
             case "gorc":
-              return <GorcField field={field} sectionIndex={sectionIndex} />;
+              return <GorcField field={field} />;
             case "licenses":
               return (
-                <LicensesField field={field} sectionIndex={sectionIndex} />
+                <LicensesField field={field} />
               );
             case "sshLicences":
               return (
-                <SshLicencesField field={field} sectionIndex={sectionIndex} />
+                <SshLicencesField field={field} />
               );
             case "geonames":
               return (
-                <GeonamesField field={field} sectionIndex={sectionIndex} />
+                <GeonamesField field={field} />
               );
             case "getty":
-              return <GettyField field={field} sectionIndex={sectionIndex} />;
+              return <GettyField field={field} />;
             case "sheets":
-              return <SheetsField field={field} sectionIndex={sectionIndex} />;
+              return <SheetsField field={field} />;
             case "dansFormats":
               return (
-                <DansFormatsField field={field} sectionIndex={sectionIndex} />
+                <DansFormatsField field={field} />
               );
             case "rdaworkinggroups":
               return (
-                <RdaWorkingGroupsField
-                  field={field}
-                  sectionIndex={sectionIndex}
-                />
+                <RdaWorkingGroupsField field={field} />
               );
             case "pathways":
               return (
-                <RdaPathwaysField field={field} sectionIndex={sectionIndex} />
+                <RdaPathwaysField field={field} />
               );
             case "domains":
               return (
-                <RdaDomainsField field={field} sectionIndex={sectionIndex} />
+                <RdaDomainsField field={field} />
               );
             case "interest groups":
               return (
-                <RdaInterestGroupsField
-                  field={field}
-                  sectionIndex={sectionIndex}
-                />
+                <RdaInterestGroupsField field={field} />
               );
             case "languageList":
               return (
-                <LanguagesField field={field} sectionIndex={sectionIndex} />
+                <LanguagesField field={field} />
               );
             case "elsst":
             case "narcis":
             case "dansCollections":
               return (
-                <DatastationsField field={field} sectionIndex={sectionIndex} />
+                <DatastationsField field={field} />
               );
             case "biodiversity_species_vernacular":
               return (
-                <BiodiversityField field={field} sectionIndex={sectionIndex} variant="vernacular" />
+                <BiodiversityField field={field} variant="vernacular" />
               );
             case "biodiversity_species_scientific":
               return (
-                <BiodiversityField field={field} sectionIndex={sectionIndex} variant="scientific" />
+                <BiodiversityField field={field} variant="scientific" />
               );
             default:
               return (
-                <AutocompleteField field={field} sectionIndex={sectionIndex} />
+                <AutocompleteField field={field} />
               );
           }
         }
@@ -186,7 +179,7 @@ const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
   );
 });
 
-const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
+const GroupedField = ({ field }: GroupedFieldProps) => {
   const { i18n } = useTranslation();
   // Check if group is repeatable. If not, lets wrap that single fieldgroup in an array, so we can use the same map function over it.
   // We use the id of the first field of the group as key for transitions
@@ -208,7 +201,7 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
           subheaderTypographyProps={{ fontSize: 12 }}
           sx={{ pb: 0, pl: 2.25, pr: 2.25 }}
         />
-        {fieldArray && (
+        {/* {fieldArray && (
           <CardContent data-testid={`group-${field.name}-${field.id}`}>
             <TransitionGroup>
               {fieldArray.map((groupedField, i) => (
@@ -230,13 +223,11 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
                         <SingleField
                           key={f.id}
                           field={f}
-                          sectionIndex={sectionIndex}
                         />
                       ))}
                     </Grid>
                     {field.repeatable && fieldArray.length > 1 && (
                       <DeleteButton
-                        sectionIndex={sectionIndex}
                         groupedFieldId={field.id}
                         deleteFieldIndex={i}
                         size="medium"
@@ -249,12 +240,11 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
               ))}
             </TransitionGroup>
           </CardContent>
-        )}
+        )} */}
         {field.repeatable && (
           <CardActions sx={{ pl: 3, pr: 3, justifyContent: "right" }}>
             <Stack direction="row" alignItems="center" justifyContent="end">
               <AddButtonText
-                sectionIndex={sectionIndex}
                 groupedFieldId={field.id}
                 groupedFieldName={field.name}
                 type="group"

@@ -33,86 +33,88 @@ import { v4 as uuidv4 } from "uuid";
 
 // load the imported form and close all accordion panels by default
 const initialState: InitialStateType = {
-  id: "",
-  form: [],
   panel: "",
   tab: 0,
-  touched: false,
+  touched: false, 
+  sections: {},
+  fields: {},
 };
 
 export const metadataSlice = createSlice({
   name: "metadata",
   initialState,
   reducers: {
-    initForm: (
-      state,
-      action: PayloadAction<InitialFormType | InitialSectionType[]>,
-    ) => {
-      if (!Array.isArray(action.payload) && action.payload.id) {
-        // form is loaded from existing data
-        state.id = action.payload.id;
-        state.form = action.payload.metadata;
-        state.panel = action.payload.metadata[0].id;
-      } else {
-        // otherwise initialize a brand new form
-        state.id = uuidv4();
-        state.form = formatInitialState(action.payload as InitialSectionType[]);
-        state.touched = false;
-        // open up the first panel by default
-        state.panel = (action.payload as InitialSectionType[])[0].id;
-        // and set initial validation status
-        metadataSlice.caseReducers.setSectionStatus(state, {
-          payload: null,
-          type: "",
-        });
-      }
-    },
+    // initForm: (
+    //   state,
+    //   action: PayloadAction<InitialFormType | InitialSectionType[]>,
+    // ) => {
+    //   if (!Array.isArray(action.payload) && action.payload.id) {
+    //     // form is loaded from existing data
+    //     state.id = action.payload.id;
+    //     state.form = action.payload.metadata;
+    //     state.panel = action.payload.metadata[0].id;
+    //   } else {
+    //     // otherwise initialize a brand new form
+    //     state.id = uuidv4();
+    //     state.form = formatInitialState(action.payload as InitialSectionType[]);
+    //     state.touched = false;
+    //     // open up the first panel by default
+    //     state.panel = (action.payload as InitialSectionType[])[0].id;
+    //     // and set initial validation status
+    //     metadataSlice.caseReducers.setSectionStatus(state, {
+    //       payload: null,
+    //       type: "",
+    //     });
+    //   }
+    // },
     // keep track of form state
     setField: (state, action: PayloadAction<SetFieldValuePayload>) => {
-      const section = state.form[action.payload.sectionIndex];
-      const field = findByIdOrName(action.payload.id, section.fields);
+      console.log(action.payload);
+      state.fields[action.payload.name] = action.payload.value;
+      // const section = state.form[action.payload.sectionIndex];
+      // const field = findByIdOrName(action.payload.id, section.fields);
 
-      if (!state.touched && field && !field.autofill) {
-        state.touched = true;
-      }
+      // if (!state.touched && field && !field.autofill) {
+      //   state.touched = true;
+      // }
 
-      // field is found, lets set it
-      if (field) {
-        field.value = action.payload.value;
-        field.touched = true;
+      // // field is found, lets set it
+      // if (field) {
+      //   field.value = action.payload.value;
+      //   field.touched = true;
 
-        // For setting required state of 'conditional' fields,
-        // we need to find the parent array and change the fields inside
-        if (field.toggleRequired) {
-          changeConditionalState(
-            action.payload.id,
-            section.fields,
-            action.payload.value,
-            field,
-            "toggleRequired",
-            "toggleRequiredIds",
-            "required",
-          );
-        }
+      //   // For setting required state of 'conditional' fields,
+      //   // we need to find the parent array and change the fields inside
+      //   if (field.toggleRequired) {
+      //     changeConditionalState(
+      //       action.payload.id,
+      //       section.fields,
+      //       action.payload.value,
+      //       field,
+      //       "toggleRequired",
+      //       "toggleRequiredIds",
+      //       "required",
+      //     );
+      //   }
 
-        // Same for private state of 'conditional' fields
-        if (field.togglePrivate) {
-          changeConditionalState(
-            action.payload.id,
-            section.fields,
-            action.payload.value,
-            field,
-            "togglePrivate",
-            "togglePrivateIds",
-            "private",
-          );
-        }
+      //   // Same for private state of 'conditional' fields
+      //   if (field.togglePrivate) {
+      //     changeConditionalState(
+      //       action.payload.id,
+      //       section.fields,
+      //       action.payload.value,
+      //       field,
+      //       "togglePrivate",
+      //       "togglePrivateIds",
+      //       "private",
+      //     );
+      //   }
 
-        // After every input, we need to update field valid status and section status as well.
-        field.valid = getValid(action.payload.value, field);
-        // then set the section/accordion
-        metadataSlice.caseReducers.setSectionStatus(state, action);
-      }
+      //   // After every input, we need to update field valid status and section status as well.
+      //   field.valid = getValid(action.payload.value, field);
+      //   // then set the section/accordion
+      //   metadataSlice.caseReducers.setSectionStatus(state, action);
+      // }
     },
     setMultiApiField: (
       state,
@@ -261,7 +263,7 @@ export const metadataSlice = createSlice({
 });
 
 export const {
-  initForm,
+  // initForm,
   setField,
   setFieldValid,
   setMultiApiField,
@@ -280,9 +282,11 @@ export const getMetadata = (state: RootState) => state.metadata.form;
 export const getOpenPanel = (state: RootState) => state.metadata.panel;
 export const getOpenTab = (state: RootState) => state.metadata.tab;
 export const getMetadataStatus = (state: RootState) => {
-  const statusArray = state.metadata.form.map((section) => section.status);
-  return getSectionStatus(statusArray);
+  // const statusArray = state.metadata.form.map((section) => section.status);
+  return undefined;
 };
+export const getFieldValue = (name: string) => (state: RootState) => state.metadata.fields[name];
+export const getSection = (state: RootState) => state.metadata.sections;
 export const getTouchedStatus = (state: RootState) => state.metadata.touched;
 
 export default metadataSlice.reducer;

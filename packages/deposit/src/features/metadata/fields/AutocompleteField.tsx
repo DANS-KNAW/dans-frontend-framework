@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { getFieldStatus } from "../metadataHelpers";
 import { StatusIcon } from "../../generic/Icons";
-import { setField } from "../metadataSlice";
+import { setField, getFieldValue } from "../metadataSlice";
 import type {
   AutocompleteFieldProps,
   InfoLinkProps,
@@ -30,6 +30,7 @@ const AutocompleteField = ({
   const status = getFieldStatus(field);
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
+  const fieldValue = useAppSelector(getFieldValue(field.name));
 
   const options =
     Array.isArray(field.options) ? (field.options as OptionsType[]) : [];
@@ -44,14 +45,14 @@ const AutocompleteField = ({
       <Autocomplete
         multiple={field.multiselect}
         fullWidth
-        data-testid={`${field.name}-${field.id}`}
+        data-testid={field.name}
         options={localizedOptions}
         groupBy={(option) =>
           (option.header &&
             lookupLanguageString(option.header, i18n.language)) ||
           ""
         }
-        value={field.value || (field.multiselect ? [] : null)}
+        value={fieldValue || (field.multiselect ? [] : null)}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -65,20 +66,20 @@ const AutocompleteField = ({
               startAdornment:
                 (
                   !field.multiselect &&
-                  field.value &&
-                  !Array.isArray(field.value) &&
-                  ((field.value.value &&
-                    field.value.value.startsWith("http")) ||
-                    field.value.url)
+                  fieldValue &&
+                  !Array.isArray(fieldValue) &&
+                  ((fieldValue.value &&
+                    fieldValue.value.startsWith("http")) ||
+                    fieldValue.url)
                 ) ?
                   <InfoLink
                     link={
-                      (field.value.value.startsWith("http") &&
-                        field.value.value) ||
-                      (field.value.url as string)
+                      (fieldValue.value.startsWith("http") &&
+                        fieldValue.value) ||
+                      (fieldValue.url as string)
                     }
                     checkValue={lookupLanguageString(
-                      field.value.label,
+                      fieldValue.label,
                       i18n.language,
                     )}
                   />
@@ -103,8 +104,7 @@ const AutocompleteField = ({
         onChange={(_e, newValue) =>
           dispatch(
             setField({
-              sectionIndex: sectionIndex,
-              id: field.id,
+              name: field.name,
               value: newValue,
             }),
           )

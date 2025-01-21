@@ -5,7 +5,7 @@ import type { FormConfig } from "../types/Metadata";
 // Save the props/config we need to redux store, for use in subcomponents
 // Also set a global disabled key, for when form is submitting/saving
 const initialState: {
-  config: Omit<FormConfig, "form">;
+  config: FormConfig
   formDisabled: boolean;
 } = {
   config: {
@@ -15,6 +15,7 @@ const initialState: {
     submitKey: "",
     skipValidation: false,
     filesUpload: {},
+    form: [],
   },
   formDisabled: false,
 };
@@ -23,7 +24,7 @@ export const depositSlice = createSlice({
   name: "deposit",
   initialState,
   reducers: {
-    setData: (state, action: PayloadAction<Omit<FormConfig, "form">>) => {
+    setData: (state, action: PayloadAction<FormConfig>) => {
       state.config = action.payload;
     },
     setFormDisabled: (state, action: PayloadAction<boolean>) => {

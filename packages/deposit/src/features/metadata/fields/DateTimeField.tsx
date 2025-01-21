@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
 import { AddDeleteControls } from "../MetadataButtons";
-import { setField, setDateTypeField, setFieldValid } from "../metadataSlice";
+import { setField, setDateTypeField, setFieldValid, getFieldValue } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
 import type {
   DateFieldProps,
@@ -46,6 +46,7 @@ export const DateTimeField = ({
   const formDisabled = useAppSelector(getFormDisabled);
   const status = getFieldStatus(field);
   const dispatch = useAppDispatch();
+  const fieldValue = useAppSelector(getFieldValue(field.name));
 
   const errorMessage = useMemo(() => {
     switch (error) {
@@ -81,7 +82,7 @@ export const DateTimeField = ({
         helperText={status === "error" && field.touched && t("incorrect")}
         label={lookupLanguageString(field.label, i18n.language)}
         required={field.required}
-        value={(field.value && moment(field.value, field.format)) || null}
+        value={(fieldValue && moment(fieldValue, field.format)) || null}
         disabled={field.disabled || formDisabled}
         minDate={
           field.minDate ?
@@ -99,8 +100,7 @@ export const DateTimeField = ({
             !context.validationError && value ? value.format(field.format) : "";
           dispatch(
             setField({
-              sectionIndex: sectionIndex,
-              id: field.id,
+              name: field.name,
               value: dateValue,
             }),
           );

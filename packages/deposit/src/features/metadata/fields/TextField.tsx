@@ -10,8 +10,8 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
 import { AddDeleteControls } from "../MetadataButtons";
-import { setField, getMetadata } from "../metadataSlice";
-import { getFieldStatus, findByIdOrName } from "../metadataHelpers";
+import { setField, getMetadata, getFieldValue } from "../metadataSlice";
+import { getFieldStatus } from "../metadataHelpers";
 import type { TextFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled } from "../../../deposit/depositSlice";
@@ -19,7 +19,6 @@ import moment from "moment";
 
 const SingleTextField = ({
   field,
-  sectionIndex,
   groupedFieldId,
   currentField = 0,
   totalFields = 1,
@@ -31,69 +30,68 @@ const SingleTextField = ({
   const formDisabled = useAppSelector(getFormDisabled);
   const metadata = useAppSelector(getMetadata);
   const [generatedValue, setGeneratedValue] = useState<string>("");
+  const fieldValue = useAppSelector(getFieldValue(field.name));
 
   useEffect(() => {
     // if requested, auto fill user data from oidc, if field has no (manually) set value
-    if (field.autofill && auth.user && !field.value) {
+    if (field.autofill && auth.user && !fieldValue) {
       dispatch(
         setField({
-          sectionIndex: sectionIndex,
-          id: field.id,
+          name: field.name,
           value: auth.user.profile[field.autofill] as string,
         }),
       );
     }
-  }, [dispatch, field.autofill, field.id, sectionIndex, auth.user]);
+  }, [dispatch, field.autofill, field.name, auth.user, fieldValue]);
 
   // function to generate value from form config string and filled in fields
   // set to state, so we only have to call this function once
   const generateValue = () => {
-    const generatedString = lookupLanguageString(
-      field.autoGenerateValue,
-      i18n.language,
-    );
-    // split string into segments to replace
-    const segments = generatedString ? generatedString.split(/({{.*?}})/) : [];
-    const value = segments.map((segment) => {
-      const match = segment.match(/{{(.*?)}}/);
-      if (match) {
-        const field = metadata
-          .map((section) => findByIdOrName(match[1], section.fields, "name"))
-          .filter(Boolean)[0];
+    // const generatedString = lookupLanguageString(
+    //   field.autoGenerateValue,
+    //   i18n.language,
+    // );
+    // // split string into segments to replace
+    // const segments = generatedString ? generatedString.split(/({{.*?}})/) : [];
+    // const value = segments.map((segment) => {
+    //   const match = segment.match(/{{(.*?)}}/);
+    //   if (match) {
+    //     const field = metadata
+    //       .map((section) => findByIdOrName(match[1], section.fields, "name"))
+    //       .filter(Boolean)[0];
 
-        return (
-          field && field.value && !field.private ?
-            field.type === "autocomplete" ?
-              Array.isArray(field.value) ?
-                field.value.map((v) => v.label).join(" & ")
-              : field.value.label
-              // if field type is date, just convert it to DD-MM-YYYY for every value
-              // TODO: should any other app than ohsmart want to use this, modify this where necessary
-            : field.type === "date" ?
-              moment(field.value, field.format)
-                .startOf("day")
-                .format("DD-MM-YYYY")
-            : field.type === "daterange" ?
-              moment(field.value[0], field.format)
-                .startOf("day")
-                .format("DD-MM-YYYY")
-            : field.value
-          : null
-        );
-      }
-      return segment;
-    });
+    //     return (
+    //       field && field.value && !field.private ?
+    //         field.type === "autocomplete" ?
+    //           Array.isArray(field.value) ?
+    //             field.value.map((v) => v.label).join(" & ")
+    //           : field.value.label
+    //           // if field type is date, just convert it to DD-MM-YYYY for every value
+    //           // TODO: should any other app than ohsmart want to use this, modify this where necessary
+    //         : field.type === "date" ?
+    //           moment(field.value, field.format)
+    //             .startOf("day")
+    //             .format("DD-MM-YYYY")
+    //         : field.type === "daterange" ?
+    //           moment(field.value[0], field.format)
+    //             .startOf("day")
+    //             .format("DD-MM-YYYY")
+    //         : field.value
+    //       : null
+    //     );
+    //   }
+    //   return segment;
+    // });
 
-    if (!value.includes(null)) {
-      setGeneratedValue(value.join(""));
-    }
+    // if (!value.includes(null)) {
+    //   setGeneratedValue(value.join(""));
+    // }
   };
 
   const setValue = () => {
     dispatch(
       setField({
-        sectionIndex: sectionIndex,
-        id: field.id,
+        name: field.name,
         value: generatedValue,
       }),
     );
@@ -105,7 +103,7 @@ const SingleTextField = ({
       // generate value if it hasn't been do so yet
       !generatedValue && generateValue();
       // if there's no value set yet, set value to generated value
-      generatedValue && !field.value && setValue();
+      generatedValue && !fieldValue && setValue();
     }
   }, [generatedValue]);
 
@@ -121,7 +119,7 @@ const SingleTextField = ({
         required={field.required}
         multiline={field.multiline}
         rows={field.multiline ? 4 : ""}
-        value={field.value || ""}
+        value={fieldValue || ""}
         disabled={
           (field.disabled &&
             !(field.autofill && !auth.user?.profile[field.autofill])) ||
@@ -130,8 +128,7 @@ const SingleTextField = ({
         onChange={(e) =>
           dispatch(
             setField({
-              sectionIndex: sectionIndex,
-              id: field.id,
+              name: field.name,
               value: e.target.value,
             }),
           )
@@ -176,7 +173,6 @@ const SingleTextField = ({
       <AddDeleteControls
         groupedFieldId={groupedFieldId}
         totalFields={totalFields}
-        sectionIndex={sectionIndex}
         currentField={currentField}
         field={field}
       />

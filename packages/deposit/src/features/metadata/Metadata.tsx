@@ -10,12 +10,13 @@ import { SingleField, GroupedField } from "./MetadataFields";
 import { StatusIcon } from "../generic/Icons";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { getMetadata, getOpenPanel, setOpenPanel } from "./metadataSlice";
+import { getData } from "../../deposit/depositSlice";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 
 const Form = () => {
   const dispatch = useAppDispatch();
-  const metadata = useAppSelector(getMetadata);
+  const formData = useAppSelector(getData).form;
   const openPanel = useAppSelector(getOpenPanel);
   const { i18n } = useTranslation();
 
@@ -27,7 +28,7 @@ const Form = () => {
 
   return (
     <>
-      {(metadata as SectionType[]).map((section, sectionIndex) => (
+      {formData.map((section, sectionIndex) => (
         <Accordion
           key={`section-${section.id}`}
           expanded={openPanel === section.id}
@@ -75,19 +76,7 @@ const Form = () => {
                   </Typography>
                 </Grid>
               )}
-              {section.fields.map((field, i) =>
-                field.type === "group" ?
-                  <GroupedField
-                    key={i}
-                    field={field}
-                    sectionIndex={sectionIndex}
-                  />
-                : <SingleField
-                    key={i}
-                    field={field}
-                    sectionIndex={sectionIndex}
-                  />,
-              )}
+                <FieldSelector fields={section.fields} />
             </Grid>
           </AccordionDetails>
         </Accordion>
@@ -95,5 +84,18 @@ const Form = () => {
     </>
   );
 };
+
+const FieldSelector = ({ fields }) => {
+  return (
+    <>
+      {fields.map((field, i) => {
+        if (field.type === "group") {
+          return <GroupedField key={i} field={field} />;
+        }
+        return <SingleField key={i} field={field} />;
+      })}
+    </>
+  );
+}
 
 export default Form;
