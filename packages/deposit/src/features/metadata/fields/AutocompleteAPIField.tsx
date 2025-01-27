@@ -41,6 +41,7 @@ import {
   useFetchRdaDomainQuery,
   useFetchRdaInterestGroupQuery,
 } from "../api/rdaApi";
+import { group } from "console";
 
 /*
  *  Type ahead fields for different API endpoints
@@ -49,7 +50,7 @@ import {
  *  Queries get cached by RTK Query
  */
 
-export const OrcidField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
+export const OrcidField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   // Fetch data on input change
@@ -61,7 +62,8 @@ export const OrcidField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
   return (
     <AutocompleteAPIField
       field={field}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       inputValue={inputValue}
       setInputValue={setInputValue}
       debouncedInputValue={debouncedInputValue}
@@ -72,7 +74,7 @@ export const OrcidField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
   );
 };
 
-export const RorField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
+export const RorField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   // Fetch data on input change
@@ -84,7 +86,8 @@ export const RorField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
   return (
     <AutocompleteAPIField
       field={field}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       inputValue={inputValue}
       setInputValue={setInputValue}
       debouncedInputValue={debouncedInputValue}
@@ -95,10 +98,7 @@ export const RorField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
   );
 };
 
-export const GeonamesField = ({
-  field,
-  sectionIndex,
-}: AutocompleteFieldProps) => {
+export const GeonamesField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   // Fetch data on input change
@@ -110,7 +110,8 @@ export const GeonamesField = ({
   return (
     <AutocompleteAPIField
       field={field}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       inputValue={inputValue}
       setInputValue={setInputValue}
       debouncedInputValue={debouncedInputValue}
@@ -121,7 +122,7 @@ export const GeonamesField = ({
   );
 };
 
-export const GettyField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
+export const GettyField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   // Fetch data on input change
@@ -133,7 +134,8 @@ export const GettyField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
   return (
     <AutocompleteAPIField
       field={field}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       inputValue={inputValue}
       setInputValue={setInputValue}
       debouncedInputValue={debouncedInputValue}
@@ -144,10 +146,7 @@ export const GettyField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
   );
 };
 
-export const DatastationsField = ({
-  field,
-  sectionIndex,
-}: AutocompleteFieldProps) => {
+export const DatastationsField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   const { i18n } = useTranslation();
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
@@ -165,7 +164,8 @@ export const DatastationsField = ({
   return (
     <AutocompleteAPIField
       field={field}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       inputValue={inputValue}
       setInputValue={setInputValue}
       debouncedInputValue={debouncedInputValue}
@@ -176,16 +176,12 @@ export const DatastationsField = ({
   );
 };
 
-export const BiodiversityField = ({
-  field,
-  sectionIndex,
-  variant
-}: AutocompleteFieldProps) => {
+export const BiodiversityField = ({ field, variant, groupName, groupIndex }: AutocompleteFieldProps) => {
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
   // Fetch data on input change
   const { data, isFetching, isLoading } = useFetchSpeciesQuery<QueryReturnType>(
-    { value: debouncedInputValue, variant: variant }, 
+    { value: debouncedInputValue, variant: variant },
     { skip: debouncedInputValue === "" },
   );
 
@@ -194,7 +190,8 @@ export const BiodiversityField = ({
   return (
     <AutocompleteAPIField
       field={field}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       inputValue={inputValue}
       setInputValue={setInputValue}
       debouncedInputValue={debouncedInputValue}
@@ -207,10 +204,7 @@ export const BiodiversityField = ({
 
 // Google Sheets and DANS file formats fields, get all values at once
 // So just use a simple AutocompleteField with options fetched from the API
-export const DansFormatsField = ({
-  field,
-  sectionIndex,
-}: AutocompleteFieldProps) => {
+export const DansFormatsField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   // Fetch data right away
   const { data, isFetching, isLoading } =
     useFetchDansFormatsQuery<QueryReturnType>(null);
@@ -222,16 +216,14 @@ export const DansFormatsField = ({
   return (
     <AutocompleteField
       field={newField}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       isLoading={isLoading || isFetching}
     />
   );
 };
 
-export const SshLicencesField = ({
-  field,
-  sectionIndex,
-}: AutocompleteFieldProps) => {
+export const SshLicencesField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   // Fetch data right away
   const { data, isFetching, isLoading } =
     useFetchSshLicencesQuery<QueryReturnType>(null);
@@ -243,16 +235,14 @@ export const SshLicencesField = ({
   return (
     <AutocompleteField
       field={newField}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       isLoading={isLoading || isFetching}
     />
   );
 };
 
-export const LicensesField = ({
-  field,
-  sectionIndex,
-}: AutocompleteFieldProps) => {
+export const LicensesField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   // Fetch data right away
   const { data, isFetching, isLoading } =
     useFetchLicencesQuery<QueryReturnType>(null);
@@ -264,16 +254,14 @@ export const LicensesField = ({
   return (
     <AutocompleteField
       field={newField}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       isLoading={isLoading || isFetching}
     />
   );
 };
 
-export const LanguagesField = ({
-  field,
-  sectionIndex,
-}: AutocompleteFieldProps) => {
+export const LanguagesField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   // Fetch data right away
   const { data, isFetching, isLoading } =
     useFetchLanguagesQuery<QueryReturnType>(null);
@@ -285,13 +273,14 @@ export const LanguagesField = ({
   return (
     <AutocompleteField
       field={newField}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       isLoading={isLoading || isFetching}
     />
   );
 };
 
-export const GorcField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
+export const GorcField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   // Fetch data if field is opened
   const [touched, setTouched] = useState(false);
   const { data, isFetching, isLoading } = useFetchGorcQuery<QueryReturnType>(
@@ -306,17 +295,15 @@ export const GorcField = ({ field, sectionIndex }: AutocompleteFieldProps) => {
   return (
     <AutocompleteField
       field={newField}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       isLoading={isLoading || isFetching}
       onOpen={() => setTouched(true)}
     />
   );
 };
 
-export const RdaPathwaysField = ({
-  field,
-  sectionIndex,
-}: AutocompleteFieldProps) => {
+export const RdaPathwaysField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   // Fetch data if field is opened
   const [touched, setTouched] = useState(false);
   const { data, isFetching, isLoading } =
@@ -329,17 +316,15 @@ export const RdaPathwaysField = ({
   return (
     <AutocompleteField
       field={newField}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       isLoading={isLoading || isFetching}
       onOpen={() => setTouched(true)}
     />
   );
 };
 
-export const RdaDomainsField = ({
-  field,
-  sectionIndex,
-}: AutocompleteFieldProps) => {
+export const RdaDomainsField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   // Fetch data if field is opened
   const [touched, setTouched] = useState(false);
   const { data, isFetching, isLoading } =
@@ -352,17 +337,15 @@ export const RdaDomainsField = ({
   return (
     <AutocompleteField
       field={newField}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       isLoading={isLoading || isFetching}
       onOpen={() => setTouched(true)}
     />
   );
 };
 
-export const RdaInterestGroupsField = ({
-  field,
-  sectionIndex,
-}: AutocompleteFieldProps) => {
+export const RdaInterestGroupsField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   /// Fetch data if field is opened
   const [touched, setTouched] = useState(false);
   const { data, isFetching, isLoading } =
@@ -375,17 +358,15 @@ export const RdaInterestGroupsField = ({
   return (
     <AutocompleteField
       field={newField}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       isLoading={isLoading || isFetching}
       onOpen={() => setTouched(true)}
     />
   );
 };
 
-export const RdaWorkingGroupsField = ({
-  field,
-  sectionIndex,
-}: AutocompleteFieldProps) => {
+export const RdaWorkingGroupsField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   // Fetch data if field is opened
   const [touched, setTouched] = useState(false);
   const { data, isFetching, isLoading } =
@@ -398,17 +379,15 @@ export const RdaWorkingGroupsField = ({
   return (
     <AutocompleteField
       field={newField}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       isLoading={isLoading || isFetching}
       onOpen={() => setTouched(true)}
     />
   );
 };
 
-export const SheetsField = ({
-  field,
-  sectionIndex,
-}: AutocompleteFieldProps) => {
+export const SheetsField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   // Fetch data if field is opened
   const [touched, setTouched] = useState(false);
   const { data, isFetching, isLoading } = useFetchSheetsQuery<QueryReturnType>(
@@ -423,20 +402,24 @@ export const SheetsField = ({
   return (
     <AutocompleteField
       field={newField}
-      sectionIndex={sectionIndex}
+      groupName={groupName}
+      groupIndex={groupIndex}
       isLoading={isLoading || isFetching}
       onOpen={() => setTouched(true)}
     />
   );
 };
 
-export const MultiApiField = ({
-  field,
-  sectionIndex,
-}: AutocompleteFieldProps) => {
+export const MultiApiField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
+  const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
+
+  const multiApiValue = (fieldValue?.multiApiValue || field.multiApiValue) as TypeaheadAPI;
+
+  console.log(field)
+  console.log(fieldValue)
 
   return (
     <Stack direction="row" alignItems="start">
@@ -449,23 +432,15 @@ export const MultiApiField = ({
             // set the type of API used
             dispatch(
               setMultiApiField({
-                sectionIndex: sectionIndex,
-                id: field.id,
+                field: field,
                 value: e.target.value as TypeaheadAPI,
+                ...(groupName !== undefined && { groupName: groupName }),
+                ...(groupIndex !== undefined && { groupIndex: groupIndex }),
               }),
             );
-            // and reset the currently selected value if there is one
-            field.value &&
-              dispatch(
-                setField({
-                  name: field.name,
-                  value: "",
-                }),
-              );
           }}
-          value={field.multiApiValue}
+          value={multiApiValue}
           disabled={formDisabled}
-          inputProps={{ "data-testid": `selectapi-${field.name}` }}
         >
           {Array.isArray(field.options) &&
             (field.options as TypeaheadAPI[]).map((option) => (
@@ -475,49 +450,63 @@ export const MultiApiField = ({
             ))}
         </Select>
       </FormControl>
-      {field.multiApiValue === "ror" && (
-        <RorField field={field} sectionIndex={sectionIndex} />
+      {multiApiValue === "ror" && (
+        <RorField field={field} groupName={groupName}
+          groupIndex={groupIndex} />
       )}
-      {field.multiApiValue === "orcid" && (
-        <OrcidField field={field} sectionIndex={sectionIndex} />
+      {multiApiValue === "orcid" && (
+        <OrcidField field={field} groupName={groupName}
+          groupIndex={groupIndex} />
       )}
-      {field.multiApiValue === "gorc" && (
-        <GorcField field={field} sectionIndex={sectionIndex} />
+      {multiApiValue === "gorc" && (
+        <GorcField field={field} groupName={groupName}
+          groupIndex={groupIndex} />
       )}
-      {field.multiApiValue === "geonames" && (
-        <GeonamesField field={field} sectionIndex={sectionIndex} />
+      {multiApiValue  === "geonames" && (
+        <GeonamesField field={field} groupName={groupName}
+          groupIndex={groupIndex} />
       )}
-      {field.multiApiValue === "getty" && (
-        <GettyField field={field} sectionIndex={sectionIndex} />
+      {multiApiValue  === "getty" && (
+        <GettyField field={field} groupName={groupName}
+          groupIndex={groupIndex} />
       )}
-      {field.multiApiValue === "sheets" && (
-        <SheetsField field={field} sectionIndex={sectionIndex} />
+      {multiApiValue  === "sheets" && (
+        <SheetsField field={field} groupName={groupName}
+          groupIndex={groupIndex} />
       )}
-      {field.multiApiValue === "dansFormats" && (
-        <DansFormatsField field={field} sectionIndex={sectionIndex} />
+      {multiApiValue  === "dansFormats" && (
+        <DansFormatsField field={field} groupName={groupName}
+          groupIndex={groupIndex} />
       )}
-      {(field.multiApiValue === "elsst" ||
-        field.multiApiValue === "dansCollections" ||
-        field.multiApiValue === "narcis") && (
-        <DatastationsField field={field} sectionIndex={sectionIndex} />
+      {(multiApiValue  === "elsst" ||
+        multiApiValue  === "dansCollections" ||
+        multiApiValue  === "narcis") && (
+          <DatastationsField field={field} groupName={groupName}
+            groupIndex={groupIndex} />
+        )}
+      {multiApiValue  === "rdaworkinggroups" && (
+        <RdaWorkingGroupsField field={field} groupName={groupName}
+          groupIndex={groupIndex} />
       )}
-      {field.multiApiValue === "rdaworkinggroups" && (
-        <RdaWorkingGroupsField field={field} sectionIndex={sectionIndex} />
+      {multiApiValue  === "pathways" && (
+        <RdaPathwaysField field={field} groupName={groupName}
+          groupIndex={groupIndex} />
       )}
-      {field.multiApiValue === "pathways" && (
-        <RdaPathwaysField field={field} sectionIndex={sectionIndex} />
+      {multiApiValue  === "domains" && (
+        <RdaDomainsField field={field} groupName={groupName}
+          groupIndex={groupIndex} />
       )}
-      {field.multiApiValue === "domains" && (
-        <RdaDomainsField field={field} sectionIndex={sectionIndex} />
+      {multiApiValue  === "interest groups" && (
+        <RdaInterestGroupsField field={field} groupName={groupName}
+          groupIndex={groupIndex} />
       )}
-      {field.multiApiValue === "interest groups" && (
-        <RdaInterestGroupsField field={field} sectionIndex={sectionIndex} />
+      {multiApiValue  === "biodiversity_species_vernacular" && (
+        <BiodiversityField field={field} groupName={groupName}
+          groupIndex={groupIndex} variant="vernacular" />
       )}
-      {field.multiApiValue === "biodiversity_species_vernacular" && (
-        <BiodiversityField field={field} sectionIndex={sectionIndex} variant="vernacular" />
-      )}
-      {field.multiApiValue === "biodiversity_species_scientific" && (
-        <BiodiversityField field={field} sectionIndex={sectionIndex} variant="scientific" />
+      {multiApiValue  === "biodiversity_species_scientific" && (
+        <BiodiversityField field={field} groupName={groupName}
+          groupIndex={groupIndex} variant="scientific" />
       )}
     </Stack>
   );
@@ -525,7 +514,8 @@ export const MultiApiField = ({
 
 const AutocompleteAPIField = ({
   field,
-  sectionIndex,
+  groupName,
+  groupIndex,
   inputValue,
   setInputValue,
   debouncedInputValue,
@@ -535,13 +525,13 @@ const AutocompleteAPIField = ({
 }: AutocompleteAPIFieldProps) => {
   const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation("metadata");
+  const formDisabled = useAppSelector(getFormDisabled);
+  const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
+  const status = getFieldStatus(field, fieldValue);
   const apiValue = (
     Array.isArray(field.options) ?
-      field.multiApiValue
-    : field.options) as TypeaheadAPI;
-  const formDisabled = useAppSelector(getFormDisabled);
-  const fieldValue = useAppSelector(getField(field.name));
-  const status = getFieldStatus(field, fieldValue);
+    fieldValue?.multiApiValue
+      : field.options) as TypeaheadAPI;
 
   // on initial render, check if field has a default value, and if so, add it to the value state
   useEffect(() => {
@@ -550,6 +540,8 @@ const AutocompleteAPIField = ({
         setField({
           field: field,
           value: field.value,
+          ...(groupName !== undefined && { groupName: groupName }),
+          ...(groupIndex !== undefined && { groupIndex: groupIndex }),
         }),
       );
     }
@@ -570,7 +562,7 @@ const AutocompleteAPIField = ({
             data.arg === debouncedInputValue
           ) ?
             data.response
-          : []
+            : []
         }
         value={fieldValue?.value || (field.multiselect ? [] : null)}
         inputValue={
@@ -584,9 +576,8 @@ const AutocompleteAPIField = ({
         renderInput={(params) => (
           <TextField
             {...params}
-            label={`${lookupLanguageString(field.label, i18n.language)}${
-              field.required ? " *" : ""
-            }`}
+            label={`${lookupLanguageString(field.label, i18n.language)}${field.required ? " *" : ""
+              }`}
             error={status === "error" && field.touched}
             helperText={status === "error" && field.touched && t("incorrect")}
             placeholder={lookupLanguageString(field.placeholder, i18n.language)}
@@ -601,7 +592,7 @@ const AutocompleteAPIField = ({
                   fieldValue?.value.value.startsWith("http")
                 ) ?
                   <InfoLink link={fieldValue?.value.value} apiValue={apiValue} />
-                : params.InputProps.startAdornment,
+                  : params.InputProps.startAdornment,
             }}
             inputProps={{
               ...params.inputProps,
@@ -649,16 +640,18 @@ const AutocompleteAPIField = ({
                 },
               ]
               // the same for non-multiselect
-            : typeof newValue === "string" ?
-              { label: newValue, value: newValue, freetext: true }
-              // otherwise just return the new value
-            : newValue;
+              : typeof newValue === "string" ?
+                { label: newValue, value: newValue, freetext: true }
+                // otherwise just return the new value
+                : newValue;
 
           // Set the field
           dispatch(
             setField({
               field: field,
               value: (saveValues || setValue) as OptionsType | OptionsType[],
+              ...(groupName !== undefined && { groupName: groupName }),
+              ...(groupIndex !== undefined && { groupIndex: groupIndex }),
             }),
           );
 
@@ -694,7 +687,7 @@ const AutocompleteAPIField = ({
             // for freesolo, display the dropdown message when not searching
             t("startTyping", { api: t(apiValue), freeText: field.allowFreeText ? t('freeText') : '' })
             // otherwise the loading indicator
-          : <Stack
+            : <Stack
               direction="row"
               justifyContent="space-between"
               alignItems="end"

@@ -23,14 +23,15 @@ import { getFormDisabled } from "../../../deposit/depositSlice";
 
 const AutocompleteField = ({
   field,
-  sectionIndex,
+  groupName,
+  groupIndex,
   isLoading,
   onOpen,
 }: AutocompleteFieldProps) => {
   const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
-  const fieldValue = useAppSelector(getField(field.name));
+  const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
   const status = getFieldStatus(field, fieldValue);
 
   // on initial render, check if field has a default value, and if so, add it to the value state
@@ -40,6 +41,8 @@ const AutocompleteField = ({
         setField({
           field: field,
           value: field.value,
+          ...(groupName !== undefined && { groupName: groupName }),
+          ...(groupIndex !== undefined && { groupIndex: groupIndex }),
         }),
       );
     }
@@ -120,6 +123,8 @@ const AutocompleteField = ({
             setField({
               field: field,
               value: newValue,
+              ...(groupName !== undefined && { groupName: groupName }),
+              ...(groupIndex !== undefined && { groupIndex: groupIndex }),
             }),
           )
         }

@@ -19,11 +19,11 @@ import { useTranslation } from "react-i18next";
 import { getFormDisabled } from "../../../deposit/depositSlice";
 
 // List of radio button options. First value of the options is selected by default, so no need for status checking.
-export const RadioField = ({ field, sectionIndex }: RadioFieldProps) => {
+export const RadioField = ({ field, groupName, groupIndex }: RadioFieldProps) => {
   const dispatch = useAppDispatch();
   const { i18n } = useTranslation();
   const formDisabled = useAppSelector(getFormDisabled);
-  const fieldValue = useAppSelector(getField(field.name));
+  const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
   const status = getFieldStatus(field, fieldValue);
 
   return (
@@ -49,6 +49,8 @@ export const RadioField = ({ field, sectionIndex }: RadioFieldProps) => {
             setField({
               field: field,
               value: e.target.value,
+              ...(groupName !== undefined && { groupName: groupName }),
+              ...(groupIndex !== undefined && { groupIndex: groupIndex }),
             }),
           )
         }
@@ -68,11 +70,12 @@ export const RadioField = ({ field, sectionIndex }: RadioFieldProps) => {
 };
 
 // For a list of checkboxes, we keep the selected values in an array.
-export const CheckField = ({ field, sectionIndex }: CheckFieldProps) => {
+export const CheckField = ({ field, groupName, groupIndex }: CheckFieldProps) => {
   const dispatch = useAppDispatch();
-  const status = getFieldStatus(field);
   const { i18n } = useTranslation();
   const formDisabled = useAppSelector(getFormDisabled);
+  const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
+  const status = getFieldStatus(field, fieldValue);
 
   return (
     <FormControl
@@ -106,10 +109,12 @@ export const CheckField = ({ field, sectionIndex }: CheckFieldProps) => {
                         field: field,
                         value:
                           e.target.checked ?
-                            [...(fieldValue.value || ""), e.target.name]
-                          : fieldValue.value!.filter(
+                            [...(fieldValue?.value || ""), e.target.name]
+                          : fieldValue?.value!.filter(
                               (item) => item !== e.target.name,
                             ),
+                        ...(groupName !== undefined && { groupName: groupName }),
+                        ...(groupIndex !== undefined && { groupIndex: groupIndex }),
                       }),
                     )
                   }

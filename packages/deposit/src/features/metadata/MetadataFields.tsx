@@ -44,48 +44,36 @@ import { TransitionGroup } from "react-transition-group";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 import Skeleton from "@mui/material/Skeleton";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { getField } from "./metadataSlice";
+import { Box } from "@mui/material";
+
 // Lazy load the Draw map components, as it's quite large
 const DrawMap = lazy(() => import("./fields/Map"));
 
 // Memoized Field function, so only the affected field rerenders when form/metadata props change.
 // Loads the field specified in the type key
-const SingleField = memo(({ field }: SingleFieldProps) => {
+const SingleField = memo(({ field, groupName, groupIndex }: SingleFieldProps) => {
   // Switch to determine which field type to render
   const getField = () => {
+    const commonProps = {
+      field,
+      groupName,
+      groupIndex,
+    };
+
     switch (field.type) {
       case "text":
       case "number":
-        return <TextField field={field} />;
+        return <TextField {...commonProps} />;
       case "date":
-        return <DateTimeField field={field} />;
+        return <DateTimeField {...commonProps} />;
       case "daterange":
-        return <DateRangeField field={field} />;
-      // case "repeatSingleField":
-      //   return (
-      //     <TransitionGroup id={`group-${field.name}-${field.id}`}>
-      //       {field.fields.map((f: TextFieldType | DateFieldType, i: number) => {
-      //         const commonProps = {
-      //           groupedFieldId: field.id,
-      //           currentField: i,
-      //           totalFields: field.fields.length,
-      //         };
-      //         return (
-      //           <Collapse key={f.id}>
-      //             {(f.type === "text" || f.type === "number") && (
-      //               <TextField {...commonProps} field={f} />
-      //             )}
-      //             {f.type === "date" && (
-      //               <DateTimeField {...commonProps} field={f} />
-      //             )}
-      //           </Collapse>
-      //         );
-      //       })}
-      //     </TransitionGroup>
-      //   );
+        return <DateRangeField {...commonProps} />;
       case "radio":
-        return <RadioField field={field} />;
+        return <RadioField {...commonProps} />;
       case "check":
-        return <CheckField field={field} />;
+        return <CheckField {...commonProps} />;
       case "drawmap":
         return (
           <Suspense
@@ -93,78 +81,52 @@ const SingleField = memo(({ field }: SingleFieldProps) => {
               <Skeleton variant="rectangular" width="100%" height={140} />
             }
           >
-            <DrawMap field={field} />
+            <DrawMap {...commonProps} />
           </Suspense>
         );
       case "autocomplete":
         if (field.multiApiValue)
-          return <MultiApiField field={field} />;
+          return <MultiApiField {...commonProps} />;
         else {
           switch (field.options) {
             case "orcid":
-              return <OrcidField field={field} />;
+              return <OrcidField {...commonProps} />;
             case "ror":
-              return <RorField field={field} />;
+              return <RorField {...commonProps} />;
             case "gorc":
-              return <GorcField field={field} />;
+              return <GorcField {...commonProps} />;
             case "licenses":
-              return (
-                <LicensesField field={field} />
-              );
+              return <LicensesField {...commonProps} />;
             case "sshLicences":
-              return (
-                <SshLicencesField field={field} />
-              );
+              return <SshLicencesField {...commonProps} />;
             case "geonames":
-              return (
-                <GeonamesField field={field} />
-              );
+              return <GeonamesField {...commonProps} />;
             case "getty":
-              return <GettyField field={field} />;
+              return <GettyField {...commonProps} />;
             case "sheets":
-              return <SheetsField field={field} />;
+              return <SheetsField {...commonProps} />;
             case "dansFormats":
-              return (
-                <DansFormatsField field={field} />
-              );
+              return <DansFormatsField {...commonProps} />;
             case "rdaworkinggroups":
-              return (
-                <RdaWorkingGroupsField field={field} />
-              );
+              return <RdaWorkingGroupsField {...commonProps} />;
             case "pathways":
-              return (
-                <RdaPathwaysField field={field} />
-              );
+              return <RdaPathwaysField {...commonProps} />;
             case "domains":
-              return (
-                <RdaDomainsField field={field} />
-              );
+              return <RdaDomainsField {...commonProps} />;
             case "interest groups":
-              return (
-                <RdaInterestGroupsField field={field} />
-              );
+              return <RdaInterestGroupsField {...commonProps} />;
             case "languageList":
-              return (
-                <LanguagesField field={field} />
-              );
+              return <LanguagesField {...commonProps} />;
             case "elsst":
             case "narcis":
             case "dansCollections":
-              return (
-                <DatastationsField field={field} />
-              );
+              return <DatastationsField {...commonProps} />;
             case "biodiversity_species_vernacular":
-              return (
-                <BiodiversityField field={field} variant="vernacular" />
-              );
+              return <BiodiversityField {...commonProps} variant="vernacular" />;
             case "biodiversity_species_scientific":
-              return (
-                <BiodiversityField field={field} variant="scientific" />
-              );
+              return <BiodiversityField {...commonProps} variant="scientific" />;
             default:
-              return (
-                <AutocompleteField field={field} />
-              );
+              return <AutocompleteField {...commonProps} />;
           }
         }
       default:
@@ -181,12 +143,9 @@ const SingleField = memo(({ field }: SingleFieldProps) => {
 
 const GroupedField = ({ field }: GroupedFieldProps) => {
   const { i18n } = useTranslation();
-  // Check if group is repeatable. If not, lets wrap that single fieldgroup in an array, so we can use the same map function over it.
-  // We use the id of the first field of the group as key for transitions
-  const fieldArray =
-    field.repeatable ?
-      (field.fields as InputField[][])
-    : [field.fields as InputField[]];
+  const fieldValue = useAppSelector(getField(field.name));
+
+  console.log(fieldValue)
 
   return (
     <Grid xs={12}>
@@ -201,52 +160,92 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
           subheaderTypographyProps={{ fontSize: 12 }}
           sx={{ pb: 0, pl: 2.25, pr: 2.25 }}
         />
-        {/* {fieldArray && (
-          <CardContent data-testid={`group-${field.name}-${field.id}`}>
-            <TransitionGroup>
-              {fieldArray.map((groupedField, i) => (
-                <Collapse key={`group-${groupedField[0].id}`}>
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    key={i}
-                    sx={{
-                      borderTop: i > 0 ? "1px solid" : "none",
-                      borderColor: "neutral.main",
-                      pt: i > 0 ? 2 : 0,
-                      mt: i > 0 ? 2 : 0,
-                    }}
-                    data-testid={`single-${field.name}-group-${i}`}
-                  >
-                    <Grid container sx={{ flex: 1 }} spacing={2}>
-                      {groupedField.map((f) => (
-                        <SingleField
-                          key={f.id}
-                          field={f}
-                        />
-                      ))}
-                    </Grid>
-                    {field.repeatable && fieldArray.length > 1 && (
-                      <DeleteButton
-                        groupedFieldId={field.id}
-                        deleteFieldIndex={i}
-                        size="medium"
-                        deleteGroupId={`group-${i}`}
-                        groupedFieldName={field.name}
+        <CardContent data-testid={`group-${field.name}-${field.id}`}>
+          {field.repeatable ? (
+            (Array.isArray(fieldValue?.value) ? fieldValue?.value : [{}]).map((_repeatableItem, index) => (
+              <Stack 
+                key={index}
+                direction="row"
+                alignItems="center"
+                sx={{ 
+                  borderTop: index > 0 ? "1px solid" : "none",
+                  borderColor: "neutral.main",
+                  mt: index > 0 ? 1 : 0,
+                  pt: index > 0 ? 2 : 0,
+                  width: "100%",
+                }}
+              >
+                <Box>
+                  {field.fields.map((f) => (
+                    <SingleField
+                      key={f.id}
+                      field={f}
+                      groupName={field.name}
+                      groupIndex={index}
+                    />
+                  ))}
+                </Box>
+                {fieldValue?.value.length > 1 && (
+                  <DeleteButton
+                    size="medium"
+                    field={field}
+                    fieldIndex={index}
+                  />
+                )}
+              </Stack>
+            ))
+          ) : (
+            field.fields.map((f) => (
+              <SingleField
+                key={f.id}
+                field={f}
+                groupName={field.name}
+                groupIndex={0}
+              />
+            ))
+          )}
+          {/* <TransitionGroup>
+            {fieldArray.map((groupedField, i) => (
+              <Collapse key={`group-${groupedField[0].id}`}>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  key={i}
+                  sx={{
+                    borderTop: i > 0 ? "1px solid" : "none",
+                    borderColor: "neutral.main",
+                    pt: i > 0 ? 2 : 0,
+                    mt: i > 0 ? 2 : 0,
+                  }}
+                  data-testid={`single-${field.name}-group-${i}`}
+                >
+                  <Grid container sx={{ flex: 1 }} spacing={2}>
+                    {groupedField.map((f) => (
+                      <SingleField
+                        key={f.id}
+                        field={f}
                       />
-                    )}
-                  </Stack>
-                </Collapse>
-              ))}
-            </TransitionGroup>
-          </CardContent>
-        )} */}
+                    ))}
+                  </Grid>
+                  {field.repeatable && fieldArray.length > 1 && (
+                    <DeleteButton
+                      groupedFieldId={field.id}
+                      deleteFieldIndex={i}
+                      size="medium"
+                      deleteGroupId={`group-${i}`}
+                      groupedFieldName={field.name}
+                    />
+                  )}
+                </Stack>
+              </Collapse>
+            ))}
+          </TransitionGroup> */}
+        </CardContent>
         {field.repeatable && (
           <CardActions sx={{ pl: 3, pr: 3, justifyContent: "right" }}>
             <Stack direction="row" alignItems="center" justifyContent="end">
               <AddButtonText
-                groupedFieldId={field.id}
-                groupedFieldName={field.name}
+                field={field}
                 type="group"
               />
             </Stack>

@@ -22,6 +22,7 @@ import {
   initForm,
   resetMetadata,
   getTouchedStatus,
+  getSections,
 } from "../features/metadata/metadataSlice";
 import {
   resetFilesSubmitStatus,
@@ -83,15 +84,18 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   //   { skip: !formAction.id },
   // );
 
-  // set config
   useEffect(() => {
+    // set config
     dispatch(setData(config));
+    // initialize sections state 
+    dispatch(initForm(config.form))
   }, [config]);
 
   // set page title
   useEffect(() => {
     setSiteTitle(siteTitle, lookupLanguageString(page.name, i18n.language));
   }, [siteTitle, page.name]);
+
 
   // Initialize form on initial render when there's no sessionId yet or when form gets reset
   // Or initialize saved data (overwrites the previously set sessionId)

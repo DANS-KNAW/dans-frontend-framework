@@ -46,6 +46,7 @@ const section: InitialSectionType = {
       required: true,
       validation: "email",
       autofill: "email",
+      repeatable: true,
       description: {
         en: "This is the e-mail address of the person who receives questions about this dataset, once it has been published.",
         nl: "Dit is het e-mailadres van de persoon die vragen ontvangt over deze dataset, wanneer deze is gepubliceerd.",

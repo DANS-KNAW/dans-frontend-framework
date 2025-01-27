@@ -5,7 +5,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { addField, deleteField } from "./metadataSlice";
+import { addField, deleteField, setField } from "./metadataSlice";
 import { getFormDisabled } from "../../deposit/depositSlice";
 import type {
   AddFieldButtonProps,
@@ -13,13 +13,10 @@ import type {
 } from "../../types/MetadataProps";
 
 export const DeleteButton = ({
-  sectionIndex,
-  groupedFieldId,
-  deleteFieldIndex,
+  field,
+  fieldIndex,
   size = "small",
-  mt,
-  deleteGroupId,
-  groupedFieldName,
+  sx,
 }: DeleteFieldButtonProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
@@ -30,18 +27,14 @@ export const DeleteButton = ({
         color="error"
         aria-label={t("delete") as string}
         size={size}
-        sx={{ mt: mt }}
         onClick={() =>
-          dispatch(
-            deleteField({
-              sectionIndex: sectionIndex,
-              groupedFieldId: groupedFieldId,
-              deleteField: deleteFieldIndex,
-            }),
-          )
+          dispatch(deleteField({
+            field: field,
+            fieldIndex: fieldIndex,
+          }))
         }
-        data-testid={`delete-button-${groupedFieldName}-${deleteGroupId}`}
         disabled={formDisabled}
+        sx={sx}
       >
         <RemoveCircleOutlineIcon fontSize={size} />
       </IconButton>
@@ -50,12 +43,10 @@ export const DeleteButton = ({
 };
 
 export const AddButton = ({
-  sectionIndex,
-  groupedFieldId,
-  type,
+  field,
   size = "small",
-  mt,
-  groupedFieldName,
+  disabled = false,
+  sx,
 }: AddFieldButtonProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
@@ -66,18 +57,13 @@ export const AddButton = ({
         color="primary"
         aria-label={t("add") as string}
         size={size}
-        sx={{ mt: mt }}
         onClick={() =>
-          dispatch(
-            addField({
-              sectionIndex: sectionIndex,
-              groupedFieldId: groupedFieldId,
-              type: type,
-            }),
-          )
+          dispatch(addField({
+            field: field,
+          }))
         }
-        data-testid={`add-button-${groupedFieldName}-${groupedFieldId}`}
-        disabled={formDisabled}
+        disabled={formDisabled || disabled}
+        sx={sx}
       >
         <AddCircleOutlineIcon fontSize={size} />
       </IconButton>
@@ -86,11 +72,8 @@ export const AddButton = ({
 };
 
 export const AddButtonText = ({
-  sectionIndex,
-  groupedFieldId,
-  type,
+  field,
   size = "medium",
-  groupedFieldName,
 }: AddFieldButtonProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
@@ -98,17 +81,13 @@ export const AddButtonText = ({
   return (
     <Button
       onClick={() =>
-        dispatch(
-          addField({
-            sectionIndex: sectionIndex,
-            groupedFieldId: groupedFieldId,
-            type: type,
-          }),
-        )
+        dispatch(addField({
+          field: field,
+          type: 'group',
+        }))
       }
       size={size}
       startIcon={<AddCircleOutlineIcon />}
-      data-testid={`add-button-${groupedFieldName}-${groupedFieldId}`}
       disabled={formDisabled}
     >
       {t("add")}
@@ -117,47 +96,29 @@ export const AddButtonText = ({
 };
 
 export const AddDeleteControls = ({
-  groupedFieldId,
-  totalFields,
-  sectionIndex,
-  currentField,
+  fieldIndex,
+  fieldValue,
   field,
 }: {
-  groupedFieldId?: string;
-  totalFields: number;
-  sectionIndex: number;
-  currentField: number;
-  field: any;
+
 }) => {
-  return groupedFieldId ?
-      [
-        totalFields > 1 && (
-          <DeleteButton
-            key="delete"
-            sectionIndex={sectionIndex}
-            groupedFieldId={groupedFieldId}
-            deleteFieldIndex={currentField}
-            mt={
-              (status === "error" && field.touched ? -3 : 0) +
-              (currentField === 0 ? 0 : 1)
-            }
-            deleteGroupId={field.id}
-            groupedFieldName={field.name}
-          />
-        ),
-        currentField + 1 === totalFields && (
-          <AddButton
-            key="add"
-            sectionIndex={sectionIndex}
-            groupedFieldId={groupedFieldId}
-            type="single"
-            mt={
-              (status === "error" && field.touched ? -3 : 0) +
-              (currentField === 0 ? 0 : 1)
-            }
-            groupedFieldName={field.name}
-          />
-        ),
-      ]
-    : null;
+  console.log(fieldValue)
+  return ([
+    fieldValue?.length > 1 && (
+      <DeleteButton
+        key="delete"
+        field={field}
+        fieldIndex={fieldIndex}
+        sx={{mt: 1.75}}
+      />
+    ),
+    (fieldIndex === fieldValue?.length - 1 || !fieldValue) && (
+      <AddButton
+        key="add"
+        field={field}
+        disabled={!fieldValue?.[fieldIndex]?.value}
+        sx={{mt: 1.75}}
+      />
+    ),
+  ]);
 };

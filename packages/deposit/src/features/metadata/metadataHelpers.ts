@@ -162,8 +162,6 @@ export const getFieldStatus = (field: InputField, fieldValue): SectionStatus => 
       Array.isArray(fieldValue.value) &&
       fieldValue.value.some((v) => v.geonames === null || v.geonames === undefined));
 
-  console.log(fieldEmpty)
-
   if (field.noIndicator && !field.required && fieldEmpty) {
     return "neutral";
   } else if (
@@ -218,10 +216,8 @@ export const getValid = (value: any, field: Field): boolean => {
         (item: any) => item.geonames !== null && item.geonames !== undefined,
       ))
   ) {
-    console.log('getValid true');
     return true;
   }
-  console.log('getValid false');
   return false;
 };
 

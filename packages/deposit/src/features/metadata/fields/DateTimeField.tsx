@@ -28,16 +28,15 @@ import type {
   DateRangeFieldType,
   DateTimeFormat,
 } from "../../../types/MetadataFields";
+import { group } from "console";
 
 // Date and time selection component
 // Allows a user to select input type (date and time, date, month and year, year) if specified in config
 
 export const DateTimeField = ({
   field,
-  sectionIndex,
-  groupedFieldId,
-  currentField = 0,
-  totalFields = 1,
+  groupName,
+  groupIndex,
 }: DateFieldProps) => {
   const { t, i18n } = useTranslation("metadata");
   const [error, setError] = useState<
@@ -46,7 +45,7 @@ export const DateTimeField = ({
   const formDisabled = useAppSelector(getFormDisabled);
   const status = getFieldStatus(field);
   const dispatch = useAppDispatch();
-  const fieldValue = useAppSelector(getField(field.name));
+  const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
 
   const errorMessage = useMemo(() => {
     switch (error) {
@@ -72,8 +71,8 @@ export const DateTimeField = ({
     <Stack direction="row" alignItems="start">
       <DateTypeWrapper
         field={field}
-        sectionIndex={sectionIndex}
-        currentField={currentField}
+        groupIndex={groupIndex}
+        groupName={groupName}
       />
 
       <MUIDateTimeField
@@ -102,15 +101,14 @@ export const DateTimeField = ({
             setField({
               field: field,
               value: dateValue,
+              ...(groupName !== undefined && { groupName: groupName }),
+              ...(groupIndex !== undefined && { groupIndex: groupIndex }),
             }),
           );
         }}
         onError={(newError) =>
           setError(newError as DateValidationError | TimeValidationError)
         }
-        sx={{
-          mt: groupedFieldId && currentField !== 0 ? 1 : 0,
-        }}
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
@@ -134,13 +132,13 @@ export const DateTimeField = ({
         }}
       />
 
-      <AddDeleteControls
-        groupedFieldId={groupedFieldId}
-        totalFields={totalFields}
-        sectionIndex={sectionIndex}
-        currentField={currentField}
-        field={field}
-      />
+      {field.repeatable &&
+        <AddDeleteControls
+          fieldValue={fieldValue?.value}
+          fieldIndex={index}
+          field={field}
+        />
+      }
     </Stack>
   );
 };
@@ -151,10 +149,8 @@ export const DateTimeField = ({
 
 export const DateRangeField = ({
   field,
-  sectionIndex,
-  groupedFieldId,
-  currentField = 0,
-  totalFields = 1,
+  groupName,
+  groupIndex,
 }: DateRangeFieldProps) => {
   const [range, setRange] = useState<(string | null)[]>(
     field.value || [null, null],
@@ -177,9 +173,10 @@ export const DateRangeField = ({
     !range.every((el) => el === null) &&
       dispatch(
         setField({
-          sectionIndex: sectionIndex,
-          id: field.id,
+          field: field,
           value: range as string[],
+          ...(groupName !== undefined && { groupName: groupName }),
+          ...(groupIndex !== undefined && { groupIndex: groupIndex }),
         }),
       );
   }, [range]);
@@ -196,39 +193,37 @@ export const DateRangeField = ({
     <Stack direction="row" alignItems="start">
       <DateTypeWrapper
         field={field}
-        sectionIndex={sectionIndex}
-        currentField={currentField}
+        groupName={groupName}
+        groupIndex={groupIndex}
       />
 
       <RangeFieldWrapper
         field={field}
-        groupedFieldId={groupedFieldId}
-        currentField={currentField}
         range={range}
         index={0}
         setRange={setStart}
         maxDate={range[1] || undefined}
-        sectionIndex={sectionIndex}
+        groupName={groupName}
+        groupIndex={groupIndex}
       />
 
       <RangeFieldWrapper
         field={field}
-        groupedFieldId={groupedFieldId}
-        currentField={currentField}
         range={range}
         index={1}
         setRange={setEnd}
         minDate={range[0] || undefined}
-        sectionIndex={sectionIndex}
+        groupName={groupName}
+        groupIndex={groupIndex}
       />
 
-      <AddDeleteControls
-        groupedFieldId={groupedFieldId}
-        totalFields={totalFields}
-        sectionIndex={sectionIndex}
-        currentField={currentField}
-        field={field}
-      />
+      {field.repeatable &&
+        <AddDeleteControls
+          fieldValue={fieldValue?.value}
+          fieldIndex={index}
+          field={field}
+        />
+      }
     </Stack>
   );
 };
@@ -238,19 +233,15 @@ const RangeFieldWrapper = ({
   range,
   setRange,
   index,
-  sectionIndex,
-  groupedFieldId,
-  currentField,
   minDate,
   maxDate,
+  groupName,
+  groupIndex,
 }: {
   field: DateRangeFieldType;
   range: (string | null)[];
   setRange: (v: string) => void;
   index: number;
-  sectionIndex: number;
-  groupedFieldId?: string;
-  currentField?: number;
   minDate?: string;
   maxDate?: string;
 }) => {
@@ -298,9 +289,10 @@ const RangeFieldWrapper = ({
   // Set global field valid status based on user interaction, valid if warning/success
   useEffect(() => {
     setFieldValid({
-      sectionIndex: sectionIndex,
-      id: field.id,
+      field: field,
       value: status !== "error",
+      ...(groupName !== undefined && { groupName: groupName }),
+      ...(groupIndex !== undefined && { groupIndex: groupIndex }),
     });
   }, [status]);
 
@@ -340,7 +332,6 @@ const RangeFieldWrapper = ({
         setError(newError);
       }}
       sx={{
-        mt: groupedFieldId && currentField !== 0 ? 1 : 0,
         mr: index === 0 ? 1 : 0,
       }}
       InputProps={{
@@ -369,19 +360,19 @@ const RangeFieldWrapper = ({
 
 const DateTypeWrapper = ({
   field,
-  sectionIndex,
-  currentField,
+  groupName,
+  groupIndex,
 }: {
   field: DateFieldType | DateRangeFieldType;
-  sectionIndex: number;
-  currentField: number;
+  groupName?: string;
+  groupIndex?: number;
 }) => {
   const formDisabled = useAppSelector(getFormDisabled);
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
 
   return field.formatOptions ?
-      <FormControl sx={{ minWidth: 110, mr: 1, mt: currentField > 0 ? 1 : 0 }}>
+      <FormControl sx={{ minWidth: 110, mr: 1, }}>
         <InputLabel>{t("selectDateType")}</InputLabel>
         <Select
           label={t("selectDateType")}
@@ -389,18 +380,20 @@ const DateTypeWrapper = ({
             // set the type of date
             dispatch(
               setDateTypeField({
-                sectionIndex: sectionIndex,
-                id: field.id,
+                name: field.name,
                 value: e.target.value as DateTimeFormat,
+                ...(groupName !== undefined && { groupName: groupName }),
+                ...(groupIndex !== undefined && { groupIndex: groupIndex }),
               }),
             );
             // and reset the currently selected value if there is one
             field.value &&
               dispatch(
                 setField({
-                  sectionIndex: sectionIndex,
-                  id: field.id,
+                  field: field,
                   value: "",
+                  ...(groupName !== undefined && { groupName: groupName }),
+                  ...(groupIndex !== undefined && { groupIndex: groupIndex }),
                 }),
               );
           }}

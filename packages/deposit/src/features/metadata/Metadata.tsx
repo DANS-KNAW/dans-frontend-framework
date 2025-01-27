@@ -9,7 +9,7 @@ import type { SectionType } from "../../types/Metadata";
 import { SingleField, GroupedField } from "./MetadataFields";
 import { StatusIcon } from "../generic/Icons";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { getMetadata, getOpenPanel, setOpenPanel } from "./metadataSlice";
+import { getMetadata, getOpenPanel, setOpenPanel, getSections } from "./metadataSlice";
 import { getData } from "../../deposit/depositSlice";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
@@ -19,6 +19,9 @@ const Form = () => {
   const formData = useAppSelector(getData).form;
   const openPanel = useAppSelector(getOpenPanel);
   const { i18n } = useTranslation();
+  const sections = useAppSelector(getSections);
+
+  console.log(sections)
 
   // handles accordion open/close actions, sends to redux store
   const handleChange =
@@ -57,7 +60,7 @@ const Form = () => {
             expandIcon={<ExpandMoreIcon />}
             aria-controls={`${section.id}-content`}
           >
-            <StatusIcon status={section.status} margin="r" />
+            <StatusIcon status={sections?.[section]?.status} margin="r" />
             <Typography>
               {lookupLanguageString(section.title, i18n.language)}
             </Typography>

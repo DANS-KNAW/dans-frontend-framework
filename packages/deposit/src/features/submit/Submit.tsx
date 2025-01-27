@@ -12,7 +12,6 @@ import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import {
   getMetadataStatus,
   resetMetadata,
-  setSectionStatus,
   setOpenTab,
   getMetadata,
   getTouchedStatus,
@@ -201,8 +200,6 @@ const Submit = ({
     dispatch(resetFilesSubmitStatus());
     // reset files in file slice
     dispatch(resetFiles());
-    // finally reset all section statusses
-    dispatch(setSectionStatus(null));
     // and enable form
     dispatch(setFormDisabled(false));
   };
