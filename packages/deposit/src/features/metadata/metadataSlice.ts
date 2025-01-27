@@ -57,6 +57,7 @@ export const metadataSlice = createSlice({
       }, {});
     },
     // keep track of form state
+    // TODO: maybe combine some reducers?
     setField: (state, action: PayloadAction<SetFieldValuePayload>) => {
       console.log(action.payload);
 
