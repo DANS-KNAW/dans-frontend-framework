@@ -45,6 +45,8 @@ export async function fetchSearchResult(
   payload: Payload,
   dispatch: any,
   fixedFacets?: FixedFacetsProps[],
+  user?: string,
+  pass?: string,
 ) {
   let fetchResponse: Response;
   let response: any;
@@ -71,6 +73,10 @@ export async function fetchSearchResult(
       method: "post",
       headers: {
         "Content-Type": "application/json",
+        // if user and pass are provided, add basic auth header
+        ...(user && pass && {
+          Authorization: `Basic ${btoa(`${user}:${pass}`)}`,
+        }),
       },
       body: body,
     });
