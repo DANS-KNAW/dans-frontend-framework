@@ -41,7 +41,6 @@ import {
   useFetchRdaDomainQuery,
   useFetchRdaInterestGroupQuery,
 } from "../api/rdaApi";
-import { group } from "console";
 
 /*
  *  Type ahead fields for different API endpoints
@@ -184,8 +183,6 @@ export const BiodiversityField = ({ field, variant, groupName, groupIndex }: Aut
     { value: debouncedInputValue, variant: variant },
     { skip: debouncedInputValue === "" },
   );
-
-  console.log(data)
 
   return (
     <AutocompleteAPIField
@@ -415,11 +412,7 @@ export const MultiApiField = ({ field, groupName, groupIndex }: AutocompleteFiel
   const { t } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-
   const multiApiValue = (fieldValue?.multiApiValue || field.multiApiValue) as TypeaheadAPI;
-
-  console.log(field)
-  console.log(fieldValue)
 
   return (
     <Stack direction="row" alignItems="start">

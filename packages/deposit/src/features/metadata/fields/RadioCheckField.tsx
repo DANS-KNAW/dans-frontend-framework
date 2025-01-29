@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Radio from "@mui/material/Radio";
 import Stack from "@mui/material/Stack";
 import RadioGroup from "@mui/material/RadioGroup";
@@ -25,6 +26,20 @@ export const RadioField = ({ field, groupName, groupIndex }: RadioFieldProps) =>
   const formDisabled = useAppSelector(getFormDisabled);
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
   const status = getFieldStatus(field, fieldValue);
+
+  // on initial render, check if field has a value set, and if so, set it to state
+  useEffect(() => { 
+    if (field.value && !fieldValue) {
+      dispatch(
+        setField({
+          field: field,
+          value: field.value,
+          ...(groupName !== undefined && { groupName: groupName }),
+          ...(groupIndex !== undefined && { groupIndex: groupIndex }),
+        }),
+      );
+    }
+  }, []);
 
   return (
     <FormControl>

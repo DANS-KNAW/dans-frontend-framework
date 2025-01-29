@@ -40,7 +40,6 @@ import AutocompleteField from "./fields/AutocompleteField";
 import TextField from "./fields/TextField";
 import { DateTimeField, DateRangeField } from "./fields/DateTimeField";
 import { RadioField, CheckField } from "./fields/RadioCheckField";
-import { TransitionGroup } from "react-transition-group";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 import Skeleton from "@mui/material/Skeleton";
@@ -145,8 +144,6 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
   const { i18n } = useTranslation();
   const fieldValue = useAppSelector(getField(field.name));
 
-  console.log(fieldValue)
-
   return (
     <Grid xs={12}>
       <Card>
@@ -161,30 +158,36 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
           sx={{ pb: 0, pl: 2.25, pr: 2.25 }}
         />
         <CardContent data-testid={`group-${field.name}-${field.id}`}>
+        <Stack direction="row" flexWrap="wrap">
           {field.repeatable ? (
             (Array.isArray(fieldValue?.value) ? fieldValue?.value : [{}]).map((_repeatableItem, index) => (
-              <Stack 
+              <Stack
                 key={index}
                 direction="row"
                 alignItems="center"
-                sx={{ 
+                sx={{
+                  width: '100%', 
                   borderTop: index > 0 ? "1px solid" : "none",
                   borderColor: "neutral.main",
                   mt: index > 0 ? 1 : 0,
-                  pt: index > 0 ? 2 : 0,
-                  width: "100%",
+                  pt: index > 0 ? 1 : 0,
                 }}
               >
-                <Box>
+                <Stack 
+                  direction="row"
+                  alignItems="center"
+                  flexWrap="wrap"
+                  sx={{ flex: 1 }}
+                >
                   {field.fields.map((f) => (
                     <SingleField
-                      key={f.id}
+                      key={f.name}
                       field={f}
                       groupName={field.name}
                       groupIndex={index}
                     />
                   ))}
-                </Box>
+                </Stack>
                 {fieldValue?.value.length > 1 && (
                   <DeleteButton
                     size="medium"
@@ -197,49 +200,14 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
           ) : (
             field.fields.map((f) => (
               <SingleField
-                key={f.id}
+                key={f.name}
                 field={f}
                 groupName={field.name}
                 groupIndex={0}
               />
             ))
           )}
-          {/* <TransitionGroup>
-            {fieldArray.map((groupedField, i) => (
-              <Collapse key={`group-${groupedField[0].id}`}>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  key={i}
-                  sx={{
-                    borderTop: i > 0 ? "1px solid" : "none",
-                    borderColor: "neutral.main",
-                    pt: i > 0 ? 2 : 0,
-                    mt: i > 0 ? 2 : 0,
-                  }}
-                  data-testid={`single-${field.name}-group-${i}`}
-                >
-                  <Grid container sx={{ flex: 1 }} spacing={2}>
-                    {groupedField.map((f) => (
-                      <SingleField
-                        key={f.id}
-                        field={f}
-                      />
-                    ))}
-                  </Grid>
-                  {field.repeatable && fieldArray.length > 1 && (
-                    <DeleteButton
-                      groupedFieldId={field.id}
-                      deleteFieldIndex={i}
-                      size="medium"
-                      deleteGroupId={`group-${i}`}
-                      groupedFieldName={field.name}
-                    />
-                  )}
-                </Stack>
-              </Collapse>
-            ))}
-          </TransitionGroup> */}
+          </Stack>
         </CardContent>
         {field.repeatable && (
           <CardActions sx={{ pl: 3, pr: 3, justifyContent: "right" }}>

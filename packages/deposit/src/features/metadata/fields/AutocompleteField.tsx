@@ -242,9 +242,13 @@ export const InfoChip = ({
 }: InfoChipProps) => {
   const { i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
+  const tagProps = getTagProps({ index });
+  const { key, ...restTagProps } = tagProps;
+
   return (
     <Chip
-      {...getTagProps({ index })}
+      key={key} // Pass key directly
+      {...restTagProps} // Spread the rest of the props
       label={
         option.freetext ?
           option.value

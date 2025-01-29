@@ -21,8 +21,6 @@ const Form = () => {
   const { i18n } = useTranslation();
   const sections = useAppSelector(getSections);
 
-  console.log(sections)
-
   // handles accordion open/close actions, sends to redux store
   const handleChange =
     (panel: string) => (_e: SyntheticEvent, isExpanded: boolean) => {
@@ -60,7 +58,7 @@ const Form = () => {
             expandIcon={<ExpandMoreIcon />}
             aria-controls={`${section.id}-content`}
           >
-            <StatusIcon status={sections?.[section]?.status} margin="r" />
+            <StatusIcon status={sections?.[section.id]?.status} margin="r" />
             <Typography>
               {lookupLanguageString(section.title, i18n.language)}
             </Typography>

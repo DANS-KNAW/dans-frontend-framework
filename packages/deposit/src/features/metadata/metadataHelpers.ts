@@ -186,12 +186,14 @@ export const getFieldStatus = (field: InputField, fieldValue): SectionStatus => 
 };
 
 // Get the status (color of indicator) for a specific section, based on an array of section statusses
-export const getSectionStatus = (section: SectionStatus[]): SectionStatus => {
-  return (
-    section.indexOf("error") !== -1 ? "error"
-    : section.indexOf("warning") !== -1 ? "warning"
-    : "success"
-  );
+export const getSectionStatus = (sections: Section[]): SectionStatus => {
+  const priority = ["neutral", "success", "warning", "error"];
+
+  return Object.values(sections)
+    .map((section) => section.status)
+    .reduce((highest, current) =>
+      priority.indexOf(current) > priority.indexOf(highest) ? current : highest
+    , "neutral");
 };
 
 // Check if a field conforms to validation type specified
@@ -221,69 +223,6 @@ export const getValid = (value: any, field: Field): boolean => {
   return false;
 };
 
-/*
-Format the initial state loaded from the ./config files
-for repeatable fields/fieldgroups functionality.
-We also add a unique ID so we can keep track of everything.
-Structure we want:
-[
-  {singlefield},
-  {groupfield: fields: [
-    {field}, 
-    {field},
-  ]},
-  {repeatSingleField: fields:[
-    {repeatablefield}, 
-    {repeatablefield},
-  ]}, 
-  {repeatGroupField: fields: [
-    [{field}, {field}],
-    [{field}, {field}],
-  ]},
-]
-*/
-export const formatInitialState = (form: InitialSectionType[]) => {
-  const newForm = form.map((section) => ({
-    ...section,
-    fields: section.fields.map((field) => {
-      if (field.type === "group" && field.fields) {
-        const newFieldGroup = field.fields.map((f) =>
-          (
-            !Array.isArray(f) &&
-            (f.type === "text" || f.type === "number" || f.type === "date") &&
-            f.repeatable
-          ) ?
-            {
-              id: uuidv4(),
-              type: "repeatSingleField",
-              name: f.name,
-              private: f.private,
-              fields: [{ ...f, id: uuidv4(), touched: false }],
-            }
-          : { ...f, id: uuidv4() },
-        );
-        return {
-          ...field,
-          id: uuidv4(),
-          fields: !field.repeatable ? newFieldGroup : [newFieldGroup],
-        };
-      }
-      if (field.repeatable) {
-        return {
-          id: uuidv4(),
-          type: "repeatSingleField",
-          name: field.name,
-          private: field.private,
-          fields: [{ ...field, id: uuidv4(), touched: false }],
-        };
-      } else {
-        return { ...field, id: uuidv4(), touched: false };
-      }
-    }),
-  }));
-  return newForm as SectionType[];
-};
-
 // Debounce function for autosaving on form change
 export const debounce = <F extends (...args: any[]) => any>(
   func: F,
@@ -303,3 +242,33 @@ export const debounce = <F extends (...args: any[]) => any>(
     timeoutId = setTimeout(later, wait);
   };
 };
+
+// Helper to get the initial status of every section
+export function evaluateSection(section: InitialSectionType): string {
+  const evaluateFields = (fields: InitialSectionType["fields"]): string => {
+    const hasRequiredWithoutValue = fields.some((field) => {
+      if (field.type === "group" && field.fields) {
+        return evaluateFields(field.fields) === "error";
+      }
+      return field.required && !(Array.isArray(field.value) ? field.value.length > 0 : field.value);
+    });
+
+    const allFieldsHaveValue = fields.every((field) => {
+      if (field.type === "group" && field.fields) {
+        return evaluateFields(field.fields) === "success";
+      }
+      return Array.isArray(field.value) ? field.value.length > 0 : !!field.value;
+    });
+
+    const allFieldsNoIndicator = fields.every(
+      (field) => field.noIndicator || (field.type === "group" && field.fields && evaluateFields(field.fields) === "neutral")
+    );
+
+    if (allFieldsNoIndicator) return "neutral";
+    if (hasRequiredWithoutValue) return "error";
+    if (!allFieldsHaveValue) return "warning";
+    return "success";
+  };
+
+  return evaluateFields(section.fields);
+}

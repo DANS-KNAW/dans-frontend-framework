@@ -24,6 +24,7 @@ import {
   getTouchedStatus,
   getSections,
 } from "../features/metadata/metadataSlice";
+import { getSectionStatus } from "../features/metadata/metadataHelpers";
 import {
   resetFilesSubmitStatus,
   resetMetadataSubmitStatus,
@@ -281,13 +282,13 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
 const TabHeader = ({ value, handleChange }: TabHeaderProps) => {
   const { t } = useTranslation(["metadata", "files"]);
   const selectedFiles = useAppSelector(getFiles);
-  const metadataStatus = useAppSelector(getMetadataStatus);
+  const sections = useAppSelector(getSections);
 
   return (
     <Tabs value={value} onChange={handleChange}>
       <Tab
         label={t("heading", { ns: "metadata" })}
-        icon={<StatusIcon status={metadataStatus} margin="r" />}
+        icon={<StatusIcon status={getSectionStatus(sections)} margin="r" />}
         iconPosition="start"
         data-testid="metadata-tab"
       />

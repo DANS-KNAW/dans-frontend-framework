@@ -28,6 +28,7 @@ import {
   findByIdOrName,
   changeConditionalState,
   // findFieldInGroup,
+  evaluateSection,
 } from "./metadataHelpers";
 import { v4 as uuidv4 } from "uuid";
 import { FileDownload } from "@mui/icons-material";
@@ -52,98 +53,108 @@ export const metadataSlice = createSlice({
       state.sections = action.payload.reduce((acc, section) => {
         acc[section.id] = {
           fields: section.fields.map(field => field.name),
+          status: evaluateSection(section),
         };
         return acc;
       }, {});
     },
     // keep track of form state
-    // TODO: maybe combine some reducers?
     setField: (state, action: PayloadAction<SetFieldValuePayload>) => {
-      console.log(action.payload);
-
       const { field, fieldIndex, value, groupName, groupIndex } = action.payload;
-      console.log(field)
+      // Helper function to generate a valid field object
+      const getValidField = (value) => ({
+        value,
+        touched: true,
+        valid: getValid(value, field),
+      });
 
       if (groupName !== undefined && groupIndex !== undefined) {
+        // Accessing the group from state
         const group = state.fields[groupName]?.value || [];
-        if (fieldIndex !== undefined) {
+
+        // Checking if the field is repeatable inside the group
+        if (field.repeatable) {
+          // Ensure the field inside the group exists and is repeatable
+          const repeatableValues = group[groupIndex]?.[field.name]?.value || [];
+          if (fieldIndex !== undefined) {
+            // Update the specific index if fieldIndex is provided
+            repeatableValues[fieldIndex] = getValidField(value);
+          } else {
+            // Push new item if no fieldIndex is provided
+            repeatableValues.push(getValidField(value));
+          }
+          // Update the group with the modified repeatable values
           group[groupIndex] = {
             ...group[groupIndex],
-            [field.name]: {
-              ...group[groupIndex][field.name],
-              value,
-              touched: true,
-              valid: getValid(value, field),
-            },
+            [field.name]: { value: repeatableValues },
           };
         } else {
+          // Handle non-repeatable field inside the group
           group[groupIndex] = {
             ...group[groupIndex],
-            [field.name]: {
-              ...group[groupIndex]?.[field.name],
-              value,
-              touched: true,
-              valid: getValid(value, field),
-            },
+            [field.name]: getValidField(value),
           };
         }
+        // Update the state for the group field
         state.fields[groupName] = {
           ...state.fields[groupName],
           value: group,
         };
-      }
-
-      if (field.repeatable) {
-        const repeatableValues = state.fields[field.name]?.value || [];
-        if (fieldIndex !== undefined) {
-          repeatableValues[fieldIndex] = {
-            ...repeatableValues[fieldIndex],
-            value,
-            touched: true,
-            valid: getValid(value, field),
+      } else {
+        // Handle fields outside of a group (single fields)
+        if (field.repeatable) {
+          // Handle repeatable fields outside of groups
+          const repeatableValues = state.fields[field.name]?.value || [];
+          if (fieldIndex !== undefined) {
+            // Update existing repeatable field
+            repeatableValues[fieldIndex] = getValidField(value);
+          } else {
+            // Push new value to repeatable field
+            repeatableValues.push(getValidField(value));
+          }
+          // Update the state for the single field
+          state.fields[field.name] = {
+            ...state.fields[field.name],
+            value: repeatableValues,
+          };
+        } else {
+          // Handle non-repeatable field outside of groups
+          state.fields[field.name] = {
+            ...state.fields[field.name],
+            ...getValidField(value),
           };
         }
-        state.fields[field.name] = {
-          ...state.fields[field.name], 
-          value: repeatableValues,
-        };
-      } else {
-        state.fields[field.name] = {
-          ...state.fields[field.name], 
-          value,
-          touched: true,
-          valid: getValid(value, field),
-        };
       }
 
-      // now set section status
-      // Determine which section(s) this field belongs to
+      // Now set section status
+      // Todo: need to call this on field adding/deleting as well
+      // need to fix this to work with groups and repeatable fields properly!!
       for (const sectionName in state.sections) {
         const section = state.sections[sectionName];
-        
-        // Determine the section status
-        const sectionStatus = section.fields.reduce((overallStatus, fieldName) => {
-          const fieldData = state.fields[fieldName];
-          const status = getFieldStatus(field, fieldData?.value);
-          console.log(status);
-      
-          // Priority order: 'error' > 'warning' > 'success' > 'neutral'
-          if (status === "error") return "error";
-          if (status === "warning" && overallStatus !== "error") return "warning";
-          if (status === "success" && overallStatus === "neutral") return "success";
-          return overallStatus; // Default to the current overallStatus
-        }, "neutral");
-      
-        // Update the section's status and validity in the state
-        state.sections[sectionName].status = sectionStatus;
+        // Check if the field is part of the section
+        if (section.fields.indexOf(field.name) !== -1 || section.fields.indexOf(groupName) !== -1) {
+          const sectionStatus = section.fields.reduce((overallStatus, fieldName) => {
+            const fieldToCheck = groupName !== undefined && groupIndex !== undefined 
+              ? state.fields[groupName].value[groupIndex][fieldName] 
+              : state.fields[fieldName];
+            const status = getFieldStatus(field, fieldToCheck);
+            // Priority order: 'error' > 'warning' > 'success' > 'neutral'
+            if (status === "error") return "error";
+            if (status === "warning" && overallStatus !== "error") return "warning";
+            if (status === "success" && overallStatus === "neutral") return "success";
+            return overallStatus; // Default to the current overallStatus
+          }, "neutral");
+          state.sections[sectionName].status = sectionStatus;
+        }
       }
     },
     addField: (state, action: PayloadAction<AddFieldPayload>) => {
-      const { field } = action.payload;
+      const { field, groupName, groupIndex } = action.payload;
     
       // Ensure there's always a valid `value` array to work with
       const existingField = state.fields[field.name] || { value: [{}] };
     
+      // for adding a whole group of fields
       if (field.type === 'group') {
         const newGroup = {}; // Add an empty group object
         state.fields[field.name] = {
@@ -153,23 +164,41 @@ export const metadataSlice = createSlice({
       } else {
         // Handle non-group repeatable fields
         const newItem = { value: "", valid: false, touched: false };
-        state.fields[field.name] = {
-          ...existingField,
-          value: [...existingField.value, newItem], // Append the new item immutably
-        };
+        // Adding a field inside a grouped field
+        if (groupName !== undefined && groupIndex !== undefined) {
+          state.fields[groupName].value[groupIndex][field.name] = {
+            ...state.fields[groupName].value[groupIndex][field.name],
+            value: [...state.fields[groupName].value[groupIndex][field.name].value, newItem], // Append the new item immutably
+          };
+        }
+        else {
+          state.fields[field.name] = {
+            ...existingField,
+            value: [...existingField.value, newItem], // Append the new item immutably
+          };
+        }
       }
     },
     deleteField: (state, action: PayloadAction<AddFieldPayload>) => {
-      const { field, fieldIndex } = action.payload;
-      const repeatableValues = state.fields[field.name]?.value || [];
-      repeatableValues.splice(fieldIndex, 1);
+      const { field, fieldIndex, groupName, groupIndex } = action.payload;
+      // Fields inside a grouped field
+      if (groupName !== undefined && groupIndex !== undefined) {
+        const group = state.fields[groupName]?.value || [];
+        group[groupIndex][field.name].value.splice(fieldIndex, 1);
+        state.fields[groupName].value[groupIndex] = group[groupIndex];
+      }
+      // For single fields and whole groups
+      else {
+        const repeatableValues = state.fields[field.name]?.value || [];
+        repeatableValues.splice(fieldIndex, 1);
+      }
     },
     setMultiApiField: (
       state,
       action: PayloadAction<SetFieldMultiApiPayload>,
     ) => {
+      // Sets the multiApiValue (selectable api by user) of a field
       const { field, value, groupName, groupIndex } = action.payload;
-
       state.fields[field.name] = {
         ...state.fields[field.name], 
         multiApiValue: value,
@@ -227,6 +256,7 @@ export const getMetadataStatus = (state: RootState) => {
   // const statusArray = state.metadata.form.map((section) => section.status);
   return undefined;
 };
+export const getFieldValues = (state: RootState) => state.metadata.fields;
 export const getField = (name: string, groupName?: string, groupIndex?: number) => (state: RootState) => {
   if (groupName !== undefined && groupIndex !== undefined) {
     return state.metadata.fields[groupName]?.value[groupIndex][name];
