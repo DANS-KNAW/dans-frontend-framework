@@ -175,6 +175,7 @@ const section: InitialSectionType = {
       },
       name: "additional_authors",
       repeatable: true,
+      compleetGroup: true,
       description: {
         en: "Additional authors of the dataset and or software",
         nl: "Extra auteurs van het dataset en of software",

@@ -46,7 +46,7 @@ export const metadataSlice = createSlice({
   reducers: {
     initForm: (
       state,
-      action: PayloadAction<InitialFormType | InitialSectionType[]>,
+      action: PayloadAction<InitialFormType | InitialSectionType[]>
     ) => {
       if (!Array.isArray(action.payload) && action.payload.id) {
         // form is loaded from existing data
@@ -81,6 +81,61 @@ export const metadataSlice = createSlice({
         field.value = action.payload.value;
         field.touched = true;
 
+        // This section is for ensure that all fields in a group are required if compleetGroup is true.
+        // Find the parent group if this field is part of a group
+        const parentGroup = section.fields.find(
+          (f) =>
+            f.type === "group" &&
+            f.compleetGroup &&
+            f.fields.some((groupField) =>
+              Array.isArray(groupField)
+                ? groupField.some(
+                    (innerField) => innerField.id === action.payload.id
+                  )
+                : groupField.id === action.payload.id
+            )
+        );
+
+        // If this field is part of a compleetGroup, handle the group logic
+        if (
+          parentGroup &&
+          parentGroup.type === "group" &&
+          parentGroup.compleetGroup
+        ) {
+          const groupFields = parentGroup.fields.flatMap((f) =>
+            Array.isArray(f) ? f : [f]
+          );
+
+          // Check if any field in the group has a value
+          const hasAnyValue = groupFields.some((f) => {
+            if (Array.isArray(f.value)) {
+              return f.value.length > 0;
+            }
+            return f.value !== undefined && f.value !== null && f.value !== "";
+          });
+
+          // If any field has a value, make all empty fields required
+          if (hasAnyValue) {
+            groupFields.forEach((f) => {
+              // Store the original required state if not already stored
+              if (f.required === undefined) {
+                f.required = f.required;
+              }
+
+              // Make the field required if it's empty
+              const isEmpty =
+                !f.value || (Array.isArray(f.value) && f.value.length === 0);
+              f.required = isEmpty ? true : f.required;
+            });
+          } else {
+            // If no fields have values, restore original required states
+            groupFields.forEach((f) => {
+              f.required = f.required !== undefined ? f.required : f.required;
+              delete f.required;
+            });
+          }
+        }
+
         // For setting required state of 'conditional' fields,
         // we need to find the parent array and change the fields inside
         if (field.toggleRequired) {
@@ -91,7 +146,7 @@ export const metadataSlice = createSlice({
             field,
             "toggleRequired",
             "toggleRequiredIds",
-            "required",
+            "required"
           );
         }
 
@@ -104,7 +159,7 @@ export const metadataSlice = createSlice({
             field,
             "togglePrivate",
             "togglePrivateIds",
-            "private",
+            "private"
           );
         }
 
@@ -116,7 +171,7 @@ export const metadataSlice = createSlice({
     },
     setMultiApiField: (
       state,
-      action: PayloadAction<SetFieldMultiApiPayload>,
+      action: PayloadAction<SetFieldMultiApiPayload>
     ) => {
       const section = state.form[action.payload.sectionIndex];
       const field = findByIdOrName(action.payload.id, section.fields);
@@ -143,46 +198,46 @@ export const metadataSlice = createSlice({
       const section = state.form[action.payload.sectionIndex];
       const field = findByIdOrName(
         action.payload.groupedFieldId,
-        section.fields,
+        section.fields
       );
       if (field) {
         const newField =
-          action.payload.type === "single" ?
-            // single repeatable field is just a copy with a new id, value, valid, touched state
-            {
-              ...(field as RepeatTextFieldType).fields[0],
-              id: uuidv4(),
-              value: "",
-              valid: "",
-              touched: false,
-            }
-            // grouped fields a bit more complicated, since grouped fields can also contain single repeatable fields
-          : (field as RepeatGroupedFieldType).fields[0].map((f) =>
-              f.type === "repeatSingleField" ?
-                {
-                  ...f,
-                  id: uuidv4(),
-                  fields: [
-                    {
-                      ...f.fields[0],
+          action.payload.type === "single"
+            ? // single repeatable field is just a copy with a new id, value, valid, touched state
+              {
+                ...(field as RepeatTextFieldType).fields[0],
+                id: uuidv4(),
+                value: "",
+                valid: "",
+                touched: false,
+              }
+            : // grouped fields a bit more complicated, since grouped fields can also contain single repeatable fields
+              (field as RepeatGroupedFieldType).fields[0].map((f) =>
+                f.type === "repeatSingleField"
+                  ? {
+                      ...f,
+                      id: uuidv4(),
+                      fields: [
+                        {
+                          ...f.fields[0],
+                          id: uuidv4(),
+                          value: "",
+                          valid: "",
+                          touched: false,
+                        },
+                      ],
+                    }
+                  : {
+                      // Omit the toggleRequiredIds property
+                      ...(({ toggleRequiredIds, ...rest }) => rest)(f),
+                      // reset what needs resetting
                       id: uuidv4(),
                       value: "",
                       valid: "",
                       touched: false,
-                    },
-                  ],
-                }
-              : {
-                  // Omit the toggleRequiredIds property
-                  ...(({ toggleRequiredIds, ...rest }) => rest)(f),
-                  // reset what needs resetting
-                  id: uuidv4(),
-                  value: "",
-                  valid: "",
-                  touched: false,
-                  required: f.noIndicator ? undefined : f.required,
-                },
-            );
+                      required: f.noIndicator ? undefined : f.required,
+                    }
+              );
 
         field.fields = [
           ...(field as RepeatGroupedFieldType | RepeatTextFieldType).fields,
@@ -194,12 +249,12 @@ export const metadataSlice = createSlice({
       const section = state.form[action.payload.sectionIndex];
       const field = findByIdOrName(
         action.payload.groupedFieldId,
-        section.fields,
+        section.fields
       );
       if (field) {
         (field as RepeatTextFieldType | RepeatGroupedFieldType).fields.splice(
           action.payload.deleteField,
-          1,
+          1
         );
         // need to also update the section/accordion status
         metadataSlice.caseReducers.setSectionStatus(state, action);
@@ -215,7 +270,7 @@ export const metadataSlice = createSlice({
     },
     setSectionStatus: (
       state,
-      action: PayloadAction<SectionStatusPayload | null>,
+      action: PayloadAction<SectionStatusPayload | null>
     ) => {
       if (action.payload) {
         // setting status based on user interaction
@@ -236,19 +291,20 @@ export const metadataSlice = createSlice({
               // grouped field, can have either a fields key with a single array as value, or an array of arrays
               // note the check for a single repeatable field inside a grouped or repeatable grouped field
               return field.fields.flatMap((f) =>
-                Array.isArray(f) ?
-                  f.flatMap((inner) =>
-                    inner.fields ?
-                      inner.fields.flatMap((f) => getFieldStatus(f))
-                    : getFieldStatus(inner),
-                  )
-                : f.fields ? f.fields.flatMap((f) => getFieldStatus(f))
-                : getFieldStatus(f),
+                Array.isArray(f)
+                  ? f.flatMap((inner) =>
+                      inner.fields
+                        ? inner.fields.flatMap((f) => getFieldStatus(f))
+                        : getFieldStatus(inner)
+                    )
+                  : f.fields
+                    ? f.fields.flatMap((f) => getFieldStatus(f))
+                    : getFieldStatus(f)
               );
             } else {
               return getFieldStatus(field);
             }
-          }),
+          })
         );
         state.form[sectionIndex].status = status;
       }
