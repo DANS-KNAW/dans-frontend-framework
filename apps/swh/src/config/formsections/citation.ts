@@ -154,6 +154,20 @@ const section: InitialSectionType = {
       disabled: true,
     },
     {
+      type: "text",
+      label: {
+        en: "Software Author",
+        nl: "Software auteur",
+      },
+      name: "software_author",
+      autofill: "name",
+      required: true,
+      description: {
+        en: "Author of the software",
+        nl: "Auteur van de software",
+      },
+    },
+    {
       type: "group",
       label: {
         en: "Additional Authors",
