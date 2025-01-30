@@ -98,6 +98,10 @@ export interface AutocompleteFieldType
 export interface GroupedFieldType
   extends Omit<BasisFieldType, "value" | "touched"> {
   type: "group"; // This type groups multiple single fields
+  /**
+   * If true, the group is required if at least one of the fields is set.
+   */
+  compleetGroup?: boolean;
   fields: InputField[];
   value?: never;
   validation?: never;
