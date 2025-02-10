@@ -31,6 +31,7 @@ import {
   FacetedSearchProvider,
 } from "@dans-framework/rdt-search-ui";
 import { Freshdesk } from "@dans-framework/freshdesk";
+import SupportDrawer from "@dans-framework/support-drawer";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -87,7 +88,9 @@ const App = () => {
                   path="user-submissions"
                   element={
                     <AuthRoute>
-                      <UserSubmissions targetCredentials={form.targetCredentials} />
+                      <UserSubmissions
+                        targetCredentials={form.targetCredentials}
+                      />
                     </AuthRoute>
                   }
                 />
@@ -106,6 +109,9 @@ const App = () => {
         </FacetedSearchProvider>
         <Footer {...footer} />
         <Freshdesk widgetId={80000010123} />
+        <SupportDrawer
+          supportMaterialEndpoint={import.meta.env.VITE_SUPPORT_DRAWER_CONFIG}
+        />
       </ThemeWrapper>
     </AuthWrapper>
   );
