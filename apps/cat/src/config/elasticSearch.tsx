@@ -24,7 +24,7 @@ const fieldConfig: Partial<RDTSearchUIProps> = {
 export const elasticConfig: EndpointProps[] = [
   {
     name: "CAT Catalogue",
-    url: "https://es.ohsmart.dansdemo.nl/fc4e-cat",
+    url: import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT + "/cat",
     fullTextFields: fieldConfig.fullTextFields,
     fullTextHighlight: fieldConfig.fullTextHighlight,
     resultBodyComponent: Cat2Result,
