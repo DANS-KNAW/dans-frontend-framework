@@ -13,13 +13,15 @@ import type {
   OptionsType,
   DateRangeFieldType,
   DrawMapFieldType,
+  FormField
 } from "./MetadataFields";
 import type { AutocompleteRenderGetTagProps } from "@mui/material";
 
 // Props for components
 export interface SingleFieldProps {
   field: Field;
-  sectionIndex: number;
+  groupName?: string;
+  groupIndex?: number;
 }
 
 export interface GroupedFieldProps extends Omit<SingleFieldProps, "field"> {
@@ -73,21 +75,24 @@ export interface DrawMapFieldProps extends Omit<SingleFieldProps, "field"> {
   field: DrawMapFieldType;
 }
 
-interface FieldButtonProps {
-  sectionIndex: number;
-  groupedFieldId: string;
-  size?: "small" | "medium" | "large";
-  mt?: number;
-  groupedFieldName?: string;
+export interface BaseButtonProps {
+  field: Field;
+  sx?: any;
+  groupName?: string;
+  groupIndex?: number;
 }
 
-export interface DeleteFieldButtonProps extends FieldButtonProps {
-  deleteFieldIndex: number;
-  deleteGroupId?: string;
+export interface AddButtonProps extends BaseButtonProps {
+  disabled?: boolean;
 }
 
-export interface AddFieldButtonProps extends FieldButtonProps {
-  type: "single" | "group";
+export interface DeleteButtonProps extends BaseButtonProps {
+  fieldIndex: number;
+}
+
+export interface AddDeleteControlsProps extends BaseButtonProps {
+  fieldIndex: number;
+  fieldValue: FormField[];
 }
 
 export interface InfoLinkProps {
@@ -102,4 +107,10 @@ export interface InfoChipProps {
   apiValue?: TypeaheadAPI;
   getTagProps: AutocompleteRenderGetTagProps;
   index: number;
+}
+
+export interface CommonProps<T extends Field> {
+  field: T;
+  groupName?: string;
+  groupIndex?: number;
 }

@@ -8,7 +8,7 @@ import FormLabel from "@mui/material/FormLabel";
 import FormGroup from "@mui/material/FormGroup";
 import Checkbox from "@mui/material/Checkbox";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { setField, getField, toggleFieldPrivate } from "../metadataSlice";
+import { setField, getField } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
 import { StatusIcon } from "../../generic/Icons";
 import { lookupLanguageString } from "@dans-framework/utils";
@@ -18,7 +18,6 @@ import type {
 } from "../../../types/MetadataProps";
 import { useTranslation } from "react-i18next";
 import { getFormDisabled } from "../../../deposit/depositSlice";
-import { group } from "console";
 
 // List of radio button options. First value of the options is selected by default, so no need for status checking.
 export const RadioField = ({ field, groupName, groupIndex }: RadioFieldProps) => {
@@ -134,17 +133,6 @@ export const CheckField = ({ field, groupName, groupIndex }: CheckFieldProps) =>
                         ...(groupIndex !== undefined && { groupIndex: groupIndex }),
                       }),
                     );
-                    // toggle other fields private state based on the value
-                    if (field.togglePrivate) {
-                      dispatch(
-                        toggleFieldPrivate({
-                          fields: field.togglePrivate,
-                          value: !e.target.checked,
-                          ...(groupName !== undefined && { groupName: groupName }),
-                          ...(groupIndex !== undefined && { groupIndex: groupIndex }),
-                        }),
-                      );
-                    }
                   }}
                   name={option.value}
                   disabled={formDisabled}

@@ -5,21 +5,17 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { addField, deleteField, setField } from "./metadataSlice";
+import { addField, deleteField } from "./metadataSlice";
 import { getFormDisabled } from "../../deposit/depositSlice";
-import type {
-  AddFieldButtonProps,
-  DeleteFieldButtonProps,
-} from "../../types/MetadataProps";
+import type { BaseButtonProps, AddButtonProps, DeleteButtonProps, AddDeleteControlsProps } from "../../types/MetadataProps";
 
 export const DeleteButton = ({
   field,
   fieldIndex,
-  size = "small",
   sx,
   groupName,
   groupIndex,
-}: DeleteFieldButtonProps) => {
+}: DeleteButtonProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
@@ -29,7 +25,7 @@ export const DeleteButton = ({
         <IconButton
           color="error"
           aria-label={t("delete") as string}
-          size={size}
+          size="small"
           onClick={() =>
             dispatch(deleteField({
               field: field,
@@ -41,7 +37,7 @@ export const DeleteButton = ({
           disabled={formDisabled}
           sx={sx}
         >
-          <RemoveCircleOutlineIcon fontSize={size} />
+          <RemoveCircleOutlineIcon fontSize="small" />
         </IconButton>
       </span>
     </Tooltip>
@@ -50,12 +46,11 @@ export const DeleteButton = ({
 
 export const AddButton = ({
   field,
-  size = "small",
   disabled = false,
   sx,
   groupName,
   groupIndex,
-}: AddFieldButtonProps) => {
+}: AddButtonProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
@@ -65,7 +60,7 @@ export const AddButton = ({
         <IconButton
           color="primary"
           aria-label={t("add") as string}
-          size={size}
+          size="small"
           onClick={() =>
             dispatch(addField({
               field: field,
@@ -76,17 +71,14 @@ export const AddButton = ({
           disabled={formDisabled || disabled}
           sx={sx}
         >
-          <AddCircleOutlineIcon fontSize={size} />
+          <AddCircleOutlineIcon fontSize="small" />
         </IconButton>
       </span>
     </Tooltip>
   );
 };
 
-export const AddButtonText = ({
-  field,
-  size = "medium",
-}: AddFieldButtonProps) => {
+export const AddButtonText = ({ field }: BaseButtonProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
@@ -99,7 +91,7 @@ export const AddButtonText = ({
             type: 'group',
           }))
         }
-        size={size}
+        size="medium"
         startIcon={<AddCircleOutlineIcon />}
         disabled={formDisabled}
       >
@@ -115,9 +107,7 @@ export const AddDeleteControls = ({
   field,
   groupName,
   groupIndex,
-}: {
-
-}) => {
+}: AddDeleteControlsProps) => {
   return ([
     fieldValue?.length > 1 && (
       <DeleteButton

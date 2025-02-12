@@ -4,16 +4,8 @@ import type {
   SetFieldValuePayload,
   SetFieldMultiApiPayload,
   SetFieldFormatPayload,
-  AddFieldPayload,
-  DeleteFieldPayload,
-  SectionStatusPayload,
+  AddDeleteFieldPayload,
 } from "../../types/MetadataPayloads";
-import type {
-  RepeatTextFieldType,
-  RepeatGroupedFieldType,
-  TextFieldType,
-  InputField,
-} from "../../types/MetadataFields";
 import type {
   InitialStateType,
   InitialSectionType,
@@ -21,22 +13,12 @@ import type {
 } from "../../types/Metadata";
 import {
   getValid,
-  getFieldStatus,
-  getSectionStatus,
-  formatInitialState,
-  findByIdOrName,
-  changeConditionalState,
-  // findFieldInGroup,
   evaluateSection,
+  isEmpty,
 } from "./metadataHelpers";
-import { v4 as uuidv4 } from "uuid";
-import { FileDownload } from "@mui/icons-material";
 
 // load the imported form and close all accordion panels by default
 const initialState: InitialStateType = {
-  panel: "",
-  tab: 0,
-  touched: false, 
   sections: {},
   fields: {},
 };
@@ -136,6 +118,20 @@ export const metadataSlice = createSlice({
         }
       }
 
+      // Toggle other fields required/private state based on the value of this field
+      if (field.togglePrivate || field.toggleRequired) {
+        const toggleType = field.togglePrivate ? "private" : "required";
+        const toToggle = field.togglePrivate || field.toggleRequired;
+        toToggle.forEach((toggleField) => {
+          if (groupName !== undefined && groupIndex !== undefined) {
+            const item = (state.fields[groupName] ??= { value: [] }).value[groupIndex] ??= {};
+            (item[toggleField] ??= {})[toggleType] = toggleType === "private" ? isEmpty(value) : !isEmpty(value);
+          } else {
+            (state.fields[toggleField] ??= {})[toggleType] = toggleType === "private" ? isEmpty(value) : !isEmpty(value);
+          }
+        });
+      }
+
       // Now set section status
       // Todo: need to call this on field adding/deleting as well
       // need to fix this to work with groups and repeatable fields properly!!
@@ -158,7 +154,7 @@ export const metadataSlice = createSlice({
       //   }
       // }
     },
-    addField: (state, action: PayloadAction<AddFieldPayload>) => {
+    addField: (state, action: PayloadAction<AddDeleteFieldPayload>) => {
       const { field, groupName, groupIndex } = action.payload;
     
       // Ensure there's always a valid `value` array to work with
@@ -189,7 +185,7 @@ export const metadataSlice = createSlice({
         }
       }
     },
-    deleteField: (state, action: PayloadAction<AddFieldPayload>) => {
+    deleteField: (state, action: PayloadAction<AddDeleteFieldPayload>) => {
       const { field, fieldIndex, groupName, groupIndex } = action.payload;
 
       // Fields inside a grouped field
@@ -204,10 +200,7 @@ export const metadataSlice = createSlice({
         repeatableValues.splice(fieldIndex, 1);
       }
     },
-    setMultiApiField: (
-      state,
-      action: PayloadAction<SetFieldMultiApiPayload>,
-    ) => {
+    setMultiApiField: (state, action: PayloadAction<SetFieldMultiApiPayload>) => {
       // Sets the multiApiValue (selectable api by user) of a field
       const { field, value, groupName, groupIndex } = action.payload;
       state.fields[field.name] = {
@@ -227,26 +220,6 @@ export const metadataSlice = createSlice({
         (state.fields[field.name] ??= {}).format = value;
       }
     },
-    toggleFieldPrivate: (state, action: PayloadAction<string>) => {
-      // Toggle the private state of a field. Takes an array of one or more fields to toggle.
-      const { fields, value, groupName, groupIndex } = action.payload;
-      fields.forEach(field => {
-        if (groupName !== undefined && groupIndex !== undefined) {
-          const item = (state.fields[groupName] ??= { value: [] }).value[groupIndex] ??= {};
-          (item[field] ??= {}).private = value;
-        } else {
-          (state.fields[field] ??= {}).private = value;
-        }
-      });
-    },
-    // keep track of the accordion state
-    setOpenPanel: (state, action: PayloadAction<string>) => {
-      state.panel = action.payload;
-    },
-    // keep track of open tab (metadata/files)
-    setOpenTab: (state, action: PayloadAction<number>) => {
-      state.tab = action.payload;
-    },
     resetMetadata: (state) => {
       // We only need to remove the id. Deposit.tsx will then reinit the form
       state.id = "";
@@ -258,20 +231,15 @@ export const {
   initForm,
   setField,
   setMultiApiField,
-  setOpenPanel,
-  setOpenTab,
   addField,
   deleteField,
   resetMetadata,
   setDateTypeField,
-  toggleFieldPrivate,
 } = metadataSlice.actions;
 
 // Select values from state
 export const getSessionId = (state: RootState) => state.metadata.id;
 export const getMetadata = (state: RootState) => state.metadata.form;
-export const getOpenPanel = (state: RootState) => state.metadata.panel;
-export const getOpenTab = (state: RootState) => state.metadata.tab;
 export const getMetadataStatus = (state: RootState) => {
   // const statusArray = state.metadata.form.map((section) => section.status);
   return undefined;
@@ -284,6 +252,5 @@ export const getField = (name: string, groupName?: string, groupIndex?: number) 
   return state.metadata.fields[name];
 }
 export const getSections = (state: RootState) => state.metadata.sections;
-export const getTouchedStatus = (state: RootState) => state.metadata.touched;
 
 export default metadataSlice.reducer;

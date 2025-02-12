@@ -262,3 +262,26 @@ export interface AutocompleteAPIFieldData<T = OptionsType[]> {
   arg?: string;
   response: T;
 }
+
+// Metadata gets stored in state like so
+type FieldValue = 
+  | string 
+  | number 
+  | boolean 
+  | OptionsType
+  | ExtendedMapFeature
+  | FieldValue[];
+
+export interface BaseField {
+  value: FieldValue;
+  touched?: boolean;
+  valid?: boolean;
+  private?: boolean;
+  required?: boolean;
+}
+
+export interface RepeatableField {
+  value: Record<string, BaseField>[];
+}
+
+export type FormField = BaseField | RepeatableField;

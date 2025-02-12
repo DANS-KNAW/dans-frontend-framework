@@ -1,5 +1,5 @@
 import type { LanguageStrings, RecursiveOmit } from "@dans-framework/utils";
-import type { Field } from "./MetadataFields";
+import type { Field, FormField } from "./MetadataFields";
 import type { Target, SubmissionResponse } from "@dans-framework/user-auth";
 import type { SelectedFile } from "./Files";
 
@@ -23,12 +23,23 @@ export interface SectionType extends Omit<InitialSectionType, "fields"> {
   status: SectionStatus;
 }
 
+interface DynamicFormState {
+  [key: string]: FormField;
+}
+
 export interface InitialStateType {
   id: string;
   form: SectionType[];
   panel: string;
   tab: number;
   touched: boolean;
+  fields: DynamicFormState;
+  sections: {
+    [key: string]: {
+      fields: string[];
+      status: SectionStatus;
+    };
+  }
 }
 
 export interface InitialFormType {

@@ -3,12 +3,19 @@ import type {
   TypeaheadAPI,
   ExtendedMapFeature,
   DateTimeFormat,
+  Field,
 } from "./MetadataFields";
 
 // Payloads and types for redux slices
 interface Payload {
-  sectionIndex: number;
-  id: string;
+  field: Field;
+  fieldIndex?: number;
+  groupName?: string;
+  groupIndex?: number;
+}
+
+export interface AddDeleteFieldPayload extends Payload {
+  type?: string;
 }
 
 export interface SetFieldValuePayload extends Payload {
@@ -19,6 +26,7 @@ export interface SetFieldValuePayload extends Payload {
     | OptionsType[]
     | ExtendedMapFeature[]
     | null;
+  fields?: string[];
 }
 
 export interface SetFieldMultiApiPayload extends Payload {
@@ -27,24 +35,4 @@ export interface SetFieldMultiApiPayload extends Payload {
 
 export interface SetFieldFormatPayload extends Payload {
   value: DateTimeFormat;
-}
-
-export interface SetFieldValidPayload extends Payload {
-  value: boolean;
-}
-
-export interface AddFieldPayload {
-  sectionIndex: number;
-  groupedFieldId: string;
-  type: "single" | "group";
-}
-
-export interface DeleteFieldPayload {
-  sectionIndex: number;
-  groupedFieldId: string;
-  deleteField: number;
-}
-
-export interface SectionStatusPayload {
-  sectionIndex: number;
 }

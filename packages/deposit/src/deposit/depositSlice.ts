@@ -7,6 +7,9 @@ import type { FormConfig } from "../types/Metadata";
 const initialState: {
   config: FormConfig
   formDisabled: boolean;
+  panel: string;
+  tab: number;
+  touched: boolean;
 } = {
   config: {
     targetCredentials: [],
@@ -18,6 +21,9 @@ const initialState: {
     form: [],
   },
   formDisabled: false,
+  panel: "",
+  tab: 0,
+  touched: false, 
 };
 
 export const depositSlice = createSlice({
@@ -30,13 +36,24 @@ export const depositSlice = createSlice({
     setFormDisabled: (state, action: PayloadAction<boolean>) => {
       state.formDisabled = action.payload;
     },
+    // keep track of the accordion state
+    setOpenPanel: (state, action: PayloadAction<string>) => {
+      state.panel = action.payload;
+    },
+    // keep track of open tab (metadata/files)
+    setOpenTab: (state, action: PayloadAction<number>) => {
+      state.tab = action.payload;
+    },
   },
 });
 
-export const { setData, setFormDisabled } = depositSlice.actions;
+export const { setData, setFormDisabled, setOpenPanel, setOpenTab, } = depositSlice.actions;
 
 // Selectors
 export const getData = (state: RootState) => state.deposit.config;
 export const getFormDisabled = (state: RootState) => state.deposit.formDisabled;
+export const getOpenPanel = (state: RootState) => state.deposit.panel;
+export const getOpenTab = (state: RootState) => state.deposit.tab;
+export const getTouchedStatus = (state: RootState) => state.metadata.touched;
 
 export default depositSlice.reducer;

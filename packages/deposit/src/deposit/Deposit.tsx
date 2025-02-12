@@ -17,11 +17,8 @@ import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import {
   getMetadataStatus,
   getSessionId,
-  getOpenTab,
-  setOpenTab,
   initForm,
   resetMetadata,
-  getTouchedStatus,
   getSections,
 } from "../features/metadata/metadataSlice";
 import { getSectionStatus } from "../features/metadata/metadataHelpers";
@@ -38,7 +35,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { Link as RouterLink } from "react-router-dom";
-import { setData, setFormDisabled, getData } from "./depositSlice";
+import { setData, setFormDisabled, getData, getOpenTab, setOpenTab, getTouchedStatus } from "./depositSlice";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import {
@@ -55,7 +52,6 @@ import {
   clearFormActions,
   setFormActions,
 } from "@dans-framework/user-auth";
-import { v4 as uuidv4 } from "uuid";
 
 /*
  * TODO:
@@ -73,7 +69,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const [dataMessage, setDataMessage] = useState(false);
   const formAction = getFormActions();
   const formTouched = useAppSelector(getTouchedStatus);
-  const currentConfig = useAppSelector(getData);
 
   // Can load a saved form based on metadata id, passed along from UserSubmissions.
   // Set form behaviour based on action param.

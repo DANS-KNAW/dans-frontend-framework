@@ -5,16 +5,11 @@ import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
-import Collapse from "@mui/material/Collapse";
 import { memo } from "react";
-import type {
-  TextFieldType,
-  DateFieldType,
-  InputField,
-} from "../../types/MetadataFields";
 import type {
   SingleFieldProps,
   GroupedFieldProps,
+  CommonProps,
 } from "../../types/MetadataProps";
 import { DeleteButton, AddButtonText } from "./MetadataButtons";
 import {
@@ -43,9 +38,9 @@ import { RadioField, CheckField } from "./fields/RadioCheckField";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 import Skeleton from "@mui/material/Skeleton";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useAppSelector } from "../../redux/hooks";
 import { getField } from "./metadataSlice";
-import { Box } from "@mui/material";
+import type { Field, TextFieldType, DateFieldType, DateRangeFieldType, RadioFieldType, CheckFieldType, DrawMapFieldType, AutocompleteFieldType } from "../../types/MetadataFields";
 
 // Lazy load the Draw map components, as it's quite large
 const DrawMap = lazy(() => import("./fields/Map"));
@@ -64,15 +59,15 @@ const SingleField = memo(({ field, groupName, groupIndex }: SingleFieldProps) =>
     switch (field.type) {
       case "text":
       case "number":
-        return <TextField {...commonProps} />;
+        return <TextField {...(commonProps as CommonProps<TextFieldType>)} />;
       case "date":
-        return <DateTimeField {...commonProps} />;
+        return <DateTimeField {...(commonProps as CommonProps<DateFieldType>)} />;
       case "daterange":
-        return <DateRangeField {...commonProps} />;
+        return <DateRangeField {...(commonProps as CommonProps<DateRangeFieldType>)} />;
       case "radio":
-        return <RadioField {...commonProps} />;
+        return <RadioField {...(commonProps as CommonProps<RadioFieldType>)} />;
       case "check":
-        return <CheckField {...commonProps} />;
+        return <CheckField {...(commonProps as CommonProps<CheckFieldType>)} />;
       case "drawmap":
         return (
           <Suspense
@@ -80,52 +75,52 @@ const SingleField = memo(({ field, groupName, groupIndex }: SingleFieldProps) =>
               <Skeleton variant="rectangular" width="100%" height={140} />
             }
           >
-            <DrawMap {...commonProps} />
+            <DrawMap {...(commonProps as CommonProps<DrawMapFieldType>)} />
           </Suspense>
         );
       case "autocomplete":
         if (field.multiApiValue)
-          return <MultiApiField {...commonProps} />;
+          return <MultiApiField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
         else {
           switch (field.options) {
             case "orcid":
-              return <OrcidField {...commonProps} />;
+              return <OrcidField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "ror":
-              return <RorField {...commonProps} />;
+              return <RorField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "gorc":
-              return <GorcField {...commonProps} />;
+              return <GorcField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "licenses":
-              return <LicensesField {...commonProps} />;
+              return <LicensesField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "sshLicences":
-              return <SshLicencesField {...commonProps} />;
+              return <SshLicencesField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "geonames":
-              return <GeonamesField {...commonProps} />;
+              return <GeonamesField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "getty":
-              return <GettyField {...commonProps} />;
+              return <GettyField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "sheets":
-              return <SheetsField {...commonProps} />;
+              return <SheetsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "dansFormats":
-              return <DansFormatsField {...commonProps} />;
+              return <DansFormatsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "rdaworkinggroups":
-              return <RdaWorkingGroupsField {...commonProps} />;
+              return <RdaWorkingGroupsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "pathways":
-              return <RdaPathwaysField {...commonProps} />;
+              return <RdaPathwaysField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "domains":
-              return <RdaDomainsField {...commonProps} />;
+              return <RdaDomainsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "interest groups":
-              return <RdaInterestGroupsField {...commonProps} />;
+              return <RdaInterestGroupsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "languageList":
-              return <LanguagesField {...commonProps} />;
+              return <LanguagesField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "elsst":
             case "narcis":
             case "dansCollections":
-              return <DatastationsField {...commonProps} />;
+              return <DatastationsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "biodiversity_species_vernacular":
-              return <BiodiversityField {...commonProps} variant="vernacular" />;
+              return <BiodiversityField {...(commonProps as CommonProps<AutocompleteFieldType>)} variant="vernacular" />;
             case "biodiversity_species_scientific":
-              return <BiodiversityField {...commonProps} variant="scientific" />;
+              return <BiodiversityField {...(commonProps as CommonProps<AutocompleteFieldType>)} variant="scientific" />;
             default:
-              return <AutocompleteField {...commonProps} />;
+              return <AutocompleteField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
           }
         }
       default:
@@ -212,10 +207,7 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
         {field.repeatable && (
           <CardActions sx={{ pl: 3, pr: 3, justifyContent: "right" }}>
             <Stack direction="row" alignItems="center" justifyContent="end">
-              <AddButtonText
-                field={field}
-                type="group"
-              />
+              <AddButtonText field={field} />
             </Stack>
           </CardActions>
         )}

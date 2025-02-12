@@ -9,8 +9,8 @@ import type { SectionType } from "../../types/Metadata";
 import { SingleField, GroupedField } from "./MetadataFields";
 import { StatusIcon } from "../generic/Icons";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { getFieldValues, getOpenPanel, setOpenPanel, getSections } from "./metadataSlice";
-import { getData } from "../../deposit/depositSlice";
+import { getFieldValues, getSections } from "./metadataSlice";
+import { getData, getOpenPanel, setOpenPanel } from "../../deposit/depositSlice";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 

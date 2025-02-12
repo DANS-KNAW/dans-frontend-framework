@@ -12,9 +12,7 @@ import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import {
   getMetadataStatus,
   resetMetadata,
-  setOpenTab,
   getMetadata,
-  getTouchedStatus,
   getSessionId,
 } from "../metadata/metadataSlice";
 import { getFiles, resetFiles } from "../files/filesSlice";
@@ -33,6 +31,8 @@ import {
   getData,
   setFormDisabled,
   getFormDisabled,
+  setOpenTab,
+  getTouchedStatus,
 } from "../../deposit/depositSlice";
 import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";

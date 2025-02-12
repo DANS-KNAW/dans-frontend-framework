@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
@@ -12,7 +12,6 @@ import { StatusIcon } from "../../generic/Icons";
 import { AddDeleteControls } from "../MetadataButtons";
 import {
   setField,
-  getMetadata,
   getField,
   getFieldValues,
 } from "../metadataSlice";
@@ -20,18 +19,12 @@ import { getFieldStatus } from "../metadataHelpers";
 import type { TextFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled } from "../../../deposit/depositSlice";
-import moment from "moment";
-
-import Button from "@mui/material/Button";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import type { BaseField, FormField, TextFieldType } from "../../../types/MetadataFields";
 
 const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
   const dispatch = useAppDispatch();
   const auth = useAuth();
   const { t, i18n } = useTranslation("metadata");
-  const formDisabled = useAppSelector(getFormDisabled);
-  const metadata = useAppSelector(getMetadata);
   const [generatedValue, setGeneratedValue] = useState<string>("");
   const fieldValue = useAppSelector(
     getField(field.name, groupName, groupIndex)
@@ -79,6 +72,7 @@ const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
       const match = segment.match(/{{(.*?)}}/);
       if (match) {
         const matchedField = getNestedField(allFieldValues, match[1]);
+        console.log(matchedField)
         return matchedField && matchedField.value && !matchedField.private
           ? Array.isArray(matchedField.value)
             ? matchedField.value[0].hasOwnProperty("label")
@@ -116,10 +110,12 @@ const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
     }
   }, [generatedValue]);
 
+  const repeatableEntries = (Array.isArray(fieldValue?.value) ? fieldValue.value : [{}]) as BaseField[];
+
   return (
     <Stack direction={field.repeatable ? "column" : "row"} alignItems="center">
       {field.repeatable ? (
-        (Array.isArray(fieldValue?.value) ? fieldValue?.value : [{}]).map(
+        repeatableEntries.map(
           (repeatableItem, index) => (
             <Stack
               direction="row"
@@ -193,10 +189,13 @@ const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
   );
 };
 
-const FieldInput = ({ field, fieldValue, onChange, index }) => {
+const FieldInput = ({ field, fieldValue, onChange, index }: {
+  field: TextFieldType; fieldValue: BaseField; onChange: (e: any) => void; index?: number;
+}) => {
   const { t, i18n } = useTranslation("metadata");
   const status = getFieldStatus(field, fieldValue);
   const formDisabled = useAppSelector(getFormDisabled);
+  const auth = useAuth();
 
   return (
     <TextField
@@ -210,7 +209,7 @@ const FieldInput = ({ field, fieldValue, onChange, index }) => {
           ? `${lookupLanguageString(field.label, i18n.language)} #${index + 1}`
           : lookupLanguageString(field.label, i18n.language)
       }
-      required={field.required}
+      required={fieldValue?.required || field.required}
       multiline={field.multiline}
       rows={field.multiline ? 4 : ""}
       value={fieldValue?.value || ""}
@@ -247,7 +246,7 @@ const FieldInput = ({ field, fieldValue, onChange, index }) => {
 };
 
 // helper to get nested field values for auto generation
-const getNestedField = (obj, path): string => {
+const getNestedField = (obj: any, path: string): FormField => {
   const keys = path.includes(".") ? path.split(".") : [path];
 
   return keys.reduce((acc, key) => {

@@ -10,7 +10,6 @@ import MenuItem from "@mui/material/MenuItem";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
-import { AddDeleteControls } from "../MetadataButtons";
 import { setField, setDateTypeField, getField } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
 import type {
@@ -28,7 +27,6 @@ import type {
   DateRangeFieldType,
   DateTimeFormat,
 } from "../../../types/MetadataFields";
-import { group } from "console";
 
 // Date and time selection component
 // Allows a user to select input type (date and time, date, month and year, year) if specified in config
@@ -133,14 +131,6 @@ export const DateTimeField = ({
           },
         }}
       />
-
-      {field.repeatable &&
-        <AddDeleteControls
-          fieldValue={fieldValue?.value}
-          fieldIndex={index}
-          field={field}
-        />
-      }
     </Stack>
   );
 };
@@ -220,14 +210,6 @@ export const DateRangeField = ({
         groupName={groupName}
         groupIndex={groupIndex}
       />
-
-      {field.repeatable &&
-        <AddDeleteControls
-          fieldValue={fieldValue?.value}
-          fieldIndex={index}
-          field={field}
-        />
-      }
     </Stack>
   );
 };
@@ -248,6 +230,8 @@ const RangeFieldWrapper = ({
   index: number;
   minDate?: string;
   maxDate?: string;
+  groupName?: string;
+  groupIndex?: number;
 }) => {
   const { t, i18n } = useTranslation("metadata");
   const [error, setError] = useState<
@@ -384,16 +368,6 @@ const DateTypeWrapper = ({
                 ...(groupIndex !== undefined && { groupIndex: groupIndex }),
               }),
             );
-            // and reset the currently selected value if there is one
-            // field.value &&
-            //   dispatch(
-            //     setField({
-            //       field: field,
-            //       value: "",
-            //       ...(groupName !== undefined && { groupName: groupName }),
-            //       ...(groupIndex !== undefined && { groupIndex: groupIndex }),
-            //     }),
-            //   );
           }}
           value={fieldValue?.format || field.format}
           disabled={formDisabled}
