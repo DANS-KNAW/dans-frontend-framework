@@ -20,8 +20,8 @@ const section: InitialSectionType = {
         nl: "<p>Een beschrijvende titel voor de interview dataset, voor gebruik in citaties.</p><p>Er wordt automatisch een titel gegenereerd, als de aan volgende voorwaarden wordt voldaan:</p><ul><li>Onder de geïnterviewde is 'Voor- en achternaam zijn openbaar' aangevinkt</li><li>Locatie van het interview is ingevoerd</li><li>Datum van het interview is ingevoerd</li></ul><p>De automatisch gegenereerde titel kan altijd worden aangepast.</p>",
       },
       autoGenerateValue: {
-        en: "Interview with {{interviewee.interviewee_first_name}} {{interviewee.interviewee_last_name}}, {{interview_location}}, {{interview_date_time_range}}",
-        nl: "Interview met {{interviewee.interviewee_first_name}} {{interviewee.interviewee_last_name}}, {{interview_location}}, {{interview_date_time_range}}",
+        en: "Interview with {{interviewee.interviewee_first_name}} {{interviewee.interviewee_last_name}}, {{interview_location}}, {{interview_date_time.interview_date_time_range}}",
+        nl: "Interview met {{interviewee.interviewee_first_name}} {{interviewee.interviewee_last_name}}, {{interview_location}}, {{interview_date_time.interview_date_time_range}}",
       },
     },
     {

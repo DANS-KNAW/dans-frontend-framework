@@ -10,7 +10,12 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
 import { AddDeleteControls } from "../MetadataButtons";
-import { setField, getMetadata, getField, getFieldValues } from "../metadataSlice";
+import {
+  setField,
+  getMetadata,
+  getField,
+  getFieldValues,
+} from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
 import type { TextFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
@@ -21,30 +26,28 @@ import Button from "@mui/material/Button";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 
-const SingleTextField = ({
-  field,
-  groupName,
-  groupIndex,
-}: TextFieldProps) => {
+const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
   const dispatch = useAppDispatch();
   const auth = useAuth();
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
   const metadata = useAppSelector(getMetadata);
   const [generatedValue, setGeneratedValue] = useState<string>("");
-  const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
+  const fieldValue = useAppSelector(
+    getField(field.name, groupName, groupIndex)
+  );
   const status = getFieldStatus(field, fieldValue);
   const allFieldValues = useAppSelector(getFieldValues);
 
   // on initial render, check if field has a value set, and if so, set it to state
-  useEffect(() => { 
+  useEffect(() => {
     if (field.value && !fieldValue) {
       dispatch(
         setField({
           field: field,
           value: field.value,
           ...(field.repeatable && { fieldIndex: 0 }),
-        }),
+        })
       );
     }
   }, []);
@@ -58,7 +61,7 @@ const SingleTextField = ({
           value: auth.user.profile[field.autofill] as string,
           // support repeatable fields too
           ...(field.repeatable && { fieldIndex: 0 }),
-        }),
+        })
       );
     }
   }, [dispatch, field.autofill, field.name, auth.user, fieldValue]);
@@ -68,7 +71,7 @@ const SingleTextField = ({
   const generateValue = () => {
     const generatedString = lookupLanguageString(
       field.autoGenerateValue,
-      i18n.language,
+      i18n.language
     );
     // split string into segments to replace
     const segments = generatedString ? generatedString.split(/({{.*?}})/) : [];
@@ -76,25 +79,15 @@ const SingleTextField = ({
       const match = segment.match(/{{(.*?)}}/);
       if (match) {
         const matchedField = getNestedField(allFieldValues, match[1]);
-        return (
-          matchedField && matchedField.value && !matchedField.private ?
-            matchedField.type === "autocomplete" ?
-              Array.isArray(field.value) ?
-              matchedField.value.map((v) => v.label).join(" & ")
-              : matchedField.value.label
-              // if field type is date, just convert it to DD-MM-YYYY for every value
-              // TODO: should any other app than ohsmart want to use this, modify this where necessary
-            : matchedField.type === "date" ?
-              moment(field.value, field.format)
-                .startOf("day")
-                .format("DD-MM-YYYY")
-            : matchedField.type === "daterange" ?
-              moment(field.value[0], field.format)
-                .startOf("day")
-                .format("DD-MM-YYYY")
+        return matchedField && matchedField.value && !matchedField.private
+          ? Array.isArray(matchedField.value)
+            ? matchedField.value[0].hasOwnProperty("label")
+              ? // assume an autoCompleteField
+                matchedField.value.map((v) => v.label).join(" & ")
+              : // otherwise return first value
+                matchedField.value[0]
             : matchedField.value
-          : null
-        );
+          : null;
       }
       return segment;
     });
@@ -109,7 +102,7 @@ const SingleTextField = ({
       setField({
         field: field,
         value: generatedValue,
-      }),
+      })
     );
   };
 
@@ -124,35 +117,44 @@ const SingleTextField = ({
   }, [generatedValue]);
 
   return (
-    <Stack direction="column" alignItems="center">
+    <Stack direction={field.repeatable ? "column" : "row"} alignItems="center">
       {field.repeatable ? (
-        (Array.isArray(fieldValue?.value) ? fieldValue?.value : [{}]).map((repeatableItem, index) => (
-          <Stack direction="row" alignItems="flex-start" key={index} sx={{width: '100%'}}>
-            <FieldInput
-              fieldValue={repeatableItem}
-              field={field}
-              onChange={(e) =>
-                dispatch(
-                  setField({
-                    field,
-                    fieldIndex: index,
-                    value: e.target.value,
-                    ...(groupName !== undefined && { groupName: groupName }),
-                    ...(groupIndex !== undefined && { groupIndex: groupIndex }),
-                  })
-                )
-              }
-              index={index}
-            />
-            <AddDeleteControls
-              fieldValue={fieldValue?.value}
-              fieldIndex={index}
-              field={field}
-              groupName={groupName}
-              groupIndex={groupIndex}
-            />
-          </Stack>
-        ))
+        (Array.isArray(fieldValue?.value) ? fieldValue?.value : [{}]).map(
+          (repeatableItem, index) => (
+            <Stack
+              direction="row"
+              alignItems="flex-start"
+              key={index}
+              sx={{ width: "100%", mb: index === ( fieldValue?.value || [{}]).length - 1 ? 0 : 2 }}
+            >
+              <FieldInput
+                fieldValue={repeatableItem}
+                field={field}
+                onChange={(e) =>
+                  dispatch(
+                    setField({
+                      field,
+                      fieldIndex: index,
+                      value: e.target.value,
+                      ...(groupName !== undefined && { groupName: groupName }),
+                      ...(groupIndex !== undefined && {
+                        groupIndex: groupIndex,
+                      }),
+                    })
+                  )
+                }
+                index={index}
+              />
+              <AddDeleteControls
+                fieldValue={fieldValue?.value}
+                fieldIndex={index}
+                field={field}
+                groupName={groupName}
+                groupIndex={groupIndex}
+              />
+            </Stack>
+          )
+        )
       ) : (
         <FieldInput
           fieldValue={fieldValue}
@@ -238,15 +240,15 @@ const FieldInput = ({ field, fieldValue, onChange, index }) => {
         }`,
       }}
       sx={{
-        mT: field.repeatable ? 2 : 0
+        mT: field.repeatable ? 2 : 0,
       }}
     />
-  )
+  );
 };
 
 // helper to get nested field values for auto generation
 const getNestedField = (obj, path): string => {
-  const keys = path.includes('.') ? path.split('.') : [path];
+  const keys = path.includes(".") ? path.split(".") : [path];
 
   return keys.reduce((acc, key) => {
     if (acc?.value instanceof Array) {

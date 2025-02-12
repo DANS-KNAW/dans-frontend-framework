@@ -9,7 +9,7 @@ import type { SectionType } from "../../types/Metadata";
 import { SingleField, GroupedField } from "./MetadataFields";
 import { StatusIcon } from "../generic/Icons";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { getMetadata, getOpenPanel, setOpenPanel, getSections } from "./metadataSlice";
+import { getFieldValues, getOpenPanel, setOpenPanel, getSections } from "./metadataSlice";
 import { getData } from "../../deposit/depositSlice";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
@@ -20,6 +20,10 @@ const Form = () => {
   const openPanel = useAppSelector(getOpenPanel);
   const { i18n } = useTranslation();
   const sections = useAppSelector(getSections);
+ 
+  const metadata = useAppSelector(getFieldValues);
+  console.log(metadata)
+  console.log(sections)
 
   // handles accordion open/close actions, sends to redux store
   const handleChange =
@@ -34,23 +38,23 @@ const Form = () => {
           key={`section-${section.id}`}
           expanded={openPanel === section.id}
           onChange={handleChange(section.id)}
-          TransitionProps={{
-            unmountOnExit: true,
-            timeout: 200,
-            onEntered: (el) => {
-              // make sure accordion scrolls into view after expanding,
-              // if not in view yet, including header
-              const rect = el.getBoundingClientRect();
-              if (rect.top < 0) {
-                window.scrollBy({
-                  top: rect.bottom - rect.height - 80,
-                  behavior: "smooth",
-                });
-              }
-            },
+          slotProps={{ 
+            transition: { 
+              unmountOnExit: true,
+              timeout: 200,
+              onEntered: (el) => {
+                // make sure accordion scrolls into view after expanding,
+                // if not in view yet, including header
+                const rect = el.getBoundingClientRect();
+                if (rect.top < 0) {
+                  window.scrollBy({
+                    top: rect.bottom - rect.height - 80,
+                    behavior: "smooth",
+                  });
+                }
+              },
+            }
           }}
-          // todo: update mui, change TransitionProps to the following:
-          // slotProps={{ transition: { unmountOnExit: true, etc... } }}
           data-testid={`section-${section.id}`}
           id={`section-${section.id}`}
         >

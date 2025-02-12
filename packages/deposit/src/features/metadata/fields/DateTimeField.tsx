@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
 import { AddDeleteControls } from "../MetadataButtons";
-import { setField, setDateTypeField, setFieldValid, getField } from "../metadataSlice";
+import { setField, setDateTypeField, getField } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
 import type {
   DateFieldProps,
@@ -43,9 +43,9 @@ export const DateTimeField = ({
     DateValidationError | TimeValidationError | null
   >(null);
   const formDisabled = useAppSelector(getFormDisabled);
-  const status = getFieldStatus(field);
   const dispatch = useAppDispatch();
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
+  const status = getFieldStatus(field, fieldValue);
 
   const errorMessage = useMemo(() => {
     switch (error) {
@@ -67,6 +67,8 @@ export const DateTimeField = ({
     }
   }, [error]);
 
+  const fieldFormat = fieldValue?.format || field.format;
+
   return (
     <Stack direction="row" alignItems="start">
       <DateTypeWrapper
@@ -77,26 +79,26 @@ export const DateTimeField = ({
 
       <MUIDateTimeField
         fullWidth
-        format={field.format}
+        format={fieldFormat}
         helperText={status === "error" && field.touched && t("incorrect")}
         label={lookupLanguageString(field.label, i18n.language)}
         required={field.required}
-        value={(fieldValue?.value && moment(fieldValue.value, field.format)) || null}
+        value={(fieldValue?.value && moment(fieldValue.value, fieldFormat)) || null}
         disabled={field.disabled || formDisabled}
         minDate={
           field.minDate ?
-            moment(field.minDate, field.format)
+            moment(field.minDate, fieldFormat)
           : moment().subtract(273790, "year")
         }
         maxDate={
           field.maxDate ?
-            moment(field.maxDate, field.format)
+            moment(field.maxDate, fieldFormat)
           : moment().add(100, "year")
         }
         onChange={(value: Moment | null, context) => {
           // Serialize the date value we get from the component so we can store it using Redux
           const dateValue =
-            !context.validationError && value ? value.format(field.format) : "";
+            !context.validationError && value ? value.format(fieldFormat) : "";
           dispatch(
             setField({
               field: field,
@@ -152,10 +154,12 @@ export const DateRangeField = ({
   groupName,
   groupIndex,
 }: DateRangeFieldProps) => {
+  const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
+  const fieldFormat = fieldValue?.format || field.format;
   const [range, setRange] = useState<(string | null)[]>(
-    field.value || [null, null],
+    fieldValue?.value || field.value || [null, null],
   );
-  const [format, setFormat] = useState<string>(field.format);
+  const [format, setFormat] = useState<string>(fieldFormat);
   const dispatch = useAppDispatch();
 
   const setStart = (dateString: string) => {
@@ -183,11 +187,11 @@ export const DateRangeField = ({
 
   // and reset when format is changed
   useEffect(() => {
-    if (format !== field.format) {
+    if (format !== fieldFormat) {
       setRange(["", ""]);
-      setFormat(field.format);
+      setFormat(fieldFormat);
     }
-  }, [field.format]);
+  }, [fieldFormat]);
 
   return (
     <Stack direction="row" alignItems="start">
@@ -286,20 +290,13 @@ const RangeFieldWrapper = ({
     }
   }, [error]);
 
-  // Set global field valid status based on user interaction, valid if warning/success
-  useEffect(() => {
-    setFieldValid({
-      field: field,
-      value: status !== "error",
-      ...(groupName !== undefined && { groupName: groupName }),
-      ...(groupIndex !== undefined && { groupIndex: groupIndex }),
-    });
-  }, [status]);
+  const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
+  const fieldFormat = fieldValue?.format || field.format;
 
   return (
     <MUIDateTimeField
       fullWidth
-      format={field.format}
+      format={fieldFormat}
       helperText={status === "error" && field.touched && t("incorrect")}
       label={t("dateRange", {
         label: lookupLanguageString(field.label, i18n.language),
@@ -309,23 +306,23 @@ const RangeFieldWrapper = ({
         (field.required && index === 0) ||
         (!field.optionalEndDate && index === 1)
       }
-      value={(range[index] && moment(range[index], field.format)) || null}
+      value={(range[index] && moment(range[index], fieldFormat)) || null}
       disabled={field.disabled || formDisabled}
       minDateTime={
-        minDate ? moment(minDate, field.format)
+        minDate ? moment(minDate, fieldFormat)
         : field.minDate ?
-          moment(field.minDate, field.format)
+          moment(field.minDate, fieldFormat)
         : moment().subtract(273790, "year")
       }
       maxDateTime={
-        maxDate ? moment(maxDate, field.format)
+        maxDate ? moment(maxDate, fieldFormat)
         : field.maxDate ?
-          moment(field.maxDate, field.format)
+          moment(field.maxDate, fieldFormat)
         : moment().add(100, "year")
       }
       onChange={(value: Moment | null) => {
         const formattedValue =
-          value && value.isValid() ? value.format(field.format) : "";
+          value && value.isValid() ? value.format(fieldFormat) : "";
         setRange(formattedValue);
       }}
       onError={(newError) => {
@@ -370,6 +367,7 @@ const DateTypeWrapper = ({
   const formDisabled = useAppSelector(getFormDisabled);
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
+  const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
 
   return field.formatOptions ?
       <FormControl sx={{ minWidth: 110, mr: 1, }}>
@@ -380,24 +378,24 @@ const DateTypeWrapper = ({
             // set the type of date
             dispatch(
               setDateTypeField({
-                name: field.name,
+                field: field,
                 value: e.target.value as DateTimeFormat,
                 ...(groupName !== undefined && { groupName: groupName }),
                 ...(groupIndex !== undefined && { groupIndex: groupIndex }),
               }),
             );
             // and reset the currently selected value if there is one
-            field.value &&
-              dispatch(
-                setField({
-                  field: field,
-                  value: "",
-                  ...(groupName !== undefined && { groupName: groupName }),
-                  ...(groupIndex !== undefined && { groupIndex: groupIndex }),
-                }),
-              );
+            // field.value &&
+            //   dispatch(
+            //     setField({
+            //       field: field,
+            //       value: "",
+            //       ...(groupName !== undefined && { groupName: groupName }),
+            //       ...(groupIndex !== undefined && { groupIndex: groupIndex }),
+            //     }),
+            //   );
           }}
-          value={field.format}
+          value={fieldValue?.format || field.format}
           disabled={formDisabled}
           inputProps={{ "data-testid": `datetype-${field.name}-${field.id}` }}
         >
