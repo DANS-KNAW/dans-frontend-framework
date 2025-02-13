@@ -19,6 +19,7 @@ import {
 
 // load the imported form and close all accordion panels by default
 const initialState: InitialStateType = {
+  form: [],
   sections: {},
   fields: {},
 };
@@ -31,43 +32,80 @@ export const metadataSlice = createSlice({
       state,
       action: PayloadAction<InitialFormType | InitialSectionType[]>,
     ) => {
+      state.form = action.payload;
+      // helper to initialize field objects
+      const fieldFormatter = (field) => ({
+        value: field.value || undefined,
+        valid: field.value ? getValid(field.value, field) : undefined,
+        touched: false,
+        required: field.required,
+        private: field.private,
+        type: field.type,
+        ...(field.noIndicator && { noIndicator: true }),
+        ...(field.validation && { validation: field.validation }),
+      });
+
+      // Temporary fields object to ensure correct section evaluation
+      let newFields = {};
+
+      // Populate fields object
+      state.form.forEach((section) => {
+        section.fields.forEach((field) => {
+          if (field.type === 'group') {
+            newFields[field.name] = {
+              value: [
+                field.fields.reduce((acc, f) => {
+                  acc[f.name] = fieldFormatter(f);
+                  return acc;
+                }, {}),
+              ],
+            };
+          } else if (field.repeatable) {
+            newFields[field.name] = {
+              value: [fieldFormatter(field)],
+            };
+          } else {
+            newFields[field.name] = fieldFormatter(field);
+          }
+        });
+      });
+
+      // Assign newFields to state.fields after processing
+      state.fields = newFields;
+
       state.sections = action.payload.reduce((acc, section) => {
         acc[section.id] = {
           fields: section.fields.map(field => field.name),
-          status: evaluateSection(section),
+          status: evaluateSection({fields: section.fields.map(field => field.name)}, newFields),
         };
         return acc;
       }, {});
+
     },
     // keep track of form state
     setField: (state, action: PayloadAction<SetFieldValuePayload>) => {
       const { field, fieldIndex, value, groupName, groupIndex } = action.payload;
       // Helper function to generate a valid field object
-      const getValidField = (value, initialize?: Boolean) => ({
+      const getValidField = (value) => ({
         value,
         touched: true,
         valid: getValid(value, field),
-        // set private flag only if present and not previously set
-        ...(field.private !== undefined && initialize && { private: field.private }),
       });
 
       if (groupName !== undefined && groupIndex !== undefined) {
         // Accessing the group from state
-        let group = state.fields[groupName]?.value || [];
+        let group = state.fields[groupName].value;
 
         // Checking if the field is repeatable inside the group
         if (field.repeatable) {
           // Ensure the field inside the group exists and is repeatable
-          let repeatableValues = group[groupIndex]?.[field.name]?.value || [];
+          let repeatableValues = group[groupIndex][field.name]?.value;
           if (fieldIndex !== undefined) {
             // Update the specific index if fieldIndex is provided
             repeatableValues[fieldIndex] = {
               ...repeatableValues[fieldIndex],
               ...getValidField(value),
             };
-          } else {
-            // Push new item if no fieldIndex is provided
-            repeatableValues.push(getValidField(value, true));
           }
           // Update the group with the modified repeatable values
           group[groupIndex] = {
@@ -79,8 +117,8 @@ export const metadataSlice = createSlice({
           group[groupIndex] = {
             ...group[groupIndex],
             [field.name]: {
-              ...group[groupIndex]?.[field.name],
-              ...getValidField(value, !group[groupIndex]?.hasOwnProperty(field.name)),
+              ...group[groupIndex][field.name],
+              ...getValidField(value),
             }
           };
         }
@@ -93,16 +131,13 @@ export const metadataSlice = createSlice({
         // Handle fields outside of a group (single fields)
         if (field.repeatable) {
           // Handle repeatable fields outside of groups
-          let repeatableValues = state.fields[field.name]?.value || [];
+          let repeatableValues = state.fields[field.name].value;
           if (fieldIndex !== undefined) {
             // Update existing repeatable field
             repeatableValues[fieldIndex] = {
               ...repeatableValues[fieldIndex],
               ...getValidField(value),
             }
-          } else {
-            // Push new value to repeatable field
-            repeatableValues.push(getValidField(value, true));
           }
           // Update the state for the single field
           state.fields[field.name] = {
@@ -113,7 +148,7 @@ export const metadataSlice = createSlice({
           // Handle non-repeatable field outside of groups
           state.fields[field.name] = {
             ...state.fields[field.name],
-            ...getValidField(value, state.fields[field.name] === undefined),
+            ...getValidField(value),
           };
         }
       }
@@ -124,10 +159,10 @@ export const metadataSlice = createSlice({
         const toToggle = field.togglePrivate || field.toggleRequired;
         toToggle.forEach((toggleField) => {
           if (groupName !== undefined && groupIndex !== undefined) {
-            const item = (state.fields[groupName] ??= { value: [] }).value[groupIndex] ??= {};
-            (item[toggleField] ??= {})[toggleType] = toggleType === "private" ? isEmpty(value) : !isEmpty(value);
+            const item = state.fields[groupName].value[groupIndex];
+            item[toggleField][toggleType] = toggleType === "private" ? isEmpty(value) : !isEmpty(value);
           } else {
-            (state.fields[toggleField] ??= {})[toggleType] = toggleType === "private" ? isEmpty(value) : !isEmpty(value);
+            state.fields[toggleField][toggleType] = toggleType === "private" ? isEmpty(value) : !isEmpty(value);
           }
         });
       }
@@ -135,14 +170,14 @@ export const metadataSlice = createSlice({
       // Now set section status
       // Todo: need to call this on field adding/deleting as well
       // need to fix this to work with groups and repeatable fields properly!!
-      // for (const sectionName in state.sections) {
-      //   const section = state.sections[sectionName];
-      //   // Check if the field is part of the section
-      //   if (section.fields.indexOf(field.name) !== -1 || section.fields.indexOf(groupName) !== -1) {
-      //     const sectionStatus = section.fields.reduce((overallStatus, fieldName) => {
-      //       const fieldToCheck = groupName !== undefined && groupIndex !== undefined 
-      //         ? state.fields[groupName].value[groupIndex][fieldName] 
-      //         : state.fields[fieldName];
+      for (const sectionName in state.sections) {
+        const section = state.sections[sectionName];
+        // Check if the field is part of the section
+        if (section.fields.indexOf(field.name) !== -1 || section.fields.indexOf(groupName) !== -1) {
+          section.status = evaluateSection(section, state.fields);
+          break;
+        }
+      }
       //       const status = getFieldStatus(field, fieldToCheck);
       //       // Priority order: 'error' > 'warning' > 'success' > 'neutral'
       //       if (status === "error") return "error";
@@ -239,10 +274,14 @@ export const {
 
 // Select values from state
 export const getSessionId = (state: RootState) => state.metadata.id;
-export const getMetadata = (state: RootState) => state.metadata.form;
+export const getForm = (state: RootState) => state.metadata.form;
 export const getMetadataStatus = (state: RootState) => {
-  // const statusArray = state.metadata.form.map((section) => section.status);
-  return undefined;
+  const overallStatus = Object.values(state.metadata.sections).some(s => s.status === "error") 
+    ? "error" 
+    : Object.values(state.metadata.sections).some(s => s.status === "warning") 
+      ? "warning" 
+      : "success";
+  return overallStatus;
 };
 export const getFieldValues = (state: RootState) => state.metadata.fields;
 export const getField = (name: string, groupName?: string, groupIndex?: number) => (state: RootState) => {

@@ -176,7 +176,7 @@ const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
               sx={{
                 ml: 0.5,
                 // keep icon centered
-                mt: status === "error" && field.touched ? -3 : 0,
+                mt: status === "error" && fieldValue?.touched ? -3 : 0,
               }}
               disabled={!generatedValue ? true : false}
             >

@@ -78,7 +78,7 @@ export const DateTimeField = ({
       <MUIDateTimeField
         fullWidth
         format={fieldFormat}
-        helperText={status === "error" && field.touched && t("incorrect")}
+        helperText={status === "error" && fieldValue?.touched && t("incorrect")}
         label={lookupLanguageString(field.label, i18n.language)}
         required={field.required}
         value={(fieldValue?.value && moment(fieldValue.value, fieldFormat)) || null}
@@ -126,7 +126,7 @@ export const DateTimeField = ({
         slotProps={{
           textField: {
             error:
-              (status === "error" && field.touched) || error ? true : false,
+              (status === "error" && fieldValue?.touched) || error ? true : false,
             helperText: errorMessage,
           },
         }}
@@ -281,7 +281,7 @@ const RangeFieldWrapper = ({
     <MUIDateTimeField
       fullWidth
       format={fieldFormat}
-      helperText={status === "error" && field.touched && t("incorrect")}
+      helperText={status === "error" && fieldValue?.touched && t("incorrect")}
       label={t("dateRange", {
         label: lookupLanguageString(field.label, i18n.language),
         startEnd: t(index === 0 ? "dateStart" : "dateEnd"),
@@ -331,7 +331,7 @@ const RangeFieldWrapper = ({
       inputProps={{ "data-testid": `${field.name}-${field.id}` }}
       slotProps={{
         textField: {
-          error: (status === "error" && field.touched) || error ? true : false,
+          error: (status === "error" && fieldValue?.touched) || error ? true : false,
           helperText: errorMessage,
         },
       }}

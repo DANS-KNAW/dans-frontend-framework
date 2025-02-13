@@ -41,7 +41,7 @@ export const isEmpty = (value: string | object | any[] | null): boolean => {
 // Get the status of a single field
 // Some specific checking for dateranges needed
 export const getFieldStatus = (field: InputField, fieldValue): SectionStatus => {
-  const isRequired = fieldValue?.required || field.required;
+  const isRequired = fieldValue?.required || field?.required;
   const fieldEmpty =
     !fieldValue?.value ||
     (typeof fieldValue.value === "string" && !fieldValue.value.trim()) ||
@@ -53,7 +53,7 @@ export const getFieldStatus = (field: InputField, fieldValue): SectionStatus => 
       Array.isArray(fieldValue.value) &&
       fieldValue.value.some((v) => v.geonames === null || v.geonames === undefined));
 
-  if (field.noIndicator && !isRequired && fieldEmpty) {
+  if (field?.noIndicator && !isRequired && fieldEmpty) {
     return "neutral";
   } else if (
     (!isRequired && fieldEmpty) ||
@@ -135,31 +135,30 @@ export const debounce = <F extends (...args: any[]) => any>(
 };
 
 // Helper to get the initial status of every section
-export function evaluateSection(section: InitialSectionType): string {
-  const evaluateFields = (fields: InitialSectionType["fields"]): string => {
-    const hasRequiredWithoutValue = fields.some((field) => {
-      if (field.type === "group" && field.fields) {
-        return evaluateFields(field.fields) === "error";
+// Gets the section with the fields it needs to evaluate, and the values of all fields
+export function evaluateSection(section: InitialSectionType, fieldValues): string {
+  const statusses = section.fields.flatMap((field) => {
+    const fieldValue = fieldValues[field];
+
+    if (fieldValue) {
+      if (fieldValue.hasOwnProperty("valid")) {
+        // Single field
+        return getFieldStatus(fieldValue, fieldValue);
+      } else if (fieldValue.hasOwnProperty("value")) {
+        // Grouped field: Flatten nested statuses
+        return fieldValue.value.flatMap(groupField =>
+          Object.keys(groupField).map(key => getFieldStatus(groupField[key], groupField[key]))
+        );
       }
-      return field.required && !(Array.isArray(field.value) ? field.value.length > 0 : field.value);
-    });
+    }
 
-    const allFieldsHaveValue = fields.every((field) => {
-      if (field.type === "group" && field.fields) {
-        return evaluateFields(field.fields) === "success";
-      }
-      return Array.isArray(field.value) ? field.value.length > 0 : !!field.value;
-    });
+    return []; // Default return for missing field
+  }).flat(); // Ensures everything is a single array of statuses
 
-    const allFieldsNoIndicator = fields.every(
-      (field) => field.noIndicator || (field.type === "group" && field.fields && evaluateFields(field.fields) === "neutral")
-    );
+  console.log(statusses)
 
-    if (allFieldsNoIndicator) return "neutral";
-    if (hasRequiredWithoutValue) return "error";
-    if (!allFieldsHaveValue) return "warning";
-    return "success";
-  };
-
-  return evaluateFields(section.fields);
+  // Check for "error" first, then "warning", otherwise return "success"
+  if (statusses.includes("error")) return "error";
+  if (statusses.includes("warning")) return "warning";
+  return "success";
 }

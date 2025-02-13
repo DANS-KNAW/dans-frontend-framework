@@ -9,14 +9,14 @@ import type { SectionType } from "../../types/Metadata";
 import { SingleField, GroupedField } from "./MetadataFields";
 import { StatusIcon } from "../generic/Icons";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { getFieldValues, getSections } from "./metadataSlice";
-import { getData, getOpenPanel, setOpenPanel } from "../../deposit/depositSlice";
+import { getFieldValues, getSections, getForm } from "./metadataSlice";
+import { getOpenPanel, setOpenPanel } from "../../deposit/depositSlice";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 
 const Form = () => {
   const dispatch = useAppDispatch();
-  const formData = useAppSelector(getData).form;
+  const formData = useAppSelector(getForm);
   const openPanel = useAppSelector(getOpenPanel);
   const { i18n } = useTranslation();
   const sections = useAppSelector(getSections);

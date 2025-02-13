@@ -95,7 +95,7 @@ export const CheckField = ({ field, groupName, groupIndex }: CheckFieldProps) =>
   return (
     <FormControl
       required={field.required}
-      error={field.required && fieldValue?.value.length === 0}
+      error={field.required && fieldValue?.value?.length === 0}
       component="fieldset"
     >
       {field.label && (

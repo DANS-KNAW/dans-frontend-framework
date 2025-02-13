@@ -12,7 +12,6 @@ import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import {
   getMetadataStatus,
   resetMetadata,
-  getMetadata,
   getSessionId,
 } from "../metadata/metadataSlice";
 import { getFiles, resetFiles } from "../files/filesSlice";
@@ -54,7 +53,6 @@ const Submit = ({
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const selectedFiles = useAppSelector(getFiles);
   const formAction = getFormActions();
-  const metadata = useAppSelector(getMetadata);
   const isTouched = useAppSelector(getTouchedStatus);
   const [fileWarning, setFileWarning] = useState<boolean>(false);
   const sessionId = useAppSelector(getSessionId);
@@ -141,7 +139,7 @@ const Submit = ({
         user: user,
         actionType: actionType,
         id: sessionId,
-        metadata: metadata,
+        // metadata: metadata,
         config: formConfig,
         files: selectedFiles,
       }).then((result: { data?: any; error?: any }) => {
@@ -175,7 +173,7 @@ const Submit = ({
         user: auth.user,
         actionType: "save",
         id: sessionId,
-        metadata: metadata,
+        // metadata: metadata,
         config: formConfig,
         files: selectedFiles,
         // set flag autoSave, so we don't show a snackbar each time
@@ -184,9 +182,9 @@ const Submit = ({
     }
   }, 2000);
 
-  useEffect(() => {
-    !import.meta.env.VITE_DISABLE_AUTOSAVE && autoSave();
-  }, [metadata]);
+  // useEffect(() => {
+  //   !import.meta.env.VITE_DISABLE_AUTOSAVE && autoSave();
+  // }, [metadata]);
 
   // Reset the entire form to initial state
   const resetForm = () => {

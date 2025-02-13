@@ -35,7 +35,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { Link as RouterLink } from "react-router-dom";
-import { setData, setFormDisabled, getData, getOpenTab, setOpenTab, getTouchedStatus } from "./depositSlice";
+import { setData, setFormDisabled, getOpenTab, setOpenTab, getTouchedStatus } from "./depositSlice";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import {

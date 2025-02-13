@@ -571,8 +571,8 @@ const AutocompleteAPIField = ({
             {...params}
             label={`${lookupLanguageString(field.label, i18n.language)}${field.required ? " *" : ""
               }`}
-            error={status === "error" && field.touched}
-            helperText={status === "error" && field.touched && t("incorrect")}
+            error={status === "error" && fieldValue?.touched}
+            helperText={status === "error" && fieldValue?.touched && t("incorrect")}
             placeholder={lookupLanguageString(field.placeholder, i18n.language)}
             InputProps={{
               ...params.InputProps,
