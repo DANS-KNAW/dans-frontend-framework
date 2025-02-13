@@ -15,11 +15,12 @@ import type { TabPanelProps, TabHeaderProps } from "../types/Deposit";
 import type { FormConfig } from "../types/Metadata";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import {
-  getMetadataStatus,
+  getFieldValues,
   getSessionId,
   initForm,
-  resetMetadata,
   getSections,
+  getTouchedStatus,
+  getForm,
 } from "../features/metadata/metadataSlice";
 import { getSectionStatus } from "../features/metadata/metadataHelpers";
 import {
@@ -35,7 +36,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { Link as RouterLink } from "react-router-dom";
-import { setData, setFormDisabled, getOpenTab, setOpenTab, getTouchedStatus } from "./depositSlice";
+import { setData, setFormDisabled, getOpenTab, setOpenTab } from "./depositSlice";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import {
@@ -81,11 +82,14 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // );
 
   useEffect(() => {
-    // set config
-    dispatch(setData(config));
-    // initialize sections state 
-    dispatch(initForm(config.form))
-  }, [config]);
+    if (!sessionId) {
+      // initialize form if no sessionId is set
+      // set config in Deposit slice
+      dispatch(setData(config));
+      // initialize sections and metadata state 
+      dispatch(initForm(config.form));
+    }
+  }, [config, sessionId]);
 
   // set page title
   useEffect(() => {
@@ -149,17 +153,15 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   //   isSuccess,
   // ]);
 
-  // useEffect(() => {
-  //   // Show a message when a saved form is loaded.
-  //   // Show a message when data's been entered previously.
-  //   // Give option to clear form and start again.
-  //   ((sessionId && formTouched) || formAction.id) && setDataMessage(true);
-  //   // Update user on initial render, makes sure all target credentials are up-to-date.
-  //   // Also remove user immediately, should there be an error..
-  //   auth.signinSilent().catch(() => auth.removeUser());
-  //   // Set init form props in redux, all props without the form metadata config itself
-  //   dispatch(setData(config));
-  // }, []);
+  useEffect(() => {
+    // Show a message when a saved form is loaded.
+    // Show a message when data's been entered previously.
+    // Give option to clear form and start again.
+    ((sessionId && formTouched) || formAction.id) && setDataMessage(true);
+    // Update user on initial render, makes sure all target credentials are up-to-date.
+    // Also remove user immediately, should there be an error..
+    auth.signinSilent().catch(() => auth.removeUser());
+  }, []);
 
   // For external form selection from the pre-form advisor without reloading the app,
   // we listen for changes to the form object, and initiate a new form when it changes
@@ -328,6 +330,7 @@ const ActionMessage = ({
     skip: !formAction.id,
   });
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
+  const form = useAppSelector(getForm);
 
   return (
     <Collapse in={dataMessage}>
@@ -392,7 +395,7 @@ const ActionMessage = ({
           <Button
             variant="contained"
             onClick={() => {
-              dispatch(resetMetadata());
+              dispatch(initForm(form));
               setDataMessage(false);
               clearFormActions();
             }}

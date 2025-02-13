@@ -16,12 +16,54 @@ import {
   evaluateSection,
   isEmpty,
 } from "./metadataHelpers";
+import { v4 as uuidv4 } from "uuid";
 
 // load the imported form and close all accordion panels by default
 const initialState: InitialStateType = {
+  id: undefined,
+  touched: false,
   form: [],
   sections: {},
   fields: {},
+};
+
+// helper to initialize field objects
+const fieldFormatter = (field, reset?: boolean) => ({
+  value: reset || !field.value ? undefined : field.value,
+  valid: reset || !field.value ? undefined : getValid(field.value, field),
+  touched: false,
+  required: field.noIndicator ? false : field.required,
+  private: field.private,
+  type: field.type,
+  ...(field.noIndicator && { noIndicator: true }),
+  ...(field.validation && { validation: field.validation }),
+});
+
+// helper to duplicate a field object and clear its value 
+const resetObject = (obj) => {
+  let newObj = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (Array.isArray(value.value)) {
+      // this is a repeatable field inside a group
+      newObj[key] = { value: [fieldFormatter(value.value[0], true)] };
+    } else {
+      // this is a single field inside a group
+      newObj[key] = fieldFormatter(value, true);
+    }
+  }
+  return newObj;
+};
+
+// helper to update section status
+const updateSection = (sections, fields, field, groupName) => {
+  for (const sectionName in sections) {
+    const section = sections[sectionName];
+    // Check if the field is part of the section
+    if (section.fields.indexOf(field.name) !== -1 || section.fields.indexOf(groupName) !== -1) {
+      section.status = evaluateSection(section, fields);
+      break;
+    }
+  }
 };
 
 export const metadataSlice = createSlice({
@@ -32,18 +74,8 @@ export const metadataSlice = createSlice({
       state,
       action: PayloadAction<InitialFormType | InitialSectionType[]>,
     ) => {
+      state.id = uuidv4();
       state.form = action.payload;
-      // helper to initialize field objects
-      const fieldFormatter = (field) => ({
-        value: field.value || undefined,
-        valid: field.value ? getValid(field.value, field) : undefined,
-        touched: false,
-        required: field.required,
-        private: field.private,
-        type: field.type,
-        ...(field.noIndicator && { noIndicator: true }),
-        ...(field.validation && { validation: field.validation }),
-      });
 
       // Temporary fields object to ensure correct section evaluation
       let newFields = {};
@@ -55,7 +87,7 @@ export const metadataSlice = createSlice({
             newFields[field.name] = {
               value: [
                 field.fields.reduce((acc, f) => {
-                  acc[f.name] = fieldFormatter(f);
+                  acc[f.name] = f.repeatable ? { value: [fieldFormatter(f)] } : fieldFormatter(f);
                   return acc;
                 }, {}),
               ],
@@ -91,6 +123,8 @@ export const metadataSlice = createSlice({
         touched: true,
         valid: getValid(value, field),
       });
+
+      metadataSlice.caseReducers.setTouched(state, { payload: true, type: '' } );
 
       if (groupName !== undefined && groupIndex !== undefined) {
         // Accessing the group from state
@@ -168,61 +202,43 @@ export const metadataSlice = createSlice({
       }
 
       // Now set section status
-      // Todo: need to call this on field adding/deleting as well
-      // need to fix this to work with groups and repeatable fields properly!!
-      for (const sectionName in state.sections) {
-        const section = state.sections[sectionName];
-        // Check if the field is part of the section
-        if (section.fields.indexOf(field.name) !== -1 || section.fields.indexOf(groupName) !== -1) {
-          section.status = evaluateSection(section, state.fields);
-          break;
-        }
-      }
-      //       const status = getFieldStatus(field, fieldToCheck);
-      //       // Priority order: 'error' > 'warning' > 'success' > 'neutral'
-      //       if (status === "error") return "error";
-      //       if (status === "warning" && overallStatus !== "error") return "warning";
-      //       if (status === "success" && overallStatus === "neutral") return "success";
-      //       return overallStatus; // Default to the current overallStatus
-      //     }, "neutral");
-      //     state.sections[sectionName].status = sectionStatus;
-      //   }
-      // }
+      updateSection(state.sections, state.fields, field, groupName);
     },
     addField: (state, action: PayloadAction<AddDeleteFieldPayload>) => {
       const { field, groupName, groupIndex } = action.payload;
     
-      // Ensure there's always a valid `value` array to work with
-      const existingField = state.fields[field.name] || { value: [{}] };
+      // Get field that needs to be duplicated
+      const existingField = state.fields[field.name];
     
       // for adding a whole group of fields
       if (field.type === 'group') {
-        const newGroup = {}; // Add an empty group object
+        console.log(existingField)
         state.fields[field.name] = {
           ...existingField,
-          value: [...existingField.value, newGroup], // Append the new object immutably
+          value: [...existingField.value, resetObject(existingField.value[0])], // Append the new object immutably
         };
       } else {
-        // Handle non-group repeatable fields
-        const newItem = { value: "", valid: false, touched: false };
         // Adding a field inside a grouped field
         if (groupName !== undefined && groupIndex !== undefined) {
           state.fields[groupName].value[groupIndex][field.name] = {
             ...state.fields[groupName].value[groupIndex][field.name],
-            value: [...state.fields[groupName].value[groupIndex][field.name].value, newItem], // Append the new item immutably
+            value: [...state.fields[groupName].value[groupIndex][field.name].value, fieldFormatter(state.fields[groupName].value[groupIndex][field.name].value[0], true)], 
           };
         }
+        // Adding a single field
         else {
           state.fields[field.name] = {
             ...existingField,
-            value: [...existingField.value, newItem], // Append the new item immutably
+            value: [...existingField.value, fieldFormatter(existingField.value[0], true)],
           };
         }
       }
+
+      // update section status
+      updateSection(state.sections, state.fields, field, groupName);
     },
     deleteField: (state, action: PayloadAction<AddDeleteFieldPayload>) => {
       const { field, fieldIndex, groupName, groupIndex } = action.payload;
-
       // Fields inside a grouped field
       if (groupName !== undefined && groupIndex !== undefined) {
         const group = state.fields[groupName]?.value || [];
@@ -234,6 +250,8 @@ export const metadataSlice = createSlice({
         const repeatableValues = state.fields[field.name]?.value || [];
         repeatableValues.splice(fieldIndex, 1);
       }
+      // update section status
+      updateSection(state.sections, state.fields, field, groupName);
     },
     setMultiApiField: (state, action: PayloadAction<SetFieldMultiApiPayload>) => {
       // Sets the multiApiValue (selectable api by user) of a field
@@ -256,8 +274,10 @@ export const metadataSlice = createSlice({
       }
     },
     resetMetadata: (state) => {
-      // We only need to remove the id. Deposit.tsx will then reinit the form
-      state.id = "";
+      // Reset all fields to their initial state
+    },
+    setTouched: (state, action: PayloadAction<boolean>) => {
+      state.touched = action.payload
     },
   },
 });
@@ -270,6 +290,7 @@ export const {
   deleteField,
   resetMetadata,
   setDateTypeField,
+  setTouched,
 } = metadataSlice.actions;
 
 // Select values from state
@@ -291,5 +312,6 @@ export const getField = (name: string, groupName?: string, groupIndex?: number) 
   return state.metadata.fields[name];
 }
 export const getSections = (state: RootState) => state.metadata.sections;
+export const getTouchedStatus = (state: RootState) => state.metadata.touched;
 
 export default metadataSlice.reducer;

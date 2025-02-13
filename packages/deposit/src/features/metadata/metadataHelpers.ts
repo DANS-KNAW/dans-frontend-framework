@@ -8,8 +8,7 @@ import type {
   ValidationType,
 } from "../../types/MetadataFields";
 import moment from "moment";
-
-// import { current } from '@reduxjs/toolkit';
+import { current } from '@reduxjs/toolkit';
 
 // Helper functions for the Metadata form
 
@@ -40,35 +39,34 @@ export const isEmpty = (value: string | object | any[] | null): boolean => {
 
 // Get the status of a single field
 // Some specific checking for dateranges needed
-export const getFieldStatus = (field: InputField, fieldValue): SectionStatus => {
-  const isRequired = fieldValue?.required || field?.required;
+export const getFieldStatus = (field: InputField, originalField?: InputField): SectionStatus => {
   const fieldEmpty =
-    !fieldValue?.value ||
-    (typeof fieldValue.value === "string" && !fieldValue.value.trim()) ||
-    (Array.isArray(fieldValue.value) && fieldValue.value.length === 0) ||
+    !field?.value ||
+    (typeof field.value === "string" && !field.value.trim()) ||
+    (Array.isArray(field.value) && field.value.length === 0) ||
     (field.type === "daterange" &&
-      Array.isArray(fieldValue.value) &&
-      fieldValue.value.every((v) => v === null || v === "")) ||
+      Array.isArray(field.value) &&
+      field.value.every((v) => v === null || v === "")) ||
     (field.type === "drawmap" &&
-      Array.isArray(fieldValue.value) &&
-      fieldValue.value.some((v) => v.geonames === null || v.geonames === undefined));
+      Array.isArray(field.value) &&
+      field.value.some((v) => v.geonames === null || v.geonames === undefined));
 
-  if (field?.noIndicator && !isRequired && fieldEmpty) {
+  if (field?.noIndicator && !field?.required && fieldEmpty) {
     return "neutral";
   } else if (
-    (!isRequired && fieldEmpty) ||
+    (!field?.required && fieldEmpty) ||
     // daterange should also give a warning state if end date is optional and not filled in
     (field.type === "daterange" &&
-      field.optionalEndDate &&
-      Array.isArray(fieldValue.value) &&
-      !fieldValue.value[1] &&
-      fieldValue.valid)
+      originalField?.optionalEndDate &&
+      Array.isArray(field.value) &&
+      !field.value[1] &&
+      field.valid)
   ) {
     return "warning";
   } else if (
-    (isRequired && fieldEmpty) ||
-    (!fieldEmpty && field.validation && !fieldValue.valid) ||
-    (field.type === "daterange" && !fieldEmpty && !fieldValue.valid)
+    (field?.required && fieldEmpty) ||
+    (!fieldEmpty && field.validation && !field.valid) ||
+    (field.type === "daterange" && !fieldEmpty && !field.valid)
   ) {
     return "error";
   } else {
@@ -136,6 +134,7 @@ export const debounce = <F extends (...args: any[]) => any>(
 
 // Helper to get the initial status of every section
 // Gets the section with the fields it needs to evaluate, and the values of all fields
+// TODO FIX THIS!!!!
 export function evaluateSection(section: InitialSectionType, fieldValues): string {
   const statusses = section.fields.flatMap((field) => {
     const fieldValue = fieldValues[field];
@@ -143,12 +142,13 @@ export function evaluateSection(section: InitialSectionType, fieldValues): strin
     if (fieldValue) {
       if (fieldValue.hasOwnProperty("valid")) {
         // Single field
-        return getFieldStatus(fieldValue, fieldValue);
+        return getFieldStatus(fieldValue);
       } else if (fieldValue.hasOwnProperty("value")) {
         // Grouped field: Flatten nested statuses
-        return fieldValue.value.flatMap(groupField =>
-          Object.keys(groupField).map(key => getFieldStatus(groupField[key], groupField[key]))
-        );
+        return fieldValue.value.flatMap(groupField => {
+          console.log(typeof groupField === 'object' ? groupField : current(groupField) )
+          return Object.keys(groupField).map(key => getFieldStatus(groupField[key]))
+        });
       }
     }
 

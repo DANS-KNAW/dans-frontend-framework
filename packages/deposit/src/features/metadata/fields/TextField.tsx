@@ -29,7 +29,7 @@ const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
   const fieldValue = useAppSelector(
     getField(field.name, groupName, groupIndex)
   );
-  const status = getFieldStatus(field, fieldValue);
+  const status = getFieldStatus(fieldValue);
   const allFieldValues = useAppSelector(getFieldValues);
 
   // on initial render, check if field has a value set, and if so, set it to state
@@ -193,7 +193,7 @@ const FieldInput = ({ field, fieldValue, onChange, index }: {
   field: TextFieldType; fieldValue: BaseField; onChange: (e: any) => void; index?: number;
 }) => {
   const { t, i18n } = useTranslation("metadata");
-  const status = getFieldStatus(field, fieldValue);
+  const status = getFieldStatus(fieldValue);
   const formDisabled = useAppSelector(getFormDisabled);
   const auth = useAuth();
 

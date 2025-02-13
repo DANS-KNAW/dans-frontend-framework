@@ -25,7 +25,7 @@ export const RadioField = ({ field, groupName, groupIndex }: RadioFieldProps) =>
   const { i18n } = useTranslation();
   const formDisabled = useAppSelector(getFormDisabled);
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  const status = getFieldStatus(field, fieldValue);
+  const status = getFieldStatus(fieldValue);
 
   // on initial render, check if field has a value set, and if so, set it to state
   useEffect(() => { 
@@ -90,7 +90,7 @@ export const CheckField = ({ field, groupName, groupIndex }: CheckFieldProps) =>
   const { i18n } = useTranslation();
   const formDisabled = useAppSelector(getFormDisabled);
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  const status = getFieldStatus(field, fieldValue);
+  const status = getFieldStatus(fieldValue);
 
   return (
     <FormControl

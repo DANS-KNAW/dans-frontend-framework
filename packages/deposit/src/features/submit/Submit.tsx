@@ -13,6 +13,7 @@ import {
   getMetadataStatus,
   resetMetadata,
   getSessionId,
+  getTouchedStatus,
 } from "../metadata/metadataSlice";
 import { getFiles, resetFiles } from "../files/filesSlice";
 import { useSubmitDataMutation /*useSubmitFilesMutation*/ } from "./submitApi";
@@ -31,7 +32,6 @@ import {
   setFormDisabled,
   getFormDisabled,
   setOpenTab,
-  getTouchedStatus,
 } from "../../deposit/depositSlice";
 import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";

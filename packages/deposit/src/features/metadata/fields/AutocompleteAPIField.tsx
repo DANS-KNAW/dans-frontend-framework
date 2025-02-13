@@ -520,7 +520,7 @@ const AutocompleteAPIField = ({
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  const status = getFieldStatus(field, fieldValue);
+  const status = getFieldStatus(fieldValue);
   const apiValue = (
     Array.isArray(field.options) ?
     fieldValue?.multiApiValue

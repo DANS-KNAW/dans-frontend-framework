@@ -43,7 +43,7 @@ export const DateTimeField = ({
   const formDisabled = useAppSelector(getFormDisabled);
   const dispatch = useAppDispatch();
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  const status = getFieldStatus(field, fieldValue);
+  const status = getFieldStatus(fieldValue, field);
 
   const errorMessage = useMemo(() => {
     switch (error) {

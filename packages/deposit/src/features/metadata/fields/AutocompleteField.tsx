@@ -32,7 +32,7 @@ const AutocompleteField = ({
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  const status = getFieldStatus(field, fieldValue);
+  const status = getFieldStatus(fieldValue);
 
   // on initial render, check if field has a default value, and if so, add it to the value state
   useEffect(() => {

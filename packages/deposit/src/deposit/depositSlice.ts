@@ -47,13 +47,12 @@ export const depositSlice = createSlice({
   },
 });
 
-export const { setData, setFormDisabled, setOpenPanel, setOpenTab, } = depositSlice.actions;
+export const { setData, setFormDisabled, setOpenPanel, setOpenTab } = depositSlice.actions;
 
 // Selectors
 export const getData = (state: RootState) => state.deposit.config;
 export const getFormDisabled = (state: RootState) => state.deposit.formDisabled;
 export const getOpenPanel = (state: RootState) => state.deposit.panel;
 export const getOpenTab = (state: RootState) => state.deposit.tab;
-export const getTouchedStatus = (state: RootState) => state.metadata.touched;
 
 export default depositSlice.reducer;
