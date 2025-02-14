@@ -129,6 +129,8 @@ const DrawMap = ({ field, groupName, groupIndex }: DrawMapFieldProps) => {
         setField({
           field: field,
           value: features,
+          ...(groupName !== undefined && { groupName: groupName }),
+          ...(groupIndex !== undefined && { groupIndex: groupIndex }),
         }),
       );
     },
@@ -138,10 +140,10 @@ const DrawMap = ({ field, groupName, groupIndex }: DrawMapFieldProps) => {
 
   useEffect(() => {
     // on features change, write this to store with a debounce
-    if (features.length > 0 || (features.length === 0 && field.touched)) {
+    if (features.length > 0 || (features.length === 0 && fieldValue.touched)) {
       debouncedSaveToStore();
     }
-  }, [features, field.touched]);
+  }, [features, fieldValue.touched]);
 
   const [selectedFeatures, setSelectedFeatures] = useState<
     (string | number | undefined)[]

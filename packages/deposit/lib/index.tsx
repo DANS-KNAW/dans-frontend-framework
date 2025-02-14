@@ -20,7 +20,7 @@ export {
 } from "../src/features/metadata/api/ror";
 // same for slices
 export { addFiles } from "../src/features/files/filesSlice";
-// export { initForm } from "../src/features/metadata/metadataSlice";
+export { initForm } from "../src/features/metadata/metadataSlice";
 
 // expose the store
 export { store as depositStore } from "../src/redux/store";

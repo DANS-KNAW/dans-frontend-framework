@@ -138,7 +138,6 @@ const SingleField = memo(({ field, groupName, groupIndex }: SingleFieldProps) =>
 const GroupedField = ({ field }: GroupedFieldProps) => {
   const { i18n } = useTranslation();
   const fieldValue = useAppSelector(getField(field.name));
-  console.log(fieldValue)
 
   return (
     <Grid xs={12}>
