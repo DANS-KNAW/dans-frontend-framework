@@ -101,25 +101,21 @@ export const submitApi = createApi({
       }),
       providesTags: (_res, _err, id) => [{ type: "Forms", id }],
       transformResponse: (response: any) => {
-        console.log(response)
-        return ({
-          title: '',
-        })
-        // mark previously submitted files
-        // const modifiedResponse = {
-        //   ...response,
-        //   md: {
-        //     ...response.md,
-        //     "file-metadata":
-        //       response.md["file-metadata"] ?
-        //         response.md["file-metadata"].map((f) => ({
-        //           ...f,
-        //           submittedFile: true,
-        //         }))
-        //       : [],
-        //   },
-        // };
-        // return modifiedResponse;
+        const modifiedResponse = {
+          ...response,
+          md: {
+            ...response.md,
+            "file-metadata":
+              response.md["file-metadata"] ?
+                response.md["file-metadata"].map((f: any) => ({
+                  ...f,
+                  // mark as previously submitted file
+                  submittedFile: true,
+                }))
+              : [],
+          },
+        };
+        return modifiedResponse;
       },
     }),
   }),

@@ -11,6 +11,7 @@ import type {
   InitialSectionType,
   MetadataStructure,
   DynamicSections,
+  ExternalMetadata,
 } from "../../types/Metadata";
 import type { BaseField, Field } from "../../types/MetadataFields";
 import {
@@ -117,6 +118,14 @@ export const metadataSlice = createSlice({
         return acc;
       }, {});
 
+    },
+    setExternalFormData: (state, action: PayloadAction<ExternalMetadata>) => {
+      // Set external form data (e.g. from API) to the state
+      state.fields = {
+        ...state.fields,
+        ...action.payload.metadata,
+      };
+      state.id = action.payload.action === 'view' ? action.payload.id : uuidv4();
     },
     // keep track of form state
     setField: (state, action: PayloadAction<SetFieldValuePayload>) => {
@@ -295,6 +304,7 @@ export const {
   deleteField,
   setDateTypeField,
   setTouched,
+  setExternalFormData,
 } = metadataSlice.actions;
 
 // Select values from state

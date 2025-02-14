@@ -1,6 +1,6 @@
 import type { LanguageStrings } from "@dans-framework/utils";
 import type { Field, BaseField, RepeatableField } from "./MetadataFields";
-import type { Target } from "@dans-framework/user-auth";
+import type { FormActionType, Target } from "@dans-framework/user-auth";
 
 // Accordion sections
 export interface InitialSectionType {
@@ -73,4 +73,10 @@ export interface FormConfig {
   displayName?: string | LanguageStrings;
   description?: string | LanguageStrings;
   external?: string;
+}
+
+export interface ExternalMetadata {
+  metadata: MetadataStructure;
+  action: FormActionType | undefined;
+  id: string;
 }
