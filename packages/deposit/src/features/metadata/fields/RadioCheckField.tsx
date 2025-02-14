@@ -55,8 +55,8 @@ export const RadioField = ({ field, groupName, groupIndex }: RadioFieldProps) =>
       )}
       <RadioGroup
         row={field.layout === "row"}
-        aria-labelledby={field.id}
-        data-testid={`${field.name}-${field.id}`}
+        aria-labelledby={field.name}
+        data-testid={`${field.name}`}
         name={field.name}
         value={fieldValue?.value || ""}
         onChange={(e) =>
@@ -108,7 +108,7 @@ export const CheckField = ({ field, groupName, groupIndex }: CheckFieldProps) =>
           {lookupLanguageString(field.label, i18n.language)}
         </FormLabel>
       )}
-      <FormGroup data-testid={`${field.name}-${field.id}`}>
+      <FormGroup data-testid={`${field.name}`}>
         {field.options.map((option) => (
           <Stack direction="row" alignItems="center" key={option.value}>
             <FormControlLabel
@@ -127,7 +127,7 @@ export const CheckField = ({ field, groupName, groupIndex }: CheckFieldProps) =>
                           e.target.checked ?
                             [...(fieldValue?.value || ""), e.target.name]
                           : fieldValue?.value!.filter(
-                              (item) => item !== e.target.name,
+                              (item: string) => item !== e.target.name,
                             ),
                         ...(groupName !== undefined && { groupName: groupName }),
                         ...(groupIndex !== undefined && { groupIndex: groupIndex }),

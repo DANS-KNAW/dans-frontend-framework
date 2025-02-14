@@ -1,13 +1,12 @@
-import type { LanguageStrings, RecursiveOmit } from "@dans-framework/utils";
-import type { Field, FormField } from "./MetadataFields";
-import type { Target, SubmissionResponse } from "@dans-framework/user-auth";
-import type { SelectedFile } from "./Files";
+import type { LanguageStrings } from "@dans-framework/utils";
+import type { Field, BaseField, RepeatableField } from "./MetadataFields";
+import type { Target } from "@dans-framework/user-auth";
 
 // Accordion sections
 export interface InitialSectionType {
   id: string;
   title: string | LanguageStrings;
-  fields: RecursiveOmit<Field, "id">[];
+  fields: Field[];
   description?: string | LanguageStrings;
 }
 
@@ -23,38 +22,27 @@ export interface SectionType extends Omit<InitialSectionType, "fields"> {
   status: SectionStatus;
 }
 
-interface DynamicFormState {
-  [key: string]: FormField;
+type SectionKey = string; // Variable section keys  
+export interface DynamicSection {
+  fields: string[]; // List of field names
+  status: SectionStatus; // Possible status values
+}
+export type DynamicSections = Record<SectionKey, DynamicSection>; // Dynamic section keys
+
+export interface MetadataStructure {
+  [key: string]: BaseField | RepeatableField;
 }
 
 export interface InitialStateType {
   id: string;
-  form: SectionType[];
-  panel: string;
-  tab: number;
   touched: boolean;
-  fields: DynamicFormState;
-  sections: {
-    [key: string]: {
-      fields: string[];
-      status: SectionStatus;
-    };
-  }
-}
-
-export interface InitialFormType {
-  metadata: SectionType[];
-  id?: string;
-  "file-metadata"?: SelectedFile[];
-  files?: SelectedFile[];
-}
-
-export interface SavedFormResponse extends SubmissionResponse {
-  md: InitialFormType;
+  form: InitialSectionType[];
+  sections: DynamicSections;
+  fields: MetadataStructure;
 }
 
 export interface FormConfig {
-  form: InitialSectionType[];
+  form?: InitialSectionType[];
   target?: {
     envName?: string;
     configName?: string;

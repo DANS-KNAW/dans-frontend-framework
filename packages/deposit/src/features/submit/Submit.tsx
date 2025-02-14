@@ -11,9 +11,11 @@ import Typography from "@mui/material/Typography";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import {
   getMetadataStatus,
-  resetMetadata,
+  initForm,
   getSessionId,
   getTouchedStatus,
+  getFieldValues,
+  getForm,
 } from "../metadata/metadataSlice";
 import { getFiles, resetFiles } from "../files/filesSlice";
 import { useSubmitDataMutation /*useSubmitFilesMutation*/ } from "./submitApi";
@@ -56,6 +58,8 @@ const Submit = ({
   const isTouched = useAppSelector(getTouchedStatus);
   const [fileWarning, setFileWarning] = useState<boolean>(false);
   const sessionId = useAppSelector(getSessionId);
+  const metadata = useAppSelector(getFieldValues);
+  const form = useAppSelector(getForm);
 
   // get form config
   const formConfig = useAppSelector(getData);
@@ -139,7 +143,7 @@ const Submit = ({
         user: user,
         actionType: actionType,
         id: sessionId,
-        // metadata: metadata,
+        metadata: metadata,
         config: formConfig,
         files: selectedFiles,
       }).then((result: { data?: any; error?: any }) => {
@@ -182,17 +186,16 @@ const Submit = ({
     }
   }, 2000);
 
-  // useEffect(() => {
-  //   !import.meta.env.VITE_DISABLE_AUTOSAVE && autoSave();
-  // }, [metadata]);
+  useEffect(() => {
+    !import.meta.env.VITE_DISABLE_AUTOSAVE && autoSave();
+  }, [metadata]);
 
   // Reset the entire form to initial state
   const resetForm = () => {
     // reset RTK mutations
-    // resetSubmittedFiles();
     resetMeta();
-    // reset metadata in metadata slice
-    dispatch(resetMetadata());
+    // reinitialize form
+    dispatch(initForm(form));
     // reset status in submit slice
     dispatch(resetMetadataSubmitStatus());
     dispatch(resetFilesSubmitStatus());

@@ -15,12 +15,12 @@ import type { TabPanelProps, TabHeaderProps } from "../types/Deposit";
 import type { FormConfig } from "../types/Metadata";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import {
-  getFieldValues,
   getSessionId,
   initForm,
   getSections,
   getTouchedStatus,
   getForm,
+  getFieldValues,
 } from "../features/metadata/metadataSlice";
 import { getSectionStatus } from "../features/metadata/metadataHelpers";
 import {
@@ -70,6 +70,9 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const [dataMessage, setDataMessage] = useState(false);
   const formAction = getFormActions();
   const formTouched = useAppSelector(getTouchedStatus);
+  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
+  const metadata = useAppSelector(getFieldValues);
+  const files = useAppSelector(getFiles);
 
   // Can load a saved form based on metadata id, passed along from UserSubmissions.
   // Set form behaviour based on action param.
@@ -82,9 +85,9 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // );
 
   useEffect(() => {
-    if (!sessionId) {
+    if (!sessionId && config.form) {
       // initialize form if no sessionId is set
-      // set config in Deposit slice
+      // set config from app in Deposit slice
       dispatch(setData(config));
       // initialize sections and metadata state 
       dispatch(initForm(config.form));
@@ -96,6 +99,10 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     setSiteTitle(siteTitle, lookupLanguageString(page.name, i18n.language));
   }, [siteTitle, page.name]);
 
+  // remove data message when user submits or changes data
+  useEffect(() => {
+    setDataMessage(false);
+  }, [metadataSubmitStatus, metadata, files]);
 
   // Initialize form on initial render when there's no sessionId yet or when form gets reset
   // Or initialize saved data (overwrites the previously set sessionId)
@@ -355,19 +362,19 @@ const ActionMessage = ({
         <AlertTitle>
           {formAction.action === "resubmit" ?
             t("dataMessageHeaderResubmit", {
-              title: (data && data.title) || t("untitled"),
+              title:  data?.title || t("untitled"),
             })
           : formAction.action === "copy" ?
             t("dataMessageHeaderCopy", {
-              title: (data && data.title) || t("untitled"),
+              title: data?.title || t("untitled"),
             })
           : formAction.action === "load" ?
             t("dataMessageHeaderLoad", {
-              title: (data && data.title) || t("untitled"),
+              title: data?.title || t("untitled"),
             })
           : formAction.action === "view" ?
             t("dataMessageHeaderView", {
-              title: (data && data.title) || t("untitled"),
+              title: data?.title || t("untitled"),
             })
           : metadataSubmitStatus === "submitted" ?
             t("dataMessageHeaderSubmitted")
@@ -396,6 +403,9 @@ const ActionMessage = ({
             variant="contained"
             onClick={() => {
               dispatch(initForm(form));
+              dispatch(resetFiles());
+              dispatch(resetFilesSubmitStatus());
+              dispatch(resetMetadataSubmitStatus());
               setDataMessage(false);
               clearFormActions();
             }}

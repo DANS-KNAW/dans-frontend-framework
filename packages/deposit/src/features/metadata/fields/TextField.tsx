@@ -19,7 +19,7 @@ import { getFieldStatus } from "../metadataHelpers";
 import type { TextFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled } from "../../../deposit/depositSlice";
-import type { BaseField, FormField, TextFieldType } from "../../../types/MetadataFields";
+import type { BaseField, TextFieldType } from "../../../types/MetadataFields";
 
 const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
   const dispatch = useAppDispatch();
@@ -234,7 +234,7 @@ const FieldInput = ({ field, fieldValue, onChange, index }: {
         ),
       }}
       inputProps={{
-        "data-testid": `${field.name}-${field.id}${
+        "data-testid": `${field.name}${
           index !== undefined ? `-${index}` : ""
         }`,
       }}
@@ -246,9 +246,8 @@ const FieldInput = ({ field, fieldValue, onChange, index }: {
 };
 
 // helper to get nested field values for auto generation
-const getNestedField = (obj: any, path: string): FormField => {
+const getNestedField = (obj: any, path: string): BaseField => {
   const keys = path.includes(".") ? path.split(".") : [path];
-
   return keys.reduce((acc, key) => {
     if (acc?.value instanceof Array) {
       return acc.value[0]?.[key]; // Assume first element in array

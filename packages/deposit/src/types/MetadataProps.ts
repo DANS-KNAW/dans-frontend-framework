@@ -1,6 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import type {
   Field,
+  InputField,
   GroupedFieldType,
   RepeatGroupedFieldType,
   TextFieldType,
@@ -13,13 +14,13 @@ import type {
   OptionsType,
   DateRangeFieldType,
   DrawMapFieldType,
-  FormField
+  BaseField,
 } from "./MetadataFields";
 import type { AutocompleteRenderGetTagProps } from "@mui/material";
 
 // Props for components
 export interface SingleFieldProps {
-  field: Field;
+  field: InputField;
   groupName?: string;
   groupIndex?: number;
 }
@@ -88,11 +89,12 @@ export interface AddButtonProps extends BaseButtonProps {
 
 export interface DeleteButtonProps extends BaseButtonProps {
   fieldIndex: number;
+  size?: "small" | "medium" | "large";
 }
 
 export interface AddDeleteControlsProps extends BaseButtonProps {
   fieldIndex: number;
-  fieldValue: FormField[];
+  fieldValue: BaseField[];
 }
 
 export interface InfoLinkProps {

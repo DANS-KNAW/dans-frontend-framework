@@ -43,7 +43,7 @@ export const DateTimeField = ({
   const formDisabled = useAppSelector(getFormDisabled);
   const dispatch = useAppDispatch();
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  const status = getFieldStatus(fieldValue, field);
+  const status = getFieldStatus(fieldValue);
 
   const errorMessage = useMemo(() => {
     switch (error) {
@@ -122,7 +122,7 @@ export const DateTimeField = ({
             </InputAdornment>
           ),
         }}
-        inputProps={{ "data-testid": `${field.name}-${field.id}` }}
+        inputProps={{ "data-testid": `${field.name}` }}
         slotProps={{
           textField: {
             error:
@@ -328,7 +328,7 @@ const RangeFieldWrapper = ({
           </InputAdornment>
         ),
       }}
-      inputProps={{ "data-testid": `${field.name}-${field.id}` }}
+      inputProps={{ "data-testid": `${field.name}` }}
       slotProps={{
         textField: {
           error: (status === "error" && fieldValue?.touched) || error ? true : false,
@@ -371,7 +371,7 @@ const DateTypeWrapper = ({
           }}
           value={fieldValue?.format || field.format}
           disabled={formDisabled}
-          inputProps={{ "data-testid": `datetype-${field.name}-${field.id}` }}
+          inputProps={{ "data-testid": `datetype-${field.name}` }}
         >
           {field.formatOptions.map((option) => (
             <MenuItem key={option} value={option}>

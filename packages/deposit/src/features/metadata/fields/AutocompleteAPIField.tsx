@@ -589,7 +589,7 @@ const AutocompleteAPIField = ({
             }}
             inputProps={{
               ...params.inputProps,
-              "data-testid": `${field.name}-${field.id}`,
+              "data-testid": `${field.name}`,
             }}
           />
         )}
@@ -611,7 +611,7 @@ const AutocompleteAPIField = ({
             reason === "removeOption") &&
             Array.isArray(fieldValue.value) &&
             Array.isArray(newValue) && [
-              ...fieldValue.value.filter((v) => v.mandatory),
+              ...fieldValue.value.filter((v: OptionsType) => v.mandatory),
               ...newValue.filter((v) => !v.hasOwnProperty("mandatory")),
             ];
 

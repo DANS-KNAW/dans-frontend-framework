@@ -8,7 +8,6 @@ import moment from "moment";
 import { enqueueSnackbar } from "notistack";
 import i18n from "../../languages/i18n";
 import { formatFormData } from "./submitHelpers";
-import type { SavedFormResponse } from "../../types/Metadata";
 
 export const submitApi = createApi({
   reducerPath: "submitApi",
@@ -101,22 +100,26 @@ export const submitApi = createApi({
         headers: { Accept: "application/json" },
       }),
       providesTags: (_res, _err, id) => [{ type: "Forms", id }],
-      transformResponse: (response: SavedFormResponse) => {
+      transformResponse: (response: any) => {
+        console.log(response)
+        return ({
+          title: '',
+        })
         // mark previously submitted files
-        const modifiedResponse = {
-          ...response,
-          md: {
-            ...response.md,
-            "file-metadata":
-              response.md["file-metadata"] ?
-                response.md["file-metadata"].map((f) => ({
-                  ...f,
-                  submittedFile: true,
-                }))
-              : [],
-          },
-        };
-        return modifiedResponse;
+        // const modifiedResponse = {
+        //   ...response,
+        //   md: {
+        //     ...response.md,
+        //     "file-metadata":
+        //       response.md["file-metadata"] ?
+        //         response.md["file-metadata"].map((f) => ({
+        //           ...f,
+        //           submittedFile: true,
+        //         }))
+        //       : [],
+        //   },
+        // };
+        // return modifiedResponse;
       },
     }),
   }),

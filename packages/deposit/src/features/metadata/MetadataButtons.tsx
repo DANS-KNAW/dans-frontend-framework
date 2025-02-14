@@ -13,6 +13,7 @@ export const DeleteButton = ({
   field,
   fieldIndex,
   sx,
+  size = "small",
   groupName,
   groupIndex,
 }: DeleteButtonProps) => {
@@ -25,7 +26,7 @@ export const DeleteButton = ({
         <IconButton
           color="error"
           aria-label={t("delete") as string}
-          size="small"
+          size={size}
           onClick={() =>
             dispatch(deleteField({
               field: field,
@@ -37,7 +38,7 @@ export const DeleteButton = ({
           disabled={formDisabled}
           sx={sx}
         >
-          <RemoveCircleOutlineIcon fontSize="small" />
+          <RemoveCircleOutlineIcon fontSize={size} />
         </IconButton>
       </span>
     </Tooltip>

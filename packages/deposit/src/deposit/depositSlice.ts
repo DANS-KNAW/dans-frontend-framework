@@ -18,7 +18,6 @@ const initialState: {
     submitKey: "",
     skipValidation: false,
     filesUpload: {},
-    form: [],
   },
   formDisabled: false,
   panel: "",

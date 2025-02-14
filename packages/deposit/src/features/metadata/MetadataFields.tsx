@@ -40,7 +40,7 @@ import { useTranslation } from "react-i18next";
 import Skeleton from "@mui/material/Skeleton";
 import { useAppSelector } from "../../redux/hooks";
 import { getField } from "./metadataSlice";
-import type { Field, TextFieldType, DateFieldType, DateRangeFieldType, RadioFieldType, CheckFieldType, DrawMapFieldType, AutocompleteFieldType } from "../../types/MetadataFields";
+import type { TextFieldType, DateFieldType, DateRangeFieldType, RadioFieldType, CheckFieldType, DrawMapFieldType, AutocompleteFieldType, InputField } from "../../types/MetadataFields";
 
 // Lazy load the Draw map components, as it's quite large
 const DrawMap = lazy(() => import("./fields/Map"));
@@ -138,6 +138,7 @@ const SingleField = memo(({ field, groupName, groupIndex }: SingleFieldProps) =>
 const GroupedField = ({ field }: GroupedFieldProps) => {
   const { i18n } = useTranslation();
   const fieldValue = useAppSelector(getField(field.name));
+  console.log(fieldValue)
 
   return (
     <Grid xs={12}>
@@ -152,10 +153,10 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
           subheaderTypographyProps={{ fontSize: 12 }}
           sx={{ pb: 0, pl: 2.25, pr: 2.25 }}
         />
-        <CardContent data-testid={`group-${field.name}-${field.id}`}>
+        <CardContent data-testid={`group-${field.name}`}>
         <Stack direction="row" flexWrap="wrap">
           {field.repeatable ? (
-            (Array.isArray(fieldValue?.value) ? fieldValue?.value : [{}]).map((_repeatableItem, index) => (
+            (fieldValue?.value as []).map((_repeatableItem, index) => (
               <Stack
                 key={index}
                 direction="row"
@@ -174,7 +175,7 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
                   flexWrap="wrap"
                   sx={{ flex: 1 }}
                 >
-                  {field.fields.map((f) => (
+                  {(field.fields as InputField[]).map((f) => (
                     <SingleField
                       key={f.name}
                       field={f}
@@ -193,7 +194,7 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
               </Stack>
             ))
           ) : (
-            field.fields.map((f) => (
+            (field.fields as InputField[]).map((f) => (
               <SingleField
                 key={f.name}
                 field={f}

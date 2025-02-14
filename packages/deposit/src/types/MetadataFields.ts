@@ -19,7 +19,6 @@ export type Field = InputField | GroupedFieldType | RepeatGroupedFieldType;
 
 // All fields extend the basic field type
 interface BasisFieldType {
-  id: string; // auto generated uuid
   name: string; // gets mapped by packager
   label: string | LanguageStrings; // appears above field in UI
   touched?: boolean; // checks if user has interacted with field, for validation purposes
@@ -263,25 +262,31 @@ export interface AutocompleteAPIFieldData<T = OptionsType[]> {
   response: T;
 }
 
-// Metadata gets stored in state like so
-type FieldValue = 
-  | string 
-  | number 
-  | boolean 
-  | OptionsType
-  | ExtendedMapFeature
-  | FieldValue[];
+// Metadata/field values
+type FieldType = 
+  | "text"
+  | "check"
+  | "radio"
+  | "date"
+  | "daterange"
+  | "autocomplete"
+  | "drawmap"
+  | "number"; 
 
 export interface BaseField {
-  value: FieldValue;
-  touched?: boolean;
-  valid?: boolean;
-  private?: boolean;
+  value?: any;
+  touched: boolean;
   required?: boolean;
+  private?: boolean;
+  type?: FieldType;
+  noIndicator?: boolean;
+  valid?: boolean;
+  validation?: ValidationType;
+  format?: DateTimeFormat;
+  optionalEndDate?: boolean;
+  multiApiValue?: TypeaheadAPI;
 }
 
 export interface RepeatableField {
-  value: Record<string, BaseField>[];
+  value: Record<string, Field | RepeatableField[]>[];
 }
-
-export type FormField = BaseField | RepeatableField;

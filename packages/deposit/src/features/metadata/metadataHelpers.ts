@@ -1,14 +1,15 @@
 import type {
   SectionStatus,
-  InitialSectionType,
+  MetadataStructure,
+  DynamicSection,
+  DynamicSections,
 } from "../../types/Metadata";
 import type {
-  InputField,
-  Field,
   ValidationType,
+  BaseField,
+  Field,
 } from "../../types/MetadataFields";
 import moment from "moment";
-import { current } from '@reduxjs/toolkit';
 
 // Helper functions for the Metadata form
 
@@ -39,7 +40,7 @@ export const isEmpty = (value: string | object | any[] | null): boolean => {
 
 // Get the status of a single field
 // Some specific checking for dateranges needed
-export const getFieldStatus = (field: InputField, originalField?: InputField): SectionStatus => {
+export const getFieldStatus = (field: BaseField): SectionStatus => {
   const fieldEmpty =
     !field?.value ||
     (typeof field.value === "string" && !field.value.trim()) ||
@@ -57,7 +58,7 @@ export const getFieldStatus = (field: InputField, originalField?: InputField): S
     (!field?.required && fieldEmpty) ||
     // daterange should also give a warning state if end date is optional and not filled in
     (field.type === "daterange" &&
-      originalField?.optionalEndDate &&
+      field?.optionalEndDate &&
       Array.isArray(field.value) &&
       !field.value[1] &&
       field.valid)
@@ -75,18 +76,18 @@ export const getFieldStatus = (field: InputField, originalField?: InputField): S
 };
 
 // Get the status (color of indicator) for a specific section, based on an array of section statusses
-export const getSectionStatus = (sections: Section[]): SectionStatus => {
+export const getSectionStatus = (sections: DynamicSections): SectionStatus => {
   const priority = ["neutral", "success", "warning", "error"];
 
   return Object.values(sections)
     .map((section) => section.status)
     .reduce((highest, current) =>
-      priority.indexOf(current) > priority.indexOf(highest) ? current : highest
+      priority.indexOf(current as string) > priority.indexOf(highest as string) ? current : highest
     , "neutral");
 };
 
 // Check if a field conforms to validation type specified
-export const getValid = (value: any, field: Field): boolean => {
+export const getValid = (value: any, field: BaseField | Field): boolean => {
   if (field.validation) {
     return validateData(field.validation, value);
   } else if (
@@ -134,29 +135,31 @@ export const debounce = <F extends (...args: any[]) => any>(
 
 // Helper to get the initial status of every section
 // Gets the section with the fields it needs to evaluate, and the values of all fields
-// TODO FIX THIS!!!!
-export function evaluateSection(section: InitialSectionType, fieldValues): string {
-  const statusses = section.fields.flatMap((field) => {
+export function evaluateSection(section: DynamicSection, fieldValues: MetadataStructure): SectionStatus {
+  const statusses = section.fields.flatMap((field: string) => {
     const fieldValue = fieldValues[field];
-
     if (fieldValue) {
       if (fieldValue.hasOwnProperty("valid")) {
         // Single field
-        return getFieldStatus(fieldValue);
+        return getFieldStatus(fieldValue as BaseField);
       } else if (fieldValue.hasOwnProperty("value")) {
         // Grouped field: Flatten nested statuses
-        return fieldValue.value.flatMap(groupField => {
-          console.log(typeof groupField === 'object' ? groupField : current(groupField) )
+        return fieldValue.value.flatMap((groupField: any) => {
+          // repeatable field
+          if (groupField.hasOwnProperty("valid")) {
+            return getFieldStatus(groupField);
+          }
+          // repeatable field inside group
+          else if (Array.isArray(groupField)) {
+            return groupField.map(field => getFieldStatus(field));
+          }
+          // group field
           return Object.keys(groupField).map(key => getFieldStatus(groupField[key]))
         });
       }
     }
-
     return []; // Default return for missing field
   }).flat(); // Ensures everything is a single array of statuses
-
-  console.log(statusses)
-
   // Check for "error" first, then "warning", otherwise return "success"
   if (statusses.includes("error")) return "error";
   if (statusses.includes("warning")) return "warning";

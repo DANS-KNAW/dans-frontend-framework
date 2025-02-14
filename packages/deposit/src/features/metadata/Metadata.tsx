@@ -5,14 +5,14 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import type { SectionType } from "../../types/Metadata";
 import { SingleField, GroupedField } from "./MetadataFields";
 import { StatusIcon } from "../generic/Icons";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { getFieldValues, getSections, getForm } from "./metadataSlice";
+import { getSections, getForm } from "./metadataSlice";
 import { getOpenPanel, setOpenPanel } from "../../deposit/depositSlice";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
+import type { Field } from "../../types/MetadataFields";
 
 const Form = () => {
   const dispatch = useAppDispatch();
@@ -20,10 +20,6 @@ const Form = () => {
   const openPanel = useAppSelector(getOpenPanel);
   const { i18n } = useTranslation();
   const sections = useAppSelector(getSections);
- 
-  const metadata = useAppSelector(getFieldValues);
-  console.log(metadata)
-  console.log(sections)
 
   // handles accordion open/close actions, sends to redux store
   const handleChange =
@@ -33,7 +29,7 @@ const Form = () => {
 
   return (
     <>
-      {formData.map((section, sectionIndex) => (
+      {formData.map((section) => (
         <Accordion
           key={`section-${section.id}`}
           expanded={openPanel === section.id}
@@ -90,7 +86,7 @@ const Form = () => {
   );
 };
 
-const FieldSelector = ({ fields }) => {
+const FieldSelector = ({ fields }: { fields: Field[] }) => {
   return (
     <>
       {fields.map((field, i) => {

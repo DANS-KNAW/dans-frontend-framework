@@ -18,7 +18,7 @@ import Typography from "@mui/material/Typography";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
-import { setField } from "../metadataSlice";
+import { setField, getField } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
 import type {
   OptionsType,
@@ -91,9 +91,10 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
  * Also allows user to select Geobasis standard.
  */
 
-const DrawMap = ({ field, sectionIndex }: DrawMapFieldProps) => {
+const DrawMap = ({ field, groupName, groupIndex }: DrawMapFieldProps) => {
   const dispatch = useAppDispatch();
-  const status = getFieldStatus(field);
+  const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
+  const status = getFieldStatus(fieldValue);
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
   const [geonamesValue, setGeonamesValue] = useState<OptionsType>();
@@ -126,8 +127,7 @@ const DrawMap = ({ field, sectionIndex }: DrawMapFieldProps) => {
     () => {
       dispatch(
         setField({
-          sectionIndex: sectionIndex,
-          id: field.id,
+          field: field,
           value: features,
         }),
       );

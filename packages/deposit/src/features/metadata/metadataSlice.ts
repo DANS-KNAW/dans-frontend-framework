@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, current } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../redux/store";
 import type {
   SetFieldValuePayload,
@@ -9,8 +9,10 @@ import type {
 import type {
   InitialStateType,
   InitialSectionType,
-  InitialFormType,
+  MetadataStructure,
+  DynamicSections,
 } from "../../types/Metadata";
+import type { BaseField, Field } from "../../types/MetadataFields";
 import {
   getValid,
   evaluateSection,
@@ -20,7 +22,7 @@ import { v4 as uuidv4 } from "uuid";
 
 // load the imported form and close all accordion panels by default
 const initialState: InitialStateType = {
-  id: undefined,
+  id: '',
   touched: false,
   form: [],
   sections: {},
@@ -28,10 +30,11 @@ const initialState: InitialStateType = {
 };
 
 // helper to initialize field objects
-const fieldFormatter = (field, reset?: boolean) => ({
+const fieldFormatter = (field: BaseField | Field, reset?: boolean) => ({
   value: reset || !field.value ? undefined : field.value,
   valid: reset || !field.value ? undefined : getValid(field.value, field),
   touched: false,
+  // extra check here, due to toggleable required state: if noIndicator is set, required should be false on a fresh field
   required: field.noIndicator ? false : field.required,
   private: field.private,
   type: field.type,
@@ -40,26 +43,26 @@ const fieldFormatter = (field, reset?: boolean) => ({
 });
 
 // helper to duplicate a field object and clear its value 
-const resetObject = (obj) => {
-  let newObj = {};
+const resetObject = (obj: MetadataStructure) => {
+  let newObj: { [key: string]: any } = {};
   for (const [key, value] of Object.entries(obj)) {
     if (Array.isArray(value.value)) {
       // this is a repeatable field inside a group
       newObj[key] = { value: [fieldFormatter(value.value[0], true)] };
     } else {
       // this is a single field inside a group
-      newObj[key] = fieldFormatter(value, true);
+      newObj[key] = fieldFormatter(value as BaseField, true);
     }
   }
   return newObj;
 };
 
 // helper to update section status
-const updateSection = (sections, fields, field, groupName) => {
+const updateSection = (sections: DynamicSections, fields: MetadataStructure, field: Field, groupName?: string) => {
   for (const sectionName in sections) {
     const section = sections[sectionName];
     // Check if the field is part of the section
-    if (section.fields.indexOf(field.name) !== -1 || section.fields.indexOf(groupName) !== -1) {
+    if (section.fields.indexOf(field.name) !== -1 || (groupName && section.fields.indexOf(groupName) !== -1)) {
       section.status = evaluateSection(section, fields);
       break;
     }
@@ -72,32 +75,33 @@ export const metadataSlice = createSlice({
   reducers: {
     initForm: (
       state,
-      action: PayloadAction<InitialFormType | InitialSectionType[]>,
+      action: PayloadAction<InitialSectionType[]>,
     ) => {
       state.id = uuidv4();
       state.form = action.payload;
+      state.touched = false;
 
       // Temporary fields object to ensure correct section evaluation
-      let newFields = {};
+      let newFields: MetadataStructure = {};
 
       // Populate fields object
-      state.form.forEach((section) => {
+      action.payload.forEach((section) => {
         section.fields.forEach((field) => {
           if (field.type === 'group') {
             newFields[field.name] = {
               value: [
                 field.fields.reduce((acc, f) => {
-                  acc[f.name] = f.repeatable ? { value: [fieldFormatter(f)] } : fieldFormatter(f);
+                  (acc as Record<string, any>)[(f as Field).name] = (f as Field).repeatable ? { value: [fieldFormatter(f as Field)] } : fieldFormatter(f as Field);
                   return acc;
                 }, {}),
               ],
             };
           } else if (field.repeatable) {
             newFields[field.name] = {
-              value: [fieldFormatter(field)],
+              value: [fieldFormatter(field as Field)] as any,
             };
           } else {
-            newFields[field.name] = fieldFormatter(field);
+            newFields[field.name] = fieldFormatter(field as Field);
           }
         });
       });
@@ -105,10 +109,10 @@ export const metadataSlice = createSlice({
       // Assign newFields to state.fields after processing
       state.fields = newFields;
 
-      state.sections = action.payload.reduce((acc, section) => {
+      state.sections = action.payload.reduce<DynamicSections>((acc, section) => {
         acc[section.id] = {
           fields: section.fields.map(field => field.name),
-          status: evaluateSection({fields: section.fields.map(field => field.name)}, newFields),
+          status: evaluateSection({fields: section.fields.map(field => field.name), status: undefined}, newFields),
         };
         return acc;
       }, {});
@@ -118,7 +122,7 @@ export const metadataSlice = createSlice({
     setField: (state, action: PayloadAction<SetFieldValuePayload>) => {
       const { field, fieldIndex, value, groupName, groupIndex } = action.payload;
       // Helper function to generate a valid field object
-      const getValidField = (value) => ({
+      const getValidField = (value: any) => ({
         value,
         touched: true,
         valid: getValid(value, field),
@@ -191,12 +195,12 @@ export const metadataSlice = createSlice({
       if (field.togglePrivate || field.toggleRequired) {
         const toggleType = field.togglePrivate ? "private" : "required";
         const toToggle = field.togglePrivate || field.toggleRequired;
-        toToggle.forEach((toggleField) => {
+        toToggle?.forEach((toggleField) => {
           if (groupName !== undefined && groupIndex !== undefined) {
             const item = state.fields[groupName].value[groupIndex];
             item[toggleField][toggleType] = toggleType === "private" ? isEmpty(value) : !isEmpty(value);
           } else {
-            state.fields[toggleField][toggleType] = toggleType === "private" ? isEmpty(value) : !isEmpty(value);
+            (state.fields[toggleField] as BaseField & { [key: string]: any })[toggleType] = toggleType === "private" ? isEmpty(value) : !isEmpty(value);
           }
         });
       }
@@ -256,25 +260,26 @@ export const metadataSlice = createSlice({
     setMultiApiField: (state, action: PayloadAction<SetFieldMultiApiPayload>) => {
       // Sets the multiApiValue (selectable api by user) of a field
       const { field, value, groupName, groupIndex } = action.payload;
-      state.fields[field.name] = {
-        ...state.fields[field.name], 
-        multiApiValue: value,
-        value: undefined,
-      };
+      if (groupName !== undefined && groupIndex !== undefined) {
+        const group = state.fields[groupName];
+        const item = group.value[groupIndex];
+        item[field.name].multiApiValue = value;
+        item[field.name].value = undefined;
+      } else {
+        (state.fields[field.name] as BaseField).multiApiValue = value;
+        (state.fields[field.name] as BaseField).value = undefined;
+      }
     },
     setDateTypeField: (state, action: PayloadAction<SetFieldFormatPayload>) => {
       // Sets the format of a date field
       const { field, value, groupName, groupIndex } = action.payload;
       if (groupName !== undefined && groupIndex !== undefined) {
-        const group = (state.fields[groupName] ??= { value: [] });
-        const item = (group.value[groupIndex] ??= {});
-        (item[field.name] ??= {}).format = value;
+        const group = state.fields[groupName];
+        const item = group.value[groupIndex];
+        item[field.name].format = value;
       } else {
-        (state.fields[field.name] ??= {}).format = value;
+        (state.fields[field.name] as BaseField).format = value;
       }
-    },
-    resetMetadata: (state) => {
-      // Reset all fields to their initial state
     },
     setTouched: (state, action: PayloadAction<boolean>) => {
       state.touched = action.payload
@@ -288,7 +293,6 @@ export const {
   setMultiApiField,
   addField,
   deleteField,
-  resetMetadata,
   setDateTypeField,
   setTouched,
 } = metadataSlice.actions;
@@ -313,5 +317,7 @@ export const getField = (name: string, groupName?: string, groupIndex?: number) 
 }
 export const getSections = (state: RootState) => state.metadata.sections;
 export const getTouchedStatus = (state: RootState) => state.metadata.touched;
+
+export const getAll = (state: RootState) => state.metadata;
 
 export default metadataSlice.reducer;
