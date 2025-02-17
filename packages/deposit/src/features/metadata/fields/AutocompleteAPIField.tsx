@@ -412,7 +412,7 @@ export const MultiApiField = ({ field, groupName, groupIndex }: AutocompleteFiel
   const { t } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  const multiApiValue = (fieldValue?.multiApiValue || field.multiApiValue) as TypeaheadAPI;
+  const multiApiValue = (fieldValue.multiApiValue || field.multiApiValue) as TypeaheadAPI;
 
   return (
     <Stack direction="row" alignItems="start">
@@ -520,10 +520,10 @@ const AutocompleteAPIField = ({
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  const status = getFieldStatus(fieldValue);
+  const status = getFieldStatus(fieldValue, field);
   const apiValue = (
     Array.isArray(field.options) ?
-    fieldValue?.multiApiValue
+    fieldValue.multiApiValue
       : field.options) as TypeaheadAPI;
 
   // on initial render, check if field has a default value, and if so, add it to the value state
@@ -557,13 +557,13 @@ const AutocompleteAPIField = ({
             data.response
             : []
         }
-        value={fieldValue?.value || (field.multiselect ? [] : null)}
+        value={fieldValue.value || (field.multiselect ? [] : null)}
         inputValue={
           inputValue ||
           (!inputValue &&
-            fieldValue?.value &&
-            !Array.isArray(fieldValue?.value) &&
-            lookupLanguageString(fieldValue?.value.label, i18n.language)) ||
+            fieldValue.value &&
+            !Array.isArray(fieldValue.value) &&
+            lookupLanguageString(fieldValue.value.label, i18n.language)) ||
           ""
         }
         renderInput={(params) => (
@@ -571,20 +571,20 @@ const AutocompleteAPIField = ({
             {...params}
             label={`${lookupLanguageString(field.label, i18n.language)}${field.required ? " *" : ""
               }`}
-            error={status === "error" && fieldValue?.touched}
-            helperText={status === "error" && fieldValue?.touched && t("incorrect")}
+            error={status === "error" && fieldValue.touched}
+            helperText={status === "error" && fieldValue.touched && t("incorrect")}
             placeholder={lookupLanguageString(field.placeholder, i18n.language)}
             InputProps={{
               ...params.InputProps,
               startAdornment:
                 (
                   !field.multiselect &&
-                  fieldValue?.value &&
-                  !Array.isArray(fieldValue?.value) &&
-                  fieldValue?.value.value &&
-                  fieldValue?.value.value.startsWith("http")
+                  fieldValue.value &&
+                  !Array.isArray(fieldValue.value) &&
+                  fieldValue.value.value &&
+                  fieldValue.value.value.startsWith("http")
                 ) ?
-                  <InfoLink link={fieldValue?.value.value} apiValue={apiValue} />
+                  <InfoLink link={fieldValue.value.value} apiValue={apiValue} />
                   : params.InputProps.startAdornment,
             }}
             inputProps={{

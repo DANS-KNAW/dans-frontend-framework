@@ -17,12 +17,18 @@ export type SectionStatus =
   | "neutral"
   | undefined;
 
-export interface SectionType extends Omit<InitialSectionType, "fields"> {
-  fields: Field[];
-  status: SectionStatus;
+// Initial state of the form's metadata
+export interface InitialStateType {
+  id: string;
+  touched: boolean;
+  form: InitialSectionType[];
+  sections: DynamicSections;
+  fields: MetadataStructure;
+  fieldMap: FieldMapStructure;
 }
 
-type SectionKey = string; // Variable section keys  
+type SectionKey = string; // Variable section keys 
+
 export interface DynamicSection {
   fields: string[]; // List of field names
   status: SectionStatus; // Possible status values
@@ -33,14 +39,11 @@ export interface MetadataStructure {
   [key: string]: BaseField | RepeatableField;
 }
 
-export interface InitialStateType {
-  id: string;
-  touched: boolean;
-  form: InitialSectionType[];
-  sections: DynamicSections;
-  fields: MetadataStructure;
+export interface FieldMapStructure {
+  [key: string]: Field;
 }
 
+// Config for the form, specified by app
 export interface FormConfig {
   form?: InitialSectionType[];
   target?: {
@@ -75,6 +78,7 @@ export interface FormConfig {
   external?: string;
 }
 
+// What you get from server API (previously saved/submitted forms)
 export interface ExternalMetadata {
   metadata: MetadataStructure;
   action: FormActionType | undefined;

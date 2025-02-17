@@ -1,6 +1,4 @@
 import type { Target } from "@dans-framework/user-auth";
-import type { SelectedFile } from "./Files";
-import type { SectionType, FormConfig } from "./Metadata";
 
 export interface SubmitError {
   status?: string;
@@ -47,15 +45,4 @@ export interface HeaderData {
     [k: string]: string;
   };
   title?: string;
-}
-
-export interface SubmitData {
-  metadata: {
-    form: SectionType[];
-    id: string;
-  };
-  files: SelectedFile[];
-  deposit: {
-    config: Omit<FormConfig, "form">;
-  };
 }

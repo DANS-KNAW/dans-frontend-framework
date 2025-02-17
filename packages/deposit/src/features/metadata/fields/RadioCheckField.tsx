@@ -25,7 +25,7 @@ export const RadioField = ({ field, groupName, groupIndex }: RadioFieldProps) =>
   const { i18n } = useTranslation();
   const formDisabled = useAppSelector(getFormDisabled);
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  const status = getFieldStatus(fieldValue);
+  const status = getFieldStatus(fieldValue, field);
 
   // on initial render, check if field has a value set, and if so, set it to state
   useEffect(() => { 
@@ -58,7 +58,7 @@ export const RadioField = ({ field, groupName, groupIndex }: RadioFieldProps) =>
         aria-labelledby={field.name}
         data-testid={`${field.name}`}
         name={field.name}
-        value={fieldValue?.value || ""}
+        value={fieldValue.value || ""}
         onChange={(e) =>
           dispatch(
             setField({
@@ -90,7 +90,7 @@ export const CheckField = ({ field, groupName, groupIndex }: CheckFieldProps) =>
   const { i18n } = useTranslation();
   const formDisabled = useAppSelector(getFormDisabled);
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  const status = getFieldStatus(fieldValue);
+  const status = getFieldStatus(fieldValue, field);
 
   return (
     <FormControl
@@ -116,7 +116,7 @@ export const CheckField = ({ field, groupName, groupIndex }: CheckFieldProps) =>
                 <Checkbox
                   sx={{ mr: 0.15 }}
                   checked={Boolean(
-                    fieldValue?.value && fieldValue.value.indexOf(option.value) !== -1,
+                    fieldValue.value && fieldValue.value.indexOf(option.value) !== -1,
                   )}
                   onChange={(e) => {
                     // set the field value
@@ -125,8 +125,8 @@ export const CheckField = ({ field, groupName, groupIndex }: CheckFieldProps) =>
                         field: field,
                         value:
                           e.target.checked ?
-                            [...(fieldValue?.value || ""), e.target.name]
-                          : fieldValue?.value!.filter(
+                            [...(fieldValue.value || ""), e.target.name]
+                          : fieldValue.value!.filter(
                               (item: string) => item !== e.target.name,
                             ),
                         ...(groupName !== undefined && { groupName: groupName }),

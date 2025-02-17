@@ -12,62 +12,26 @@ import type {
   MetadataStructure,
   DynamicSections,
   ExternalMetadata,
+  FieldMapStructure,
 } from "../../types/Metadata";
 import type { BaseField, Field } from "../../types/MetadataFields";
 import {
-  getValid,
   evaluateSection,
   isEmpty,
+  fieldFormatter,
+  updateSection,
+  resetObject,
+  getValidField,
 } from "./metadataHelpers";
 import { v4 as uuidv4 } from "uuid";
 
-// load the imported form and close all accordion panels by default
 const initialState: InitialStateType = {
   id: '',
   touched: false,
   form: [],
   sections: {},
   fields: {},
-};
-
-// helper to initialize field objects
-const fieldFormatter = (field: BaseField | Field, reset?: boolean) => ({
-  value: reset || !field.value ? undefined : field.value,
-  valid: reset || !field.value ? undefined : getValid(field.value, field),
-  touched: false,
-  // extra check here, due to toggleable required state: if noIndicator is set, required should be false on a fresh field
-  required: field.noIndicator ? false : field.required,
-  private: field.private,
-  type: field.type,
-  ...(field.noIndicator && { noIndicator: true }),
-  ...(field.validation && { validation: field.validation }),
-});
-
-// helper to duplicate a field object and clear its value 
-const resetObject = (obj: MetadataStructure) => {
-  let newObj: { [key: string]: any } = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (Array.isArray(value.value)) {
-      // this is a repeatable field inside a group
-      newObj[key] = { value: [fieldFormatter(value.value[0], true)] };
-    } else {
-      // this is a single field inside a group
-      newObj[key] = fieldFormatter(value as BaseField, true);
-    }
-  }
-  return newObj;
-};
-
-// helper to update section status
-const updateSection = (sections: DynamicSections, fields: MetadataStructure, field: Field, groupName?: string) => {
-  for (const sectionName in sections) {
-    const section = sections[sectionName];
-    // Check if the field is part of the section
-    if (section.fields.indexOf(field.name) !== -1 || (groupName && section.fields.indexOf(groupName) !== -1)) {
-      section.status = evaluateSection(section, fields);
-      break;
-    }
-  }
+  fieldMap: {},
 };
 
 export const metadataSlice = createSlice({
@@ -85,6 +49,9 @@ export const metadataSlice = createSlice({
       // Temporary fields object to ensure correct section evaluation
       let newFields: MetadataStructure = {};
 
+      // Also create a map of all the original fields, so we can easily lookup fixed values like field type, validation type, etc.
+      let fieldMap: FieldMapStructure = {};
+      
       // Populate fields object
       action.payload.forEach((section) => {
         section.fields.forEach((field) => {
@@ -97,27 +64,32 @@ export const metadataSlice = createSlice({
                 }, {}),
               ],
             };
+            (field.fields as Field[]).forEach(f => {
+              fieldMap[f.name] = f;
+            });
           } else if (field.repeatable) {
             newFields[field.name] = {
               value: [fieldFormatter(field as Field)] as any,
             };
+            fieldMap[field.name] = field;
           } else {
             newFields[field.name] = fieldFormatter(field as Field);
+            fieldMap[field.name] = field;
           }
         });
       });
 
-      // Assign newFields to state.fields after processing
+      // Assign fields after processing
       state.fields = newFields;
+      state.fieldMap = fieldMap;
 
       state.sections = action.payload.reduce<DynamicSections>((acc, section) => {
         acc[section.id] = {
           fields: section.fields.map(field => field.name),
-          status: evaluateSection({fields: section.fields.map(field => field.name), status: undefined}, newFields),
+          status: evaluateSection({fields: section.fields.map(field => field.name), status: undefined}, newFields, fieldMap),
         };
         return acc;
       }, {});
-
     },
     setExternalFormData: (state, action: PayloadAction<ExternalMetadata>) => {
       // Set external form data (e.g. from API) to the state
@@ -130,125 +102,67 @@ export const metadataSlice = createSlice({
     // keep track of form state
     setField: (state, action: PayloadAction<SetFieldValuePayload>) => {
       const { field, fieldIndex, value, groupName, groupIndex } = action.payload;
-      // Helper function to generate a valid field object
-      const getValidField = (value: any) => ({
-        value,
-        touched: true,
-        valid: getValid(value, field),
-      });
-
+      // set field touched state to true
       metadataSlice.caseReducers.setTouched(state, { payload: true, type: '' } );
 
+      // helper function to update field value
+      const updateField = (target: any, key: string, newValue: any) => {
+        target[key] = { ...target[key], ...getValidField(newValue, field) };
+      };
+    
       if (groupName !== undefined && groupIndex !== undefined) {
-        // Accessing the group from state
         let group = state.fields[groupName].value;
-
-        // Checking if the field is repeatable inside the group
-        if (field.repeatable) {
-          // Ensure the field inside the group exists and is repeatable
-          let repeatableValues = group[groupIndex][field.name]?.value;
-          if (fieldIndex !== undefined) {
-            // Update the specific index if fieldIndex is provided
-            repeatableValues[fieldIndex] = {
-              ...repeatableValues[fieldIndex],
-              ...getValidField(value),
-            };
-          }
-          // Update the group with the modified repeatable values
-          group[groupIndex] = {
-            ...group[groupIndex],
-            [field.name]: { value: repeatableValues },
+        let groupItem = group[groupIndex];
+    
+        if (field.repeatable && fieldIndex !== undefined) {
+          groupItem[field.name].value[fieldIndex] = {
+            ...groupItem[field.name].value[fieldIndex],
+            ...getValidField(value, field),
           };
         } else {
-          // Handle non-repeatable field inside the group
-          group[groupIndex] = {
-            ...group[groupIndex],
-            [field.name]: {
-              ...group[groupIndex][field.name],
-              ...getValidField(value),
-            }
-          };
+          updateField(groupItem, field.name, value);
         }
-        // Update the state for the group field
-        state.fields[groupName] = {
-          ...state.fields[groupName],
-          value: group,
-        };
+    
+        state.fields[groupName] = { ...state.fields[groupName], value: group };
       } else {
-        // Handle fields outside of a group (single fields)
-        if (field.repeatable) {
-          // Handle repeatable fields outside of groups
-          let repeatableValues = state.fields[field.name].value;
-          if (fieldIndex !== undefined) {
-            // Update existing repeatable field
-            repeatableValues[fieldIndex] = {
-              ...repeatableValues[fieldIndex],
-              ...getValidField(value),
-            }
-          }
-          // Update the state for the single field
-          state.fields[field.name] = {
-            ...state.fields[field.name],
-            value: repeatableValues,
+        if (field.repeatable && fieldIndex !== undefined) {
+          state.fields[field.name].value[fieldIndex] = {
+            ...state.fields[field.name].value[fieldIndex],
+            ...getValidField(value, field),
           };
         } else {
-          // Handle non-repeatable field outside of groups
-          state.fields[field.name] = {
-            ...state.fields[field.name],
-            ...getValidField(value),
-          };
+          updateField(state.fields, field.name, value);
         }
       }
-
-      // Toggle other fields required/private state based on the value of this field
+    
+      // Handle toggling required/private state
       if (field.togglePrivate || field.toggleRequired) {
         const toggleType = field.togglePrivate ? "private" : "required";
-        const toToggle = field.togglePrivate || field.toggleRequired;
-        toToggle?.forEach((toggleField) => {
-          if (groupName !== undefined && groupIndex !== undefined) {
-            const item = state.fields[groupName].value[groupIndex];
-            item[toggleField][toggleType] = toggleType === "private" ? isEmpty(value) : !isEmpty(value);
-          } else {
-            (state.fields[toggleField] as BaseField & { [key: string]: any })[toggleType] = toggleType === "private" ? isEmpty(value) : !isEmpty(value);
-          }
+        (field.togglePrivate || field.toggleRequired)?.forEach((toggleField) => {
+          const target = groupName !== undefined && groupIndex !== undefined
+            ? state.fields[groupName].value[groupIndex]
+            : state.fields;
+          target[toggleField][toggleType] = toggleType === "private" ? isEmpty(value) : !isEmpty(value);
         });
       }
 
-      // Now set section status
-      updateSection(state.sections, state.fields, field, groupName);
+      // Now set section status to reflect all field changes
+      updateSection(state.sections, state.fields, field, state.fieldMap, groupName);
     },
     addField: (state, action: PayloadAction<AddDeleteFieldPayload>) => {
+      // add a repeatable single field or a whole group
       const { field, groupName, groupIndex } = action.payload;
-    
-      // Get field that needs to be duplicated
-      const existingField = state.fields[field.name];
-    
-      // for adding a whole group of fields
-      if (field.type === 'group') {
-        console.log(existingField)
-        state.fields[field.name] = {
-          ...existingField,
-          value: [...existingField.value, resetObject(existingField.value[0])], // Append the new object immutably
-        };
+      const appendField = (target: any, key: string, formatter: (val: any) => any) => {
+        target[key] = { ...target[key], value: [...target[key].value, formatter(target[key].value[0])] };
+      };
+      if (field.type === "group") {
+        appendField(state.fields, field.name, (val) => resetObject(val, state.fieldMap));
+      } else if (groupName !== undefined && groupIndex !== undefined) {
+        appendField(state.fields[groupName].value[groupIndex], field.name, (val) => fieldFormatter(val, true));
       } else {
-        // Adding a field inside a grouped field
-        if (groupName !== undefined && groupIndex !== undefined) {
-          state.fields[groupName].value[groupIndex][field.name] = {
-            ...state.fields[groupName].value[groupIndex][field.name],
-            value: [...state.fields[groupName].value[groupIndex][field.name].value, fieldFormatter(state.fields[groupName].value[groupIndex][field.name].value[0], true)], 
-          };
-        }
-        // Adding a single field
-        else {
-          state.fields[field.name] = {
-            ...existingField,
-            value: [...existingField.value, fieldFormatter(existingField.value[0], true)],
-          };
-        }
+        appendField(state.fields, field.name, (val) => fieldFormatter(val, true));
       }
-
-      // update section status
-      updateSection(state.sections, state.fields, field, groupName);
+      updateSection(state.sections, state.fields, field, state.fieldMap, groupName);
     },
     deleteField: (state, action: PayloadAction<AddDeleteFieldPayload>) => {
       const { field, fieldIndex, groupName, groupIndex } = action.payload;
@@ -264,7 +178,7 @@ export const metadataSlice = createSlice({
         repeatableValues.splice(fieldIndex, 1);
       }
       // update section status
-      updateSection(state.sections, state.fields, field, groupName);
+      updateSection(state.sections, state.fields, field, state.fieldMap, groupName);
     },
     setMultiApiField: (state, action: PayloadAction<SetFieldMultiApiPayload>) => {
       // Sets the multiApiValue (selectable api by user) of a field

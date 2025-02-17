@@ -32,7 +32,7 @@ const AutocompleteField = ({
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  const status = getFieldStatus(fieldValue);
+  const status = getFieldStatus(fieldValue, field);
 
   // on initial render, check if field has a default value, and if so, add it to the value state
   useEffect(() => {
@@ -69,21 +69,21 @@ const AutocompleteField = ({
           ""
         }
         // make sure default value gets selected if not changed yet by user
-        value={fieldValue?.value || (field.multiselect ? [] : null)}
+        value={fieldValue.value || (field.multiselect ? [] : null)}
         renderInput={(params) => (
           <TextField
             {...params}
             label={`${lookupLanguageString(field.label, i18n.language)}${
               field.required ? " *" : ""
             }`}
-            error={status === "error" && fieldValue?.touched}
-            helperText={status === "error" && fieldValue?.touched && t("incorrect")}
+            error={status === "error" && fieldValue.touched}
+            helperText={status === "error" && fieldValue.touched && t("incorrect")}
             InputProps={{
               ...params.InputProps,
               startAdornment:
                 (
                   !field.multiselect &&
-                  fieldValue?.value &&
+                  fieldValue.value &&
                   !Array.isArray(fieldValue.value) &&
                   ((fieldValue.value.value &&
                     fieldValue.value.value.startsWith("http")) ||
@@ -91,12 +91,12 @@ const AutocompleteField = ({
                 ) ?
                   <InfoLink
                     link={
-                      (fieldValue?.value.value.startsWith("http") &&
+                      (fieldValue.value.value.startsWith("http") &&
                         fieldValue.value.value) ||
-                      (fieldValue?.value.url as string)
+                      (fieldValue.value.url as string)
                     }
                     checkValue={lookupLanguageString(
-                      fieldValue?.value.label,
+                      fieldValue.value.label,
                       i18n.language,
                     )}
                   />

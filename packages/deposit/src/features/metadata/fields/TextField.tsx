@@ -29,7 +29,7 @@ const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
   const fieldValue = useAppSelector(
     getField(field.name, groupName, groupIndex)
   );
-  const status = getFieldStatus(fieldValue);
+  const status = getFieldStatus(fieldValue, field);
   const allFieldValues = useAppSelector(getFieldValues);
 
   // on initial render, check if field has a value set, and if so, set it to state
@@ -47,7 +47,7 @@ const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
 
   useEffect(() => {
     // if requested, auto fill user data from oidc, if field has no (manually) set value
-    if (field.autofill && auth.user && !fieldValue) {
+    if (field.autofill && auth.user && !fieldValue.value) {
       dispatch(
         setField({
           field: field,
@@ -110,18 +110,16 @@ const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
     }
   }, [generatedValue]);
 
-  const repeatableEntries = (Array.isArray(fieldValue?.value) ? fieldValue.value : [{}]) as BaseField[];
-
   return (
     <Stack direction={field.repeatable ? "column" : "row"} alignItems="center">
       {field.repeatable ? (
-        repeatableEntries.map(
+        (fieldValue.value as BaseField[]).map(
           (repeatableItem, index) => (
             <Stack
               direction="row"
               alignItems="flex-start"
               key={index}
-              sx={{ width: "100%", mb: index === ( fieldValue?.value || [{}]).length - 1 ? 0 : 2 }}
+              sx={{ width: "100%", mb: index === ( fieldValue.value || [{}]).length - 1 ? 0 : 2 }}
             >
               <FieldInput
                 fieldValue={repeatableItem}
@@ -142,7 +140,7 @@ const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
                 index={index}
               />
               <AddDeleteControls
-                fieldValue={fieldValue?.value}
+                fieldValue={fieldValue.value}
                 fieldIndex={index}
                 field={field}
                 groupName={groupName}
@@ -193,15 +191,15 @@ const FieldInput = ({ field, fieldValue, onChange, index }: {
   field: TextFieldType; fieldValue: BaseField; onChange: (e: any) => void; index?: number;
 }) => {
   const { t, i18n } = useTranslation("metadata");
-  const status = getFieldStatus(fieldValue);
+  const status = getFieldStatus(fieldValue, field);
   const formDisabled = useAppSelector(getFormDisabled);
   const auth = useAuth();
 
   return (
     <TextField
       fullWidth
-      error={status === "error" && fieldValue?.touched}
-      helperText={status === "error" && fieldValue?.touched && t("incorrect")}
+      error={status === "error" && fieldValue.touched}
+      helperText={status === "error" && fieldValue.touched && t("incorrect")}
       variant="outlined"
       type={field.type}
       label={
@@ -209,10 +207,10 @@ const FieldInput = ({ field, fieldValue, onChange, index }: {
           ? `${lookupLanguageString(field.label, i18n.language)} #${index + 1}`
           : lookupLanguageString(field.label, i18n.language)
       }
-      required={fieldValue?.required || field.required}
+      required={fieldValue.required || field.required}
       multiline={field.multiline}
       rows={field.multiline ? 4 : ""}
-      value={fieldValue?.value || ""}
+      value={fieldValue.value || ""}
       disabled={
         (field.disabled &&
           !(field.autofill && !auth.user?.profile[field.autofill])) ||

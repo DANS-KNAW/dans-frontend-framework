@@ -43,7 +43,7 @@ export const DateTimeField = ({
   const formDisabled = useAppSelector(getFormDisabled);
   const dispatch = useAppDispatch();
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  const status = getFieldStatus(fieldValue);
+  const status = getFieldStatus(fieldValue, field);
 
   const errorMessage = useMemo(() => {
     switch (error) {
@@ -65,7 +65,8 @@ export const DateTimeField = ({
     }
   }, [error]);
 
-  const fieldFormat = fieldValue?.format || field.format;
+  // can be variable, set by user
+  const fieldFormat = fieldValue.format || field.format;
 
   return (
     <Stack direction="row" alignItems="start">
@@ -78,10 +79,10 @@ export const DateTimeField = ({
       <MUIDateTimeField
         fullWidth
         format={fieldFormat}
-        helperText={status === "error" && fieldValue?.touched && t("incorrect")}
+        helperText={status === "error" && fieldValue.touched && t("incorrect")}
         label={lookupLanguageString(field.label, i18n.language)}
         required={field.required}
-        value={(fieldValue?.value && moment(fieldValue.value, fieldFormat)) || null}
+        value={(fieldValue.value && moment(fieldValue.value, fieldFormat)) || null}
         disabled={field.disabled || formDisabled}
         minDate={
           field.minDate ?
@@ -126,7 +127,7 @@ export const DateTimeField = ({
         slotProps={{
           textField: {
             error:
-              (status === "error" && fieldValue?.touched) || error ? true : false,
+              (status === "error" && fieldValue.touched) || error ? true : false,
             helperText: errorMessage,
           },
         }}
@@ -145,9 +146,10 @@ export const DateRangeField = ({
   groupIndex,
 }: DateRangeFieldProps) => {
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  const fieldFormat = fieldValue?.format || field.format;
+  // can be variable, set by user
+  const fieldFormat = fieldValue.format || field.format;
   const [range, setRange] = useState<(string | null)[]>(
-    fieldValue?.value || field.value || [null, null],
+    fieldValue.value || field.value || [null, null],
   );
   const [format, setFormat] = useState<string>(fieldFormat);
   const dispatch = useAppDispatch();
@@ -369,7 +371,7 @@ const DateTypeWrapper = ({
               }),
             );
           }}
-          value={fieldValue?.format || field.format}
+          value={fieldValue.format || field.format}
           disabled={formDisabled}
           inputProps={{ "data-testid": `datetype-${field.name}` }}
         >

@@ -94,7 +94,7 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 const DrawMap = ({ field, groupName, groupIndex }: DrawMapFieldProps) => {
   const dispatch = useAppDispatch();
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  const status = getFieldStatus(fieldValue);
+  const status = getFieldStatus(fieldValue, field);
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
   const [geonamesValue, setGeonamesValue] = useState<OptionsType>();

@@ -261,31 +261,17 @@ export interface AutocompleteAPIFieldData<T = OptionsType[]> {
   response: T;
 }
 
-// Metadata/field values
-type FieldType = 
-  | "text"
-  | "check"
-  | "radio"
-  | "date"
-  | "daterange"
-  | "autocomplete"
-  | "drawmap"
-  | "number"; 
-
+  // Field structure that gets saved to metadata state
 export interface BaseField {
   value?: any;
   touched: boolean;
   required?: boolean;
   private?: boolean;
-  type?: FieldType;
-  noIndicator?: boolean;
   valid?: boolean;
-  validation?: ValidationType;
   format?: DateTimeFormat;
-  optionalEndDate?: boolean;
   multiApiValue?: TypeaheadAPI;
 }
 
 export interface RepeatableField {
-  value: Record<string, Field | RepeatableField[]>[];
+  value: Record<string, BaseField>[];
 }
