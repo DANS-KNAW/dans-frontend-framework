@@ -297,6 +297,8 @@ export const FacetedWrapper = ({
               }
               ResultBodyComponent={currentConfig.resultBodyComponent}
               url={currentConfig.url}
+              user={currentConfig.user}
+              pass={currentConfig.pass}
               shareRoutes={{
                 results: resultRoute,
                 dashboard: dashRoute,

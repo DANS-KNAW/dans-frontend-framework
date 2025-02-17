@@ -154,6 +154,20 @@ const section: InitialSectionType = {
       disabled: true,
     },
     {
+      type: "text",
+      label: {
+        en: "Software Author",
+        nl: "Software auteur",
+      },
+      name: "software_author",
+      autofill: "name",
+      required: true,
+      description: {
+        en: "Author of the software",
+        nl: "Auteur van de software",
+      },
+    },
+    {
       type: "group",
       label: {
         en: "Additional Authors",
@@ -161,6 +175,7 @@ const section: InitialSectionType = {
       },
       name: "additional_authors",
       repeatable: true,
+      compleetGroup: true,
       description: {
         en: "Additional authors of the dataset and or software",
         nl: "Extra auteurs van het dataset en of software",

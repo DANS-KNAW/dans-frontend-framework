@@ -1,5 +1,5 @@
 import { Chip, CircularProgress, Container } from "@mui/material";
-import { getCurrentEndpoint, type Result } from "@dans-framework/rdt-search-ui";
+import { getCurrentEndpoint, type Result, type EndpointProps } from "@dans-framework/rdt-search-ui";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Button from "@mui/material/Button";
@@ -10,6 +10,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import { motion } from "framer-motion";
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
+import { elasticConfig } from "../../config/elasticSearch";
 
 interface SingleRecord {
   id: string;
@@ -104,8 +105,19 @@ export function SingleRecord({ onClose }: { onClose: () => void }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const currentEndpointConfig: EndpointProps | undefined = elasticConfig.find((config) => config.url === endpoint);
     if (id) {
-      fetch(`${endpoint}/_source/${encodeURIComponent(id)}`)
+      fetch(
+        `${endpoint}/_source/${encodeURIComponent(id)}`, {
+          headers: {
+            "Content-Type": "application/json",
+            // if user and pass are provided, add basic auth header
+            ...(currentEndpointConfig?.user && currentEndpointConfig?.pass && {
+              Authorization: `Basic ${btoa(`${currentEndpointConfig.user}:${currentEndpointConfig.pass}`)}`,
+            }),
+          },
+        }
+      )
         .then((res) => {
           setLoading(false);
           if (!res.ok) {

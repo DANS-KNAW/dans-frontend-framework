@@ -12,8 +12,8 @@
     "build:ohsmart": "turbo build --filter=@dans-framework/ohsmart",
     "dev:cat": "turbo dev --filter=@dans-framework/cat",
     "build:cat": "turbo build --filter=@dans-framework/cat",
-    "dev:rda": "turbo dev --filter=@dans-framework/rda",
-    "build:rda": "turbo build --filter=@dans-framework/rda",
+    "dev:rda": "turbo dev --filter=@dans-framework/rda...",
+    "build:rda": "turbo build --filter=@dans-framework/rda...",
     "dev:swh": "turbo dev --filter=@dans-framework/swh",
     "build:swh": "turbo build --filter=@dans-framework/swh",
     "dev:4tu": "turbo dev --filter=@dans-framework/4tu",
@@ -33,5 +33,5 @@
     "turbo": "^1.13.4",
     "typescript": "^5.7.2"
   },
-  "packageManager": "pnpm@8.6.12"
+  "packageManager": "pnpm@10.3.0"
 }

@@ -66,12 +66,18 @@ interface OptionalSearchProps {
 
   SearchHomeComponent?: React.FC<any>;
   fixedFacets?: FixedFacetsProps[];
+
+  // For basic auth
+  user?: string;
+  pass?: string;
 }
 
 // Endpoints for search/endpoint urls
 export interface EndpointBaseProps {
   name: string;
   url: string;
+  user?: string;
+  pass?: string;
 }
 
 export interface FixedFacetsProps {
