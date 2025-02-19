@@ -177,7 +177,7 @@ const Submit = ({
         user: auth.user,
         actionType: "save",
         id: sessionId,
-        // metadata: metadata,
+        metadata: metadata,
         config: formConfig,
         files: selectedFiles,
         // set flag autoSave, so we don't show a snackbar each time

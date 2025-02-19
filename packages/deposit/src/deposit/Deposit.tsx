@@ -71,6 +71,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const formTouched = useAppSelector(getTouchedStatus);
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const currentConfig = useAppSelector(getData);
+  console.log(currentConfig);
 
   // Can load a saved form based on metadata id, passed along from UserSubmissions.
   // Set form behaviour based on action param.
