@@ -1,5 +1,7 @@
 import type { InitialSectionType } from "@dans-framework/deposit";
 
+// for dev, a section that should show warning on init
+
 const section: InitialSectionType = {
   id: "administrative",
   title: {

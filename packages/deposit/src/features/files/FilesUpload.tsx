@@ -29,7 +29,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useFetchSimpleListQuery } from "./api/dansFormats";
 import { enqueueSnackbar } from "notistack";
 import { getFormDisabled, getData } from "../../deposit/depositSlice";
-import { getSessionId } from "../metadata/metadataSlice";
+import { getSessionId, setTouched } from "../metadata/metadataSlice";
 
 const FilesUpload = () => {
   const dispatch = useAppDispatch();
@@ -148,6 +148,7 @@ const FilesUpload = () => {
     });
 
     dispatch(addFiles(serializedFiles));
+    dispatch(setTouched(true));
   };
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } =

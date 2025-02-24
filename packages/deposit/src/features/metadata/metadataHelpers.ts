@@ -1,19 +1,16 @@
-import { v4 as uuidv4 } from "uuid";
 import type {
   SectionStatus,
-  InitialSectionType,
-  SectionType,
+  MetadataStructure,
+  DynamicSection,
+  DynamicSections,
+  FieldMapStructure,
 } from "../../types/Metadata";
 import type {
-  InputField,
-  Field,
   ValidationType,
+  BaseField,
+  Field,
 } from "../../types/MetadataFields";
 import moment from "moment";
-
-// import { current } from '@reduxjs/toolkit';
-
-// Helper functions for the Metadata form
 
 // some simple validation, not fully implemented
 export const validateData = (type: ValidationType, value: string): boolean => {
@@ -29,155 +26,44 @@ export const validateData = (type: ValidationType, value: string): boolean => {
   }
 };
 
-// Recursive function that finds and returns a single field or nothing if not found
-// id: field's ID
-// fields: an array of fields
-export const findByIdOrName = (
-  id: string,
-  fields: Field[],
-  type: "id" | "name" = "id",
-): Field | undefined => {
-  for (let item of fields) {
-    if (item[type] === id) {
-      return item;
-    }
-    if (item.fields) {
-      let result = findByIdOrName(id, item.fields.flat(), type);
-      if (result) {
-        return result;
-      }
-    }
-  }
-  return;
-};
-
-// Find array of dependant id's based on a specific id, for conditional fields
-// ugly, todo clean up
-export const findConditionalChanges = (
-  id: string,
-  fields: Field[],
-  searchKey: "toggleRequired" | "minDateField" | "togglePrivate",
-): string[] | undefined => {
-  for (let item of fields) {
-    if (item.id === id && item[searchKey]) {
-      const toFind = (
-        Array.isArray(item[searchKey]) ?
-          item[searchKey]
-        : [item[searchKey]]) as string[];
-      return toFind
-        .map((name: string) => fields.map((f) => f.name === name && f.id))
-        .flat()
-        .filter(Boolean) as string[];
-    }
-    if (item.fields && item.type === "group") {
-      let result = item.fields
-        .map((field) => {
-          if (Array.isArray(field)) {
-            // for a repeatable field, this needs to be recursive
-            return findConditionalChanges(id, field, searchKey);
-          } else {
-            // otherwise find the field ids directly
-            if (field.id === id && field[searchKey]) {
-              const toFind = (
-                Array.isArray(field[searchKey]) ?
-                  field[searchKey]
-                : [field[searchKey]]) as string[];
-              return toFind
-                .map(
-                  (name: string) =>
-                    item.fields &&
-                    (item.fields as Field[]).map(
-                      (f) => f.name === name && f.id,
-                    ),
-                )
-                .flat()
-                .filter(Boolean) as string[];
-            }
-          }
-          return false;
-        })
-        .flat()
-        .filter(Boolean) as string[];
-      if (result.length > 0) {
-        return result;
-      }
-    }
-  }
-  return;
-};
-
 // helper function to determine if const has any value
-export const isEmpty = (value: string | object | any[] | null): boolean => {
-  return (
-    value === null ||
-    value === undefined ||
-    (typeof value === "string" && value.trim() === "") ||
-    (Array.isArray(value) && value.length === 0) ||
-    (typeof value === "object" && Object.keys(value).length === 0)
-  );
-};
-
-// Function to toggle conditional state of fields,
-// like required or private
-export const changeConditionalState = (
-  fieldId: string,
-  sectionFields: Field[],
-  value: any,
-  field: Field,
-  key: "toggleRequired" | "togglePrivate",
-  idKey: "toggleRequiredIds" | "togglePrivateIds",
-  togglekey: "required" | "private",
-) => {
-  const idsToChange =
-    field[idKey] || findConditionalChanges(fieldId, sectionFields, key);
-
-  if (!field[idKey]) {
-    field[idKey] = idsToChange;
-  }
-
-  // change the conditional fields required state
-  idsToChange &&
-    idsToChange.map((id) => {
-      const changeField = findByIdOrName(id, sectionFields);
-      if (changeField && togglekey === "required") {
-        changeField[togglekey] = !isEmpty(value) ? true : undefined;
-      }
-      if (changeField && togglekey === "private") {
-        changeField[togglekey] = isEmpty(value) ? true : false;
-      }
-    });
-};
+export const isEmpty = (value: string | object | any[] | null): boolean =>
+  value === null ||
+  value === undefined ||
+  (typeof value === "string" && value.trim() === "") ||
+  (Array.isArray(value) && value.length === 0) ||
+  (typeof value === "object" && Object.keys(value).length === 0);
 
 // Get the status of a single field
 // Some specific checking for dateranges needed
-export const getFieldStatus = (field: InputField): SectionStatus => {
+export const getFieldStatus = (field: BaseField, originalField: Field): SectionStatus => {
   const fieldEmpty =
-    !field.value ||
+    !field?.value ||
     (typeof field.value === "string" && !field.value.trim()) ||
     (Array.isArray(field.value) && field.value.length === 0) ||
-    (field.type === "daterange" &&
+    (originalField.type === "daterange" &&
       Array.isArray(field.value) &&
       field.value.every((v) => v === null || v === "")) ||
-    (field.type === "drawmap" &&
+    (originalField.type === "drawmap" &&
       Array.isArray(field.value) &&
       field.value.some((v) => v.geonames === null || v.geonames === undefined));
 
-  if (field.noIndicator && !field.required && fieldEmpty) {
+  if (originalField?.noIndicator && !field?.required && fieldEmpty) {
     return "neutral";
   } else if (
-    (!field.required && fieldEmpty) ||
+    (!field?.required && fieldEmpty) ||
     // daterange should also give a warning state if end date is optional and not filled in
-    (field.type === "daterange" &&
-      field.optionalEndDate &&
+    (originalField.type === "daterange" &&
+      originalField?.optionalEndDate &&
       Array.isArray(field.value) &&
       !field.value[1] &&
       field.valid)
   ) {
     return "warning";
   } else if (
-    (field.required && fieldEmpty) ||
-    (!fieldEmpty && field.validation && !field.valid) ||
-    (field.type === "daterange" && !fieldEmpty && !field.valid)
+    (field?.required && fieldEmpty) ||
+    (!fieldEmpty && originalField.validation && !field.valid) ||
+    (originalField.type === "daterange" && !fieldEmpty && !field.valid)
   ) {
     return "error";
   } else {
@@ -185,14 +71,14 @@ export const getFieldStatus = (field: InputField): SectionStatus => {
   }
 };
 
+const priority = ["neutral", "success", "warning", "error"];
 // Get the status (color of indicator) for a specific section, based on an array of section statusses
-export const getSectionStatus = (section: SectionStatus[]): SectionStatus => {
-  return (
-    section.indexOf("error") !== -1 ? "error"
-    : section.indexOf("warning") !== -1 ? "warning"
-    : "success"
-  );
-};
+export const getSectionStatus = (sections: DynamicSections): SectionStatus => 
+  Object.values(sections)
+    .map((section) => section.status)
+    .reduce((highest, now) =>
+      priority.indexOf(now as string) > priority.indexOf(highest as string) ? now : highest
+    , "neutral");
 
 // Check if a field conforms to validation type specified
 export const getValid = (value: any, field: Field): boolean => {
@@ -221,85 +107,82 @@ export const getValid = (value: any, field: Field): boolean => {
   return false;
 };
 
-/*
-Format the initial state loaded from the ./config files
-for repeatable fields/fieldgroups functionality.
-We also add a unique ID so we can keep track of everything.
-Structure we want:
-[
-  {singlefield},
-  {groupfield: fields: [
-    {field}, 
-    {field},
-  ]},
-  {repeatSingleField: fields:[
-    {repeatablefield}, 
-    {repeatablefield},
-  ]}, 
-  {repeatGroupField: fields: [
-    [{field}, {field}],
-    [{field}, {field}],
-  ]},
-]
-*/
-export const formatInitialState = (form: InitialSectionType[]) => {
-  const newForm = form.map((section) => ({
-    ...section,
-    fields: section.fields.map((field) => {
-      if (field.type === "group" && field.fields) {
-        const newFieldGroup = field.fields.map((f) =>
-          (
-            !Array.isArray(f) &&
-            (f.type === "text" || f.type === "number" || f.type === "date") &&
-            f.repeatable
-          ) ?
-            {
-              id: uuidv4(),
-              type: "repeatSingleField",
-              name: f.name,
-              private: f.private,
-              fields: [{ ...f, id: uuidv4(), touched: false }],
-            }
-          : { ...f, id: uuidv4() },
-        );
-        return {
-          ...field,
-          id: uuidv4(),
-          fields: !field.repeatable ? newFieldGroup : [newFieldGroup],
-        };
+// Helper to get the initial status of every section
+// Gets the section with the fields it needs to evaluate, and the values of all fields
+export function evaluateSection(section: DynamicSection, fieldValues: MetadataStructure, fieldMap: FieldMapStructure): SectionStatus {
+  const statusses = section.fields.flatMap((field: string) => {
+    const fieldValue = fieldValues[field];
+    if (fieldValue) {
+      if (fieldValue.hasOwnProperty("valid")) {
+        // Single field
+        return getFieldStatus(fieldValue as BaseField, fieldMap[field]);
+      } else if (fieldValue.hasOwnProperty("value")) {
+        // Grouped field: Flatten nested statuses
+        return fieldValue.value.flatMap((groupField: any) => {
+          // repeatable field
+          if (groupField.hasOwnProperty("valid")) {
+            return getFieldStatus(groupField, fieldMap[field]);
+          }
+          // group field
+          return Object.keys(groupField).flatMap(key => 
+            groupField[key].hasOwnProperty('valid') 
+            // assume single field in group
+            ? getFieldStatus(groupField[key], fieldMap[key])
+            // assume repeatable field in group
+            : groupField[key].value.flatMap((f: BaseField) => getFieldStatus(f, fieldMap[key]))
+          )});
       }
-      if (field.repeatable) {
-        return {
-          id: uuidv4(),
-          type: "repeatSingleField",
-          name: field.name,
-          private: field.private,
-          fields: [{ ...field, id: uuidv4(), touched: false }],
-        };
-      } else {
-        return { ...field, id: uuidv4(), touched: false };
-      }
-    }),
-  }));
-  return newForm as SectionType[];
+    }
+    return []; // Default return for missing field
+  }).flat(); // Ensures everything is a single array of statuses
+  // Check for "error" first, then "warning", otherwise return "success"
+  if (statusses.includes("error")) return "error";
+  if (statusses.includes("warning")) return "warning";
+  return "success";
 };
 
-// Debounce function for autosaving on form change
-export const debounce = <F extends (...args: any[]) => any>(
-  func: F,
-  wait: number,
-): ((...args: Parameters<F>) => void) => {
-  let timeoutId: ReturnType<typeof setTimeout> | null;
+// helper to initialize field objects, with all keys that can be variable/dynamic
+export const fieldFormatter = (field: Field | BaseField, reset?: boolean, valueField?: BaseField) => ({
+  value: reset || !field.value ? undefined : field.value,
+  valid: reset || !field.value ? false : getValid(valueField ? valueField.value : field.value, field as Field),
+  touched: false,
+  // extra check here, due to toggleable required state: if noIndicator is set, required should be false on a fresh field
+  required: (field as Field).noIndicator ? false : field.required,
+  ...(field.private && { private: field.private }),
+  ...(field.multiApiValue && { multiApiValue: field.multiApiValue }),
+  ...(field.format && { format: field.format }),
+});
 
-  return function (this: ThisParameterType<F>, ...args: Parameters<F>) {
-    const context = this;
-
-    const later = () => {
-      timeoutId = null;
-      func.apply(context, args);
-    };
-
-    clearTimeout(timeoutId!);
-    timeoutId = setTimeout(later, wait);
-  };
+// helper to duplicate a field object and clear its value 
+export const resetObject = (obj: MetadataStructure, fieldMap: FieldMapStructure) => {
+  let newObj: { [key: string]: any } = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (Array.isArray(value.value)) {
+      // this is a repeatable field inside a group
+      newObj[key] = { value: [fieldFormatter(fieldMap[key], true, value.value[0])] };
+    } else {
+      // this is a single field inside a group
+      newObj[key] = fieldFormatter(fieldMap[key], true, value as BaseField);
+    }
+  }
+  return newObj;
 };
+
+// helper to update section status
+export const updateSection = (sections: DynamicSections, fields: MetadataStructure, field: Field, fieldMap: FieldMapStructure, groupName?: string) => {
+  for (const sectionName in sections) {
+    const section = sections[sectionName];
+    // Check if the field is part of the section
+    if (section.fields.indexOf(field.name) !== -1 || (groupName && section.fields.indexOf(groupName) !== -1)) {
+      section.status = evaluateSection(section, fields, fieldMap);
+      break;
+    }
+  }
+};
+
+// Helper function to generate a valid field object
+export const getValidField = (value: any, field: Field) => ({
+  value,
+  touched: true,
+  valid: getValid(value, field),
+});

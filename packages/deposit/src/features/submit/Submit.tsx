@@ -11,12 +11,11 @@ import Typography from "@mui/material/Typography";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import {
   getMetadataStatus,
-  resetMetadata,
-  setSectionStatus,
-  setOpenTab,
-  getMetadata,
-  getTouchedStatus,
+  initForm,
   getSessionId,
+  getTouchedStatus,
+  getFieldValues,
+  getForm,
 } from "../metadata/metadataSlice";
 import { getFiles, resetFiles } from "../files/filesSlice";
 import { useSubmitDataMutation /*useSubmitFilesMutation*/ } from "./submitApi";
@@ -34,6 +33,7 @@ import {
   getData,
   setFormDisabled,
   getFormDisabled,
+  setOpenTab,
 } from "../../deposit/depositSlice";
 import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";
@@ -55,10 +55,11 @@ const Submit = ({
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const selectedFiles = useAppSelector(getFiles);
   const formAction = getFormActions();
-  const metadata = useAppSelector(getMetadata);
   const isTouched = useAppSelector(getTouchedStatus);
   const [fileWarning, setFileWarning] = useState<boolean>(false);
   const sessionId = useAppSelector(getSessionId);
+  const metadata = useAppSelector(getFieldValues);
+  const form = useAppSelector(getForm);
 
   // get form config
   const formConfig = useAppSelector(getData);
@@ -192,17 +193,14 @@ const Submit = ({
   // Reset the entire form to initial state
   const resetForm = () => {
     // reset RTK mutations
-    // resetSubmittedFiles();
     resetMeta();
-    // reset metadata in metadata slice
-    dispatch(resetMetadata());
+    // reinitialize form
+    dispatch(initForm(form));
     // reset status in submit slice
     dispatch(resetMetadataSubmitStatus());
     dispatch(resetFilesSubmitStatus());
     // reset files in file slice
     dispatch(resetFiles());
-    // finally reset all section statusses
-    dispatch(setSectionStatus(null));
     // and enable form
     dispatch(setFormDisabled(false));
   };

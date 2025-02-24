@@ -15,14 +15,14 @@ import type { TabPanelProps, TabHeaderProps } from "../types/Deposit";
 import type { FormConfig } from "../types/Metadata";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import {
-  getMetadataStatus,
   getSessionId,
-  getOpenTab,
-  setOpenTab,
   initForm,
-  resetMetadata,
+  getSections,
   getTouchedStatus,
+  getForm,
+  setExternalFormData,
 } from "../features/metadata/metadataSlice";
+import { getSectionStatus } from "../features/metadata/metadataHelpers";
 import {
   resetFilesSubmitStatus,
   resetMetadataSubmitStatus,
@@ -36,7 +36,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { Link as RouterLink } from "react-router-dom";
-import { setData, setFormDisabled, getData } from "./depositSlice";
+import { setData, setFormDisabled, getOpenTab, setOpenTab, getData } from "./depositSlice";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import {
@@ -51,9 +51,7 @@ import {
   useValidateAllKeysQuery,
   getFormActions,
   clearFormActions,
-  setFormActions,
 } from "@dans-framework/user-auth";
-import { v4 as uuidv4 } from "uuid";
 
 /*
  * TODO:
@@ -71,78 +69,51 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const [dataMessage, setDataMessage] = useState(false);
   const formAction = getFormActions();
   const formTouched = useAppSelector(getTouchedStatus);
+  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const currentConfig = useAppSelector(getData);
+  console.log(currentConfig);
 
   // Can load a saved form based on metadata id, passed along from UserSubmissions.
   // Set form behaviour based on action param.
   // load: loaded data from a saved form, to edit
   // copy: copy data from saved form to a new sessionId
   // resubmit: resubmit existing and already submitted data (save disabled), set submit button target to resubmit action in API
-  const { data: serverFormData, isSuccess } = useFetchSavedMetadataQuery(
-    formAction.id,
-    { skip: !formAction.id },
-  );
+  const { data: serverFormData } = useFetchSavedMetadataQuery(formAction.id, {
+    skip: !formAction.id,
+  });
+
+  useEffect(() => {
+    if (!sessionId && config.form) {
+      // initialize form if no sessionId is set
+      // set config from app in Deposit slice
+      dispatch(setData(config));
+      // initialize sections and metadata state 
+      dispatch(initForm(config.form));
+    }
+  }, [config, sessionId]);
 
   // set page title
   useEffect(() => {
     setSiteTitle(siteTitle, lookupLanguageString(page.name, i18n.language));
   }, [siteTitle, page.name]);
 
-  // Initialize form on initial render when there's no sessionId yet or when form gets reset
-  // Or initialize saved data (overwrites the previously set sessionId)
+  // remove data message when user submits
   useEffect(() => {
-    if (!sessionId || (sessionId && serverFormData && formAction.id)) {
-      // We need to reset the form status first, in case data had been previously entered
-      dispatch(resetMetadataSubmitStatus());
-      dispatch(resetFilesSubmitStatus());
-      dispatch(resetFiles());
-      // Enable the form
-      dispatch(
-        formAction.action === "view" ?
-          setFormDisabled(true)
-        : setFormDisabled(false),
-      );
-      // Then we create a fresh form if there's no id to load
-      if (!sessionId && !formAction.id) {
-        dispatch(initForm(config.form));
-      }
-      // If there's server data available, load that into the form
-      // For copying a form, we create a new uuid as sessionId.
-      else if (serverFormData && formAction && !formAction.actionDone) {
-        dispatch(
-          initForm(
-            formAction.action === "copy" ?
-              {
-                ...serverFormData.md,
-                id: uuidv4(),
-              }
-            : serverFormData.md,
-          ),
-        );
-        // Make sure we only do this once, otherwise it's an infinite loop
-        setFormActions({
-          ...formAction,
-          actionDone: true,
-        });
-      }
-      // Load the files if there are any, but not when copying form
-      if (
-        formAction.id &&
-        serverFormData &&
-        serverFormData.md["file-metadata"] &&
-        formAction.action !== "copy"
-      ) {
-        dispatch(addFiles(serverFormData.md["file-metadata"]));
-      }
+    setDataMessage(false);
+  }, [metadataSubmitStatus]);
+
+  // Load external form data
+  useEffect(() => {
+    if (formAction?.id && serverFormData?.md) {
+      dispatch(setExternalFormData({metadata: serverFormData.md.metadata, action: formAction.action, id: serverFormData['dataset-id']}));
+      dispatch(addFiles(serverFormData.md["file-metadata"]));
     }
-  }, [
-    dispatch,
-    sessionId,
-    config.form,
-    serverFormData,
-    formAction.id,
-    isSuccess,
-  ]);
+    if (formAction?.action === "view") {
+      dispatch(setFormDisabled(true));
+    } else {
+      dispatch(setFormDisabled(false));
+    }
+  }, [formAction, serverFormData]);
 
   useEffect(() => {
     // Show a message when a saved form is loaded.
@@ -152,14 +123,13 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     // Update user on initial render, makes sure all target credentials are up-to-date.
     // Also remove user immediately, should there be an error..
     auth.signinSilent().catch(() => auth.removeUser());
-    // Set init form props in redux, all props without the form metadata config itself
-    dispatch(setData(config));
   }, []);
 
   // For external form selection from the pre-form advisor without reloading the app,
   // we listen for changes to the form object, and initiate a new form when it changes
   useEffect(() => {
     if (
+      config.form &&
       config.displayName &&
       (!currentConfig.displayName ||
         (typeof currentConfig.displayName !== "string" &&
@@ -171,6 +141,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       dispatch(resetFilesSubmitStatus());
       dispatch(resetFiles());
       dispatch(setFormDisabled(false));
+      dispatch(setData(config));
       dispatch(initForm(config.form));
       setDataMessage(false);
     }
@@ -272,13 +243,13 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
 const TabHeader = ({ value, handleChange }: TabHeaderProps) => {
   const { t } = useTranslation(["metadata", "files"]);
   const selectedFiles = useAppSelector(getFiles);
-  const metadataStatus = useAppSelector(getMetadataStatus);
+  const sections = useAppSelector(getSections);
 
   return (
     <Tabs value={value} onChange={handleChange}>
       <Tab
         label={t("heading", { ns: "metadata" })}
-        icon={<StatusIcon status={metadataStatus} margin="r" />}
+        icon={<StatusIcon status={getSectionStatus(sections)} margin="r" />}
         iconPosition="start"
         data-testid="metadata-tab"
       />
@@ -323,15 +294,14 @@ const ActionMessage = ({
     skip: !formAction.id,
   });
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
+  const form = useAppSelector(getForm);
 
   return (
     <Collapse in={dataMessage}>
       <Alert
         severity={formAction.action === "resubmit" ? "error" : "info"}
         data-testid="data-message"
-        onClose={() => {
-          setDataMessage(false);
-        }}
+        onClose={formAction.action !== "view" ? () => setDataMessage(false) : undefined}
         sx={{
           position: "relative",
           "& .MuiAlert-message": {
@@ -347,19 +317,19 @@ const ActionMessage = ({
         <AlertTitle>
           {formAction.action === "resubmit" ?
             t("dataMessageHeaderResubmit", {
-              title: (data && data.title) || t("untitled"),
+              title:  data?.title || t("untitled"),
             })
           : formAction.action === "copy" ?
             t("dataMessageHeaderCopy", {
-              title: (data && data.title) || t("untitled"),
+              title: data?.title || t("untitled"),
             })
           : formAction.action === "load" ?
             t("dataMessageHeaderLoad", {
-              title: (data && data.title) || t("untitled"),
+              title: data?.title || t("untitled"),
             })
           : formAction.action === "view" ?
             t("dataMessageHeaderView", {
-              title: (data && data.title) || t("untitled"),
+              title: data?.title || t("untitled"),
             })
           : metadataSubmitStatus === "submitted" ?
             t("dataMessageHeaderSubmitted")
@@ -387,7 +357,10 @@ const ActionMessage = ({
           <Button
             variant="contained"
             onClick={() => {
-              dispatch(resetMetadata());
+              dispatch(initForm(form));
+              dispatch(resetFiles());
+              dispatch(resetFilesSubmitStatus());
+              dispatch(resetMetadataSubmitStatus());
               setDataMessage(false);
               clearFormActions();
             }}

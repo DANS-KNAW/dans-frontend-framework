@@ -10,76 +10,78 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StatusIcon } from "../../generic/Icons";
 import { AddDeleteControls } from "../MetadataButtons";
-import { setField, getMetadata } from "../metadataSlice";
-import { getFieldStatus, findByIdOrName } from "../metadataHelpers";
+import {
+  setField,
+  getField,
+  getFieldValues,
+} from "../metadataSlice";
+import { getFieldStatus } from "../metadataHelpers";
 import type { TextFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { getFormDisabled } from "../../../deposit/depositSlice";
-import moment from "moment";
+import type { BaseField, TextFieldType } from "../../../types/MetadataFields";
 
-const SingleTextField = ({
-  field,
-  sectionIndex,
-  groupedFieldId,
-  currentField = 0,
-  totalFields = 1,
-}: TextFieldProps) => {
+const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
   const dispatch = useAppDispatch();
   const auth = useAuth();
-  const status = getFieldStatus(field);
   const { t, i18n } = useTranslation("metadata");
-  const formDisabled = useAppSelector(getFormDisabled);
-  const metadata = useAppSelector(getMetadata);
   const [generatedValue, setGeneratedValue] = useState<string>("");
+  const fieldValue = useAppSelector(
+    getField(field.name, groupName, groupIndex)
+  );
+  const status = getFieldStatus(fieldValue, field);
+  const allFieldValues = useAppSelector(getFieldValues);
+
+  // on initial render, check if field has a value set, and if so, set it to state
+  useEffect(() => {
+    if (field.value && !fieldValue) {
+      dispatch(
+        setField({
+          field: field,
+          value: field.value,
+          ...(field.repeatable && { fieldIndex: 0 }),
+        })
+      );
+    }
+  }, []);
 
   useEffect(() => {
     // if requested, auto fill user data from oidc, if field has no (manually) set value
-    if (field.autofill && auth.user && !field.value) {
+    if (field.autofill && auth.user && !fieldValue.value) {
       dispatch(
         setField({
-          sectionIndex: sectionIndex,
-          id: field.id,
+          field: field,
           value: auth.user.profile[field.autofill] as string,
-        }),
+          // support repeatable fields too
+          ...(field.repeatable && { fieldIndex: 0 }),
+        })
       );
     }
-  }, [dispatch, field.autofill, field.id, sectionIndex, auth.user]);
+  }, [dispatch, field.autofill, field.name, auth.user, fieldValue]);
 
   // function to generate value from form config string and filled in fields
   // set to state, so we only have to call this function once
   const generateValue = () => {
     const generatedString = lookupLanguageString(
       field.autoGenerateValue,
-      i18n.language,
+      i18n.language
     );
     // split string into segments to replace
     const segments = generatedString ? generatedString.split(/({{.*?}})/) : [];
     const value = segments.map((segment) => {
       const match = segment.match(/{{(.*?)}}/);
       if (match) {
-        const field = metadata
-          .map((section) => findByIdOrName(match[1], section.fields, "name"))
-          .filter(Boolean)[0];
-
-        return (
-          field && field.value && !field.private ?
-            field.type === "autocomplete" ?
-              Array.isArray(field.value) ?
-                field.value.map((v) => v.label).join(" & ")
-              : field.value.label
-              // if field type is date, just convert it to DD-MM-YYYY for every value
-              // TODO: should any other app than ohsmart want to use this, modify this where necessary
-            : field.type === "date" ?
-              moment(field.value, field.format)
-                .startOf("day")
-                .format("DD-MM-YYYY")
-            : field.type === "daterange" ?
-              moment(field.value[0], field.format)
-                .startOf("day")
-                .format("DD-MM-YYYY")
-            : field.value
-          : null
-        );
+        const matchedField = getNestedField(allFieldValues, match[1]);
+        console.log(matchedField)
+        return matchedField && matchedField.value && !matchedField.private
+          ? Array.isArray(matchedField.value)
+            ? matchedField.value[0].hasOwnProperty("label")
+              ? // assume an autoCompleteField
+                matchedField.value.map((v) => v.label).join(" & ")
+              : // otherwise return first value
+                matchedField.value[0]
+            : matchedField.value
+          : null;
       }
       return segment;
     });
@@ -92,10 +94,9 @@ const SingleTextField = ({
   const setValue = () => {
     dispatch(
       setField({
-        sectionIndex: sectionIndex,
-        id: field.id,
+        field: field,
         value: generatedValue,
-      }),
+      })
     );
   };
 
@@ -105,56 +106,65 @@ const SingleTextField = ({
       // generate value if it hasn't been do so yet
       !generatedValue && generateValue();
       // if there's no value set yet, set value to generated value
-      generatedValue && !field.value && setValue();
+      generatedValue && !fieldValue?.value && setValue();
     }
   }, [generatedValue]);
 
   return (
-    <Stack direction="row" alignItems="center">
-      <TextField
-        fullWidth
-        error={status === "error" && field.touched}
-        helperText={status === "error" && field.touched && t("incorrect")}
-        variant="outlined"
-        type={field.type}
-        label={lookupLanguageString(field.label, i18n.language)}
-        required={field.required}
-        multiline={field.multiline}
-        rows={field.multiline ? 4 : ""}
-        value={field.value || ""}
-        disabled={
-          (field.disabled &&
-            !(field.autofill && !auth.user?.profile[field.autofill])) ||
-          formDisabled
-        }
-        onChange={(e) =>
-          dispatch(
-            setField({
-              sectionIndex: sectionIndex,
-              id: field.id,
-              value: e.target.value,
-            }),
-          )
-        }
-        sx={{
-          mt: groupedFieldId && currentField !== 0 ? 1 : 0,
-        }}
-        placeholder={field.placeholder}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <StatusIcon
-                status={status}
-                title={
-                  field.description &&
-                  lookupLanguageString(field.description, i18n.language)
+    <Stack direction={field.repeatable ? "column" : "row"} alignItems="center">
+      {field.repeatable ? (
+        (fieldValue.value as BaseField[]).map(
+          (repeatableItem, index) => (
+            <Stack
+              direction="row"
+              alignItems="flex-start"
+              key={index}
+              sx={{ width: "100%", mb: index === ( fieldValue.value || [{}]).length - 1 ? 0 : 2 }}
+            >
+              <FieldInput
+                fieldValue={repeatableItem}
+                field={field}
+                onChange={(e) =>
+                  dispatch(
+                    setField({
+                      field,
+                      fieldIndex: index,
+                      value: e.target.value,
+                      ...(groupName !== undefined && { groupName: groupName }),
+                      ...(groupIndex !== undefined && {
+                        groupIndex: groupIndex,
+                      }),
+                    })
+                  )
                 }
+                index={index}
               />
-            </InputAdornment>
-          ),
-        }}
-        inputProps={{ "data-testid": `${field.name}-${field.id}` }}
-      />
+              <AddDeleteControls
+                fieldValue={fieldValue.value}
+                fieldIndex={index}
+                field={field}
+                groupName={groupName}
+                groupIndex={groupIndex}
+              />
+            </Stack>
+          )
+        )
+      ) : (
+        <FieldInput
+          fieldValue={fieldValue}
+          field={field}
+          onChange={(e) =>
+            dispatch(
+              setField({
+                field,
+                value: e.target.value,
+                ...(groupName !== undefined && { groupName: groupName }),
+                ...(groupIndex !== undefined && { groupIndex: groupIndex }),
+              })
+            )
+          }
+        />
+      )}
       {field.autoGenerateValue && (
         // auto generation of title field if allowed (all specced fields filled and public)
         <Tooltip title={generatedValue ? t("generate") : t("generateDisabled")}>
@@ -164,7 +174,7 @@ const SingleTextField = ({
               sx={{
                 ml: 0.5,
                 // keep icon centered
-                mt: status === "error" && field.touched ? -3 : 0,
+                mt: status === "error" && fieldValue?.touched ? -3 : 0,
               }}
               disabled={!generatedValue ? true : false}
             >
@@ -173,15 +183,75 @@ const SingleTextField = ({
           </span>
         </Tooltip>
       )}
-      <AddDeleteControls
-        groupedFieldId={groupedFieldId}
-        totalFields={totalFields}
-        sectionIndex={sectionIndex}
-        currentField={currentField}
-        field={field}
-      />
     </Stack>
   );
+};
+
+const FieldInput = ({ field, fieldValue, onChange, index }: {
+  field: TextFieldType; fieldValue: BaseField; onChange: (e: any) => void; index?: number;
+}) => {
+  const { t, i18n } = useTranslation("metadata");
+  const status = getFieldStatus(fieldValue, field);
+  const formDisabled = useAppSelector(getFormDisabled);
+  const auth = useAuth();
+
+  return (
+    <TextField
+      fullWidth
+      error={status === "error" && fieldValue.touched}
+      helperText={status === "error" && fieldValue.touched && t("incorrect")}
+      variant="outlined"
+      type={field.type}
+      label={
+        index !== undefined
+          ? `${lookupLanguageString(field.label, i18n.language)} #${index + 1}`
+          : lookupLanguageString(field.label, i18n.language)
+      }
+      required={fieldValue.required || field.required}
+      multiline={field.multiline}
+      rows={field.multiline ? 4 : ""}
+      value={fieldValue.value || ""}
+      disabled={
+        (field.disabled &&
+          !(field.autofill && !auth.user?.profile[field.autofill])) ||
+        formDisabled
+      }
+      onChange={onChange}
+      placeholder={field.placeholder}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <StatusIcon
+              status={status}
+              title={
+                field.description &&
+                lookupLanguageString(field.description, i18n.language)
+              }
+            />
+          </InputAdornment>
+        ),
+      }}
+      inputProps={{
+        "data-testid": `${field.name}${
+          index !== undefined ? `-${index}` : ""
+        }`,
+      }}
+      sx={{
+        mT: field.repeatable ? 2 : 0,
+      }}
+    />
+  );
+};
+
+// helper to get nested field values for auto generation
+const getNestedField = (obj: any, path: string): BaseField => {
+  const keys = path.includes(".") ? path.split(".") : [path];
+  return keys.reduce((acc, key) => {
+    if (acc?.value instanceof Array) {
+      return acc.value[0]?.[key]; // Assume first element in array
+    }
+    return acc?.[key];
+  }, obj);
 };
 
 export default SingleTextField;

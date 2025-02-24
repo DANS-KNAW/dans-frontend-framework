@@ -101,7 +101,7 @@ const FileMapper = ({
       };
 
       // must initialize the form here, otherwise files will get overwritten
-      depositStore.dispatch(initForm(config.form));
+      config.form && depositStore.dispatch(initForm(config.form));
       // add files to initialized form
       depositStore.dispatch(addFiles([serializedFile]));
       // navigate to form

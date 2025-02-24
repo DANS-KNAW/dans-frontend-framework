@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Radio from "@mui/material/Radio";
 import Stack from "@mui/material/Stack";
 import RadioGroup from "@mui/material/RadioGroup";
@@ -7,7 +8,7 @@ import FormLabel from "@mui/material/FormLabel";
 import FormGroup from "@mui/material/FormGroup";
 import Checkbox from "@mui/material/Checkbox";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { setField } from "../metadataSlice";
+import { setField, getField } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
 import { StatusIcon } from "../../generic/Icons";
 import { lookupLanguageString } from "@dans-framework/utils";
@@ -19,11 +20,26 @@ import { useTranslation } from "react-i18next";
 import { getFormDisabled } from "../../../deposit/depositSlice";
 
 // List of radio button options. First value of the options is selected by default, so no need for status checking.
-export const RadioField = ({ field, sectionIndex }: RadioFieldProps) => {
+export const RadioField = ({ field, groupName, groupIndex }: RadioFieldProps) => {
   const dispatch = useAppDispatch();
   const { i18n } = useTranslation();
-  const status = getFieldStatus(field);
   const formDisabled = useAppSelector(getFormDisabled);
+  const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
+  const status = getFieldStatus(fieldValue, field);
+
+  // on initial render, check if field has a value set, and if so, set it to state
+  useEffect(() => { 
+    if (field.value && !fieldValue) {
+      dispatch(
+        setField({
+          field: field,
+          value: field.value,
+          ...(groupName !== undefined && { groupName: groupName }),
+          ...(groupIndex !== undefined && { groupIndex: groupIndex }),
+        }),
+      );
+    }
+  }, []);
 
   return (
     <FormControl>
@@ -39,16 +55,17 @@ export const RadioField = ({ field, sectionIndex }: RadioFieldProps) => {
       )}
       <RadioGroup
         row={field.layout === "row"}
-        aria-labelledby={field.id}
-        data-testid={`${field.name}-${field.id}`}
+        aria-labelledby={field.name}
+        data-testid={`${field.name}`}
         name={field.name}
-        value={field.value || ""}
+        value={fieldValue.value || ""}
         onChange={(e) =>
           dispatch(
             setField({
-              sectionIndex: sectionIndex,
-              id: field.id,
+              field: field,
               value: e.target.value,
+              ...(groupName !== undefined && { groupName: groupName }),
+              ...(groupIndex !== undefined && { groupIndex: groupIndex }),
             }),
           )
         }
@@ -68,16 +85,17 @@ export const RadioField = ({ field, sectionIndex }: RadioFieldProps) => {
 };
 
 // For a list of checkboxes, we keep the selected values in an array.
-export const CheckField = ({ field, sectionIndex }: CheckFieldProps) => {
+export const CheckField = ({ field, groupName, groupIndex }: CheckFieldProps) => {
   const dispatch = useAppDispatch();
-  const status = getFieldStatus(field);
   const { i18n } = useTranslation();
   const formDisabled = useAppSelector(getFormDisabled);
+  const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
+  const status = getFieldStatus(fieldValue, field);
 
   return (
     <FormControl
       required={field.required}
-      error={field.required && field.value?.length === 0}
+      error={field.required && fieldValue?.value?.length === 0}
       component="fieldset"
     >
       {field.label && (
@@ -90,7 +108,7 @@ export const CheckField = ({ field, sectionIndex }: CheckFieldProps) => {
           {lookupLanguageString(field.label, i18n.language)}
         </FormLabel>
       )}
-      <FormGroup data-testid={`${field.name}-${field.id}`}>
+      <FormGroup data-testid={`${field.name}`}>
         {field.options.map((option) => (
           <Stack direction="row" alignItems="center" key={option.value}>
             <FormControlLabel
@@ -98,22 +116,24 @@ export const CheckField = ({ field, sectionIndex }: CheckFieldProps) => {
                 <Checkbox
                   sx={{ mr: 0.15 }}
                   checked={Boolean(
-                    field.value && field.value.indexOf(option.value) !== -1,
+                    fieldValue.value && fieldValue.value.indexOf(option.value) !== -1,
                   )}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    // set the field value
                     dispatch(
                       setField({
-                        sectionIndex: sectionIndex,
-                        id: field.id,
+                        field: field,
                         value:
                           e.target.checked ?
-                            [...(field.value || ""), e.target.name]
-                          : field.value!.filter(
-                              (item) => item !== e.target.name,
+                            [...(fieldValue.value || ""), e.target.name]
+                          : fieldValue.value!.filter(
+                              (item: string) => item !== e.target.name,
                             ),
+                        ...(groupName !== undefined && { groupName: groupName }),
+                        ...(groupIndex !== undefined && { groupIndex: groupIndex }),
                       }),
-                    )
-                  }
+                    );
+                  }}
                   name={option.value}
                   disabled={formDisabled}
                 />
