@@ -51,15 +51,15 @@ export const elasticConfig: EndpointProps[] = [
           chartType: "bar",
         }}
       />,
-      // <MapFacet
-      //   config={{
-      //     id: "countriesMap",
-      //     field: "countries.iso",
-      //     title:  "Map",
-      //     cols: 6,
-      //     rows: 1,
-      //   }}
-      // />,
+      <MapFacet
+        config={{
+          id: "countriesMap",
+          field: "countries.location",
+          title:  "Map",
+          cols: 6,
+          rows: 1,
+        }}
+      />,
       <DateChartFacet
         config={{
           id: "start_date",
