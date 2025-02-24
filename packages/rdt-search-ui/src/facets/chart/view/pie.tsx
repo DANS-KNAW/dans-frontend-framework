@@ -1,5 +1,5 @@
 import { ChartFacet } from "./chart";
-import { PieChartController } from "../pie-chart-controller";
+import { ChartController } from "../chart-controller";
 import {
   ChartFacetConfig,
   ChartFacetProps,
@@ -7,8 +7,6 @@ import {
   PieChartFacetState,
 } from "../state";
 import { isConfig } from "../../common";
-
-import styles from "./index.module.css";
 
 export function PieChartFacet(
   props:
@@ -24,8 +22,7 @@ export function PieChartFacet(
   return (
     <ChartFacet<ChartFacetConfig, PieChartFacetState, PieChartFacetFilter>
       {...props}
-      className={styles.pie}
     />
   );
 }
-PieChartFacet.controller = PieChartController;
+PieChartFacet.controller = ChartController;

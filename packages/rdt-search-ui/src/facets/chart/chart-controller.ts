@@ -16,35 +16,71 @@ function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export class PieChartController extends FacetController<
+export class ChartController extends FacetController<
   ChartFacetConfig,
   PieChartFacetState,
   PieChartFacetFilter
 > {
+  chartType: string; // Add this to the class to store the chartType
+
+  constructor(config: ChartFacetConfig) {
+    super(config);
+    this.chartType = config.chartType || "pie"; // Default to pie chart
+  }
+  
   setOptions() {
-    return {
-      tooltip: {},
-      series: [
-        {
-          type: "pie",
+    return this.chartType === "pie"
+    ? {
+        tooltip: {},
+        series: [
+          {
+            type: "pie",
+            data: [],
+            radius: "60%",
+          },
+        ],
+      }
+    : {
+        tooltip: {},
+        xAxis: {
+          type: "category",
           data: [],
-          radius: "60%",
         },
-      ],
-    };
+        yAxis: {
+          type: "value",
+        },
+        series: [
+          {
+            type: "bar",
+            data: [],
+          },
+        ],
+      };
   }
 
   updateOptions(values: KeyCount[]) {
-    return {
-      series: [
-        {
-          data: values.map((value) => ({
-            value: value.count,
-            name: value.key,
-          })),
+    return this.chartType === "pie"
+    ? {
+        series: [
+          {
+            data: values.map((value) => ({
+              value: value.count,
+              name: value.key,
+            })),
+          },
+        ],
+      }
+    : {
+        xAxis: {
+          data: values.map((value) => value.key),
         },
-      ],
-    };
+        series: [
+          {
+            type: "bar",
+            data: values.map((value) => value.count),
+          },
+        ],
+      };
   }
 
   reducer(state: SearchState, action: FacetsDataReducerAction): SearchState {

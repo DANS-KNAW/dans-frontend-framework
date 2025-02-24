@@ -1,69 +1,43 @@
 import type { ResultBodyProps } from "@dans-framework/rdt-search-ui";
-import { useState } from "react";
-import { MetadataList } from "../record";
 import parse from "html-react-parser";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 
-/* Custom component for search results */
-
-export function Cat2Result(props: ResultBodyProps) {
-  const { result: item } = props;
-
-  const title =
-    `${item.pid_stack} - ${item.entity} - ${item.role}` || "<i>empty</i>";
-
+const gupriMap = (coverage?: string, unique?: boolean, resolvable?: string, persistent?: string) => {
+  const sx = {
+    fontSize: '2rem',
+    fontWeight: 'bold',
+    marginBottom: 0,
+  };
   return (
-    <>
-      <Typography variant="h5">{parse(title)}</Typography>
-      {item.dc_date && (
-        <Typography variant="body2" gutterBottom>
-          {new Date(item.dc_date).toDateString()}
-        </Typography>
-      )}
-      <ReadMore item={item} />
-      <MetadataList record={item} />
-    </>
-  );
+    <Stack direction="row" sx={{
+      backgroundColor: '#f1f1f1',
+      padding: 1,
+      borderRadius: 1,
+    }}>
+      <Typography sx={sx} color={coverage === 'Global' ? 'success.main' : coverage !== null ? 'error.main' : 'primary.gray'}>G</Typography>
+      <Typography sx={sx} color={unique ? 'success.main' : unique !== null ? 'error.main' : 'primary.gray'}>U</Typography>
+      <Typography sx={sx} color={persistent?.indexOf('Yes') !== -1 ? 'success.main' : persistent !== null ? 'error.main' : 'primary.gray'}>P</Typography>
+      <Typography sx={sx} color={resolvable?.indexOf('Direct') !== -1 ? 'success.main' : persistent !== null ? 'warning.main' : 'primary.gray'}>R</Typography>
+      <Typography sx={sx}>i</Typography>
+    </Stack>
+  )
 }
 
-function ReadMore({ item }: { item: ResultBodyProps["result"] }) {
-  const [active, setActive] = useState(false);
-
-  const description = item.dc_description || "";
-
-  const [visibleText, hiddenText] = [
-    description.substring(0, 180),
-    description.substring(180),
-  ];
-
-  // There is only one sentence, return it
-  if (hiddenText == null || hiddenText.trim().length === 0) {
-    return <Typography variant="body1">{visibleText}</Typography>;
-  }
+/* Custom component for search results */
+export function SingleResult(props: ResultBodyProps) {
+  const { result: item } = props;
+  const title = item.identifier || "<i>Untitled</i>";
+  const description = item.description || "No description found";
 
   return (
-    <>
-      <Typography mb={2}>
-        {`${visibleText}${
-          visibleText.length < description.length && !active ?
-            "..."
-          : hiddenText
-        }`}
-        <Button
-          size="small"
-          onClick={(ev) => {
-            ev.stopPropagation();
-            setActive(!active);
-          }}
-          sx={{ fontSize: 10, pt: 0.1, pb: 0.1 }}
-          endIcon={active ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-        >
-          {active ? "Read less" : "Read more"}
-        </Button>
-      </Typography>
-    </>
+    <Stack direction="row" spacing={2} justifyContent="space-between" alignItems="flex-start">
+      <Box>
+        <Typography variant="h5">{parse(title)}</Typography>
+        <Typography>{parse(description)}</Typography>
+      </Box>
+      {gupriMap(item.coverage, item.unique, item.resolvable, item.persistent)}
+    </Stack>
   );
 }

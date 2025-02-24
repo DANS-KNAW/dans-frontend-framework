@@ -20,7 +20,7 @@ export function ChartFacet<
   Config extends ChartFacetConfig,
   State extends ChartFacetState,
   Filter extends FacetFilter,
->(props: ChartFacetProps<Config, State, Filter> & { className: string }) {
+>(props: ChartFacetProps<Config, State, Filter> & { className?: string }) {
   // Ref to the chart instance
   const chart = React.useRef<echarts.ECharts | null>(null);
   const { t } = useTranslation("facets");

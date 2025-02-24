@@ -7,7 +7,9 @@ import type {
 import type { KeyCount } from "../list/state";
 import { FacetsDataReducerAction } from "../../context/state/actions";
 
-export interface ChartFacetConfig extends BaseFacetConfig {}
+export interface ChartFacetConfig extends BaseFacetConfig {
+  chartType?: string;
+}
 
 export interface DateChartFacetConfig extends ChartFacetConfig {
   interval: "year" | "quarter" | "month" | "day" | "hour" | "minute";

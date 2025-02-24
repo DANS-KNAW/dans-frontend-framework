@@ -41,6 +41,8 @@ export const Facets = ({
       }))[index];
     }) || [];
 
+  const columns = (Array.isArray(children) && children?.length > 0 && children[0].props.customColumns) || 8;
+  
   return (
     <Grid container spacing={2}>
       {!dashboard ?
@@ -61,7 +63,7 @@ export const Facets = ({
         ))
       : <Grid xs={12}>
           <ImageList
-            cols={8}
+            cols={columns}
             variant="quilted"
             gap={16}
             sx={{
@@ -73,9 +75,9 @@ export const Facets = ({
               <ImageListItem
                 key={f.facet.ID}
                 cols={
-                  isTiny ? 8
+                  isTiny ? columns
                   : isSmall ?
-                    4
+                    columns / 2
                   : f.facet.config.cols || 4
                 }
                 rows={f.facet.config.rows || 1}
