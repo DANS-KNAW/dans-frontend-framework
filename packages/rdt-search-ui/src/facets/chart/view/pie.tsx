@@ -8,6 +8,7 @@ import {
 } from "../state";
 import { isConfig } from "../../common";
 
+// this now also handles bar charts!
 export function PieChartFacet(
   props:
     | { config: ChartFacetConfig }

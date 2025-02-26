@@ -41,6 +41,7 @@ export function ChartFacet<
 
     // Add click event listener
     chart.current.on("click", (params) => {
+      !props.facet.config.groupByLabel &&
       props.dispatch({
         type: "UPDATE_FACET_FILTER",
         subType: "CHART_FACET_SET_FILTER",

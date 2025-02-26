@@ -126,9 +126,10 @@ export const elasticConfig: EndpointProps[] = [
       />,
       <PieChartFacet
         config={{
-          id: "provider",
-          field: "provider",
+          id: "managers",
+          field: "managers",
           title: "Managers",
+          groupByLabel: "label",
           cols: 12,
           rows: 1,
           chartType: "bar",

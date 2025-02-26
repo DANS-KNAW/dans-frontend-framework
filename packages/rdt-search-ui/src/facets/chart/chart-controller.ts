@@ -43,11 +43,11 @@ export class ChartController extends FacetController<
     : {
         tooltip: {},
         xAxis: {
-          type: "category",
-          data: [],
+          type: "value",
         },
         yAxis: {
-          type: "value",
+          type: "category",
+          data: [],
         },
         series: [
           {
@@ -55,6 +55,12 @@ export class ChartController extends FacetController<
             data: [],
           },
         ],
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
       };
   }
 
@@ -71,7 +77,7 @@ export class ChartController extends FacetController<
         ],
       }
     : {
-        xAxis: {
+        yAxis: {
           data: values.map((value) => value.key),
         },
         series: [
@@ -182,6 +188,41 @@ export class ChartController extends FacetController<
       },
     }
     :
+    // group by label, instead of doing aggregation grouping
+    this.config.groupByLabel ?
+    {
+      terms: {
+        field: this.config.groupByLabel,
+        size: 100000,
+      },
+      aggs: {
+        total: {
+          sum: {
+            field: this.config.field
+          }
+        },
+        filter_by_count: {
+          bucket_selector: {
+            buckets_path: {
+              total_count: "total"
+            },
+            script: "params.total_count > 1"
+          }
+        },
+        order_by_total: {
+          bucket_sort: {
+            sort: [
+              {
+                total: {
+                  order: "asc"
+                }
+              }
+            ],
+          }
+        }
+      }
+    }
+    :
     {
       terms: {
         field: this.config.field,
@@ -198,7 +239,7 @@ export class ChartController extends FacetController<
   ): KeyCount[] {
     return buckets.map((b: Bucket) => ({
       key: b.key.toString(),
-      count: b.doc_count,
+      count: this.config.groupByLabel ? b.total.value : b.doc_count,
     }));
   }
 }

@@ -112,7 +112,7 @@ export function MapView(
 
       // Reset the bounds to the full extent
       const bounds = transformExtent(
-        [-180, -90, 180, 90],
+        [-180, -60, 180, 90],
         "EPSG:4326",
         "EPSG:3857",
       );

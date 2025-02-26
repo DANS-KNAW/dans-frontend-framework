@@ -14,6 +14,7 @@ export interface BaseFacetConfig {
   readonly description?: string;
   readonly collapse?: boolean;
   readonly groupBy?: Partial<FixedFacetsProps>[];
+  readonly groupByLabel?: string;
   cols?: number;
   rows?: number;
 }
