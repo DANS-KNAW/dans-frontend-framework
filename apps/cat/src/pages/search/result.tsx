@@ -2,26 +2,63 @@ import type { ResultBodyProps } from "@dans-framework/rdt-search-ui";
 import parse from "html-react-parser";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 
-const gupriMap = (coverage?: string, unique?: boolean, resolvable?: string, persistent?: string) => {
+const ToolTipItem = ({ title, value }: {title: string; value?: string;}) => (
+  <Stack direction="row" spacing={1}>
+    <Typography variant="body2" sx={{ width: '6.5rem', textAlign: 'right' }}>{title}</Typography>
+    <Typography variant="body2">{value || '-'}</Typography>
+  </Stack>
+)
+
+export const gupriMap = (unique?: string, resolvable?: string, persistent?: string) => {
   const sx = {
     fontSize: '2rem',
     fontWeight: 'bold',
     marginBottom: 0,
   };
   return (
-    <Stack direction="row" sx={{
-      backgroundColor: '#f1f1f1',
-      padding: 1,
-      borderRadius: 1,
-    }}>
-      <Typography sx={sx} color={coverage === 'Global' ? 'success.main' : coverage !== null ? 'error.main' : 'primary.gray'}>G</Typography>
-      <Typography sx={sx} color={unique ? 'success.main' : unique !== null ? 'error.main' : 'primary.gray'}>U</Typography>
-      <Typography sx={sx} color={persistent?.indexOf('Yes') !== -1 ? 'success.main' : persistent !== null ? 'error.main' : 'primary.gray'}>P</Typography>
-      <Typography sx={sx} color={resolvable?.indexOf('Direct') !== -1 ? 'success.main' : persistent !== null ? 'warning.main' : 'primary.gray'}>R</Typography>
-      <Typography sx={sx}>i</Typography>
-    </Stack>
+    <Tooltip title={
+      <Box>
+        <ToolTipItem title="Globally Unique:" value={unique} />
+        <ToolTipItem title="Persistent:" value={persistent} />
+        <ToolTipItem title="Resolvable:" value={resolvable} />
+      </Box>
+    }>
+      <Stack direction="row" sx={{
+        backgroundColor: '#f1f1f1',
+        pl: 1,
+        pr: 1,
+        pt: 0,
+        pb: 0,
+        borderRadius: 1,
+      }}>
+        <Typography sx={sx} color={unique?.toLowerCase().includes('global') ? 'success.main' : 'primary.gray'}>G</Typography>
+        <Typography sx={sx} color={
+          unique?.toLowerCase().includes('global') || unique?.toLowerCase().includes('namespace') 
+          ? 'success.main' 
+          : unique?.toLowerCase().includes('local') 
+          ? 'warning.main' 
+          : 'primary.gray'
+        }>U</Typography>
+        <Typography sx={sx} color={
+          persistent?.toLowerCase().includes('explicit') 
+          ? 'success.main' 
+          : persistent?.toLowerCase().includes('implicit') && !persistent?.toLowerCase().includes('no') 
+          ? 'warning.main' 
+          : 'primary.gray'
+        }>P</Typography>
+        <Typography sx={sx} color={
+          resolvable?.toLowerCase() === 'direct' 
+          ? 'success.main' 
+          : resolvable?.toLowerCase() === 'indirect'
+          ? 'warning.main' 
+          : 'primary.gray'
+        }>R</Typography>
+        <Typography sx={sx}>i</Typography>
+      </Stack>
+    </Tooltip>
   )
 }
 
@@ -37,7 +74,7 @@ export function SingleResult(props: ResultBodyProps) {
         <Typography variant="h5">{parse(title)}</Typography>
         <Typography>{parse(description)}</Typography>
       </Box>
-      {gupriMap(item.coverage, item.unique, item.resolvable, item.persistent)}
+      {gupriMap(item.unique, item.resolvable, item.persistent)}
     </Stack>
   );
 }
