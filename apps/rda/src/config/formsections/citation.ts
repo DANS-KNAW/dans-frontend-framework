@@ -60,6 +60,7 @@ const section: InitialSectionType = {
         nl: "Datum van publicatie",
       },
       format: "DD-MM-YYYY HH:mm",
+      autofill: "dateNow",
     },
     {
       type: "text",
