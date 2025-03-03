@@ -81,6 +81,7 @@ const section: InitialSectionType = {
         nl: "Taal van het deposit",
       },
       options: "languageList",
+      value: { label: "English", value: "en" },
     },
   ],
 };
