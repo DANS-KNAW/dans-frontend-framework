@@ -46,6 +46,12 @@ const section: InitialSectionType = {
         nl: "Instituut - vaak de rechthebbende",
       },
       options: "ror",
+      value: {
+        label: "RDA (United States)",
+        value: "https://ror.org/02hs57b27",
+        extraLabel: "country",
+        extraContent: "United States",
+      },
     },
     {
       type: "date",
