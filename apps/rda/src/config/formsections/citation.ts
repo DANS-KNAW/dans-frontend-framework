@@ -47,10 +47,10 @@ const section: InitialSectionType = {
       },
       options: "ror",
       value: {
-        label: "RDA (United States)",
-        value: "https://ror.org/02hs57b27",
+        label: "Research Data Alliance",
+        value: "https://ror.org/05dc6w374",
         extraLabel: "country",
-        extraContent: "United States",
+        extraContent: "Australia",
       },
     },
     {
