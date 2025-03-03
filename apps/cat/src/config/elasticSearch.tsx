@@ -9,13 +9,11 @@ import {
 import { SingleResult } from "../pages/search/result";
 
 const fieldConfig: Partial<RDTSearchUIProps> = {
-  fullTextFields: ["description", "label.keyword", "provider.keyword", "entity.keyword"],
+  fullTextFields: ["description", "label"],
   fullTextHighlight: {
     fields: {
       description: { number_of_fragments: 0 },
       label: { number_of_fragments: 0 },
-      provider: { number_of_fragments: 0 },
-      entity: { number_of_fragments: 0 },
     },
   },
 };
@@ -132,7 +130,7 @@ export const elasticConfig: EndpointProps[] = [
           id: "managers",
           field: "managers",
           title: "Managers",
-          groupByLabel: "label",
+          groupByLabel: "identifier",
           cols: 12,
           rows: 1,
           chartType: "bar",

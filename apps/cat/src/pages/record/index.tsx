@@ -14,7 +14,7 @@ import { elasticConfig } from "../../config/elasticSearch";
 import { gupriMap } from "../search/result";
 
 interface SingleRecord {
-  label: string;
+  identifier: string;
   description: string;
   start_date: string;
   entity: string;
@@ -134,7 +134,7 @@ export function SingleRecord({ onClose }: { onClose: () => void }) {
                     <Box mt={2}>
                       <Metadata
                         name="Identifier name"
-                        value={record.label}
+                        value={record.identifier}
                       />
                       <Metadata
                         name="Identifier Description"
