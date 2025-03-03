@@ -2,6 +2,7 @@ import type { LanguageStrings } from "@dans-framework/utils";
 import type { AuthProperty } from "@dans-framework/user-auth";
 import type { Feature, Point, Polygon, LineString, Geometry } from "geojson";
 import type { LngLatBoundsLike } from "react-map-gl";
+import { AutoFillProperty } from "@dans-framework/user-auth/src/types";
 
 // All user input field types
 export type InputField =
@@ -65,7 +66,7 @@ export interface DateFieldType extends BasisFieldType {
   fields?: never;
   multiApiValue?: never;
   options?: never;
-  autofill?: never;
+  autofill?: AutoFillProperty;
   minDateField?: string;
   maxDateField?: string;
 }
