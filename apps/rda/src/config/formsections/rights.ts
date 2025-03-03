@@ -79,6 +79,11 @@ const section: InitialSectionType = {
         nl: "Eén of meerdere specifieke licenties",
       },
       options: "licenses",
+      value: {
+        label: "CC-BY-4.0 Creative Commons Attribution 4.0",
+        value: "https://creativecommons.org/licenses/by/4.0/",
+        id: "CC-BY-4.0",
+      },
     },
   ],
 };
