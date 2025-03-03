@@ -64,6 +64,7 @@ const section: InitialSectionType = {
           value: "closed",
         },
       ],
+      value: { label: "Open", value: "open" },
     },
     {
       type: "autocomplete",
