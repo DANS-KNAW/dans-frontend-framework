@@ -9,10 +9,13 @@ import {
 import { SingleResult } from "../pages/search/result";
 
 const fieldConfig: Partial<RDTSearchUIProps> = {
-  fullTextFields: ["description"],
+  fullTextFields: ["description", "label.keyword", "provider.keyword", "entity.keyword"],
   fullTextHighlight: {
     fields: {
       description: { number_of_fragments: 0 },
+      label: { number_of_fragments: 0 },
+      provider: { number_of_fragments: 0 },
+      entity: { number_of_fragments: 0 },
     },
   },
 };
