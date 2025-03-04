@@ -101,6 +101,7 @@ const section: InitialSectionType = {
           },
           options: "orcid",
           allowFreeText: true,
+          required: true,
         },
         {
           type: "autocomplete",
@@ -113,6 +114,7 @@ const section: InitialSectionType = {
             en: "Type of contribution",
             nl: "Type bijdrage",
           },
+          required: true,
           options: [
             {
               label: {
