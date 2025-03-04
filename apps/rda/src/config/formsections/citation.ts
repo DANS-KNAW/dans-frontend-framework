@@ -76,6 +76,21 @@ const section: InitialSectionType = {
       },
     },
     {
+      type: "autocomplete",
+      name: "firstAuthor",
+      label: {
+        en: "Author",
+        nl: "Auteur",
+      },
+      required: true,
+      options: "orcid",
+      allowFreeText: true,
+      description: {
+        en: "Author for this deposit. Every submission requires at least one author to be specified. Additional contributors can be added in the Contributors section below.",
+        nl: "Auteur voor dit deposit. Elke inzending vereist dat ten minste één auteur wordt opgegeven. Extra bijdragers kunnen worden toegevoegd in de sectie Bijdragers hieronder.",
+      },
+    },
+    {
       type: "group",
       name: "contributors",
       label: {
@@ -101,7 +116,6 @@ const section: InitialSectionType = {
           },
           options: "orcid",
           allowFreeText: true,
-          required: true,
         },
         {
           type: "autocomplete",
@@ -114,7 +128,6 @@ const section: InitialSectionType = {
             en: "Type of contribution",
             nl: "Type bijdrage",
           },
-          required: true,
           options: [
             {
               label: {
