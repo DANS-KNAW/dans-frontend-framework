@@ -107,6 +107,7 @@ const section: InitialSectionType = {
         {
           type: "autocomplete",
           name: "contributor",
+          toggleRequired: ["contributorType"],
           label: {
             en: "Contributor",
             nl: "Bijdrager",
@@ -121,6 +122,7 @@ const section: InitialSectionType = {
         {
           type: "autocomplete",
           name: "contributorType",
+          toggleRequired: ["contributor"],
           label: {
             en: "Contributor type",
             nl: "Type bijdrager",
