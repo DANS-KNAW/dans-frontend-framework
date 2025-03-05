@@ -18,11 +18,8 @@ export const submitApi = createApi({
   endpoints: (build) => ({
     submitData: build.mutation({
       query: ({ user, actionType, id, metadata, config, files }) => {
-        console.log(metadata);
         // format data
         const data = formatFormData(id, metadata, files, config.formTitle);
-        console.log("Submit metadata:");
-        console.log(data);
 
         // format headers
         const headers = {
@@ -45,8 +42,14 @@ export const submitApi = createApi({
             })),
           ),
         };
-        console.log("Submit req headers:");
-        console.log(headers);
+
+        // log for dev
+        if(!import.meta.env.PROD) {
+          console.log("Submit req headers:");
+          console.log(headers);
+          console.log("Submit metadata:");
+          console.log(data);
+        }
 
         const submitUrl =
           actionType === "resubmit" ?
