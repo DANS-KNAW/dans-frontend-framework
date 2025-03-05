@@ -70,7 +70,7 @@ export interface FormConfig {
     embargoDateMin?: number;
     embargoDateMax?: number;
     maxSize?: number;
-    disableFileWarning?: boolean;
+    disableFileWarning?: boolean | number;
     customFileWarning?: string | LanguageStrings;
   };
   displayName?: string | LanguageStrings;
