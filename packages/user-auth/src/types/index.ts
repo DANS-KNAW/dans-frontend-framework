@@ -71,6 +71,8 @@ export type AuthProperty =
   | "family_name"
   | "given_name";
 
+export type AutoFillProperty = "dateNow";
+
 export type FormActionType = "load" | "copy" | "resubmit" | "view";
 
 export interface FormAction {
