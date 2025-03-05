@@ -25,8 +25,8 @@ function addFixedFacetsToQuery(query: Payload, fixedFacets?: FixedFacetsProps[])
     return null; // Ignore unsupported types
   });
 
-  // Filter out nulls
-  const validFilters = filters?.filter((filter) => filter !== null);
+  // Filter out nulls, add keyword query if present
+  const validFilters = [...(filters?.filter((filter) => filter !== null) || []), ...(query.query ? [query.query] : [])];
 
   // Add the OR filter (should clause) to the existing query
   return {
