@@ -1,5 +1,5 @@
 import { ChartFacet } from "./chart";
-import { PieChartController } from "../pie-chart-controller";
+import { ChartController } from "../chart-controller";
 import {
   ChartFacetConfig,
   ChartFacetProps,
@@ -8,8 +8,7 @@ import {
 } from "../state";
 import { isConfig } from "../../common";
 
-import styles from "./index.module.css";
-
+// this now also handles bar charts!
 export function PieChartFacet(
   props:
     | { config: ChartFacetConfig }
@@ -24,8 +23,7 @@ export function PieChartFacet(
   return (
     <ChartFacet<ChartFacetConfig, PieChartFacetState, PieChartFacetFilter>
       {...props}
-      className={styles.pie}
     />
   );
 }
-PieChartFacet.controller = PieChartController;
+PieChartFacet.controller = ChartController;

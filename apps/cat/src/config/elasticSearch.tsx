@@ -1,17 +1,19 @@
 import {
   PieChartFacet,
   ListFacet,
+  DateChartFacet,
+  MapFacet,
   type EndpointProps,
   type RDTSearchUIProps,
 } from "@dans-framework/rdt-search-ui";
-import { Cat2Result } from "../pages/search/result";
+import { SingleResult } from "../pages/search/result";
 
 const fieldConfig: Partial<RDTSearchUIProps> = {
-  fullTextFields: ["title^2", "dc_description"],
+  fullTextFields: ["description", "label"],
   fullTextHighlight: {
     fields: {
-      title: { number_of_fragments: 0 },
-      dc_description: { number_of_fragments: 0 },
+      description: { number_of_fragments: 0 },
+      label: { number_of_fragments: 0 },
     },
   },
 };
@@ -24,288 +26,160 @@ const fieldConfig: Partial<RDTSearchUIProps> = {
 export const elasticConfig: EndpointProps[] = [
   {
     name: "CAT Catalogue",
-    url: import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT + "/cat",
+    url: import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT,
     fullTextFields: fieldConfig.fullTextFields,
     fullTextHighlight: fieldConfig.fullTextHighlight,
-    resultBodyComponent: Cat2Result,
+    resultBodyComponent: SingleResult,
     onClickResultPath: "record",
+    customColumns: 12,
     dashboard: [
       <ListFacet
         config={{
-          id: "scale",
-          field: "scalability.keyword",
-          title: {
-            en: "Scalability",
-            nl: "Schaalbaarheid",
-          },
-          size: 10,
-          cols: 2,
-          rows: 1,
-        }}
-      />,
-      <PieChartFacet
-        config={{
-          id: "pids",
-          field: "pid_stack.keyword",
-          title: {
-            en: "PID stack",
-            nl: "PID stack",
-          },
+          id: "entity",
+          field: "entity",
+          title: "Entity",
           cols: 3,
           rows: 1,
         }}
       />,
       <PieChartFacet
         config={{
-          id: "ent",
-          field: "entity.keyword",
-          title: {
-            en: "Entity",
-            nl: "Entiteit",
-          },
+          id: "countries",
+          field: "countries.name",
+          title:  "Country",
           cols: 3,
+          rows: 1,
+          chartType: "bar",
+        }}
+      />,
+      <MapFacet
+        config={{
+          id: "countriesMap",
+          field: "countries.location",
+          title:  "Map",
+          cols: 6,
           rows: 1,
         }}
       />,
-      <ListFacet
+      <DateChartFacet
         config={{
-          id: "readability",
-          field: "readability.keyword",
-          title: {
-            en: "Readability",
-            nl: "Leesbaarheid",
-          },
-          cols: 2,
+          id: "start_date",
+          field: "start_date",
+          title:  "Year published",
+          interval: "year",
+          cols: 12,
           rows: 1,
         }}
       />,
       <PieChartFacet
         config={{
-          id: "role",
-          field: "role.keyword",
-          title: {
-            en: "Role",
-            nl: "Rol",
-          },
-          cols: 3,
-          rows: 1,
-        }}
-      />,
-      <PieChartFacet
-        config={{
-          id: "namespace",
-          field: "namespace.keyword",
-          title: {
-            en: "Namespace",
-            nl: "Namespace",
-          },
-          cols: 3,
-          rows: 1,
-        }}
-      />,
-      <ListFacet
-        config={{
-          id: "resolutionpoint",
-          field: "resolutionpoint.keyword",
-          title: {
-            en: "Resolution point",
-            nl: "Resolutiepunt",
-          },
-          cols: 2,
-          rows: 1,
-        }}
-      />,
-      <ListFacet
-        config={{
-          id: "resolutionchannel",
-          field: "resolutionchannel.keyword",
-          title: {
-            en: "Resolution channel",
-            nl: "Resolutiekanaal",
-          },
-          cols: 2,
-          rows: 1,
-        }}
-      />,
-      <ListFacet
-        config={{
-          id: "resolverapi",
-          field: "resolverapi.keyword",
-          title: {
-            en: "Resolver API",
-            nl: "Resolver API",
-          },
-          cols: 2,
-          rows: 1,
-        }}
-      />,
-      <ListFacet
-        config={{
-          id: "metaresolveravailable",
-          field: "metaresolveravailable.keyword",
-          title: {
-            en: "Meta resolver available",
-            nl: "Meta-resolver beschikbaar",
-          },
-          cols: 2,
-          rows: 1,
-        }}
-      />,
-      <PieChartFacet
-        config={{
-          id: "negotiationtype",
-          field: "negotiationtype.keyword",
-          title: {
-            en: "Negotiation type",
-            nl: "Onderhandelingstype",
-          },
+          id: "resolutionTopology",
+          field: "resolution_topology",
+          title: "Resolution Topology",
           cols: 4,
           rows: 1,
         }}
       />,
       <PieChartFacet
         config={{
-          id: "multipleresolution",
-          field: "multipleresolution.keyword",
-          title: {
-            en: "Multiple resolution",
-            nl: "Meervoudige resolutie",
-          },
-          cols: 4,
-          rows: 1,
-        }}
-      />,
-      <ListFacet
-        config={{
-          id: "metadataschematype",
-          field: "metadataschematype.keyword",
-          title: {
-            en: "Metadata schema type",
-            nl: "Metadataschema type",
-          },
-          size: 15,
-          cols: 2,
-          rows: 1,
-        }}
-      />,
-      <ListFacet
-        config={{
-          id: "metadatavariation",
-          field: "metadatavariation.keyword",
-          title: {
-            en: "Metadata variation",
-            nl: "Metadatavariatie",
-          },
-          cols: 2,
-          rows: 1,
-        }}
-      />,
-      <PieChartFacet
-        config={{
-          id: "metadatasupportoptions",
-          field: "metadatasupportoptions.keyword",
-          title: {
-            en: "Metadata support options",
-            nl: "Metadatamogelijkheden ondersteunen",
-          },
+          id: "numberOfResolvers",
+          field: "number_of_resolvers",
+          title: "Number of Resolvers",
           cols: 4,
           rows: 1,
         }}
       />,
       <PieChartFacet
         config={{
-          id: "governanceoptions",
-          field: "governanceoptions.keyword",
-          title: {
-            en: "Governance options",
-            nl: "Overheidsmogelijkheden",
-          },
+          id: "metaResolvers",
+          field: "metaresovers",
+          title: "Meta Resolvers",
           cols: 4,
           rows: 1,
         }}
       />,
       <PieChartFacet
         config={{
-          id: "technicalsustainability",
-          field: "technicalsustainability.keyword",
-          title: {
-            en: "Technical sustainability",
-            nl: "Technische duurzaamheid",
-          },
+          id: "namespaceType",
+          field: "namespace_type",
+          title: "Namespace Type",
+          cols: 4,
+          rows: 1,
+        }}
+      />,
+      <PieChartFacet
+        config={{
+          id: "persistent",
+          field: "persistent",
+          title: "Persistent",
+          cols: 4,
+          rows: 1,
+        }}
+      />,
+      <PieChartFacet
+        config={{
+          id: "unique",
+          field: "unique",
+          title: "Unique",
+          cols: 4,
+          rows: 1,
+        }}
+      />,
+      <PieChartFacet
+        config={{
+          id: "managers",
+          field: "managers",
+          title: "Managers",
+          groupByLabel: "identifier",
+          cols: 12,
+          rows: 1,
+          chartType: "bar",
+        }}
+      />,
+      <ListFacet
+        config={{
+          id: "authority",
+          field: "provider",
+          title: "Authority",
           cols: 4,
           rows: 1,
         }}
       />,
       <ListFacet
         config={{
-          id: "posi",
-          field: "posi.keyword",
-          title: {
-            en: "POSI",
-            nl: "POSI",
-          },
-          cols: 2,
-          rows: 1,
-        }}
-      />,
-      <PieChartFacet
-        config={{
-          id: "financialsustainability",
-          field: "financialsustainability.keyword",
-          title: {
-            en: "Financial sustainability",
-            nl: "Financiële duurzaamheid",
-          },
-          cols: 3,
-          rows: 1,
-        }}
-      />,
-      <PieChartFacet
-        config={{
-          id: "servicequality",
-          field: "servicequality.keyword",
-          title: {
-            en: "Service quality",
-            nl: "Servicekwaliteit",
-          },
-          cols: 3,
+          id: "scheme",
+          field: "scheme",
+          title: "Scheme",
+          cols: 4,
           rows: 1,
         }}
       />,
       <ListFacet
         config={{
-          id: "valueaddedservice",
-          field: "valueaddedservice.keyword",
-          title: {
-            en: "Value added service",
-            nl: "Toegevoegde waarde service",
-          },
-          cols: 2,
+          id: "standard",
+          field: "standard",
+          title: "Standard",
+          cols: 4,
           rows: 1,
         }}
       />,
       <PieChartFacet
         config={{
-          id: "informationintegrity",
-          field: "informationintegrity.keyword",
-          title: {
-            en: "Information integrity",
-            nl: "Informatie-integriteit",
-          },
-          cols: 3,
+          id: "spatialCoverage",
+          field: "coverage",
+          title: "Spatial Coverage",
+          cols: 6,
           rows: 1,
         }}
       />,
       <PieChartFacet
         config={{
-          id: "certification",
-          field: "certification.keyword",
-          title: {
-            en: "Certification",
-            nl: "Certificering",
-          },
-          cols: 3,
+          id: "disciplineCoverage",
+          field: "disciplinary",
+          title: "Discipline Coverage",
+          cols: 6,
           rows: 1,
+          chartType: "bar",
         }}
       />,
     ],

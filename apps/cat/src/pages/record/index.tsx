@@ -1,279 +1,184 @@
-import { Container } from "@mui/material";
-import { getCurrentEndpoint, type Result } from "@dans-framework/rdt-search-ui";
-import React from "react";
+import CircularProgress from "@mui/material/CircularProgress";
+import Container from "@mui/material/Container";
+import { getCurrentEndpoint, type EndpointProps } from "@dans-framework/rdt-search-ui";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2";
+import { motion } from "framer-motion";
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
+import { elasticConfig } from "../../config/elasticSearch";
+import { gupriMap } from "../search/result";
 
-interface CatRecord {
-  uuid_pidstack: string;
-  pid_stack: string;
+interface SingleRecord {
+  identifier: string;
+  description: string;
+  start_date: string;
   entity: string;
-  role: string;
-  namespace: string;
-  readability: string;
-  resolutionpoint: string;
-  resolutionchannel: string;
-  negotiationtype: string;
-  resolverapi: string;
-  metaresolveravailable: string;
-  multipleresolution: string;
-  metadatasupportoptions: string;
-  metadataschematype: string;
-  metadatavariation: string;
-  governanceoptions: string;
-  technicalsustainability: string;
-  financialsustainability: string;
-  scalability: string;
-  posi: string;
-  valueaddedservice: string;
-  servicequality: string;
-  informationintegrity: string;
-  certification: string;
-}
+  coverage: string;
+  unique: string;
+  resolvable: string;
+  persistent: string;
+} 
 
-export function RdaRecord() {
+export function SingleRecord({ onClose }: { onClose: () => void }) {
   const { id } = useParams();
-  const [record, setRecord] = React.useState<CatRecord | null>(null);
+  const [record, setRecord] = useState<SingleRecord | null>(null);
   const endpoint = getCurrentEndpoint();
+  const [loading, setLoading] = useState(true);
 
-  React.useEffect(() => {
-    fetch(`${endpoint}/_source/${id}`)
-      .then((res) => res.json())
-      .then(setRecord);
+  useEffect(() => {
+    const currentEndpointConfig: EndpointProps | undefined = elasticConfig.find((config) => config.url === endpoint);
+    if (id) {
+      fetch(
+        `${endpoint}/_source/${encodeURIComponent(id)}`, {
+          headers: {
+            "Content-Type": "application/json",
+            // if user and pass are provided, add basic auth header
+            ...(currentEndpointConfig?.user && currentEndpointConfig?.pass && {
+              Authorization: `Basic ${btoa(`${currentEndpointConfig.user}:${currentEndpointConfig.pass}`)}`,
+            }),
+          },
+        }
+      )
+        .then((res) => {
+          setLoading(false);
+          if (!res.ok) {
+            throw new Error(`Error: ${res.statusText}`);
+          }
+          return res.json();
+        })
+        .then(setRecord)
+        .catch((error) => {
+          console.error("Failed to fetch record:", error);
+          // You can also set an error state here to display an error message in the UI
+          setRecord(null);  // Example: resetting the state in case of an error
+        });
+    }
   }, [id]);
 
-  if (record == null) return;
-
   return (
-    <Container>
-      <Grid container>
-        <Grid
-          sm={10}
-          md={8}
-          lg={7}
-          smOffset={1}
-          mdOffset={2}
-          lgOffset={2.5}
-          pt={4}
-        >
-          <Typography variant="h3">
-            {`${record.pid_stack} - ${record.entity} - ${record.role}` || (
-              <i>Untitled</i>
-            )}
-          </Typography>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        top: 0,
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'flex-end',
+      }}
+    >
+      <Box 
+        sx={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          top: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+        }} 
+        onClick={onClose}
+      /> 
+      <motion.div
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{ duration: 0.3 }}
+        style={{width: '100%',}}
+      >
+        <Box sx={{
+          maxHeight: '90vh',
+          pb: 4,
+          pt: 4,
+          backgroundColor: 'neutral.light',
+          overflow: 'auto',
+          position: 'relative',
+        }}>
+          <IconButton aria-label="close" size="large"  sx={{ position: 'absolute', right: '1rem', top: '1rem' }} onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+          <Container>
+            <Grid container>
+              <Grid
+                sm={10}
+                md={8}
+                lg={7}
+                smOffset={1}
+                mdOffset={2}
+                lgOffset={2.5}
+                pt={4}
+              >
+                {loading ?
+                <Box sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '10rem',
+                }}>
+                  <CircularProgress />
+                </Box>
+                :
+                record !== null ? 
+                <Box>
+                  <Typography variant="h3">Detailed view</Typography>
 
-          <Metadata
-            name="UUID PID Stack"
-            value={record.uuid_pidstack}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="PID Stack"
-            value={record.pid_stack}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Entity"
-            value={record.entity}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Role"
-            value={record.role}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Namespace"
-            value={record.namespace}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Readability"
-            value={record.readability}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Resolution Point"
-            value={record.resolutionpoint}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Resolution Channel"
-            value={record.resolutionchannel}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Negotiation Type"
-            value={record.negotiationtype}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Resolver API"
-            value={record.resolverapi}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Meta Resolver Available"
-            value={record.metaresolveravailable}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Multiple Resolution"
-            value={record.multipleresolution}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Metadata Support Options"
-            value={record.metadatasupportoptions}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Metadata Schema Type"
-            value={record.metadataschematype}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Metadata Variation"
-            value={record.metadatavariation}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Governance Options"
-            value={record.governanceoptions}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Technical Sustainability"
-            value={record.technicalsustainability}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Financial Sustainability"
-            value={record.financialsustainability}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Scalability"
-            value={record.scalability}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="POSI"
-            value={record.posi}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Value Added Service"
-            value={record.valueaddedservice}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Service Quality"
-            value={record.servicequality}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Information Integrity"
-            value={record.informationintegrity}
-            options={{ turnicate: false }}
-          />
-          <Metadata
-            name="Certification"
-            value={record.certification}
-            options={{ turnicate: false }}
-          />
-
-          <ShowJSON record={record} />
-        </Grid>
-      </Grid>
-    </Container>
+                  <Stack direction="row" spacing={2} justifyContent="space-between" alignItems="flex-start">
+                    <Box mt={2}>
+                      <Metadata
+                        name="Identifier name"
+                        value={record.identifier}
+                      />
+                      <Metadata
+                        name="Identifier Description"
+                        value={record.description}
+                        pb={2}
+                      />
+                      <Metadata
+                        name="Year of First Operation"
+                        value={record.start_date}
+                      />
+                      <Metadata
+                        name="Used for Entities"
+                        value={record.entity}
+                      />
+                    </Box>
+                    {gupriMap(record.unique, record.resolvable, record.persistent)}
+                  </Stack>
+                </Box>
+                :
+                <Box>
+                  <Typography variant="h3">
+                    Record not found
+                  </Typography>
+                  <Typography gutterBottom>Please go back and try again</Typography>
+                </Box>
+                }
+              </Grid>
+            </Grid>
+          </Container>
+        </Box>
+      </motion.div>
+    </motion.div>
   );
 }
 
-const style = {
-  display: "grid",
-  gridTemplateColumns: "1fr 4fr",
-  marginBottom: "0.25rem",
-};
-
-function Metadata({
-  name,
-  value,
-  options = {
-    turnicate: true,
-  },
-}: {
-  name: string;
-  value: string | string[];
-  options?: { turnicate: boolean };
-}) {
-  if (value == null) return null;
-
-  const _value = Array.isArray(value) ? value.join(" || ") : value;
-
+function Metadata({name, value, pb}: {name: string; value: string | string[]; pb?: number}) {
   return (
-    <div style={style}>
-      <Typography variant="body2" color="neutral.dark" pr={1}>
+    <Stack direction="row" spacing={2} pb={pb}>
+      <Typography variant="body2" color="neutral.dark" pr={1} sx={{ width: '10rem'}}>
         {name}
       </Typography>
-      <Typography
-        variant="body2"
-        sx={{
-          overflow: options?.turnicate ? "hidden" : "unset",
-          whiteSpace: options?.turnicate ? "nowrap" : "normal",
-          textOverflow: options?.turnicate ? "ellipsis" : "unset",
-          overflowWrap: "break-word",
-        }}
-      >
-        {_value}
+      <Typography variant="body2" sx={{ flex: 1}}>
+        {Array.isArray(value) ? value.join(', ') : value || 'N/A'}
       </Typography>
-    </div>
-  );
-}
-
-export function MetadataList({ record }: { record: CatRecord | Result }) {
-  return (
-    <div>
-      <Metadata
-        name="Entity"
-        value={record.entity}
-        options={{ turnicate: false }}
-      />
-      <Metadata
-        name="Role"
-        value={record.role}
-        options={{ turnicate: false }}
-      />
-      <Metadata
-        name="Namespace"
-        value={record.namespace}
-        options={{ turnicate: false }}
-      />
-    </div>
-  );
-}
-
-function ShowJSON({ record }: { record: CatRecord }) {
-  const [active, setActive] = React.useState(false);
-
-  return (
-    <>
-      <Button onClick={() => setActive(!active)} variant="contained">
-        {active ? "Hide" : "Show"} JSON
-      </Button>
-      {active && (
-        <pre
-          style={{
-            background: "rgba(0,0,0,0.1)",
-            padding: "1rem",
-            overflow: "auto",
-          }}
-        >
-          {JSON.stringify(record, undefined, 3)}
-        </pre>
-      )}
-    </>
+    </Stack>
   );
 }

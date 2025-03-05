@@ -22,13 +22,11 @@ const style = new Style({
   image: new CircleStyle({
     radius: 0,
     stroke: new Stroke({
-      color: "black",
+      color: "#f4f4f4",
       width: 0.5,
     }),
     fill: new Fill({
-      // color: '#FF0000'
-      // color: '#0b6aff'
-      color: "#3382ff",
+      color: "#5470c6",
     }),
   }),
   text: new Text({
@@ -43,8 +41,8 @@ const style = new Style({
 });
 
 export const markerStyle = (feature: Feature) => {
-  let radius: number = feature.get("count") + 6;
-  if (radius > 12) radius = 12;
+  let radius: number = feature.get("count") / 1.5 + 6;
+  // if (radius > 12) radius = 12;
 
   (style.getImage() as CircleStyle).setRadius(radius);
   style
@@ -128,7 +126,7 @@ export function getMapInstance(target?: HTMLElement) {
       center: [0, 0],
       zoom: 0,
       extent: transformExtent(
-        [-180, -90, 180, 90],
+        [-180, -60, 180, 90],
         "EPSG:4326",
         "EPSG:3857",
       ) as [number, number, number, number],

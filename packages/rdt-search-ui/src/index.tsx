@@ -306,7 +306,7 @@ export const FacetedWrapper = ({
               fixedFacets={fixedFacets}
             >
               {currentConfig?.dashboard.map((node, i) =>
-                React.cloneElement(node, { key: i }),
+                React.cloneElement(node, { key: i, customColumns: currentConfig.customColumns }),
               )}
             </FacetedSearch>
           </motion.div>

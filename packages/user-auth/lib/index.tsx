@@ -11,4 +11,4 @@ export {
   setFormActions,
 } from "../src/redux/store";
 export { useValidateAllKeysQuery, validateKeyApi } from "../src/user/userApi";
-export type { Target, AuthProperty, SubmissionResponse } from "../src/types";
+export type { Target, AuthProperty, SubmissionResponse, FormActionType } from "../src/types";

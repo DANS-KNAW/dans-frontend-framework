@@ -1,5 +1,7 @@
 import type { InitialSectionType } from "@dans-framework/deposit";
 
+// DEV: for dev this is a 100% filled in 'success' section
+
 const section: InitialSectionType = {
   id: "rights",
   title: {
@@ -50,7 +52,6 @@ const section: InitialSectionType = {
       name: "personal_data",
       required: true,
       layout: "row",
-      value: "personal_data_true",
       options: [
         {
           value: "personal_data_true",

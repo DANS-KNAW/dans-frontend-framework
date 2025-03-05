@@ -20,7 +20,7 @@ export function ChartFacet<
   Config extends ChartFacetConfig,
   State extends ChartFacetState,
   Filter extends FacetFilter,
->(props: ChartFacetProps<Config, State, Filter> & { className: string }) {
+>(props: ChartFacetProps<Config, State, Filter> & { className?: string }) {
   // Ref to the chart instance
   const chart = React.useRef<echarts.ECharts | null>(null);
   const { t } = useTranslation("facets");
@@ -41,6 +41,7 @@ export function ChartFacet<
 
     // Add click event listener
     chart.current.on("click", (params) => {
+      !props.facet.config.groupByLabel &&
       props.dispatch({
         type: "UPDATE_FACET_FILTER",
         subType: "CHART_FACET_SET_FILTER",

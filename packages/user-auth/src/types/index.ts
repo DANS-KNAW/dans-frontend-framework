@@ -31,7 +31,7 @@ export interface ValidateTarget {
   type: AuthKeys;
 }
 
-export type ReleaseVersion = "DRAFT" | "PUBLISHED" | "PUBLISH";
+export type ReleaseVersion = "DRAFT" | "PUBLISHED" | "PUBLISH" | "SUBMIT";
 
 type ActiveStatus =
   | "initial"
@@ -71,9 +71,11 @@ export type AuthProperty =
   | "family_name"
   | "given_name";
 
+export type FormActionType = "load" | "copy" | "resubmit" | "view";
+
 export interface FormAction {
   id?: string;
-  action?: "load" | "copy" | "resubmit" | "view";
+  action?: FormActionType;
   actionDone?: boolean;
 }
 

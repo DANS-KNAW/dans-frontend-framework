@@ -43,7 +43,7 @@ const section: InitialSectionType = {
         en: "Modified",
         nl: "Gewijzigd",
       },
-      required: true,
+      required: false,
       description: {
         en: "Date of last modification of the deposit",
         nl: "Datum van laatste wijziging van het deposit",
@@ -57,7 +57,7 @@ const section: InitialSectionType = {
         en: "Available",
         nl: "Beschikbaar",
       },
-      required: true,
+      required: false,
       description: {
         en: "Date of availability of the deposit",
         nl: "Datum van beschikbaarheid van het deposit",

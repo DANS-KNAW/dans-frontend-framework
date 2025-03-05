@@ -19,7 +19,6 @@ export type Field = InputField | GroupedFieldType | RepeatGroupedFieldType;
 
 // All fields extend the basic field type
 interface BasisFieldType {
-  id: string; // auto generated uuid
   name: string; // gets mapped by packager
   label: string | LanguageStrings; // appears above field in UI
   touched?: boolean; // checks if user has interacted with field, for validation purposes
@@ -191,7 +190,6 @@ export interface DrawMapFieldType extends Omit<BasisFieldType, "value"> {
   type: "drawmap";
   value?: ExtendedMapFeature[];
   wmsLayers?: {
-    id: string;
     name: string;
     source: string;
   }[];
@@ -265,4 +263,19 @@ export type ValidationType = "email" | "uri" | "number" | "github-uri";
 export interface AutocompleteAPIFieldData<T = OptionsType[]> {
   arg?: string;
   response: T;
+}
+
+  // Field structure that gets saved to metadata state
+export interface BaseField {
+  value?: any;
+  touched: boolean;
+  required?: boolean;
+  private?: boolean;
+  valid?: boolean;
+  format?: DateTimeFormat;
+  multiApiValue?: TypeaheadAPI;
+}
+
+export interface RepeatableField {
+  value: Record<string, BaseField>[];
 }

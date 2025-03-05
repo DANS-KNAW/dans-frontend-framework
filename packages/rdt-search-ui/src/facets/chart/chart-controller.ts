@@ -16,35 +16,77 @@ function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export class PieChartController extends FacetController<
+export class ChartController extends FacetController<
   ChartFacetConfig,
   PieChartFacetState,
   PieChartFacetFilter
 > {
+  chartType: string; // Add this to the class to store the chartType
+
+  constructor(config: ChartFacetConfig) {
+    super(config);
+    this.chartType = config.chartType || "pie"; // Default to pie chart
+  }
+  
   setOptions() {
-    return {
-      tooltip: {},
-      series: [
-        {
-          type: "pie",
-          data: [],
-          radius: "60%",
+    return this.chartType === "pie"
+    ? {
+        tooltip: {},
+        series: [
+          {
+            type: "pie",
+            data: [],
+            radius: "60%",
+          },
+        ],
+      }
+    : {
+        tooltip: {},
+        xAxis: {
+          type: "value",
         },
-      ],
-    };
+        yAxis: {
+          type: "category",
+          data: [],
+        },
+        series: [
+          {
+            type: "bar",
+            data: [],
+          },
+        ],
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+      };
   }
 
   updateOptions(values: KeyCount[]) {
-    return {
-      series: [
-        {
-          data: values.map((value) => ({
-            value: value.count,
-            name: value.key,
-          })),
+    return this.chartType === "pie"
+    ? {
+        series: [
+          {
+            data: values.map((value) => ({
+              value: value.count,
+              name: value.key,
+            })),
+          },
+        ],
+      }
+    : {
+        yAxis: {
+          data: values.map((value) => value.key),
         },
-      ],
-    };
+        series: [
+          {
+            type: "bar",
+            data: values.map((value) => value.count),
+          },
+        ],
+      };
   }
 
   reducer(state: SearchState, action: FacetsDataReducerAction): SearchState {
@@ -146,6 +188,41 @@ export class PieChartController extends FacetController<
       },
     }
     :
+    // group by label, instead of doing aggregation grouping
+    this.config.groupByLabel ?
+    {
+      terms: {
+        field: this.config.groupByLabel,
+        size: 100000,
+      },
+      aggs: {
+        total: {
+          sum: {
+            field: this.config.field
+          }
+        },
+        filter_by_count: {
+          bucket_selector: {
+            buckets_path: {
+              total_count: "total"
+            },
+            script: "params.total_count > 1"
+          }
+        },
+        order_by_total: {
+          bucket_sort: {
+            sort: [
+              {
+                total: {
+                  order: "asc"
+                }
+              }
+            ],
+          }
+        }
+      }
+    }
+    :
     {
       terms: {
         field: this.config.field,
@@ -162,7 +239,7 @@ export class PieChartController extends FacetController<
   ): KeyCount[] {
     return buckets.map((b: Bucket) => ({
       key: b.key.toString(),
-      count: b.doc_count,
+      count: this.config.groupByLabel ? b.total.value : b.doc_count,
     }));
   }
 }

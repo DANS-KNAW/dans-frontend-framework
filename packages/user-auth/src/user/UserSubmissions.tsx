@@ -99,7 +99,8 @@ export const UserSubmissions = ({
         .filter(
           (d) =>
             d["release-version"] === "PUBLISHED" ||
-            d["release-version"] === "PUBLISH",
+            d["release-version"] === "PUBLISH" ||
+            d["release-version"] === "SUBMIT",
         )
         .every(
           // if all are finished, or one has an error, stop checking
@@ -154,6 +155,7 @@ export const UserSubmissions = ({
               (data &&
                 data.filter(
                   (d) =>
+                    d["release-version"] === "SUBMIT" ||
                     d["release-version"] === "PUBLISHED" ||
                     d["release-version"] === "PUBLISH",
                 )) ||

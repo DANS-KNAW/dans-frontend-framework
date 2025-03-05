@@ -175,7 +175,6 @@ const section: InitialSectionType = {
       },
       name: "additional_authors",
       repeatable: true,
-      compleetGroup: true,
       description: {
         en: "Additional authors of the dataset and or software",
         nl: "Extra auteurs van het dataset en of software",
@@ -188,6 +187,7 @@ const section: InitialSectionType = {
             en: "Additional Author",
             nl: "Extra auteur",
           },
+          toggleRequired: ["additional_author_type"],
         },
         {
           type: "autocomplete",
@@ -196,6 +196,7 @@ const section: InitialSectionType = {
             en: "Type",
             nl: "Type",
           },
+          toggleRequired: ["additional_author"],
           options: [
             {
               label: {

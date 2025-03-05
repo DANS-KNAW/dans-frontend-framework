@@ -97,6 +97,7 @@ export interface EndpointProps extends EndpointBaseProps {
   dashboard: React.ReactElement[];
   resultBodyComponent: React.FC<ResultBodyProps>;
   fixedFacets?: FixedFacetsProps[];
+  customColumns?: number;
 }
 
 /**
