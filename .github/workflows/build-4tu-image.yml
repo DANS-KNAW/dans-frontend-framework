@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: 4TU Docker Image CI
 
 on:
   push:
