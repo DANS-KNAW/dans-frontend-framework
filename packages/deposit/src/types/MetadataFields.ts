@@ -39,6 +39,7 @@ interface BasisFieldType {
   togglePrivateIds?: string[]; // filled programmatically with uuid's
   toggleTitleGeneration?: boolean; // determines if this field can toggle the forms auto title generation functionality
   fullWidth?: boolean; // set field to be 100% width instead of default 50%
+  deriveFrom?: string; // field name to derive value from
 }
 
 export interface TextFieldType extends BasisFieldType {
