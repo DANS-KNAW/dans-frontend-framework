@@ -19,6 +19,7 @@ const section: InitialSectionType = {
         en: "Name of the organisation or individual(s) owning the work",
         nl: "Naam van de organisatie of personen die eigenaar zijn van het werk",
       },
+      deriveFrom: "firstAuthor",
       multiApiValue: "orcid",
       options: ["ror", "orcid"],
     },
