@@ -146,6 +146,28 @@ export const metadataSlice = createSlice({
         });
       }
 
+      // This logic will populate fields that have the `deriveFrom` property set.
+      // Currently it just sets the value of the field to the value of the field it derives from.
+      // @TODO: Currently it doesn't check if the field can support the value of the field it derives from.
+      Object.entries(state.fieldMap).forEach(([fieldName, fieldDef]) => {
+        if (fieldDef.deriveFrom === field.name) {
+          const isTouched = "touched" in state.fields[fieldName] ? state.fields[fieldName].touched : false;
+
+          // Only update if the field hasn't been touched by the user.
+          if (state.fields[fieldName] && !isTouched) {
+            state.fields[fieldName] = {
+                ...state.fields[fieldName],
+                value,
+                valid: true,
+                touched: false
+              };
+            
+            // Update section status for the derived field
+            updateSection(state.sections, state.fields, fieldDef, state.fieldMap);
+          }
+        }
+      });
+
       // Now set section status to reflect all field changes
       updateSection(state.sections, state.fields, field, state.fieldMap, groupName);
     },
