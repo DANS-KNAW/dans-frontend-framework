@@ -273,6 +273,329 @@ const section: InitialSectionType = {
             nl: "Identificatie van het gerelateerde werk (PID, URL, etc.)",
           },
         },
+        {
+          type: "autocomplete",
+          name: "relationResourceType",
+          label: {
+            en: "Resource Type",
+            nl: "Resource Type",
+          },
+          required: true,
+          description: {
+            en: "Type of the related work resource",
+            nl: "Type van de gerelateerde werk resource",
+          },
+          options: [
+            {
+              label: {
+                en: "Dataset",
+                nl: "Gegevensset",
+              },
+              value: "dataset",
+            },
+            {
+              label: {
+                en: "Event",
+                nl: "Evenement",
+              },
+              value: "event",
+            },
+            {
+              label: {
+                en: "Image",
+                nl: "Afbeelding",
+              },
+              value: "image",
+            },
+            {
+              label: {
+                en: "Image / Diagram",
+                nl: "Afbeelding / Diagram",
+              },
+              value: "image-diagram",
+            },
+            {
+              label: {
+                en: "Image / Drawing",
+                nl: "Afbeelding / Tekening",
+              },
+              value: "image-drawing",
+            },
+            {
+              label: {
+                en: "Image / Figure",
+                nl: "Afbeelding / Figuur",
+              },
+              value: "image-figure",
+            },
+            {
+              label: {
+                en: "Image / Other",
+                nl: "Afbeelding / Overig",
+              },
+              value: "image-other",
+            },
+            {
+              label: {
+                en: "Image / Photo",
+                nl: "Afbeelding / Foto",
+              },
+              value: "image-photo",
+            },
+            {
+              label: {
+                en: "Image / Plot",
+                nl: "Afbeelding / Plot",
+              },
+              value: "image-plot",
+            },
+            {
+              label: {
+                en: "Lesson",
+                nl: "Les",
+              },
+              value: "lesson",
+            },
+            {
+              label: {
+                en: "Model",
+                nl: "Model",
+              },
+              value: "model",
+            },
+            {
+              label: {
+                en: "Other",
+                nl: "Overig",
+              },
+              value: "other",
+            },
+            {
+              label: {
+                en: "Physical object",
+                nl: "Fysiek object",
+              },
+              value: "physicalobject",
+            },
+            {
+              label: {
+                en: "Poster",
+                nl: "Poster",
+              },
+              value: "poster",
+            },
+            {
+              label: {
+                en: "Presentation",
+                nl: "Presentatie",
+              },
+              value: "presentation",
+            },
+            {
+              label: {
+                en: "Publication",
+                nl: "Publicatie",
+              },
+              value: "publication",
+            },
+            {
+              label: {
+                en: "Publication / Annotation collection",
+                nl: "Publicatie / Annotatie verzameling",
+              },
+              value: "publication-annotationcollection",
+            },
+            {
+              label: {
+                en: "Publication / Book",
+                nl: "Publicatie / Boek",
+              },
+              value: "publication-book",
+            },
+            {
+              label: {
+                en: "Publication / Book chapter",
+                nl: "Publicatie / Boekhoofdstuk",
+              },
+              value: "publication-section",
+            },
+            {
+              label: {
+                en: "Publication / Conference paper",
+                nl: "Publicatie / Conferentiepaper",
+              },
+              value: "publication-conferencepaper",
+            },
+            {
+              label: {
+                en: "Publication / Conference proceeding",
+                nl: "Publicatie / Conferentieverslag",
+              },
+              value: "publication-conferenceproceeding",
+            },
+            {
+              label: {
+                en: "Publication / Data paper",
+                nl: "Publicatie / Gegevenspaper",
+              },
+              value: "publication-datapaper",
+            },
+            {
+              label: {
+                en: "Publication / Dissertation",
+                nl: "Publicatie / Dissertatie",
+              },
+              value: "publication-dissertation",
+            },
+            {
+              label: {
+                en: "Publication / Journal",
+                nl: "Publicatie / Tijdschrift",
+              },
+              value: "publication-journal",
+            },
+            {
+              label: {
+                en: "Publication / Journal article",
+                nl: "Publicatie / Tijdschriftartikel",
+              },
+              value: "publication-article",
+            },
+            {
+              label: {
+                en: "Publication / Other",
+                nl: "Publicatie / Overig",
+              },
+              value: "publication-other",
+            },
+            {
+              label: {
+                en: "Publication / Output management plan",
+                nl: "Publicatie / Outputbeheersplan",
+              },
+              value: "publication-datamanagementplan",
+            },
+            {
+              label: {
+                en: "Publication / Patent",
+                nl: "Publicatie / Patent",
+              },
+              value: "publication-patent",
+            },
+            {
+              label: {
+                en: "Publication / Peer review",
+                nl: "Publicatie / Peer review",
+              },
+              value: "publication-peerreview",
+            },
+            {
+              label: {
+                en: "Publication / Preprint",
+                nl: "Publicatie / Preprint",
+              },
+              value: "publication-preprint",
+            },
+            {
+              label: {
+                en: "Publication / Project deliverable",
+                nl: "Publicatie / Projectresultaat",
+              },
+              value: "publication-deliverable",
+            },
+            {
+              label: {
+                en: "Publication / Project milestone",
+                nl: "Publicatie / Projectmijlpaal",
+              },
+              value: "publication-milestone",
+            },
+            {
+              label: {
+                en: "Publication / Proposal",
+                nl: "Publicatie / Voorstel",
+              },
+              value: "publication-proposal",
+            },
+            {
+              label: {
+                en: "Publication / Report",
+                nl: "Publicatie / Rapport",
+              },
+              value: "publication-report",
+            },
+            {
+              label: {
+                en: "Publication / Software documentation",
+                nl: "Publicatie / Softwaredocumentatie",
+              },
+              value: "publication-softwaredocumentation",
+            },
+            {
+              label: {
+                en: "Publication / Standard",
+                nl: "Publicatie / Standaard",
+              },
+              value: "publication-standard",
+            },
+            {
+              label: {
+                en: "Publication / Taxonomic treatment",
+                nl: "Publicatie / Taxonomische behandeling",
+              },
+              value: "publication-taxonomictreatment",
+            },
+            {
+              label: {
+                en: "Publication / Technical note",
+                nl: "Publicatie / Technische notitie",
+              },
+              value: "publication-technicalnote",
+            },
+            {
+              label: {
+                en: "Publication / Thesis",
+                nl: "Publicatie / Thesis",
+              },
+              value: "publication-thesis",
+            },
+            {
+              label: {
+                en: "Publication / Working paper",
+                nl: "Publicatie / Werkdocument",
+              },
+              value: "publication-workingpaper",
+            },
+            {
+              label: {
+                en: "Software",
+                nl: "Software",
+              },
+              value: "software",
+            },
+            {
+              label: {
+                en: "Software / Computational notebook",
+                nl: "Software / Computationeel notebook",
+              },
+              value: "software-computationalnotebook",
+            },
+            {
+              label: {
+                en: "Video/Audio",
+                nl: "Video/Audio",
+              },
+              value: "video",
+            },
+            {
+              label: {
+                en: "Workflow",
+                nl: "Werkstroom",
+              },
+              value: "workflow",
+            },
+          ],
+        },
       ],
     },
   ],
