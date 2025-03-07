@@ -275,6 +275,113 @@ const section: InitialSectionType = {
         },
         {
           type: "autocomplete",
+          name: "relationScheme",
+          label: {
+            en: "Scheme",
+            nl: "Schema",
+          },
+          required: true,
+          description: {
+            en: "Scheme of the related work identifier",
+            nl: "Schema van de identificatie van het gerelateerde werk",
+          },
+          options: [
+            {
+              label: "ARK",
+              value: "ark",
+            },
+            {
+              label: "arXiv",
+              value: "arxiv",
+            },
+            {
+              label: "Bibcode",
+              value: "ads",
+            },
+            {
+              label: "Crossref Funder ID",
+              value: "crossreffunderid",
+            },
+            {
+              label: "DOI",
+              value: "doi",
+            },
+            {
+              label: "EAN13",
+              value: "ean13",
+            },
+            {
+              label: "EISSN",
+              value: "eissn",
+            },
+            {
+              label: "GRID",
+              value: "grid",
+            },
+            {
+              label: "Handle",
+              value: "handle",
+            },
+            {
+              label: "IGSN",
+              value: "igsn",
+            },
+            {
+              label: "ISBN",
+              value: "isbn",
+            },
+            {
+              label: "ISNI",
+              value: "isni",
+            },
+            {
+              label: "ISSN",
+              value: "issn",
+            },
+            {
+              label: "ISTC",
+              value: "istc",
+            },
+            {
+              label: "LISSN",
+              value: "lissn",
+            },
+            {
+              label: "LSID",
+              value: "lsid",
+            },
+            {
+              label: "PMID",
+              value: "pmid",
+            },
+            {
+              label: "PURL",
+              value: "purl",
+            },
+            {
+              label: "UPC",
+              value: "upc",
+            },
+            {
+              label: "URL",
+              value: "url",
+            },
+            {
+              label: "URN",
+              value: "urn",
+            },
+            {
+              label: "W3ID",
+              value: "w3id",
+            },
+            {
+              label: "Other",
+              value: "other",
+            },
+          ],
+        },
+        {
+          type: "autocomplete",
           name: "relationResourceType",
           label: {
             en: "Resource Type",
