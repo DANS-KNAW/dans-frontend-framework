@@ -21,6 +21,7 @@ import { rdaApi } from "../features/metadata/api/rdaApi";
 import { wmsApi } from "../features/metadata/api/wms";
 import { biodiversityApi } from "../features/metadata/api/biodiversity";
 import { validateKeyApi } from "@dans-framework/user-auth";
+import { unsdgApi } from "../features/metadata/api/unsdg";
 
 export const store = configureStore({
   reducer: {
@@ -43,6 +44,7 @@ export const store = configureStore({
     [maptilerApi.reducerPath]: maptilerApi.reducer,
     [wmsApi.reducerPath]: wmsApi.reducer,
     [biodiversityApi.reducerPath]: biodiversityApi.reducer,
+    [unsdgApi.reducerPath]: unsdgApi.reducer,
     submit: submitReducer,
     deposit: depositReducer,
   },
@@ -65,6 +67,7 @@ export const store = configureStore({
       .concat(maptilerApi.middleware)
       .concat(wmsApi.middleware)
       .concat(biodiversityApi.middleware)
+      .concat(unsdgApi.middleware)
       .concat(errorLogger),
 });
 

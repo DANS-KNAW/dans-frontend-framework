@@ -188,3 +188,10 @@ export interface BiodiversityItem {
 export interface BiodiversityResponse {
   resultSet: BiodiversityItem[];
 }
+
+export interface UnsdgResponse {
+  code: string;
+  title: string;
+  description: string;
+  uri: string;
+}
