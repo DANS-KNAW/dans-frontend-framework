@@ -87,6 +87,21 @@ const section: InitialSectionType = {
       multiselect: true,
       allowFreeText: false,
     },
+    {
+      type: "autocomplete",
+      name: "keywordsSdg",
+      label: {
+        en:"UN Sustainable Development Goals",
+        nl: "UN Duurzame Ontwikkelingsdoelen",
+      },
+      required: true,
+      description: {
+        en: "Links to UN Sustainable Development Goals",
+        nl: "Links naar UN Duurzame Ontwikkelingsdoelen",
+      },
+      multiselect: true,
+      options: "un_sustainable_development_goals",
+    }
   ],
 };
 
