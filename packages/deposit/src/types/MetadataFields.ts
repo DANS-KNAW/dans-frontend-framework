@@ -229,7 +229,8 @@ export type TypeaheadAPI =
   | "sshLicences"
   | "languageList"
   | "biodiversity_species_scientific"
-  | "biodiversity_species_vernacular";
+  | "biodiversity_species_vernacular"
+  | "un_sustainable_development_goals";
 
 // Options that should be specified if Google Sheet API is used in Autocomplete
 interface SheetOptions {

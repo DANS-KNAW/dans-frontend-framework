@@ -41,6 +41,7 @@ import {
   useFetchRdaDomainQuery,
   useFetchRdaInterestGroupQuery,
 } from "../api/rdaApi";
+import { useFetchUnsdgQuery } from "../api/unsdg";
 
 /*
  *  Type ahead fields for different API endpoints
@@ -407,6 +408,24 @@ export const SheetsField = ({ field, groupName, groupIndex }: AutocompleteFieldP
   );
 };
 
+export const UnSustainableDevelopmentGoalsField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
+  // Fetch data right away
+  const { data, isFetching, isLoading } = useFetchUnsdgQuery<QueryReturnType>(null);
+  const newField = {
+    ...field,
+    options: data && data.response ? data.response : [],
+  };
+
+  return (
+    <AutocompleteField
+      field={newField}
+      groupName={groupName}
+      groupIndex={groupIndex}
+      isLoading={isLoading || isFetching}
+    />
+  );
+}
+
 export const MultiApiField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
@@ -500,6 +519,10 @@ export const MultiApiField = ({ field, groupName, groupIndex }: AutocompleteFiel
       {multiApiValue  === "biodiversity_species_scientific" && (
         <BiodiversityField field={field} groupName={groupName}
           groupIndex={groupIndex} variant="scientific" />
+      )}
+      {multiApiValue === "un_sustainable_development_goals" && (
+        <UnSustainableDevelopmentGoalsField field={field} groupName={groupName}
+          groupIndex={groupIndex} />
       )}
     </Stack>
   );
