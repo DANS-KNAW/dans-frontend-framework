@@ -83,6 +83,21 @@ const section: InitialSectionType = {
       options: "languageList",
       value: { label: "English", value: "en" },
     },
+    {
+      type: "text",
+      name: "maintenancePlan",
+      label: {
+        en: "Maintenance and Retirement Plan",
+        nl: "Onderhouds- en Bewaarplan",
+      },
+      multiline: true,
+      required: true,
+      fullWidth: true,
+      description: {
+        en: "Describe how this deposit will be maintained over time and under what conditions it will be retired.",
+        nl: "Beschrijf hoe dit deposit in de loop van de tijd zal worden onderhouden en onder welke voorwaarden het zal worden beëindigd.",
+      },
+    },
   ],
 };
 
