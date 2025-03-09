@@ -71,7 +71,7 @@ export const DateTimeField = ({
       dispatch(
         setField({
           field: field,
-          value: moment() as unknown as string,
+          value: moment().format(field.format || "YYYY-MM-DD"),
           // support repeatable fields too
           ...(field.repeatable && { fieldIndex: 0 }),
         })
