@@ -8,20 +8,35 @@ const section: InitialSectionType = {
   },
   fields: [
     {
-      type: "autocomplete",
-      name: "rightsholder",
+      type: "group",
+      name: "rightsholders",
       label: {
-        en: "Rights holder",
-        nl: "Rechthebbende",
+        en: "Rights holders",
+        nl: "Rechthebbenden",
       },
-      required: true,
       description: {
-        en: "Name of the organisation or individual(s) owning the work",
-        nl: "Naam van de organisatie of personen die eigenaar zijn van het werk",
+        en: "The organisation or individual(s) owning the work",
+        nl: "De organisatie of personen die eigenaar zijn van het werk",
       },
-      deriveFrom: "firstAuthor",
-      multiApiValue: "orcid",
-      options: ["ror", "orcid"],
+      repeatable: true,
+      fields: [
+        {
+          type: "autocomplete",
+          name: "rightsholder",
+          label: {
+            en: "Rights holder",
+            nl: "Rechthebbende",
+          },
+          required: true,
+          description: {
+            en: "Name of the organisation or individual(s) owning the work",
+            nl: "Naam van de organisatie of personen die eigenaar zijn van het werk",
+          },
+          deriveFrom: "firstAuthor",
+          multiApiValue: "orcid",
+          options: ["ror", "orcid"],
+        },
+      ],
     },
     {
       type: "autocomplete",
