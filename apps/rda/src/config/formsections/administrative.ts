@@ -84,6 +84,41 @@ const section: InitialSectionType = {
       value: { label: "English", value: "en" },
     },
     {
+      type: "autocomplete",
+      required: true,
+      label: {
+        en: "Zenodo Community",
+        nl: "Zenodo Community",
+      },
+      name: "zenodoCommunity",
+      description: {
+        en: "The Zenodo community to which the deposit belongs",
+        nl: "De Zenodo community waartoe het deposit behoort",
+      },
+      options: [
+        {
+          label: "Research Data Alliance",
+          value: "rda",
+          url: "https://zenodo.org/communities/rda",
+        },
+        // {
+        //   label: "Research Data Alliance - Related Documents",
+        //   value: "rda-related",
+        //   url: "https://zenodo.org/communities/rda-related",
+        // },
+        // {
+        //   label: "RDA TIGER",
+        //   value: "rda-tiger",
+        //   url: "https://zenodo.org/communities/rda-tiger",
+        // },
+      ],
+      value: {
+        label: "Research Data Alliance",
+        value: "rda",
+        url: "https://zenodo.org/communities/rda",
+      },
+    },
+    {
       type: "text",
       name: "maintenancePlan",
       label: {
@@ -91,7 +126,6 @@ const section: InitialSectionType = {
         nl: "Onderhouds- en Bewaarplan",
       },
       multiline: true,
-      required: true,
       fullWidth: true,
       description: {
         en: "Describe how this deposit will be maintained over time and under what conditions it will be retired.",
