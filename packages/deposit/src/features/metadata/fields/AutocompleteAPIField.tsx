@@ -9,7 +9,6 @@ import { useTranslation } from "react-i18next";
 import { useFetchOrcidQuery } from "../api/orcid";
 import { useFetchRorByNameQuery } from "../api/ror";
 import { useFetchGeonamesFreeTextQuery } from "../api/geonames";
-import { useFetchGettyAATTermsQuery } from "../api/getty";
 import { useFetchSheetsQuery } from "../api/sheets";
 import { useFetchDatastationsTermQuery } from "../api/datastations";
 import { useFetchDansFormatsQuery } from "../../files/api/dansFormats";
@@ -42,6 +41,7 @@ import {
   useFetchRdaInterestGroupQuery,
 } from "../api/rdaApi";
 import { useFetchUnsdgQuery } from "../api/unsdg";
+import { SingleField } from "../MetadataFields";
 
 /*
  *  Type ahead fields for different API endpoints
@@ -104,30 +104,6 @@ export const GeonamesField = ({ field, groupName, groupIndex }: AutocompleteFiel
   // Fetch data on input change
   const { data, isFetching, isLoading } =
     useFetchGeonamesFreeTextQuery<QueryReturnType>(debouncedInputValue, {
-      skip: debouncedInputValue === "",
-    });
-
-  return (
-    <AutocompleteAPIField
-      field={field}
-      groupName={groupName}
-      groupIndex={groupIndex}
-      inputValue={inputValue}
-      setInputValue={setInputValue}
-      debouncedInputValue={debouncedInputValue}
-      data={data}
-      isLoading={isLoading}
-      isFetching={isFetching}
-    />
-  );
-};
-
-export const GettyField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
-  const [inputValue, setInputValue] = useState<string>("");
-  const debouncedInputValue = useDebounce(inputValue, 500)[0];
-  // Fetch data on input change
-  const { data, isFetching, isLoading } =
-    useFetchGettyAATTermsQuery<QueryReturnType>(debouncedInputValue, {
       skip: debouncedInputValue === "",
     });
 
@@ -462,68 +438,17 @@ export const MultiApiField = ({ field, groupName, groupIndex }: AutocompleteFiel
             ))}
         </Select>
       </FormControl>
-      {multiApiValue === "ror" && (
-        <RorField field={field} groupName={groupName}
-          groupIndex={groupIndex} />
-      )}
-      {multiApiValue === "orcid" && (
-        <OrcidField field={field} groupName={groupName}
-          groupIndex={groupIndex} />
-      )}
-      {multiApiValue === "gorc" && (
-        <GorcField field={field} groupName={groupName}
-          groupIndex={groupIndex} />
-      )}
-      {multiApiValue  === "geonames" && (
-        <GeonamesField field={field} groupName={groupName}
-          groupIndex={groupIndex} />
-      )}
-      {multiApiValue  === "getty" && (
-        <GettyField field={field} groupName={groupName}
-          groupIndex={groupIndex} />
-      )}
-      {multiApiValue  === "sheets" && (
-        <SheetsField field={field} groupName={groupName}
-          groupIndex={groupIndex} />
-      )}
-      {multiApiValue  === "dansFormats" && (
-        <DansFormatsField field={field} groupName={groupName}
-          groupIndex={groupIndex} />
-      )}
-      {(multiApiValue  === "elsst" ||
-        multiApiValue  === "dansCollections" ||
-        multiApiValue  === "narcis") && (
-          <DatastationsField field={field} groupName={groupName}
-            groupIndex={groupIndex} />
-        )}
-      {multiApiValue  === "rdaworkinggroups" && (
-        <RdaWorkingGroupsField field={field} groupName={groupName}
-          groupIndex={groupIndex} />
-      )}
-      {multiApiValue  === "pathways" && (
-        <RdaPathwaysField field={field} groupName={groupName}
-          groupIndex={groupIndex} />
-      )}
-      {multiApiValue  === "domains" && (
-        <RdaDomainsField field={field} groupName={groupName}
-          groupIndex={groupIndex} />
-      )}
-      {multiApiValue  === "interest groups" && (
-        <RdaInterestGroupsField field={field} groupName={groupName}
-          groupIndex={groupIndex} />
-      )}
-      {multiApiValue  === "biodiversity_species_vernacular" && (
-        <BiodiversityField field={field} groupName={groupName}
-          groupIndex={groupIndex} variant="vernacular" />
-      )}
-      {multiApiValue  === "biodiversity_species_scientific" && (
-        <BiodiversityField field={field} groupName={groupName}
-          groupIndex={groupIndex} variant="scientific" />
-      )}
-      {multiApiValue === "un_sustainable_development_goals" && (
-        <UnSustainableDevelopmentGoalsField field={field} groupName={groupName}
-          groupIndex={groupIndex} />
-      )}
+      <SingleField 
+        field={{
+          ...field,
+          multiApiValue: undefined,
+          options: multiApiValue,
+          fullWidth: true,
+        }}
+        groupName={groupName} 
+        groupIndex={groupIndex} 
+        sx={{ padding: 0 }}
+      />
     </Stack>
   );
 };

@@ -93,6 +93,11 @@ import { Deposit } from "@dans-framework/deposit"
       displayProcesses: true,
       // set an optional maximum file upload size in bytes
       maxSize: 10737418240, // e.g. 10 GB
+      disableFileWarning: 2, // set to true to disable the file warning, can also be a number to disable the warning if the number of files is greater than the number
+      customFileWarning: {
+        en: "Have you uploaded your recording, transcript and subtitles?",
+        nl: "Heb je je opname, transcript en ondertiteling geüpload?",
+      }, // optional custom file warning message, will default to a generic message if not set
     },
 
   }
@@ -194,7 +199,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       // Autocomplete, radio and check fields only. Selectable options, can be:
       // * an array of option objects like below
       // * an API service: "orcid", "ror", "narcis", etc (autocomplete only). See TypeaheadAPI in types/Metadata.ts.
-      // * an array of API services ["orcid", "ror"] (autocomplete only)
+      // * an array of API services ["orcid", "ror"] from which the user can select one (autocomplete only)
       options: [
         // This is an options object
         {

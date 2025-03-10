@@ -16,13 +16,14 @@ import type {
   DrawMapFieldType,
   BaseField,
 } from "./MetadataFields";
-import type { AutocompleteRenderGetTagProps } from "@mui/material";
+import type { AutocompleteRenderGetTagProps, SxProps } from "@mui/material";
 
 // Props for components
 export interface SingleFieldProps {
   field: InputField;
   groupName?: string;
   groupIndex?: number;
+  sx?: SxProps;
 }
 
 export interface GroupedFieldProps extends Omit<SingleFieldProps, "field"> {
