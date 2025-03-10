@@ -36,8 +36,6 @@ const section: InitialSectionType = {
         en: "<p>You can provide a subtitle if you wish.</p><p>The subtitle you provide here will <b>not</b> be added to the citation line in Dataverse.</p>",
         nl: "<p>Je kunt een optionele ondertitel opgeven als je wilt.</p><p>De ondertitel die je hier opgeeft wordt <b>niet</b> aan de citation in Dataverse toegevoegd.</p>",
       },
-      // Note: for testing only. remove in production
-      repeatable: true,
     },
     {
       type: "text",
@@ -108,8 +106,6 @@ const section: InitialSectionType = {
             en: "State the organisation with which the author is affiliated.",
             nl: "Geef de organisatie waar de auteur aan is verbonden.",
           },
-          // Note: for testing only. remove in production
-          repeatable: true,
         },
       ],
     },
