@@ -9,24 +9,17 @@ const section: InitialSectionType = {
   fields: [
     {
       type: "autocomplete",
-      name: "keywords",
+      name: "keywordsWorkingGroups",
       label: {
-        en: "Keywords",
-        nl: "Trefwoorden",
+        en: "Keywords - Working Groups",
+        nl: "Trefwoorden - Werkgroepen",
       },
       required: true,
       description: {
-        en: "List of relevant keywords",
-        nl: "Een lijst van relevante trefwoorden",
+        en: "List of working groups",
+        nl: "Een lijst van werkgroepen",
       },
-      multiApiValue: "rdaworkinggroups",
-      options: [
-        "rdaworkinggroups",
-        "interest groups",
-        "domains",
-        "pathways",
-        "gorc",
-      ],
+      options: "rdaworkinggroups",
       multiselect: true,
       allowFreeText: true,
     },
@@ -48,18 +41,17 @@ const section: InitialSectionType = {
     },
     {
       type: "autocomplete",
-      name: "keywordsOrigin",
+      name: "keywordsInterestGroups",
       label: {
-        en: "Keywords - Origin",
-        nl: "Trefwoorden - Herkomst",
+        en: "Keywords - Interest Groups",
+        nl: "Trefwoorden - Interesse Groepen",
       },
       required: true,
       description: {
-        en: "List of relevant keywords",
-        nl: "Een lijst van relevante trefwoorden",
+        en: "List of Interest Groups",
+        nl: "Een lijst van Interesse Groepen",
       },
-      multiApiValue: "rdaworkinggroups",
-      options: ["rdaworkinggroups", "interest groups"],
+      options: "interest groups",
       multiselect: true,
       allowFreeText: false,
     },
@@ -97,61 +89,19 @@ const section: InitialSectionType = {
     },
     {
       type: "autocomplete",
-      name: "geolocation",
+      name: "keywordsSdg",
       label: {
-        en: "Geolocation",
-        nl: "Geolocatie",
+        en:"UN Sustainable Development Goals",
+        nl: "UN Duurzame Ontwikkelingsdoelen",
       },
-      required: false,
+      required: true,
       description: {
-        en: "The location(s) that the deposit deals with",
-        nl: "De locatie(s) waar het deposit over gaat",
+        en: "Links to UN Sustainable Development Goals",
+        nl: "Links naar UN Duurzame Ontwikkelingsdoelen",
       },
-      options: "geonames",
       multiselect: true,
-    },
-    {
-      type: "group",
-      name: "date_time",
-      label: {
-        en: "Data Time and Date",
-        nl: "Data Tijd en Datum",
-      },
-      repeatable: true,
-      description: {
-        en: "The dates and times the deposit deals with",
-        nl: "De data en tijden waarover het deposit gaat",
-      },
-      fields: [
-        {
-          type: "date",
-          format: "DD-MM-YYYY HH:mm",
-          name: "start",
-          label: {
-            en: "Start",
-            nl: "Start",
-          },
-          required: false,
-          description: {
-            en: "The start of a period the deposit covers",
-            nl: "Start van een periode waar het deposit over gaat",
-          },
-        },
-        {
-          type: "date",
-          format: "DD-MM-YYYY HH:mm",
-          name: "end",
-          label: {
-            en: "End",
-            nl: "Eind",
-          },
-          description: {
-            en: "The end of a period the deposit covers",
-            nl: "Eind van een periode waar het deposit over gaat",
-          },
-        },
-      ],
-    },
+      options: "un_sustainable_development_goals",
+    }
   ],
 };
 

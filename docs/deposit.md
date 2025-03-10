@@ -247,6 +247,11 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       // Auto generate the value of this field, based on a specific string. Only for text fields.
       // Value must be a string, or a language string object
       autoGenerateValue: "{{some_field_name}} has a value, and {{some_other_field}} also has one",
+
+      // Optional logic that enabled the field to be populated from the value derived from the specified field name.
+      // Value must be a single string.
+      // Will only trigger if the user hasn't `Touched` the field. (This is to prevent data loss)
+      deriveFrom: "name_of_field_to_derive_from"
     },
   ]
 }

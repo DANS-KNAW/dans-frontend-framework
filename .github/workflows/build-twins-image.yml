@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Twins Docker Image CI
 
 on:
   push:
@@ -31,7 +31,7 @@ jobs:
       run: "echo 'setup complete' "
 
   push:
-
+    if: github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/main'
     name: Push to registry.
     runs-on: ohsmart-demo
     needs: test

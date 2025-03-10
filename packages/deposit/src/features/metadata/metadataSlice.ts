@@ -146,6 +146,56 @@ export const metadataSlice = createSlice({
         });
       }
 
+      // This logic will populate fields that have the `deriveFrom` property set.
+      // Currently it just sets the value of the field to the value of the field it derives from.
+      // @TODO: Currently it doesn't check if the field can support the value of the field it derives from.
+      Object.entries(state.fieldMap).forEach(([fieldName, fieldDef]) => {
+        if (fieldDef.deriveFrom === field.name) {
+          // Handle top-level fields
+          if (state.fields[fieldName] && "touched" in state.fields[fieldName]) {
+            const isTouched = state.fields[fieldName].touched;
+            
+            // Only update if the field hasn't been touched by the user
+            if (!isTouched) {
+              state.fields[fieldName] = {
+                ...state.fields[fieldName],
+                value,
+                valid: true,
+                touched: false
+              };
+              
+              // Force the derived field to be updated in the section status
+              updateSection(state.sections, state.fields, fieldDef, state.fieldMap);
+            }
+          }
+          
+          // Handle fields within groups
+          Object.entries(state.fields).forEach(([stateGroupName, stateGroup]) => {
+            if (stateGroup.value && Array.isArray(stateGroup.value)) {
+              stateGroup.value.forEach((groupItem) => {
+                // Check if the group item contains the field we're looking for
+                if (groupItem[fieldName] && "touched" in groupItem[fieldName]) {
+                  const isTouched = groupItem[fieldName].touched;
+                  
+                  // Only update if the field hasn't been touched by the user
+                  if (!isTouched) {
+                    groupItem[fieldName] = {
+                      ...groupItem[fieldName],
+                      value,
+                      valid: true,
+                      touched: false
+                    };
+                    
+                    // Force the derived field to be updated in the section status
+                    updateSection(state.sections, state.fields, fieldDef, state.fieldMap, stateGroupName);
+                  }
+                }
+              });
+            }
+          });
+        }
+      });
+
       // Now set section status to reflect all field changes
       updateSection(state.sections, state.fields, field, state.fieldMap, groupName);
     },

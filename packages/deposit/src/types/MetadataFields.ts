@@ -2,6 +2,7 @@ import type { LanguageStrings } from "@dans-framework/utils";
 import type { AuthProperty } from "@dans-framework/user-auth";
 import type { Feature, Point, Polygon, LineString, Geometry } from "geojson";
 import type { LngLatBoundsLike } from "react-map-gl";
+import { AutoFillProperty } from "@dans-framework/user-auth/src/types";
 
 // All user input field types
 export type InputField =
@@ -38,6 +39,7 @@ interface BasisFieldType {
   togglePrivateIds?: string[]; // filled programmatically with uuid's
   toggleTitleGeneration?: boolean; // determines if this field can toggle the forms auto title generation functionality
   fullWidth?: boolean; // set field to be 100% width instead of default 50%
+  deriveFrom?: string; // field name to derive value from
 }
 
 export interface TextFieldType extends BasisFieldType {
@@ -65,7 +67,7 @@ export interface DateFieldType extends BasisFieldType {
   fields?: never;
   multiApiValue?: never;
   options?: never;
-  autofill?: never;
+  autofill?: AutoFillProperty;
   minDateField?: string;
   maxDateField?: string;
 }
@@ -227,7 +229,8 @@ export type TypeaheadAPI =
   | "sshLicences"
   | "languageList"
   | "biodiversity_species_scientific"
-  | "biodiversity_species_vernacular";
+  | "biodiversity_species_vernacular"
+  | "un_sustainable_development_goals";
 
 // Options that should be specified if Google Sheet API is used in Autocomplete
 interface SheetOptions {

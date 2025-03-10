@@ -30,6 +30,7 @@ import {
   SshLicencesField,
   LanguagesField,
   BiodiversityField,
+  UnSustainableDevelopmentGoalsField,
 } from "./fields/AutocompleteAPIField";
 import AutocompleteField from "./fields/AutocompleteField";
 import TextField from "./fields/TextField";
@@ -119,6 +120,8 @@ const SingleField = memo(({ field, groupName, groupIndex }: SingleFieldProps) =>
               return <BiodiversityField {...(commonProps as CommonProps<AutocompleteFieldType>)} variant="vernacular" />;
             case "biodiversity_species_scientific":
               return <BiodiversityField {...(commonProps as CommonProps<AutocompleteFieldType>)} variant="scientific" />;
+            case "un_sustainable_development_goals":
+              return <UnSustainableDevelopmentGoalsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             default:
               return <AutocompleteField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
           }

@@ -65,6 +65,20 @@ export const DateTimeField = ({
     }
   }, [error]);
 
+  useEffect(() => {
+    // if requested, auto fill user data from oidc, if field has no (manually) set value
+    if (field.autofill == "dateNow" && !fieldValue.value) {
+      dispatch(
+        setField({
+          field: field,
+          value: moment().format(field.format || "YYYY-MM-DD"),
+          // support repeatable fields too
+          ...(field.repeatable && { fieldIndex: 0 }),
+        })
+      );
+    }
+  }, [dispatch, field.autofill, field.name, fieldValue]);
+
   // can be variable, set by user
   const fieldFormat = fieldValue.format || field.format;
 
