@@ -1,5 +1,5 @@
-import { Suspense, useMemo, useState } from "react";
-import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { Suspense, useState } from "react";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
@@ -20,29 +20,7 @@ import {
   FacetedSearchProvider,
 } from "@dans-framework/rdt-search-ui";
 import { AnimatePresence } from "framer-motion";
-
-// Helper to preserve ?embed=true in the url, when present
-const useEmbedHandler = () => {
-  const location = useLocation();
-
-  // on first render, check if embed=true is present in the url
-  const isEmbed = useMemo(() => {
-    const queryParams = new URLSearchParams(location.search);
-    return queryParams.get("embed") === "true";
-  }, []);
-
-  // Ensure ?embed=true is always preserved ... not needed, as this should never rerender
-  // const navigate = useNavigate();
-  // useEffect(() => {
-  //   if (isEmbed && !location.search.includes("embed=true")) {
-  //     const queryParams = new URLSearchParams(location.search);
-  //     queryParams.set("embed", "true");
-  //     navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true });
-  //   }
-  // }, [isEmbed, location.search, location.pathname, navigate]);
-
-  return { isEmbed };
-};
+import { useEmbedHandler } from "@dans-framework/utils";
 
 const App = () => {
   const { i18n } = useTranslation();
