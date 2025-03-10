@@ -112,7 +112,7 @@ const SingleField = memo(({ field, groupName, groupIndex, sx }: SingleFieldProps
             case "elsst":
             case "narcis":
             case "dansCollections":
-            case "getty":
+            case "gettyAat":
               return <DatastationsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "biodiversity_species_vernacular":
               return <BiodiversityField {...(commonProps as CommonProps<AutocompleteFieldType>)} variant="vernacular" />;
