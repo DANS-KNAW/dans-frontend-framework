@@ -20,12 +20,12 @@ const section: InitialSectionType = {
         en: "<p>Enter keywords that describe the content of your dataset in terms of artistic or architectural subject matter.</p><p>Keywords may either be selected from the Getty Art & Architecture Thesaurus (AAT), or entered as free text.</p>",
         nl: "<p>Voer trefwoorden in die de inhoud van de dataset beschrijven voor wat betreft artistieke of architectonische onderwerpen.</p><p>Trefwoorden kunnen worden geselecteerd uit de Getty Art & Architecture Thesaurus (AAT) of worden ingevoerd als vrije tekst.</p>",
       },
-      options: "getty",
+      options: "gettyAat",
       allowFreeText: true,
       value: [
         {
           label: "oral history (discipline)",
-          value: "http://vocab.getty.edu/page/aat/300054402",
+          value: "http://vocab.getty.edu/aat/300054402",
           mandatory: true,
         },
       ],

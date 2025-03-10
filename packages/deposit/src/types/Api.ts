@@ -135,20 +135,6 @@ export interface ProxyResponse {
   text: string;
 }
 
-export interface GettyResponse {
-  Vocabulary: GettyVocabulary;
-}
-
-export interface GettyVocabulary {
-  Count: number;
-  Subject: GettyItem[];
-}
-
-export interface GettyItem {
-  Preferred_Term: string;
-  Subject_ID: number;
-}
-
 export interface QueryReturnType<T = OptionsType[]> {
   data: AutocompleteAPIFieldData<T>;
   isLoading: boolean;
