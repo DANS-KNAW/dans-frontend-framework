@@ -28,7 +28,6 @@ const section: InitialSectionType = {
             nl: "Relatie",
           },
           required: true,
-          multiselect: true,
           description: {
             en: "Other PID's, publications, projects",
             nl: "Andere PID's, publicaties, projecten",

@@ -34,7 +34,7 @@ const section: InitialSectionType = {
         en: "Date of creation of the deposit",
         nl: "Datum van aanmaak van het deposit",
       },
-      format: "DD-MM-YYYY HH:mm",
+      format: "DD-MM-YYYY",
       autofill: "dateNow",
       disabled: true,
     },
@@ -50,7 +50,7 @@ const section: InitialSectionType = {
         en: "Date of last modification of the deposit",
         nl: "Datum van laatste wijziging van het deposit",
       },
-      format: "DD-MM-YYYY HH:mm",
+      format: "DD-MM-YYYY",
       autofill: "dateNow",
     },
     {
@@ -65,7 +65,7 @@ const section: InitialSectionType = {
         en: "Date of availability of the deposit",
         nl: "Datum van beschikbaarheid van het deposit",
       },
-      format: "DD-MM-YYYY HH:mm",
+      format: "DD-MM-YYYY",
       autofill: "dateNow",
     },
     {
