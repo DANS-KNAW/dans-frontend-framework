@@ -17,7 +17,6 @@ import {
   RorField,
   MultiApiField,
   GeonamesField,
-  GettyField,
   SheetsField,
   DatastationsField,
   DansFormatsField,
@@ -48,7 +47,7 @@ const DrawMap = lazy(() => import("./fields/Map"));
 
 // Memoized Field function, so only the affected field rerenders when form/metadata props change.
 // Loads the field specified in the type key
-const SingleField = memo(({ field, groupName, groupIndex }: SingleFieldProps) => {
+const SingleField = memo(({ field, groupName, groupIndex, sx }: SingleFieldProps) => {
   // Switch to determine which field type to render
   const getField = () => {
     const commonProps = {
@@ -96,8 +95,6 @@ const SingleField = memo(({ field, groupName, groupIndex }: SingleFieldProps) =>
               return <SshLicencesField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "geonames":
               return <GeonamesField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
-            case "getty":
-              return <GettyField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "sheets":
               return <SheetsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "dansFormats":
@@ -115,6 +112,7 @@ const SingleField = memo(({ field, groupName, groupIndex }: SingleFieldProps) =>
             case "elsst":
             case "narcis":
             case "dansCollections":
+            case "getty":
               return <DatastationsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             case "biodiversity_species_vernacular":
               return <BiodiversityField {...(commonProps as CommonProps<AutocompleteFieldType>)} variant="vernacular" />;
@@ -132,7 +130,7 @@ const SingleField = memo(({ field, groupName, groupIndex }: SingleFieldProps) =>
   };
 
   return (
-    <Grid xs={12} md={field.fullWidth ? 12 : 6}>
+    <Grid xs={12} md={field.fullWidth ? 12 : 6} sx={sx || undefined}>
       {getField()}
     </Grid>
   );

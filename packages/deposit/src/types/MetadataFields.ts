@@ -211,14 +211,13 @@ export type DateTimeFormat =
   | "YYYY";
 
 // API's that can be used by Autocomplete fields
-export type Datastations = "elsst" | "narcis" | "dansCollections";
+export type Datastations = "elsst" | "narcis" | "dansCollections" | "getty";
 export type TypeaheadAPI =
   | "orcid"
   | "ror"
   | "gorc"
   | "licenses"
   | "geonames"
-  | "getty"
   | "sheets"
   | "dansFormats"
   | "rdaworkinggroups"

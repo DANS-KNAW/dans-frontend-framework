@@ -25,7 +25,7 @@ const section: InitialSectionType = {
       value: [
         {
           label: "oral history (discipline)",
-          value: "http://vocab.getty.edu/page/aat/300054402",
+          value: "http://vocab.getty.edu/aat/300054402",
           mandatory: true,
         },
       ],

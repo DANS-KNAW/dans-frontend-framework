@@ -5,7 +5,6 @@ import submitReducer from "../features/submit/submitSlice";
 import depositReducer from "../deposit/depositSlice";
 import { orcidApi } from "../features/metadata/api/orcid";
 import { rorApi } from "../features/metadata/api/ror";
-import { gettyApi } from "../features/metadata/api/getty";
 import { geonamesApi } from "../features/metadata/api/geonames";
 import { sheetsApi } from "../features/metadata/api/sheets";
 import { datastationsApi } from "../features/metadata/api/datastations";
@@ -31,7 +30,6 @@ export const store = configureStore({
     [rorApi.reducerPath]: rorApi.reducer,
     [licenceApi.reducerPath]: licenceApi.reducer,
     [sshLicenceApi.reducerPath]: sshLicenceApi.reducer,
-    [gettyApi.reducerPath]: gettyApi.reducer,
     [geonamesApi.reducerPath]: geonamesApi.reducer,
     [sheetsApi.reducerPath]: sheetsApi.reducer,
     [submitApi.reducerPath]: submitApi.reducer,
@@ -54,7 +52,6 @@ export const store = configureStore({
       .concat(rorApi.middleware)
       .concat(licenceApi.middleware)
       .concat(sshLicenceApi.middleware)
-      .concat(gettyApi.middleware)
       .concat(geonamesApi.middleware)
       .concat(sheetsApi.middleware)
       .concat(datastationsApi.middleware)
