@@ -53,5 +53,6 @@
 	"confirmDelete": "Bevestig verwijderen",
 	"viewItemReadOnly": "Als alleen-lezen form",
 	"viewItemTarget": "Op {{name}}",
-	"deleteSuccess": "Dataset succesvol verwijderd van server"
+	"deleteSuccess": "Dataset succesvol verwijderd van server",
+	"remoteChanges": "Deze dataset is aangepast op de doelserver. Het opnieuw indienen van deze dataset zal deze wijzigingen overschrijven. Het bekijken of kopiëren van deze dataset in deze app zal de wijzigingen op de server niet weergeven."
 }
