@@ -192,6 +192,8 @@ const SubmissionList = ({
   const [toDelete, setToDelete] = useState<string>("");
   const [deleteSubmission] = useDeleteSubmissionMutation();
 
+  
+
   // useMemo to make sure columns don't change
   const columns = useMemo<GridColDef[]>(
     () => [
@@ -228,6 +230,7 @@ const SubmissionList = ({
                 id={params.row.id}
                 depositSlug={depositSlug}
                 status={params.row.status}
+                legacy={params.row["legacy-form"] || new Date(params.row.created) < new Date("2025-03-12")}
               />
             ),
             /*type !== "draft" && (
@@ -574,10 +577,12 @@ const ViewAction = ({
   id,
   depositSlug,
   status,
+  legacy,
 }: {
   id: string;
   depositSlug: string;
   status: TargetOutput[];
+  legacy?: boolean;
 }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -604,22 +609,24 @@ const ViewAction = ({
       </Tooltip>
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
         {/* Go to read only view */}
-        <MenuItem
-          onClick={() => {
-            dispatch(
-              setFormAction({
-                id: id,
-                action: "view",
-              }),
-            );
-            navigate(`/${depositSlug}`);
-          }}
-        >
-          <ListItemIcon>
-            <VisibilityIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>{t("viewItemReadOnly")}</ListItemText>
-        </MenuItem>
+        {!legacy && 
+          <MenuItem
+            onClick={() => {
+              dispatch(
+                setFormAction({
+                  id: id,
+                  action: "view",
+                }),
+              );
+              navigate(`/${depositSlug}`);
+            }}
+          >
+            <ListItemIcon>
+              <VisibilityIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>{t("viewItemReadOnly")}</ListItemText>
+          </MenuItem>
+        }
 
         {/* Open submission on target site. TODO: mod API to always return a response.url key */}
         {status.map(
