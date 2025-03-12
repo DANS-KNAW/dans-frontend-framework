@@ -8,6 +8,7 @@ import moment from "moment";
 import { enqueueSnackbar } from "notistack";
 import i18n from "../../languages/i18n";
 import { formatFormData } from "./submitHelpers";
+import { getUser } from "@dans-framework/utils/user";
 
 export const submitApi = createApi({
   reducerPath: "submitApi",
@@ -17,7 +18,8 @@ export const submitApi = createApi({
   tagTypes: ["Forms"],
   endpoints: (build) => ({
     submitData: build.mutation({
-      query: ({ user, actionType, id, metadata, config, files }) => {
+      query: ({ actionType, id, metadata, config, files }) => {
+        const user = getUser(); 
         // format data
         const data = formatFormData(id, metadata, files, config.formTitle);
 

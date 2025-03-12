@@ -97,7 +97,7 @@ export const metadataSlice = createSlice({
         ...state.fields,
         ...action.payload.metadata,
       };
-      state.id = action.payload.action === 'view' ? action.payload.id : uuidv4();
+      state.id = action.payload.action === 'view' || action.payload.action === 'load' || action.payload.action === 'resubmit' ? action.payload.id : uuidv4();
     },
     // keep track of form state
     setField: (state, action: PayloadAction<SetFieldValuePayload>) => {
