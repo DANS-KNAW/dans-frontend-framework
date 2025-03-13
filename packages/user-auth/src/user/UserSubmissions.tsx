@@ -297,7 +297,7 @@ const SubmissionList = ({
         type: "actions",
         align: "left",
         // adjust width for more icons. Add or remove 30 for an icon.
-        width: type === "draft" ? 125 : 165,
+        width: type === "draft" || !resubmit ? 125 : 165,
       },
       {
         field: "title",
