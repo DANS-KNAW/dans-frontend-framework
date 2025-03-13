@@ -109,7 +109,10 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     }
     if (formAction?.action === "view") {
       dispatch(setFormDisabled(true));
-    } else {
+    } else if (formAction?.id !== serverFormData?.id) {
+      // reset the form status if another form is loaded from userSubmissions
+      dispatch(resetMetadataSubmitStatus());
+      dispatch(resetFilesSubmitStatus());
       dispatch(setFormDisabled(false));
     }
   }, [formAction, serverFormData]);
@@ -360,6 +363,7 @@ const ActionMessage = ({
               dispatch(resetFiles());
               dispatch(resetFilesSubmitStatus());
               dispatch(resetMetadataSubmitStatus());
+              dispatch(setFormDisabled(false));
               setDataMessage(false);
               clearFormActions();
             }}

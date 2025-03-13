@@ -77,10 +77,12 @@ const depositStatus: DepositStatus = {
 
 export const UserSubmissions = ({ 
   depositSlug, 
-  targetCredentials 
+  targetCredentials,
+  resubmit,
 }: { 
   depositSlug?: string;
   targetCredentials?: { repo: string; auth: string; authKey: string; }[];
+  resubmit?: boolean;
 }) => {
   const { t } = useTranslation("user");
   const siteTitle = useSiteTitle();
@@ -150,6 +152,7 @@ export const UserSubmissions = ({
             isLoading={isLoading}
             header={t("userSubmissionsDrafts")}
             depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
+            resubmit={resubmit}
           />
           <SubmissionList
             data={
@@ -179,12 +182,14 @@ const SubmissionList = ({
   header,
   type,
   depositSlug,
+  resubmit,
 }: {
   data: SubmissionResponse[];
   isLoading: boolean;
   header: string;
   type: "draft" | "published";
   depositSlug: string;
+  resubmit?: boolean;
 }) => {
   const { t, i18n } = useTranslation("user");
   const navigate = useNavigate();
@@ -232,7 +237,7 @@ const SubmissionList = ({
                 legacy={params.row.legacy || new Date(params.row.created) < new Date("2025-03-12")}
               />
             ),
-            type !== "draft" && (
+            type !== "draft" && resubmit && (
               // Resubmit a form
               <Tooltip title={t("retryItem")} placement="bottom">
                 <GridActionsCellItem
