@@ -152,7 +152,6 @@ export const UserSubmissions = ({
             isLoading={isLoading}
             header={t("userSubmissionsDrafts")}
             depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
-            resubmit={resubmit}
           />
           <SubmissionList
             data={
@@ -169,6 +168,7 @@ export const UserSubmissions = ({
             isLoading={isLoading}
             header={t("userSubmissionsCompleted")}
             depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
+            resubmit={resubmit}
           />
         </Grid>
       </Grid>
@@ -243,6 +243,7 @@ const SubmissionList = ({
                 <GridActionsCellItem
                   icon={<ReplayIcon />}
                   label={t("retryItem")}
+                  disabled // disabled for now
                   onClick={() => {
                     dispatch(
                       setFormAction({
