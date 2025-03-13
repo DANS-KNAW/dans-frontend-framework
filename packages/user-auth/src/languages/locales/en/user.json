@@ -53,5 +53,6 @@
 	"confirmDelete": "Confirm deletion",
 	"viewItemReadOnly": "As read only form",
 	"viewItemTarget": "On {{name}}",
-	"deleteSuccess": "Dataset succesfully deleted from server"
+	"deleteSuccess": "Dataset succesfully deleted from server",
+	"remoteChanges": "This dataset has been modified on the target server. Resubmitting this dataset will overwrite these changes. Viewing or copying this dataset in this app will not reflect the changes on the server."
 }

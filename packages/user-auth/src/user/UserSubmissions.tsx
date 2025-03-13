@@ -42,7 +42,8 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Link from "@mui/material/Link";
 import EditIcon from "@mui/icons-material/Edit";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-// import ReplayIcon from "@mui/icons-material/Replay";
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import ReplayIcon from "@mui/icons-material/Replay";
 import PendingIcon from "@mui/icons-material/Pending";
 import ErrorIcon from "@mui/icons-material/Error";
 import PreviewIcon from "@mui/icons-material/Preview";
@@ -76,10 +77,12 @@ const depositStatus: DepositStatus = {
 
 export const UserSubmissions = ({ 
   depositSlug, 
-  targetCredentials 
+  targetCredentials,
+  resubmit,
 }: { 
   depositSlug?: string;
   targetCredentials?: { repo: string; auth: string; authKey: string; }[];
+  resubmit?: boolean;
 }) => {
   const { t } = useTranslation("user");
   const siteTitle = useSiteTitle();
@@ -165,6 +168,7 @@ export const UserSubmissions = ({
             isLoading={isLoading}
             header={t("userSubmissionsCompleted")}
             depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
+            resubmit={resubmit}
           />
         </Grid>
       </Grid>
@@ -178,12 +182,14 @@ const SubmissionList = ({
   header,
   type,
   depositSlug,
+  resubmit,
 }: {
   data: SubmissionResponse[];
   isLoading: boolean;
   header: string;
   type: "draft" | "published";
   depositSlug: string;
+  resubmit?: boolean;
 }) => {
   const { t, i18n } = useTranslation("user");
   const navigate = useNavigate();
@@ -191,8 +197,6 @@ const SubmissionList = ({
   const auth = useAuth();
   const [toDelete, setToDelete] = useState<string>("");
   const [deleteSubmission] = useDeleteSubmissionMutation();
-
-  
 
   // useMemo to make sure columns don't change
   const columns = useMemo<GridColDef[]>(
@@ -230,15 +234,16 @@ const SubmissionList = ({
                 id={params.row.id}
                 depositSlug={depositSlug}
                 status={params.row.status}
-                legacy={params.row["legacy-form"] || new Date(params.row.created) < new Date("2025-03-12")}
+                legacy={params.row.legacy || new Date(params.row.created) < new Date("2025-03-12")}
               />
             ),
-            /*type !== "draft" && (
+            type !== "draft" && resubmit && (
               // Resubmit a form
               <Tooltip title={t("retryItem")} placement="bottom">
                 <GridActionsCellItem
                   icon={<ReplayIcon />}
                   label={t("retryItem")}
+                  disabled // disabled for now
                   onClick={() => {
                     dispatch(
                       setFormAction({
@@ -250,7 +255,7 @@ const SubmissionList = ({
                   }}
                 />
               </Tooltip>
-            ),*/
+            ),
             <Tooltip title={t("copyItem")} placement="bottom">
               <GridActionsCellItem
                 icon={<ContentCopyIcon />}
@@ -292,7 +297,7 @@ const SubmissionList = ({
         type: "actions",
         align: "left",
         // adjust width for more icons. Add or remove 30 for an icon.
-        width: type === "draft" ? 125 : 125,
+        width: type === "draft" || !resubmit ? 125 : 165,
       },
       {
         field: "title",
@@ -400,6 +405,8 @@ const SubmissionList = ({
       id: d["dataset-id"],
       created: type === "draft" ? d["saved-date"] : d["submitted-date"],
       title: d["title"],
+      remoteChanges: d["targets"].some(t => t.diff && t.diff.hasOwnProperty("data")),
+      legacy: d["legacy-form"],
       ...(type === "published" ? { status: d["targets"] } : null),
     }));
 
@@ -495,7 +502,12 @@ const SingleTargetStatus = ({
 
   return (
     <>
-      <Stack direction="row" alignItems="center" pt={0.1} pb={0.1}>
+      <Stack direction="row" alignItems="center" pt={0.1} pb={0.1} spacing={0.5}>
+        {target.diff && target.diff.hasOwnProperty("data") && (
+          <Tooltip title={t("remoteChanges")} placement="left">
+            <ErrorOutlineIcon fontSize="small" color="warning" />
+          </Tooltip>
+        )}
         <Tooltip
           title={
             !target["deposit-status"] ? t("queue")
@@ -526,7 +538,7 @@ const SingleTargetStatus = ({
             <CheckCircleIcon fontSize="small" color="success" />
           : <PendingIcon fontSize="small" color="neutral" />}
         </Tooltip>
-        <Typography variant="body2" ml={1}>
+        <Typography variant="body2">
           {target["display-name"]}
         </Typography>
       </Stack>
