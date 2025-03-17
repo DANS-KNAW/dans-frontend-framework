@@ -51,6 +51,7 @@ export interface TargetOutput {
   "display-name": string;
   "output-response": any;
   "repo-name": string;
+  diff: {} | { data: any };
 }
 
 export interface SubmissionResponse {
@@ -59,6 +60,7 @@ export interface SubmissionResponse {
   "release-version": ReleaseVersion;
   "saved-date": string | null;
   "submitted-date": string | null;
+  "legacy-form": boolean;
   targets: TargetOutput[];
   title: string;
 }

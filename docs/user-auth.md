@@ -66,7 +66,7 @@ import { LoginButton } from "@dans-framework/user-auth";
 
 ## UserSubmissions
 
-TBD. Displays a current users metadata submissions. Needs to be a child of `<AuthRoute />`.
+Displays a current users metadata submissions. Needs to be a child of `<AuthRoute />`. 
 
 ```tsx
 import { UserSubmissions } from "@dans-framework/user-auth";
@@ -75,7 +75,11 @@ import { UserSubmissions } from "@dans-framework/user-auth";
   path="user-submissions"
   element={
     <AuthRoute>
-      <UserSubmissions />
+      <UserSubmissions 
+        depositSlug="/deposit" // a string, must point to the slug of the deposit page
+        targetCredentials={form.targetCredentials} // array of target objects, see form config in Deposit
+        resubmit={false} // set to true to enable resubmission of previously submitted forms
+      />
     </AuthRoute>
   }
 />;

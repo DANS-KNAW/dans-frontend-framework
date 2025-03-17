@@ -8,6 +8,7 @@ import moment from "moment";
 import { enqueueSnackbar } from "notistack";
 import i18n from "../../languages/i18n";
 import { formatFormData } from "./submitHelpers";
+import { getUser } from "@dans-framework/utils/user";
 
 export const submitApi = createApi({
   reducerPath: "submitApi",
@@ -17,7 +18,8 @@ export const submitApi = createApi({
   tagTypes: ["Forms"],
   endpoints: (build) => ({
     submitData: build.mutation({
-      query: ({ user, actionType, id, metadata, config, files }) => {
+      query: ({ actionType, id, metadata, config, files }) => {
+        const user = getUser(); 
         // format data
         const data = formatFormData(id, metadata, files, config.formTitle);
 
@@ -54,7 +56,7 @@ export const submitApi = createApi({
         const submitUrl =
           actionType === "resubmit" ?
             `resubmit/${data.id}`
-          : `dataset/${actionType === "save" ? "DRAFT" : "PUBLISH"}`;
+          : `dataset/${actionType === "save" ? "DRAFT" : "SUBMIT"}`;
 
         return {
           url: `inbox/${submitUrl}`,
@@ -89,7 +91,6 @@ export const submitApi = createApi({
         store.dispatch(setMetadataSubmitStatus("error"));
         // enable form again, so user can try and resubmit
         store.dispatch(setFormDisabled(false));
-        console.log(response)
         return {
           error: i18n.t("submit:submitMetadataError", {
             error: response.status === "FETCH_ERROR" ? i18n.t("submit:serverConnectionError") : response.status,

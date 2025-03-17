@@ -35,12 +35,10 @@ import {
   getFormDisabled,
   setOpenTab,
 } from "../../deposit/depositSlice";
-import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
 import { getFormActions, clearFormActions } from "@dans-framework/user-auth";
 import { useDebouncedCallback } from "use-debounce";
-import { enqueueSnackbar } from "notistack";
 import { lookupLanguageString } from "@dans-framework/utils";
 
 const Submit = ({
@@ -50,7 +48,6 @@ const Submit = ({
 }) => {
   const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation("submit");
-  const auth = useAuth();
   const metadataStatus = useAppSelector(getMetadataStatus);
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const selectedFiles = useAppSelector(getFiles);
@@ -97,17 +94,6 @@ const Submit = ({
     { isLoading: isLoadingMeta, isError: isErrorMeta, reset: resetMeta },
   ] = useSubmitDataMutation();
 
-  // Access token might just be expiring, or user settings just changed
-  // So we do a callback to signinSilent, which refreshes the current user
-  const getUser = () =>
-    auth
-      .signinSilent()
-      .then(() => auth.user)
-      .catch(() => {
-        // make sure we display an error when there's an issue signing in/refreshing the user's token
-        enqueueSnackbar("Athentication error", { variant: "customError" });
-      });
-
   // remove warning when files get added
   useEffect(() => {
     selectedFiles.length > 0 && fileWarning && setFileWarning(false);
@@ -143,36 +129,32 @@ const Submit = ({
     dispatch(setMetadataSubmitStatus("submitting"));
 
     // do the actual submit
-    getUser().then((user) =>
-      // with fresh headerdata/user info, we can submit the metadata
-      submitData({
-        user: user,
-        actionType: actionType,
-        id: sessionId,
-        metadata: metadata,
-        config: formConfig,
-        files: selectedFiles,
-      }).then((result: { data?: any; error?: any }) => {
-        if (result.data?.status === "OK") {
-          // if metadata has been submitted ok, we start the file submit
-          selectedFiles.map((file) => {
-            const hasStatus = filesSubmitStatus.find((f) => f.id === file.id);
-            // make sure file is not already submitted or currently submitting
-            return (
-              !file.submittedFile &&
-              (!hasStatus || hasStatus?.status === "error") &&
-              dispatch(
-                setFilesSubmitStatus({
-                  id: file.id,
-                  progress: 0,
-                  status: "queued",
-                }),
-              )
-            );
-          });
-        }
-      }),
-    );
+    submitData({
+      actionType: actionType,
+      id: sessionId,
+      metadata: metadata,
+      config: formConfig,
+      files: selectedFiles,
+    }).then((result: { data?: any; error?: any }) => {
+      if (result.data?.status === "OK") {
+        // if metadata has been submitted ok, we start the file submit
+        selectedFiles.map((file) => {
+          const hasStatus = filesSubmitStatus.find((f) => f.id === file.id);
+          // make sure file is not already submitted or currently submitting
+          return (
+            !file.submittedFile &&
+            (!hasStatus || hasStatus?.status === "error") &&
+            dispatch(
+              setFilesSubmitStatus({
+                id: file.id,
+                progress: 0,
+                status: "queued",
+              }),
+            )
+          );
+        });
+      }
+    });
   };
 
   // Autosave functionality, debounced on metadata change
@@ -180,7 +162,6 @@ const Submit = ({
     // on autosave, we send along file metadata, but not the actual files
     if (!formDisabled && isTouched) {
       submitData({
-        user: auth.user,
         actionType: "save",
         id: sessionId,
         metadata: metadata,

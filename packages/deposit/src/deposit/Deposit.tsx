@@ -104,12 +104,17 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // Load external form data
   useEffect(() => {
     if (formAction?.id && serverFormData?.md) {
+      // load the data
       dispatch(setExternalFormData({metadata: serverFormData.md.metadata, action: formAction.action, id: serverFormData['dataset-id']}));
       dispatch(addFiles(serverFormData.md["file-metadata"]));
     }
     if (formAction?.action === "view") {
+      // disable form if just viewing
       dispatch(setFormDisabled(true));
-    } else {
+    } else if (formAction?.id !== serverFormData?.id) {
+      // reset the form status if another form is loaded from userSubmissions
+      dispatch(resetMetadataSubmitStatus());
+      dispatch(resetFilesSubmitStatus());
       dispatch(setFormDisabled(false));
     }
   }, [formAction, serverFormData]);
@@ -356,10 +361,12 @@ const ActionMessage = ({
           <Button
             variant="contained"
             onClick={() => {
+              // reset everything and enable form again
               dispatch(initForm(form));
               dispatch(resetFiles());
               dispatch(resetFilesSubmitStatus());
               dispatch(resetMetadataSubmitStatus());
+              dispatch(setFormDisabled(false));
               setDataMessage(false);
               clearFormActions();
             }}

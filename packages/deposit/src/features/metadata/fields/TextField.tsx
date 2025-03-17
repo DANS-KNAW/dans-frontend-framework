@@ -72,7 +72,6 @@ const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
       const match = segment.match(/{{(.*?)}}/);
       if (match) {
         const matchedField = getNestedField(allFieldValues, match[1]);
-        console.log(matchedField)
         return matchedField && matchedField.value && !matchedField.private
           ? Array.isArray(matchedField.value)
             ? matchedField.value[0].hasOwnProperty("label")
