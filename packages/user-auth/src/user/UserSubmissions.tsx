@@ -101,9 +101,9 @@ export const UserSubmissions = ({
       data
         .filter(
           (d) =>
-            d["release-version"] === "PUBLISHED" ||
-            d["release-version"] === "PUBLISH" ||
-            d["release-version"] === "SUBMIT",
+            d["state-version"] === "PUBLISHED" ||
+            d["state-version"] === "PUBLISH" ||
+            d["state-version"] === "SUBMIT",
         )
         .every(
           // if all are finished, or one has an error, stop checking
@@ -145,7 +145,7 @@ export const UserSubmissions = ({
           <Typography variant="h1">{t("userSubmissions")}</Typography>
           <SubmissionList
             data={
-              (data && data.filter((d) => d["release-version"] === "DRAFT")) ||
+              (data && data.filter((d) => d["state-version"] === "DRAFT")) ||
               []
             }
             type="draft"
@@ -158,9 +158,9 @@ export const UserSubmissions = ({
               (data &&
                 data.filter(
                   (d) =>
-                    d["release-version"] === "SUBMIT" ||
-                    d["release-version"] === "PUBLISHED" ||
-                    d["release-version"] === "PUBLISH",
+                    d["state-version"] === "SUBMIT" ||
+                    d["state-version"] === "PUBLISHED" ||
+                    d["state-version"] === "PUBLISH",
                 )) ||
               []
             }
