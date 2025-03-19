@@ -243,7 +243,6 @@ const SubmissionList = ({
                 <GridActionsCellItem
                   icon={<ReplayIcon />}
                   label={t("retryItem")}
-                  disabled // disabled for now
                   onClick={() => {
                     dispatch(
                       setFormAction({
