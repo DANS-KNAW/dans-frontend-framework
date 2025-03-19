@@ -199,6 +199,12 @@ export const metadataSlice = createSlice({
       // Now set section status to reflect all field changes
       updateSection(state.sections, state.fields, field, state.fieldMap, groupName);
     },
+    updateAllSections: (state) => {
+      // Update all sections to reflect the current field values
+      Object.entries(state.sections).forEach(([sectionId, section]) => {
+        state.sections[sectionId].status = evaluateSection(section, state.fields, state.fieldMap);
+      });
+    },
     addField: (state, action: PayloadAction<AddDeleteFieldPayload>) => {
       // add a repeatable single field or a whole group
       const { field, groupName, groupIndex } = action.payload;
@@ -269,6 +275,7 @@ export const {
   setDateTypeField,
   setTouched,
   setExternalFormData,
+  updateAllSections,
 } = metadataSlice.actions;
 
 // Select values from state

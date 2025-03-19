@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Container from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -21,6 +21,7 @@ import {
   getTouchedStatus,
   getForm,
   setExternalFormData,
+  updateAllSections,
 } from "../features/metadata/metadataSlice";
 import { getSectionStatus } from "../features/metadata/metadataHelpers";
 import {
@@ -52,6 +53,7 @@ import {
   getFormActions,
   clearFormActions,
 } from "@dans-framework/user-auth";
+import { v4 as uuidv4 } from "uuid";
 
 /*
  * TODO:
@@ -63,6 +65,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const dispatch = useAppDispatch();
   const auth = useAuth();
   const sessionId = useAppSelector(getSessionId);
+  const lastProcessedId = useRef<string | null>(null);
   const openTab = useAppSelector(getOpenTab);
   const { t, i18n } = useTranslation("generic");
   const siteTitle = useSiteTitle();
@@ -103,21 +106,38 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
 
   // Load external form data
   useEffect(() => {
-    if (formAction?.id && serverFormData?.md) {
-      // load the data
-      dispatch(setExternalFormData({metadata: serverFormData.md.metadata, action: formAction.action, id: serverFormData['dataset-id']}));
-      dispatch(addFiles(serverFormData.md["file-metadata"]));
+    if (!formAction?.id || !serverFormData?.md) return; // Ensure data is available
+  
+    // If formAction.id is the same as the last processed one, don't reinitialize
+    if (lastProcessedId.current === formAction.id && formAction.action !== "copy") {
+      return;
     }
-    if (formAction?.action === "view") {
-      // disable form if just viewing
-      dispatch(setFormDisabled(true));
-    } else if (formAction?.id !== serverFormData?.id) {
-      // reset the form status if another form is loaded from userSubmissions
-      dispatch(resetMetadataSubmitStatus());
-      dispatch(resetFilesSubmitStatus());
-      dispatch(setFormDisabled(false));
-    }
-  }, [formAction, serverFormData]);
+  
+    // Update the last processed ID (but allow copy to regenerate new UUID)
+    lastProcessedId.current = formAction.id;
+  
+    // Reset states before loading new data
+    dispatch(resetMetadataSubmitStatus());
+    dispatch(resetFilesSubmitStatus());
+    dispatch(resetFiles());
+  
+    // Determine the new session ID
+    const newSessionId = formAction.action === "copy" ? uuidv4() : serverFormData["dataset-id"];
+  
+    // Load the form data
+    dispatch(setExternalFormData({ 
+      metadata: serverFormData.md.metadata, 
+      action: formAction.action, 
+      id: newSessionId 
+    }));
+  
+    dispatch(addFiles(serverFormData.md["file-metadata"]));
+    dispatch(updateAllSections());
+  
+    // Handle form disabling logic
+    dispatch(setFormDisabled(formAction.action === "view"));
+  
+  }, [formAction, serverFormData]); 
 
   useEffect(() => {
     // Show a message when a saved form is loaded.
