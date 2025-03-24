@@ -91,7 +91,7 @@ const Submit = ({
 
   const [
     submitData,
-    { isLoading: isLoadingMeta, isError: isErrorMeta, reset: resetMeta },
+    { isLoading: isLoadingMeta, isError: isErrorMeta, reset: resetMeta, data: submittedMetaResponse },
   ] = useSubmitDataMutation();
 
   // remove warning when files get added
@@ -377,14 +377,14 @@ const Submit = ({
               t("resubmit")
             : t("submit")}
           </Button>
-          <FileUploader />
+          <FileUploader customId={submittedMetaResponse?.['dataset-id']}/>
         </Stack>
       </Stack>
     </Stack>
   );
 };
 
-const FileUploader = () => {
+const FileUploader = ({customId}: {customId: string}) => {
   // Component that manages file upload queue.
   // Check files that have status queued, and start uploading when a spot becomes available in the queue.
   const maxConcurrentUploads = 3;
@@ -404,7 +404,7 @@ const FileUploader = () => {
         const hasStatus = filesSubmitStatus.find((f) => f.id === file.id);
         return (
           hasStatus?.status === "queued" &&
-          uploadFile(file, sessionId, formConfig.target?.envName)
+          uploadFile(file, customId || sessionId, formConfig.target?.envName)
         );
       });
     }
