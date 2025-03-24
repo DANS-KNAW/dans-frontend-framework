@@ -53,7 +53,7 @@ export const submitApi = createApi({
           console.log(data);
         }
 
-        const submitUrl = `dataset/${actionType === "save" ? "DRAFT" : "SUBMIT"}`;
+        const submitUrl = `dataset/${actionType === "save" ? "DRAFT" : actionType === "resubmit" ? "RESUBMIT" : "SUBMIT"}`;
 
         return {
           url: `inbox/${submitUrl}`,
