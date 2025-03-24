@@ -12,6 +12,10 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "react-i18next";
 import { lookupLanguageString } from "@dans-framework/utils";
+import Tooltip from '@mui/material/Tooltip';
+import Stack from "@mui/material/Stack";
+import parse from "html-react-parser";
+import HelpIcon from '@mui/icons-material/Help';
 
 interface Props<
   FacetConfig extends BaseFacetConfig,
@@ -36,12 +40,19 @@ function FacetWrapper<
   return (
     <Card sx={{ height: "100%" }}>
       <CardContent>
-        <Typography variant="h5">
-          {lookupLanguageString(props.facet.config.title, i18n.language)}
-          {props.facetState?.collapse && (
-            <ActiveIndicator<Filter> filter={props.filter} />
-          )}
-        </Typography>
+        <Stack direction="row" spacing={1}>
+          <Typography variant="h5">
+            {lookupLanguageString(props.facet.config.title, i18n.language)}
+            {props.facetState?.collapse && (
+              <ActiveIndicator<Filter> filter={props.filter} />
+            )}
+          </Typography>
+          {props.facet.config.tooltip &&
+            <Tooltip title={parse(props.facet.config.tooltip)}>
+              <HelpIcon color="primary" />
+            </Tooltip>
+          }
+        </Stack>
         <HelpDropDown>{props.facet.config.description}</HelpDropDown>
         {props.children}
       </CardContent>

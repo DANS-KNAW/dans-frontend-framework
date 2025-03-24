@@ -17,6 +17,8 @@ export interface BaseFacetConfig {
   readonly groupByLabel?: string;
   cols?: number;
   rows?: number;
+  tooltip?: string;
+  disableSort?: boolean;
 }
 
 export interface FacetFilterObject<T extends FacetFilter> {
