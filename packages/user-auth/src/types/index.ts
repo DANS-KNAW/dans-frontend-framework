@@ -57,7 +57,7 @@ export interface TargetOutput {
 export interface SubmissionResponse {
   "created-date": string;
   "dataset-id": string;
-  "state-version": ReleaseVersion;
+  "status": ReleaseVersion;
   "saved-date": string | null;
   "submitted-date": string | null;
   "legacy-form": boolean;
