@@ -12,8 +12,6 @@ export const SortBy = React.memo(function SortBy(props: Props) {
   const controllers = React.useContext(FacetControllersContext);
   const { t } = useTranslation("views");
 
-  console.log(controllers)
-
   return (
     <DropDown label={t("sortBy", { count: props.sortOrder.size })}>
       {Array.from(controllers.values()).map((facet) => (

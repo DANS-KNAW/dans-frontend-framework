@@ -201,6 +201,15 @@ export const elasticConfig: EndpointProps[] = [
           tooltip: "Most Identifiers are domain-agnostic, but there are important examples of domain-specific identifiers - especially in the life sciences.",
         }}
       />,
+      // This is hacky, fake facet to add this to sorting options
+      <ListFacet
+        config={{
+          id: "identifier",
+          field: "identifier",
+          title: "Name",
+          hidden: true,
+        }}
+      />
     ],
   },
 ];

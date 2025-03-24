@@ -47,6 +47,8 @@ export function ListView(props: ListFacetProps) {
     });
   }, [props.values?.total]);
 
+  if (props.facet.config.hidden) return null;
+
   if (!values.length && props.values !== undefined )
     return (
       <Typography variant="body2" sx={{ color: "neutral.dark" }}>

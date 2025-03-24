@@ -19,6 +19,7 @@ export interface BaseFacetConfig {
   rows?: number;
   tooltip?: string;
   disableSort?: boolean;
+  hidden?: boolean;
 }
 
 export interface FacetFilterObject<T extends FacetFilter> {

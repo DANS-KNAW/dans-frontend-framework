@@ -39,6 +39,8 @@ export function _ListFacet(props: ListFacetProps) {
     props.facet.config,
   );
 
+  if (props.facet.config.hidden) return null;
+
   return (
     <FacetWrapper {...props} className="list-facet">
       {props.values != null && (viewState.pagination || viewState.query) && (
