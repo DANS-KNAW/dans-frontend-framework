@@ -241,7 +241,6 @@ export function SingleRecord({ onClose }: { onClose: () => void }) {
 }
 
 function Metadata({name, value, pb, width}: {name: string; value: string | string[]; pb?: number; width?: number;}) {
-  console.log(value)
   return (
     <Stack direction={{xs: "column", sm: "row"}} spacing={{xs: 0, sm: 2}} pb={{xs: 1, sm: pb}}>
       <Typography variant="body2" color="neutral.dark" pr={1} sx={{ width: `${width || 10}rem`}}>
