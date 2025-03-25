@@ -64,7 +64,6 @@ export const userSubmissionsApi = createApi({
         // We need to pass on endpoint api keys with this call, like submitApi.ts does, 
         // for server to compare data with data on target repo 
         const user = getUser();
-        console.log(user)
         const targets = targetCredentials.map((t: { repo: string; auth: string; authKey: string; }) => ({
           "target-repo-name": t.repo,
           credentials: {
