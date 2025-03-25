@@ -121,8 +121,9 @@ const Submit = ({
     setFileWarning(false);
 
     // Clear any form action messages on submit
+    clearFormActions();
+
     if (actionType === "resubmit" || actionType === "submit") {
-      clearFormActions();
       dispatch(setFormDisabled(true));
     }
 
@@ -160,6 +161,8 @@ const Submit = ({
   // Autosave functionality, debounced on metadata change
   const autoSave = useDebouncedCallback(() => {
     // on autosave, we send along file metadata, but not the actual files
+    // we also clear form actions (e.g. copy)
+    clearFormActions();
     if (!formDisabled && isTouched) {
       submitData({
         actionType: "save",

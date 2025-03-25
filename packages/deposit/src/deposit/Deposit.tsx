@@ -69,11 +69,10 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const openTab = useAppSelector(getOpenTab);
   const { t, i18n } = useTranslation("generic");
   const siteTitle = useSiteTitle();
-  const [dataMessage, setDataMessage] = useState(false);
   const formAction = getFormActions();
   const formTouched = useAppSelector(getTouchedStatus);
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const currentConfig = useAppSelector(getData);
+  const [dataMessage, setDataMessage] = useState(false);
 
   // Can load a saved form based on metadata id, passed along from UserSubmissions.
   // Set form behaviour based on action param.
@@ -83,6 +82,8 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const { data: serverFormData } = useFetchSavedMetadataQuery(formAction.id, {
     skip: !formAction.id,
   });
+
+  console.log(serverFormData)
 
   useEffect(() => {
     if (!sessionId && config.form) {
@@ -98,11 +99,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   useEffect(() => {
     setSiteTitle(siteTitle, lookupLanguageString(page.name, i18n.language));
   }, [siteTitle, page.name]);
-
-  // remove data message when user submits
-  useEffect(() => {
-    setDataMessage(false);
-  }, [metadataSubmitStatus]);
 
   // Load external form data
   useEffect(() => {
@@ -131,7 +127,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       id: newSessionId 
     }));
   
-    dispatch(addFiles(serverFormData.md["file-metadata"]));
+    formAction.action !== "copy" && dispatch(addFiles(serverFormData.md["file-metadata"]));
     dispatch(updateAllSections());
   
     // Handle form disabling logic
