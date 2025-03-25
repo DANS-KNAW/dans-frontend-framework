@@ -86,12 +86,10 @@ export const UserSubmissions = ({
 }) => {
   const { t } = useTranslation("user");
   const siteTitle = useSiteTitle();
-  const auth = useAuth();
   const dispatch = useAppDispatch();
 
   // Fetch the users submitted/saved forms, every 10 sec, to update submission status
   const { data, isLoading } = useFetchUserSubmissionsQuery({
-    userId: auth.user?.profile.sub,
     targetCredentials: targetCredentials,
   });
 

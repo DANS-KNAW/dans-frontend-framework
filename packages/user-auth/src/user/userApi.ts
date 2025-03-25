@@ -60,10 +60,11 @@ export const userSubmissionsApi = createApi({
   tagTypes: ["Submissions"],
   endpoints: (build) => ({
     fetchUserSubmissions: build.query({
-      query: ({userId: userId, targetCredentials: targetCredentials}) => {
+      query: ({targetCredentials: targetCredentials}) => {
         // We need to pass on endpoint api keys with this call, like submitApi.ts does, 
         // for server to compare data with data on target repo 
         const user = getUser();
+        console.log(user)
         const targets = targetCredentials.map((t: { repo: string; auth: string; authKey: string; }) => ({
           "target-repo-name": t.repo,
           credentials: {
@@ -77,7 +78,7 @@ export const userSubmissionsApi = createApi({
           },
         }));
         return {
-          url: `progress-state/${userId}`,
+          url: `progress-state/${user?.profile.sub}`,
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
             Accept: "application/json",
