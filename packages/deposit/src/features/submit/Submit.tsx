@@ -334,7 +334,7 @@ const Submit = ({
         <Stack direction="row" alignItems="center" mb={2}>
           <Button
             variant="contained"
-            disabled={formDisabled || formAction.action === "resubmit"}
+            disabled={formDisabled}
             onClick={() => handleButtonClick("save")}
             size="large"
             sx={{ mr: 1 }}
