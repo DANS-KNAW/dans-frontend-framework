@@ -407,7 +407,7 @@ const FileUploader = ({customId}: {customId: string}) => {
         const hasStatus = filesSubmitStatus.find((f) => f.id === file.id);
         return (
           hasStatus?.status === "queued" &&
-          uploadFile(file, customId || sessionId, formConfig.target?.envName)
+          uploadFile(file, customId || sessionId, formConfig.target)
         );
       });
     }
