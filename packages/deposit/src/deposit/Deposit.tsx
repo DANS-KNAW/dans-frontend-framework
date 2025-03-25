@@ -79,11 +79,9 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // load: loaded data from a saved form, to edit
   // copy: copy data from saved form to a new sessionId
   // resubmit: resubmit existing and already submitted data (save disabled), set submit button target to resubmit action in API
-  const { data: serverFormData } = useFetchSavedMetadataQuery(formAction.id, {
+  const { data: serverFormData } = useFetchSavedMetadataQuery({ id: formAction.id, config: currentConfig }, {
     skip: !formAction.id,
   });
-
-  console.log(serverFormData)
 
   useEffect(() => {
     if (!sessionId && config.form) {
@@ -310,7 +308,8 @@ const ActionMessage = ({
   const { t } = useTranslation("generic");
   const dispatch = useAppDispatch();
   const formAction = getFormActions();
-  const { data } = useFetchSavedMetadataQuery(formAction.id, {
+  const currentConfig = useAppSelector(getData);
+  const { data } = useFetchSavedMetadataQuery({ id: formAction.id, config: currentConfig }, {
     skip: !formAction.id,
   });
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);

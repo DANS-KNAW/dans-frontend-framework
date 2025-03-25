@@ -96,10 +96,17 @@ export const submitApi = createApi({
       },
     }),
     fetchSavedMetadata: build.query({
-      query: (id) => ({
-        url: `dataset/${id}`,
-        headers: { Accept: "application/json" },
-      }),
+      query: ({id, config}) => {
+        const user = getUser(); 
+        return ({
+          url: `dataset/${id}`,
+          headers: { 
+            Authorization: `Bearer ${config.submitKey || user?.access_token}`,
+            Accept: "application/json",
+            "auth-env-name": config.target?.envName,
+          },
+        });
+      },
       providesTags: (_res, _err, id) => [{ type: "Forms", id }],
       transformResponse: (response: any) => {
         const modifiedResponse = {
