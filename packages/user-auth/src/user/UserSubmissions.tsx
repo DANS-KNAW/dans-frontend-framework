@@ -336,7 +336,6 @@ const SubmissionList = ({
                         () =>
                           deleteSubmission({
                             id: params.row.id,
-                            user: auth.user,
                           })
                       }
                     >

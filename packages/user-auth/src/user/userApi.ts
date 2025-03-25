@@ -79,7 +79,9 @@ export const userSubmissionsApi = createApi({
         return {
           url: `progress-state/${userId}`,
           headers: {
+            Authorization: `Bearer ${user?.access_token}`,
             Accept: "application/json",
+            "assistant-config-name": import.meta.env.VITE_CONFIG_NAME,
             "targets-credentials": JSON.stringify(targets),
           },
         };
@@ -94,14 +96,16 @@ export const userSubmissionsApi = createApi({
       },
     }),
     deleteSubmission: build.mutation({
-      query: ({ id, user }) => {
+      query: ({ id }) => {
+        const user = getUser();
         return {
           url: `inbox/dataset/${id}`,
           method: "DELETE",
           headers: {
-            Authorization: `Bearer ${user.access_token}`,
+            Authorization: `Bearer ${user?.access_token}`,
             Accept: "application/json",
             "auth-env-name": import.meta.env.VITE_ENV_NAME,
+            "assistant-config-name": import.meta.env.VITE_CONFIG_NAME,
             "user-id": user?.profile.sub,
           },
         };
