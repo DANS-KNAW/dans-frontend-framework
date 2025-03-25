@@ -103,7 +103,7 @@ export const submitApi = createApi({
           headers: { 
             Authorization: `Bearer ${config.submitKey || user?.access_token}`,
             Accept: "application/json",
-            "auth-env-name": config.target?.envName,
+            "assistant-config-name": config.target?.configName,
           },
         });
       },
