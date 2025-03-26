@@ -101,6 +101,7 @@ export const UserSubmissions = ({
           (d) =>
             d["status"] === "PUBLISHED" ||
             d["status"] === "PUBLISH" ||
+            d["status"] === "SUBMITTED" ||
             d["status"] === "SUBMIT",
         )
         .every(
@@ -156,6 +157,7 @@ export const UserSubmissions = ({
               (data &&
                 data.filter(
                   (d) =>
+                    d["status"] === "SUBMITTED" ||
                     d["status"] === "SUBMIT" ||
                     d["status"] === "PUBLISHED" ||
                     d["status"] === "PUBLISH",
