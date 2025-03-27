@@ -39,15 +39,17 @@ export class ChartController extends FacetController<
             radius: "60%",
           },
         ],
-        legend: {
-          bottom: 10,
-          left: 'center',
-          itemHeight: 10,
-          itemWidth: 10,
-          textStyle: {
-            fontSize: 10,
+        ...(this.config.legend && {
+          legend: {
+            bottom: 10,
+            left: 'center',
+            itemHeight: 10,
+            itemWidth: 10,
+            textStyle: {
+              fontSize: 10,
+            }
           }
-        },
+        }),
       }
     : {
         tooltip: {},
@@ -65,6 +67,7 @@ export class ChartController extends FacetController<
           },
         ],
         grid: {
+          top: '1%',
           left: '3%',
           right: '4%',
           bottom: '3%',

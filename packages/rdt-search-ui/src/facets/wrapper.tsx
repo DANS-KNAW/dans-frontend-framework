@@ -39,8 +39,8 @@ function FacetWrapper<
 
   return (
     <Card sx={{ height: "100%" }}>
-      <CardContent>
-        <Stack direction="row" spacing={1}>
+      <CardContent sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+        <Stack direction="row" spacing={1} mb={1}>
           <Typography variant="h5">
             {lookupLanguageString(props.facet.config.title, i18n.language)}
             {props.facetState?.collapse && (

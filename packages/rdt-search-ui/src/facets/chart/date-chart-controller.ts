@@ -312,7 +312,8 @@ const barSetOptions: echarts.EChartsOption = {
       type: "slider",
       height: 18,
       bottom: 12,
-
+      left: '4%',
+      right: '5%',
       // Do not change the y-axis when zooming
       filterMode: "empty",
     },
@@ -320,5 +321,7 @@ const barSetOptions: echarts.EChartsOption = {
   grid: {
     top: 24,
     // bottom: 36,
+    left: '5%',
+    right: '5%',
   },
 };
