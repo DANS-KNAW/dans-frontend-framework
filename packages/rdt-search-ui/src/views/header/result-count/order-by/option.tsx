@@ -67,7 +67,7 @@ function OrderOption(props: Props) {
   const direction = props.sortOrder.get(props.facet.config.field);
 
   return (
-    <MenuItem key={props.facet.ID} onClick={setFacetId}>
+    <MenuItem key={props.facet.ID}>
       {direction != null && (
         <ListItemIcon onClick={setDirection}>
           <SortIcon
@@ -78,7 +78,7 @@ function OrderOption(props: Props) {
           />
         </ListItemIcon>
       )}
-      <ListItemText>
+      <ListItemText onClick={setFacetId}>
         {lookupLanguageString(props.facet.config.title, i18n.language)}
       </ListItemText>
     </MenuItem>

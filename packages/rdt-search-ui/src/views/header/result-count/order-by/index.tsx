@@ -15,6 +15,7 @@ export const SortBy = React.memo(function SortBy(props: Props) {
   return (
     <DropDown label={t("sortBy", { count: props.sortOrder.size })}>
       {Array.from(controllers.values()).map((facet) => (
+        !facet.config.disableSort &&
         <OrderOption facet={facet} key={facet.ID} sortOrder={props.sortOrder} />
       ))}
     </DropDown>

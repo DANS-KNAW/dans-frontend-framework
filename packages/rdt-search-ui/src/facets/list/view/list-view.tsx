@@ -47,6 +47,8 @@ export function ListView(props: ListFacetProps) {
     });
   }, [props.values?.total]);
 
+  if (props.facet.config.hidden) return null;
+
   if (!values.length && props.values !== undefined )
     return (
       <Typography variant="body2" sx={{ color: "neutral.dark" }}>
@@ -63,7 +65,7 @@ export function ListView(props: ListFacetProps) {
     );
 
   return (
-    <>
+    <Stack sx={{flex: 1}} flexDirection="column" justifyContent="space-between">
       <Box ref={ulRef} style={{ overflow: "auto" }}>
         {values.map((value) => (
           <ListFacetValue
@@ -78,7 +80,7 @@ export function ListView(props: ListFacetProps) {
         ))}
       </Box>
       {props.viewState.pagination ?
-        <Stack alignItems="center" mt={2}>
+        <Stack alignItems="center" mt={2} sx={{ justifySelf: "flex-end" }}>
           <Pagination
             currentPage={page}
             dispatch={props.dispatch}
@@ -96,7 +98,7 @@ export function ListView(props: ListFacetProps) {
           </Button>
         )
       }
-    </>
+    </Stack>
   );
 }
 

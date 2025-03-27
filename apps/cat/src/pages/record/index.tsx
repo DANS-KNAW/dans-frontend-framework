@@ -22,6 +22,16 @@ interface SingleRecord {
   unique: string;
   resolvable: string;
   persistent: string;
+  provider: string;
+  scheme: string;
+  authority: string;
+  standard: string;
+  managers: string;
+  metaresovers: string;
+  number_of_resolvers: string;
+  resolution_topology: string;
+  countries: { name: string }[];
+  disciplinary: string;
 } 
 
 export function SingleRecord({ onClose }: { onClose: () => void }) {
@@ -130,7 +140,7 @@ export function SingleRecord({ onClose }: { onClose: () => void }) {
                 <Box>
                   <Typography variant="h3">Detailed view</Typography>
 
-                  <Stack direction="row" spacing={2} justifyContent="space-between" alignItems="flex-start">
+                  <Stack direction={{xs: "column", sm: "row"}} spacing={2} justifyContent="space-between" alignItems="flex-start">
                     <Box mt={2}>
                       <Metadata
                         name="Identifier name"
@@ -139,7 +149,6 @@ export function SingleRecord({ onClose }: { onClose: () => void }) {
                       <Metadata
                         name="Identifier Description"
                         value={record.description}
-                        pb={2}
                       />
                       <Metadata
                         name="Year of First Operation"
@@ -152,6 +161,66 @@ export function SingleRecord({ onClose }: { onClose: () => void }) {
                     </Box>
                     {gupriMap(record.unique, record.resolvable, record.persistent)}
                   </Stack>
+
+                  <Box mt={2}>
+                    <Typography variant="h5">Stack Information</Typography>
+                    <Metadata
+                      name="Provider"
+                      value={record.provider}
+                    />
+                    <Metadata
+                      name="Scheme"
+                      value={record.scheme}
+                    />
+                    <Metadata
+                      name="Authority"
+                      value={record.authority}
+                    />
+                    <Metadata
+                      name="Standard"
+                      value={record.standard}
+                    />
+                    <Metadata
+                      name="Number of Managers"
+                      value={record.managers}
+                    />
+                  </Box>
+
+                  <Box mt={2}>
+                    <Typography variant="h5">Resolution Information</Typography>
+                    <Metadata
+                      name="Metaresolvers"
+                      value={record.metaresovers}
+                    />
+                    <Metadata
+                      name="Number of Resolvers"
+                      value={record.number_of_resolvers}
+                    />
+                    <Metadata
+                      name="Resolution Topology"
+                      value={record.resolution_topology}
+                    />
+                  </Box>
+
+                  <Box mt={2}>
+                    <Typography variant="h5">Coverage and Endorsements</Typography>
+                    <Metadata
+                      name="Country-Specific (Spatial Coverage)"
+                      value={record.coverage}
+                      width={16}
+                    />
+                    <Metadata
+                      name="Endorsed/Recommended by (Country)"
+                      value={record.countries?.map(c => c.name)}
+                      width={16}
+                    />
+                    <Metadata
+                      name="Discipline Coverage"
+                      value={record.disciplinary}
+                      width={16}
+                    />
+                  </Box>
+                  
                 </Box>
                 :
                 <Box>
@@ -170,10 +239,10 @@ export function SingleRecord({ onClose }: { onClose: () => void }) {
   );
 }
 
-function Metadata({name, value, pb}: {name: string; value: string | string[]; pb?: number}) {
+function Metadata({name, value, pb = 0, width}: {name: string; value: string | string[]; pb?: number; width?: number;}) {
   return (
-    <Stack direction="row" spacing={2} pb={pb}>
-      <Typography variant="body2" color="neutral.dark" pr={1} sx={{ width: '10rem'}}>
+    <Stack direction={{xs: "column", sm: "row"}} spacing={{xs: 0, sm: 2}} pb={{xs: 1, sm: pb}}>
+      <Typography variant="body2" color="neutral.dark" pr={1} sx={{ width: `${width || 10}rem`}}>
         {name}
       </Typography>
       <Typography variant="body2" sx={{ flex: 1}}>

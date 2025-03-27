@@ -194,7 +194,7 @@ function AppLoader({ children, controllers, searchProps }: AppLoaderProps) {
               <Stack
                 justifyContent="center"
                 alignItems="center"
-                sx={{ height: "20rem" }}
+                sx={{ height: "24rem" }}
               >
                 <Stack>
                   <Typography variant="h3">{t("error.header")}</Typography>
