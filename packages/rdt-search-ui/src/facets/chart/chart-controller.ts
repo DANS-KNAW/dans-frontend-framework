@@ -47,8 +47,9 @@ export class ChartController extends FacetController<
             itemWidth: 10,
             textStyle: {
               fontSize: 10,
-            }
-          }
+            },
+            selectedMode: false,
+          },
         }),
       }
     : {
