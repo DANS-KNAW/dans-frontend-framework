@@ -166,7 +166,7 @@ export function MapView(
         ref={mapRef} 
         sx={{ 
           width: '100%', 
-          height: '18rem', 
+          height: '22rem', 
           borderRadius: 1, 
           overflow: 'hidden', 
           border: '1px solid', 

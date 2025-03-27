@@ -9,6 +9,7 @@ import { FacetsDataReducerAction } from "../../context/state/actions";
 
 export interface ChartFacetConfig extends BaseFacetConfig {
   chartType?: string;
+  legend?: boolean;
 }
 
 export interface DateChartFacetConfig extends ChartFacetConfig {

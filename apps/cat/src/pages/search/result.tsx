@@ -34,27 +34,30 @@ export const gupriMap = (unique?: string, resolvable?: string, persistent?: stri
         pb: 0,
         borderRadius: 1,
       }}>
-        <Typography sx={sx} color={unique?.toLowerCase().includes('global') ? 'success.main' : 'primary.gray'}>G</Typography>
+        <Typography sx={sx} color={
+          unique?.toLowerCase().includes('global') 
+          ? 'success.main' 
+          : 'neutral.dark'}>G</Typography>
         <Typography sx={sx} color={
           unique?.toLowerCase().includes('global') || unique?.toLowerCase().includes('namespace') 
           ? 'success.main' 
           : unique?.toLowerCase().includes('local') 
           ? 'warning.main' 
-          : 'primary.gray'
+          : 'neutral.dark'
         }>U</Typography>
         <Typography sx={sx} color={
           persistent?.toLowerCase().includes('explicit') 
           ? 'success.main' 
           : persistent?.toLowerCase().includes('implicit') && !persistent?.toLowerCase().includes('no') 
           ? 'warning.main' 
-          : 'primary.gray'
+          : 'neutral.dark'
         }>P</Typography>
         <Typography sx={sx} color={
           resolvable?.toLowerCase() === 'direct' 
           ? 'success.main' 
           : resolvable?.toLowerCase() === 'indirect'
           ? 'warning.main' 
-          : 'primary.gray'
+          : 'neutral.dark'
         }>R</Typography>
         <Typography sx={sx}>i</Typography>
       </Stack>
