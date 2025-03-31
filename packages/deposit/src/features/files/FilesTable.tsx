@@ -110,6 +110,7 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
   const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation("files");
   const formDisabled = useAppSelector(getFormDisabled);
+  const rowDisabled = (file.state && file.state === "generated") || formDisabled;
   const config = useAppSelector(getData);
   const fileRoles = config.filesUpload?.fileRoles || defaultFileRoles;
   const options = type === "process" ? fileProcessing : fileRoles;
@@ -158,7 +159,7 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
       )}
       options={filteredOptions}
       value={file[type] || (type === "process" ? [] : null)}
-      disabled={formDisabled}
+      disabled={rowDisabled}
       isOptionEqualToValue={(option, value) => option.value === value.value}
     />
   );
@@ -172,6 +173,7 @@ const EmbargoDate = ({ file }: { file: SelectedFile }) => {
   const dateFormat = "DD-MM-YYYY";
   const serverDateFormat = "YYYY-MM-DD";
   const config = useAppSelector(getData);
+  const rowDisabled = (file.state && file.state === "generated") || formDisabled;
 
   const errorMessage = useMemo(() => {
     switch (error) {
@@ -205,7 +207,7 @@ const EmbargoDate = ({ file }: { file: SelectedFile }) => {
         );
       }}
       value={moment(file.embargo, serverDateFormat) || null}
-      disabled={formDisabled}
+      disabled={rowDisabled}
       minDate={moment().add(config.filesUpload?.embargoDateMin || 1, "days")}
       maxDate={moment().add(
         config.filesUpload?.embargoDateMax || 10000,
@@ -236,6 +238,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const formDisabled = useAppSelector(getFormDisabled);
   const formConfig = useAppSelector(getData);
+  const rowDisabled = (file.state && file.state === "generated") || formDisabled
 
   const {
     displayRoles = true,
@@ -265,12 +268,12 @@ const FileTableRow = ({ file }: FileItemProps) => {
             color="primary"
             size="small"
             onClick={() =>
-              !formDisabled &&
+              !rowDisabled &&
               (!file.submittedFile ?
                 dispatch(removeFile(file))
               : setToDelete(!toDelete))
             }
-            disabled={formDisabled}
+            disabled={rowDisabled}
             data-testid={`delete-${file.name}`}
           >
             <DeleteIcon fontSize="small" color="error" />
@@ -356,7 +359,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
                 )
               }
               data-testid={`private-${file.name}`}
-              disabled={file.valid === false || formDisabled}
+              disabled={file.valid === false || rowDisabled}
             />
           </TableCell>
         )}
