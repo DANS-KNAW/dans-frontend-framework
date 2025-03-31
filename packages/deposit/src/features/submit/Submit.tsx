@@ -100,7 +100,7 @@ const Submit = ({
   }, [selectedFiles.length]);
 
   // submit the data
-  const handleButtonClick = (actionType: "submit" | "save" | "resubmit") => {
+  const handleButtonClick = (actionType: "submit" | "save" | "resubmit" | "saveResubmit") => {
     // check to see if any files have been added.
     // If not, and there is no warning yet, show a warning to confirm actual submission first
     if (
@@ -165,7 +165,7 @@ const Submit = ({
     clearFormActions();
     if (!formDisabled && isTouched) {
       submitData({
-        actionType: "save",
+        actionType: formAction.action === "resubmit" ? "saveResubmit" : "save",
         id: sessionId,
         metadata: metadata,
         config: formConfig,
@@ -335,7 +335,9 @@ const Submit = ({
           <Button
             variant="contained"
             disabled={formDisabled}
-            onClick={() => handleButtonClick("save")}
+            onClick={() => handleButtonClick(
+              formAction.action === "resubmit" ? "saveResubmit" : "save"
+            )}
             size="large"
             sx={{ mr: 1 }}
             data-testid="save-form"

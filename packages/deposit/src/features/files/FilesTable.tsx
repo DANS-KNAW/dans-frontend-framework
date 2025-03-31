@@ -264,20 +264,22 @@ const FileTableRow = ({ file }: FileItemProps) => {
         }}
       >
         <TableCell sx={{ p: 0, pl: 1, borderWidth: fileStatus ? 0 : 1 }}>
-          <IconButton
-            color="primary"
-            size="small"
-            onClick={() =>
-              !rowDisabled &&
-              (!file.submittedFile ?
-                dispatch(removeFile(file))
-              : setToDelete(!toDelete))
-            }
-            disabled={rowDisabled}
-            data-testid={`delete-${file.name}`}
-          >
-            <DeleteIcon fontSize="small" color="error" />
-          </IconButton>
+          {!(file.state && file.state === "generated") && 
+            <IconButton
+              color="primary"
+              size="small"
+              onClick={() =>
+                !rowDisabled &&
+                (!file.submittedFile ?
+                  dispatch(removeFile(file))
+                : setToDelete(!toDelete))
+              }
+              disabled={rowDisabled}
+              data-testid={`delete-${file.name}`}
+            >
+              <DeleteIcon fontSize="small" color="error" />
+            </IconButton>
+          }
         </TableCell>
         <TableCell
           sx={{
