@@ -58,8 +58,8 @@ export interface SubmissionResponse {
   "created-date": string;
   "dataset-id": string;
   "status": ReleaseVersion;
-  "saved-date": string | null;
-  "submitted-date": string | null;
+  "saved-at": string | null;
+  "submitted-at": string | null;
   "legacy-form": boolean;
   targets: TargetOutput[];
   title: string;

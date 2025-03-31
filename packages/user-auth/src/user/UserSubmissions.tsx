@@ -135,43 +135,33 @@ export const UserSubmissions = ({
 
   useEffect(() => {
     setSiteTitle(siteTitle, t("userSubmissions"));
-  }, [siteTitle, name]);
+  }, [siteTitle]);
 
+  const drafts = data && data.filter((d) => d["status"] === "DRAFT") || [];
+  const resubmits = data && data.filter((d) => d["status"] === "RESUBMIT") || [];
+  const published = data && data.filter((d) => ["SUBMITTED", "SUBMIT", "PUBLISHED", "PUBLISH"].includes(d.status)) || [];
+  
   return (
     <Container>
       <Grid container>
         <Grid xs={12} mdOffset={1} md={10}>
           <Typography variant="h1">{t("userSubmissions")}</Typography>
           <SubmissionList
-            data={
-              (data && data.filter((d) => d["status"] === "DRAFT")) || []
-            }
+            data={drafts}
             type="draft"
             isLoading={isLoading}
             header={t("userSubmissionsDrafts")}
             depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
           />
           <SubmissionList
-            data={
-              (data && data.filter((d) => d["status"] === "RESUBMIT")) || []
-            }
+            data={resubmits}
             type="resubmit"
             isLoading={isLoading}
             header={t("userSubmissionsResubmit")}
             depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
           />
           <SubmissionList
-            data={
-              (data &&
-                data.filter(
-                  (d) =>
-                    d["status"] === "SUBMITTED" ||
-                    d["status"] === "SUBMIT" ||
-                    d["status"] === "PUBLISHED" ||
-                    d["status"] === "PUBLISH",
-                )) ||
-              []
-            }
+            data={published}
             type="published"
             isLoading={isLoading}
             header={t("userSubmissionsCompleted")}
@@ -349,7 +339,7 @@ const SubmissionList = ({
       },
       {
         field: "created",
-        headerName: type === "draft" ? t("savedOn") : t("submittedOn"),
+        headerName: type === "published" ? t("submittedOn") : t("savedOn"),
         width: 200,
         type: "dateTime",
         valueGetter: (params) => moment.utc(params.value).toDate(),
@@ -393,7 +383,7 @@ const SubmissionList = ({
         (t) => depositStatus.processing.indexOf(t["deposit-status"]) !== -1,
       ),
       id: d["dataset-id"],
-      created: type === "draft" ? d["saved-date"] : d["submitted-date"],
+      created: type === "published" ? d["submitted-at"] : d["saved-at"],
       title: d["title"],
       remoteChanges: d["targets"].some(t => t.diff && t.diff.hasOwnProperty("data")),
       legacy: d["legacy-form"],
