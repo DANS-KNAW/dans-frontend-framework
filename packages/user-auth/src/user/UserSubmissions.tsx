@@ -93,32 +93,31 @@ export const UserSubmissions = ({
     targetCredentials: targetCredentials,
   });
 
+  useEffect(() => {
+    setSiteTitle(siteTitle, t("userSubmissions"));
+  }, [siteTitle]);
+
+  const drafts = data && data.filter((d) => d["status"] === "DRAFT") || [];
+  const resubmits = data && data.filter((d) => d["status"] === "RESUBMIT") || [];
+  const published = data && data.filter((d) => ["SUBMITTED", "SUBMIT", "PUBLISHED", "PUBLISH"].includes(d.status)) || [];
+
   // are there any targets that have been submitted not complete yet?
   const allTargetsComplete =
-    (data &&
-      data
-        .filter(
-          (d) =>
-            d["status"] === "PUBLISHED" ||
-            d["status"] === "PUBLISH" ||
-            d["status"] === "SUBMITTED" ||
-            d["status"] === "SUBMIT"
-        )
-        .every(
-          // if all are finished, or one has an error, stop checking
-          (d) =>
-            d.targets.every(
-              (t) => depositStatus.success.indexOf(t["deposit-status"]) !== -1,
-            ) ||
-            d.targets.some(
-              (t) => depositStatus.error.indexOf(t["deposit-status"]) !== -1,
-            ) ||
-            d.targets.some(
-              // Something went wrong if status is null.
-              // Todo: modify API to give more consistent output
-              (t) => t["deposit-status"] === null,
-            ),
-        )) ||
+    published.every(
+      // if all are finished, or one has an error, stop checking
+      (d) =>
+        d.targets.every(
+          (t) => depositStatus.success.indexOf(t["deposit-status"]) !== -1,
+        ) ||
+        d.targets.some(
+          (t) => depositStatus.error.indexOf(t["deposit-status"]) !== -1,
+        ) ||
+        d.targets.some(
+          // Something went wrong if status is null.
+          // Todo: modify API to give more consistent output
+          (t) => t["deposit-status"] === null,
+        ),
+    ) ||
     // or when fetch is complete but there's no data for this user
     (data === undefined && !isLoading);
 
@@ -132,14 +131,6 @@ export const UserSubmissions = ({
       );
     return () => (interval ? clearInterval(interval) : undefined);
   }, [allTargetsComplete]);
-
-  useEffect(() => {
-    setSiteTitle(siteTitle, t("userSubmissions"));
-  }, [siteTitle]);
-
-  const drafts = data && data.filter((d) => d["status"] === "DRAFT") || [];
-  const resubmits = data && data.filter((d) => d["status"] === "RESUBMIT") || [];
-  const published = data && data.filter((d) => ["SUBMITTED", "SUBMIT", "PUBLISHED", "PUBLISH"].includes(d.status)) || [];
   
   return (
     <Container>
