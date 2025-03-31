@@ -214,26 +214,6 @@ const SubmissionList = ({
         headerName: "",
         getActions: (params: any) => {
           return [
-            type !== "published" && (
-              // Edit function for saved but not submitted forms
-              <Tooltip title={t("editItem")} placement="bottom">
-                <GridActionsCellItem
-                  icon={<EditIcon />}
-                  label={t("editItem")}
-                  onClick={() => {
-                    // set which form to load in userSlice (accessed in Deposit package)
-                    dispatch(
-                      setFormAction({
-                        id: params.row.id,
-                        action: "load",
-                      }),
-                    );
-                    // navigate to deposit page
-                    navigate(`/${depositSlug}`);
-                  }}
-                />
-              </Tooltip>
-            ),
             type === "published" && (
               // Open a popover menu with these options:
               // Open a read only version of a submitted form, so user can check input values
@@ -245,17 +225,17 @@ const SubmissionList = ({
                 legacy={params.row.legacy || new Date(params.row.created) < new Date("2025-03-12")}
               />
             ),
-            resubmit && (
-              // Resubmit a form
-              <Tooltip title={t("retryItem")} placement="bottom">
+            (resubmit || type !== "published") && (
+              // Resubmit or edit a form
+              <Tooltip title={t(type === "draft" ? "editItem" : "retryItem")} placement="bottom">
                 <GridActionsCellItem
-                  icon={<ReplayIcon />}
-                  label={t("retryItem")}
+                  icon={resubmit ? <ReplayIcon /> : <EditIcon />}
+                  label={t(type === "draft" ? "editItem" : "retryItem")}
                   onClick={() => {
                     dispatch(
                       setFormAction({
                         id: params.row.id,
-                        action: "resubmit",
+                        action: type === "draft" ? "load" : "resubmit",
                       }),
                     );
                     navigate(`/${depositSlug}`);
@@ -282,7 +262,9 @@ const SubmissionList = ({
               // Delete an item, for drafts and for errored submissions. todo
               <Tooltip
                 title={t(
-                  toDelete === params.row.id ? "undeleteItem" : "deleteItem",
+                  toDelete === params.row.id 
+                  ? (type === "resubmit" ? "cancelUnstageItem" : "undeleteItem")
+                  : (type === "resubmit" ? "unstageItem" : "deleteItem"),
                 )}
                 placement="bottom"
               >
@@ -291,7 +273,9 @@ const SubmissionList = ({
                     toDelete === params.row.id ? <CloseIcon /> : <DeleteIcon />
                   }
                   label={t(
-                    toDelete === params.row.id ? "undeleteItem" : "deleteItem",
+                    toDelete === params.row.id 
+                    ? (type === "resubmit" ? "cancelUnstageItem" : "undeleteItem")
+                    : (type === "resubmit" ? "unstageItem" : "deleteItem"),
                   )}
                   onClick={() =>
                     setToDelete(toDelete === params.row.id ? "" : params.row.id)
@@ -347,7 +331,7 @@ const SubmissionList = ({
                           })
                       }
                     >
-                      {t("confirmDelete")}
+                      {t(type === "resubmit" ? "confirmUnstage" : "confirmDelete")}
                     </Button>
                   </motion.div>
                 )}

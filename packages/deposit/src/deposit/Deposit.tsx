@@ -127,6 +127,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       id: newSessionId 
     }));
   
+    console.log(serverFormData.md["file-metadata"])
     formAction.action !== "copy" && dispatch(addFiles(serverFormData.md["file-metadata"]));
 
     // update section status indicators
