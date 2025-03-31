@@ -120,7 +120,7 @@ const Submit = ({
     // Files are present or a warning has already been shown to the user
     setFileWarning(false);
 
-    // Clear any form action messages on submit
+    // Clear any form action messages on submit, when saving a copy
     formAction.action === "copy" && clearFormActions();
 
     if (actionType === "resubmit" || actionType === "submit") {
@@ -161,7 +161,7 @@ const Submit = ({
   // Autosave functionality, debounced on metadata change
   const autoSave = useDebouncedCallback(() => {
     // on autosave, we send along file metadata, but not the actual files
-    // we also clear form actions (e.g. copy)
+    // we also clear form actions for copy
     formAction.action === "copy" && clearFormActions();
     if (!formDisabled && isTouched) {
       submitData({
