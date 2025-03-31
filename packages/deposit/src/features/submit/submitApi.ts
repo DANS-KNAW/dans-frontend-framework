@@ -107,6 +107,7 @@ export const submitApi = createApi({
           },
         });
       },
+      keepUnusedDataFor: 0,
       providesTags: (_res, _err, id) => [{ type: "Forms", id }],
       transformResponse: (response: any) => {
         const modifiedResponse = {

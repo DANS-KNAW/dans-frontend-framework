@@ -102,7 +102,7 @@ export const UserSubmissions = ({
             d["status"] === "PUBLISHED" ||
             d["status"] === "PUBLISH" ||
             d["status"] === "SUBMITTED" ||
-            d["status"] === "SUBMIT",
+            d["status"] === "SUBMIT"
         )
         .every(
           // if all are finished, or one has an error, stop checking
@@ -144,12 +144,20 @@ export const UserSubmissions = ({
           <Typography variant="h1">{t("userSubmissions")}</Typography>
           <SubmissionList
             data={
-              (data && data.filter((d) => d["status"] === "DRAFT")) ||
-              []
+              (data && data.filter((d) => d["status"] === "DRAFT")) || []
             }
             type="draft"
             isLoading={isLoading}
             header={t("userSubmissionsDrafts")}
+            depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
+          />
+          <SubmissionList
+            data={
+              (data && data.filter((d) => d["status"] === "RESUBMIT")) || []
+            }
+            type="resubmit"
+            isLoading={isLoading}
+            header={t("userSubmissionsResubmit")}
             depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
           />
           <SubmissionList
@@ -187,7 +195,7 @@ const SubmissionList = ({
   data: SubmissionResponse[];
   isLoading: boolean;
   header: string;
-  type: "draft" | "published";
+  type: "draft" | "published" | "resubmit";
   depositSlug: string;
   resubmit?: boolean;
 }) => {
@@ -206,7 +214,7 @@ const SubmissionList = ({
         headerName: "",
         getActions: (params: any) => {
           return [
-            type === "draft" && (
+            type !== "published" && (
               // Edit function for saved but not submitted forms
               <Tooltip title={t("editItem")} placement="bottom">
                 <GridActionsCellItem
@@ -226,7 +234,7 @@ const SubmissionList = ({
                 />
               </Tooltip>
             ),
-            type !== "draft" && (
+            type === "published" && (
               // Open a popover menu with these options:
               // Open a read only version of a submitted form, so user can check input values
               // Or go to the deposited data on the target website(s)
@@ -237,7 +245,7 @@ const SubmissionList = ({
                 legacy={params.row.legacy || new Date(params.row.created) < new Date("2025-03-12")}
               />
             ),
-            type !== "draft" && resubmit && (
+            resubmit && (
               // Resubmit a form
               <Tooltip title={t("retryItem")} placement="bottom">
                 <GridActionsCellItem
@@ -270,7 +278,7 @@ const SubmissionList = ({
                 }}
               />
             </Tooltip>,
-            (type === "draft" || params.row.error) && (
+            (type !== "published" || params.row.error) && (
               // Delete an item, for drafts and for errored submissions. todo
               <Tooltip
                 title={t(

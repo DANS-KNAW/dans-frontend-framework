@@ -31,7 +31,7 @@ export interface ValidateTarget {
   type: AuthKeys;
 }
 
-export type ReleaseVersion = "DRAFT" | "PUBLISHED" | "PUBLISH" | "SUBMIT" | "SUBMITTED";
+export type ReleaseVersion = "DRAFT" | "PUBLISHED" | "PUBLISH" | "SUBMIT" | "SUBMITTED" | "RESUBMIT";
 
 type ActiveStatus =
   | "initial"

@@ -14,7 +14,7 @@
   "fileWarning": "You have not added any files. Do you really want to submit?",
   "submit": "Submit data",
   "resubmit": "Resubmit data",
-  "submitAnyway": "Submit without files",
+  "submitAnyway": "Submit with missing files",
   "errorRetry": "Please try again or contact an administrator",
   "save": "Save",
   "saveErrorNotification": "Failed to save metadata - {{error}}",
