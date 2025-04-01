@@ -21,6 +21,12 @@ export const validateData = (type: ValidationType, value: string): boolean => {
       return /^(https?|ftp):\/\/[^\s/$.?#]*\.[^\s]*$/.test(value.toLowerCase());
     case "github-uri":
       return /^https:\/\/github\.com\/.*$/.test(value.toLowerCase());
+    case "pid":
+      // Currently only checks for DOI and URL should potentially be expanded
+      // Might be better to revise some of the logic for this method to accept multiple validation types.
+      const doi = /^(https?:\/\/(dx\.)?doi\.org\/|doi:)?10\.\d{4,}([\.\-\/]?[a-zA-Z0-9_]+)+$/i.test(value.toLowerCase());
+      const url =  /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/.test(value.toLowerCase());
+      return doi || url;
     default:
       return true;
   }

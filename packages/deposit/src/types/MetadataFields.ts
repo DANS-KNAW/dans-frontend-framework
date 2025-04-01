@@ -259,7 +259,7 @@ export interface OptionsType {
 }
 
 // Validation for text fields
-export type ValidationType = "email" | "uri" | "number" | "github-uri";
+export type ValidationType = "email" | "uri" | "number" | "github-uri" | "pid";
 
 // Format to return API response in, used by RTK's transformResponse
 export interface AutocompleteAPIFieldData<T = OptionsType[]> {
