@@ -316,7 +316,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
                   </Button>
                 </motion.div>
               )}
-              <motion.div layout key="name">
+              <motion.div layout key="name" style={{ opacity: file.state && file.state === "generated" ? 0.5 : 1 }}>
                 {file.name}
                 {file.mapping && (
                   <Tooltip
@@ -341,7 +341,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
             </AnimatePresence>
           </Box>
         </TableCell>
-        <TableCell sx={{ p: 1, borderWidth: fileStatus ? 0 : 1 }}>
+        <TableCell sx={{ p: 1, borderWidth: fileStatus ? 0 : 1, opacity: file.state && file.state === "generated" ? 0.5 : 1 }}>
           {file.size ? `${(file.size / 1048576).toFixed(2)} MB` : "-"}
         </TableCell>
         <TableCell sx={{ p: 1, borderWidth: fileStatus ? 0 : 1 }}>
