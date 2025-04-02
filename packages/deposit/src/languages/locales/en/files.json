@@ -38,6 +38,7 @@
   "fileSubmitError": "Try uploading again",
   "fileTypeCheckError": "Something went wrong checking the file type. Please try again.",
   "submittedFile": "File has been uploaded previously",
+  "generatedFile": "Auto generated file: will be regenerated on resubmit",
   "confirmDelete": "Confirm deletion",
   "fileLimitHeader": "Warning! Files larger than {{amount}} MB",
   "fileLimitDescription": "Unfortunately, we cannot handle files of this size automatically. Please <0>contact DANS directly</0>.",

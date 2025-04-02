@@ -7,6 +7,7 @@ import { enqueueSnackbar } from "notistack";
 import { getUser } from "@dans-framework/utils/user";
 import i18n from "../../languages/i18n";
 import { sendTicket } from "@dans-framework/utils/error";
+import type { EndpointTarget } from "../../types/Submit"
 
 const manualError = async (
   fileName: string,
@@ -37,7 +38,7 @@ const manualError = async (
 export const uploadFile = async (
   file: SelectedFile,
   sessionId: string,
-  target: string = "",
+  target?: EndpointTarget,
 ) => {
   // set file status to submitting, to add it to actual upload queue, while we create the blob
   store.dispatch(
@@ -52,13 +53,13 @@ export const uploadFile = async (
   const fetchedFile = await fetch(file.url);
 
   if (!fetchedFile.ok) {
-    throw new Error(`Failed to fetch file: ${fetchedFile.statusText}`);
     store.dispatch(
       setFilesSubmitStatus({
         id: file.id,
         status: "error",
       }),
     );
+    throw new Error(`Failed to fetch file: ${fetchedFile.statusText}`);
   }
 
   const fileBlob = await fetchedFile.blob();
@@ -79,7 +80,8 @@ export const uploadFile = async (
     },
     headers: {
       Authorization: `Bearer ${userBeforeUpload?.access_token}`,
-      "auth-env-name": target,
+      "auth-env-name": target?.envName || "",
+      "assistant-config-name": target?.configName || "",
     },
     removeFingerprintOnSuccess: true,
     onError: (error) => {
@@ -147,7 +149,8 @@ export const uploadFile = async (
             method: "PATCH",
             headers: {
               Authorization: `Bearer ${userAfterUpload?.access_token}`,
-              "auth-env-name": target,
+              "auth-env-name": target?.envName || "",
+              "assistant-config-name": target?.configName || "",
             },
           },
         );

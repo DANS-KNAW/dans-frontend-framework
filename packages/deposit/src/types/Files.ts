@@ -47,6 +47,7 @@ export interface SelectedFile {
   mapping?: {
     [key: string]: any;
   };
+  state?: string;
 }
 
 export interface RejectedFiles extends FileRejection {
