@@ -31,7 +31,7 @@ export interface ValidateTarget {
   type: AuthKeys;
 }
 
-export type ReleaseVersion = "DRAFT" | "PUBLISHED" | "PUBLISH" | "SUBMIT";
+export type ReleaseVersion = "DRAFT" | "PUBLISHED" | "PUBLISH" | "SUBMIT" | "SUBMITTED" | "RESUBMIT";
 
 type ActiveStatus =
   | "initial"
@@ -57,9 +57,9 @@ export interface TargetOutput {
 export interface SubmissionResponse {
   "created-date": string;
   "dataset-id": string;
-  "release-version": ReleaseVersion;
-  "saved-date": string | null;
-  "submitted-date": string | null;
+  "status": ReleaseVersion;
+  "saved-at": string | null;
+  "submitted-at": string | null;
   "legacy-form": boolean;
   targets: TargetOutput[];
   title: string;

@@ -86,40 +86,38 @@ export const UserSubmissions = ({
 }) => {
   const { t } = useTranslation("user");
   const siteTitle = useSiteTitle();
-  const auth = useAuth();
   const dispatch = useAppDispatch();
 
   // Fetch the users submitted/saved forms, every 10 sec, to update submission status
   const { data, isLoading } = useFetchUserSubmissionsQuery({
-    userId: auth.user?.profile.sub,
     targetCredentials: targetCredentials,
   });
 
+  useEffect(() => {
+    setSiteTitle(siteTitle, t("userSubmissions"));
+  }, [siteTitle]);
+
+  const drafts = data && data.filter((d) => d["status"] === "DRAFT") || [];
+  const resubmits = data && data.filter((d) => d["status"] === "RESUBMIT") || [];
+  const published = data && data.filter((d) => ["SUBMITTED", "SUBMIT", "PUBLISHED", "PUBLISH"].includes(d.status)) || [];
+
   // are there any targets that have been submitted not complete yet?
   const allTargetsComplete =
-    (data &&
-      data
-        .filter(
-          (d) =>
-            d["release-version"] === "PUBLISHED" ||
-            d["release-version"] === "PUBLISH" ||
-            d["release-version"] === "SUBMIT",
-        )
-        .every(
-          // if all are finished, or one has an error, stop checking
-          (d) =>
-            d.targets.every(
-              (t) => depositStatus.success.indexOf(t["deposit-status"]) !== -1,
-            ) ||
-            d.targets.some(
-              (t) => depositStatus.error.indexOf(t["deposit-status"]) !== -1,
-            ) ||
-            d.targets.some(
-              // Something went wrong if status is null.
-              // Todo: modify API to give more consistent output
-              (t) => t["deposit-status"] === null,
-            ),
-        )) ||
+    published.every(
+      // if all are finished, or one has an error, stop checking
+      (d) =>
+        d.targets.every(
+          (t) => depositStatus.success.indexOf(t["deposit-status"]) !== -1,
+        ) ||
+        d.targets.some(
+          (t) => depositStatus.error.indexOf(t["deposit-status"]) !== -1,
+        ) ||
+        d.targets.some(
+          // Something went wrong if status is null.
+          // Todo: modify API to give more consistent output
+          (t) => t["deposit-status"] === null,
+        ),
+    ) ||
     // or when fetch is complete but there's no data for this user
     (data === undefined && !isLoading);
 
@@ -133,37 +131,28 @@ export const UserSubmissions = ({
       );
     return () => (interval ? clearInterval(interval) : undefined);
   }, [allTargetsComplete]);
-
-  useEffect(() => {
-    setSiteTitle(siteTitle, t("userSubmissions"));
-  }, [siteTitle, name]);
-
+  
   return (
     <Container>
       <Grid container>
         <Grid xs={12} mdOffset={1} md={10}>
           <Typography variant="h1">{t("userSubmissions")}</Typography>
           <SubmissionList
-            data={
-              (data && data.filter((d) => d["release-version"] === "DRAFT")) ||
-              []
-            }
+            data={drafts}
             type="draft"
             isLoading={isLoading}
             header={t("userSubmissionsDrafts")}
             depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
           />
+          {resubmit && resubmits.length > 0 && <SubmissionList
+            data={resubmits}
+            type="resubmit"
+            isLoading={isLoading}
+            header={t("userSubmissionsResubmit")}
+            depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
+          />}
           <SubmissionList
-            data={
-              (data &&
-                data.filter(
-                  (d) =>
-                    d["release-version"] === "SUBMIT" ||
-                    d["release-version"] === "PUBLISHED" ||
-                    d["release-version"] === "PUBLISH",
-                )) ||
-              []
-            }
+            data={published}
             type="published"
             isLoading={isLoading}
             header={t("userSubmissionsCompleted")}
@@ -187,7 +176,7 @@ const SubmissionList = ({
   data: SubmissionResponse[];
   isLoading: boolean;
   header: string;
-  type: "draft" | "published";
+  type: "draft" | "published" | "resubmit";
   depositSlug: string;
   resubmit?: boolean;
 }) => {
@@ -206,27 +195,7 @@ const SubmissionList = ({
         headerName: "",
         getActions: (params: any) => {
           return [
-            type === "draft" && (
-              // Edit function for saved but not submitted forms
-              <Tooltip title={t("editItem")} placement="bottom">
-                <GridActionsCellItem
-                  icon={<EditIcon />}
-                  label={t("editItem")}
-                  onClick={() => {
-                    // set which form to load in userSlice (accessed in Deposit package)
-                    dispatch(
-                      setFormAction({
-                        id: params.row.id,
-                        action: "load",
-                      }),
-                    );
-                    // navigate to deposit page
-                    navigate(`/${depositSlug}`);
-                  }}
-                />
-              </Tooltip>
-            ),
-            type !== "draft" && (
+            type === "published" && (
               // Open a popover menu with these options:
               // Open a read only version of a submitted form, so user can check input values
               // Or go to the deposited data on the target website(s)
@@ -237,18 +206,17 @@ const SubmissionList = ({
                 legacy={params.row.legacy || new Date(params.row.created) < new Date("2025-03-12")}
               />
             ),
-            type !== "draft" && resubmit && (
-              // Resubmit a form
-              <Tooltip title={t("retryItem")} placement="bottom">
+            (resubmit || type !== "published") && (
+              // Resubmit or edit a form
+              <Tooltip title={t(type === "draft" ? "editItem" : "retryItem")} placement="bottom">
                 <GridActionsCellItem
-                  icon={<ReplayIcon />}
-                  label={t("retryItem")}
-                  disabled // disabled for now
+                  icon={resubmit ? <ReplayIcon /> : <EditIcon />}
+                  label={t(type === "draft" ? "editItem" : "retryItem")}
                   onClick={() => {
                     dispatch(
                       setFormAction({
                         id: params.row.id,
-                        action: "resubmit",
+                        action: type === "draft" ? "load" : "resubmit",
                       }),
                     );
                     navigate(`/${depositSlug}`);
@@ -271,11 +239,13 @@ const SubmissionList = ({
                 }}
               />
             </Tooltip>,
-            (type === "draft" || params.row.error) && (
+            (type !== "published" || params.row.error) && (
               // Delete an item, for drafts and for errored submissions. todo
               <Tooltip
                 title={t(
-                  toDelete === params.row.id ? "undeleteItem" : "deleteItem",
+                  toDelete === params.row.id 
+                  ? (type === "resubmit" ? "cancelUnstageItem" : "undeleteItem")
+                  : (type === "resubmit" ? "unstageItem" : "deleteItem"),
                 )}
                 placement="bottom"
               >
@@ -284,7 +254,9 @@ const SubmissionList = ({
                     toDelete === params.row.id ? <CloseIcon /> : <DeleteIcon />
                   }
                   label={t(
-                    toDelete === params.row.id ? "undeleteItem" : "deleteItem",
+                    toDelete === params.row.id 
+                    ? (type === "resubmit" ? "cancelUnstageItem" : "undeleteItem")
+                    : (type === "resubmit" ? "unstageItem" : "deleteItem"),
                   )}
                   onClick={() =>
                     setToDelete(toDelete === params.row.id ? "" : params.row.id)
@@ -337,11 +309,10 @@ const SubmissionList = ({
                         () =>
                           deleteSubmission({
                             id: params.row.id,
-                            user: auth.user,
                           })
                       }
                     >
-                      {t("confirmDelete")}
+                      {t(type === "resubmit" ? "confirmUnstage" : "confirmDelete")}
                     </Button>
                   </motion.div>
                 )}
@@ -359,7 +330,7 @@ const SubmissionList = ({
       },
       {
         field: "created",
-        headerName: type === "draft" ? t("savedOn") : t("submittedOn"),
+        headerName: type === "published" ? t("submittedOn") : t("savedOn"),
         width: 200,
         type: "dateTime",
         valueGetter: (params) => moment.utc(params.value).toDate(),
@@ -403,7 +374,7 @@ const SubmissionList = ({
         (t) => depositStatus.processing.indexOf(t["deposit-status"]) !== -1,
       ),
       id: d["dataset-id"],
-      created: type === "draft" ? d["saved-date"] : d["submitted-date"],
+      created: type === "published" ? d["submitted-at"] : d["saved-at"],
       title: d["title"],
       remoteChanges: d["targets"].some(t => t.diff && t.diff.hasOwnProperty("data")),
       legacy: d["legacy-form"],

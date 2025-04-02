@@ -69,18 +69,17 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const openTab = useAppSelector(getOpenTab);
   const { t, i18n } = useTranslation("generic");
   const siteTitle = useSiteTitle();
-  const [dataMessage, setDataMessage] = useState(false);
   const formAction = getFormActions();
   const formTouched = useAppSelector(getTouchedStatus);
-  const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const currentConfig = useAppSelector(getData);
+  const [dataMessage, setDataMessage] = useState(false);
 
   // Can load a saved form based on metadata id, passed along from UserSubmissions.
   // Set form behaviour based on action param.
   // load: loaded data from a saved form, to edit
   // copy: copy data from saved form to a new sessionId
   // resubmit: resubmit existing and already submitted data (save disabled), set submit button target to resubmit action in API
-  const { data: serverFormData } = useFetchSavedMetadataQuery(formAction.id, {
+  const { data: serverFormData } = useFetchSavedMetadataQuery({ id: formAction.id, config: currentConfig }, {
     skip: !formAction.id,
   });
 
@@ -99,13 +98,10 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     setSiteTitle(siteTitle, lookupLanguageString(page.name, i18n.language));
   }, [siteTitle, page.name]);
 
-  // remove data message when user submits
-  useEffect(() => {
-    setDataMessage(false);
-  }, [metadataSubmitStatus]);
-
   // Load external form data
   useEffect(() => {
+    console.log(formAction?.id)
+    console.log(lastProcessedId.current)
     if (!formAction?.id || !serverFormData?.md) return; // Ensure data is available
   
     // If formAction.id is the same as the last processed one, don't reinitialize
@@ -131,7 +127,9 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       id: newSessionId 
     }));
   
-    dispatch(addFiles(serverFormData.md["file-metadata"]));
+    formAction.action !== "copy" && dispatch(addFiles(serverFormData.md["file-metadata"]));
+
+    // update section status indicators
     dispatch(updateAllSections());
   
     // Handle form disabling logic
@@ -314,7 +312,8 @@ const ActionMessage = ({
   const { t } = useTranslation("generic");
   const dispatch = useAppDispatch();
   const formAction = getFormActions();
-  const { data } = useFetchSavedMetadataQuery(formAction.id, {
+  const currentConfig = useAppSelector(getData);
+  const { data } = useFetchSavedMetadataQuery({ id: formAction.id, config: currentConfig }, {
     skip: !formAction.id,
   });
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);

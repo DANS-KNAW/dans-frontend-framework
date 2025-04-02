@@ -33,13 +33,15 @@ export interface InitialStateType {
   submittedFiles: ReduxFileSubmitActions[];
 }
 
+export interface EndpointTarget {
+  envName?: string;
+  configName?: string;
+}
+
 export interface HeaderData {
   submitKey: string;
   userId: string;
-  target: {
-    envName: string;
-    configName: string;
-  };
+  target: EndpointTarget;
   targetCredentials: Target[];
   targetKeys: {
     [k: string]: string;

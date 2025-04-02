@@ -53,10 +53,14 @@ export const submitApi = createApi({
           console.log(data);
         }
 
-        const submitUrl =
-          actionType === "resubmit" ?
-            `resubmit/${data.id}`
-          : `dataset/${actionType === "save" ? "DRAFT" : "SUBMIT"}`;
+        const submitUrl = `dataset/${
+          actionType === "save" 
+          ? "DRAFT" 
+          : actionType === "resubmit" 
+          ? "RESUBMIT" 
+          : actionType === "saveResubmit" 
+          ? "DRAFT-RESUBMIT" 
+          : "SUBMIT"}`;
 
         return {
           url: `inbox/${submitUrl}`,
@@ -93,16 +97,28 @@ export const submitApi = createApi({
         store.dispatch(setFormDisabled(false));
         return {
           error: i18n.t("submit:submitMetadataError", {
-            error: response.status === "FETCH_ERROR" ? i18n.t("submit:serverConnectionError") : response.status,
+            error: response.status === "FETCH_ERROR" 
+              ? i18n.t("submit:serverConnectionError") 
+              : response.status === 409 
+              ? i18n.t("submit:serverConflictError")
+              : response.status,
           }),
         };
       },
     }),
     fetchSavedMetadata: build.query({
-      query: (id) => ({
-        url: `dataset/${id}`,
-        headers: { Accept: "application/json" },
-      }),
+      query: ({id, config}) => {
+        const user = getUser(); 
+        return ({
+          url: `dataset/${id}`,
+          headers: { 
+            Authorization: `Bearer ${config.submitKey || user?.access_token}`,
+            Accept: "application/json",
+            "assistant-config-name": config.target?.configName,
+          },
+        });
+      },
+      keepUnusedDataFor: 0,
       providesTags: (_res, _err, id) => [{ type: "Forms", id }],
       transformResponse: (response: any) => {
         const modifiedResponse = {

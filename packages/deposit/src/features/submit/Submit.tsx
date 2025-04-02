@@ -91,7 +91,7 @@ const Submit = ({
 
   const [
     submitData,
-    { isLoading: isLoadingMeta, isError: isErrorMeta, reset: resetMeta },
+    { isLoading: isLoadingMeta, isError: isErrorMeta, reset: resetMeta, data: submittedMetaResponse },
   ] = useSubmitDataMutation();
 
   // remove warning when files get added
@@ -100,7 +100,7 @@ const Submit = ({
   }, [selectedFiles.length]);
 
   // submit the data
-  const handleButtonClick = (actionType: "submit" | "save" | "resubmit") => {
+  const handleButtonClick = (actionType: "submit" | "save" | "resubmit" | "saveResubmit") => {
     // check to see if any files have been added.
     // If not, and there is no warning yet, show a warning to confirm actual submission first
     if (
@@ -120,9 +120,10 @@ const Submit = ({
     // Files are present or a warning has already been shown to the user
     setFileWarning(false);
 
-    // Clear any form action messages on submit
+    // Clear any form action messages on submit, when saving a copy
+    formAction.action === "copy" && clearFormActions();
+
     if (actionType === "resubmit" || actionType === "submit") {
-      clearFormActions();
       dispatch(setFormDisabled(true));
     }
 
@@ -160,9 +161,11 @@ const Submit = ({
   // Autosave functionality, debounced on metadata change
   const autoSave = useDebouncedCallback(() => {
     // on autosave, we send along file metadata, but not the actual files
+    // we also clear form actions for copy
+    formAction.action === "copy" && clearFormActions();
     if (!formDisabled && isTouched) {
       submitData({
-        actionType: "save",
+        actionType: formAction.action === "resubmit" ? "saveResubmit" : "save",
         id: sessionId,
         metadata: metadata,
         config: formConfig,
@@ -331,8 +334,10 @@ const Submit = ({
         <Stack direction="row" alignItems="center" mb={2}>
           <Button
             variant="contained"
-            disabled={formDisabled || formAction.action === "resubmit"}
-            onClick={() => handleButtonClick("save")}
+            disabled={formDisabled}
+            onClick={() => handleButtonClick(
+              formAction.action === "resubmit" ? "saveResubmit" : "save"
+            )}
             size="large"
             sx={{ mr: 1 }}
             data-testid="save-form"
@@ -377,14 +382,14 @@ const Submit = ({
               t("resubmit")
             : t("submit")}
           </Button>
-          <FileUploader />
+          <FileUploader customId={submittedMetaResponse?.['dataset-id']}/>
         </Stack>
       </Stack>
     </Stack>
   );
 };
 
-const FileUploader = () => {
+const FileUploader = ({customId}: {customId: string}) => {
   // Component that manages file upload queue.
   // Check files that have status queued, and start uploading when a spot becomes available in the queue.
   const maxConcurrentUploads = 3;
@@ -404,7 +409,7 @@ const FileUploader = () => {
         const hasStatus = filesSubmitStatus.find((f) => f.id === file.id);
         return (
           hasStatus?.status === "queued" &&
-          uploadFile(file, sessionId, formConfig.target?.envName)
+          uploadFile(file, customId || sessionId, formConfig.target)
         );
       });
     }
