@@ -144,13 +144,13 @@ export const UserSubmissions = ({
             header={t("userSubmissionsDrafts")}
             depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
           />
-          <SubmissionList
+          {resubmit && resubmits.length > 0 && <SubmissionList
             data={resubmits}
             type="resubmit"
             isLoading={isLoading}
             header={t("userSubmissionsResubmit")}
             depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
-          />
+          />}
           <SubmissionList
             data={published}
             type="published"
