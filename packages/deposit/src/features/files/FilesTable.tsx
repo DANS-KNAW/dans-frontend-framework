@@ -97,7 +97,7 @@ const FilesTable = () => {
           <TableBody>
             <AnimatePresence initial={false}>
               {selectedFiles.map((file, i) => (
-                <FileTableRow key={`${file.name}-${i}`} file={file} />
+                <FileTableRow key={file.name} file={file} />
               ))}
             </AnimatePresence>
           </TableBody>
