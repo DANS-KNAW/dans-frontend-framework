@@ -23,5 +23,6 @@
   "submitFileErrorNotification": "Kan bestanden niet submitten - {{error}}",
   "submitMetadataError": "Fout bij versturen metadata naar de server - {{error}}",
   "submitFileError": "Fout bij versturen bestanden naar de server - {{error}}",
-  "serverConnectionError": "Kan niet verbinden, probeer het nog eens."
+  "serverConnectionError": "Kan niet verbinden, probeer het nog eens.",
+  "serverConflictError": "Je data is veranderd in de repository. We kunnen je wijzigingen niet samenvoegen. Bewerk de data rechtstreeks in de repository."
 }

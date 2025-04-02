@@ -97,7 +97,11 @@ export const submitApi = createApi({
         store.dispatch(setFormDisabled(false));
         return {
           error: i18n.t("submit:submitMetadataError", {
-            error: response.status === "FETCH_ERROR" ? i18n.t("submit:serverConnectionError") : response.status,
+            error: response.status === "FETCH_ERROR" 
+              ? i18n.t("submit:serverConnectionError") 
+              : response.status === 409 
+              ? i18n.t("submit:serverConflictError")
+              : response.status,
           }),
         };
       },

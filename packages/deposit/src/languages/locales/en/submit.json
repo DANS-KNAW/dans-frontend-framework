@@ -23,5 +23,6 @@
   "submitFileErrorNotification": "Failed to submit files - {{error}}",
   "submitMetadataError": "Failed to send metadata to the server - {{error}}",
   "submitFileError": "Failed to send files to the server - {{error}}",
-  "serverConnectionError": "Couldn't connect, please try again in a few moments."
+  "serverConnectionError": "Couldn't connect, please try again in a few moments.",
+  "serverConflictError": "Your data has been changed in the repository. We can't merge your changes. Please edit directly on the repository."
 }
