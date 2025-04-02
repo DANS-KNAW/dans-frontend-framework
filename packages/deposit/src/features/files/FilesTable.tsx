@@ -96,8 +96,8 @@ const FilesTable = () => {
           </TableHead>
           <TableBody>
             <AnimatePresence initial={false}>
-              {selectedFiles.map((file) => (
-                <FileTableRow key={file.id} file={file} />
+              {selectedFiles.map((file, i) => (
+                <FileTableRow key={`${file.name}-${i}`} file={file} />
               ))}
             </AnimatePresence>
           </TableBody>
@@ -238,7 +238,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const formDisabled = useAppSelector(getFormDisabled);
   const formConfig = useAppSelector(getData);
-  const rowDisabled = (file.state && file.state === "generated") || formDisabled
+  const rowDisabled = (file.state && file.state === "generated") || formDisabled;
 
   const {
     displayRoles = true,
