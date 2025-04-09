@@ -221,6 +221,7 @@ const SubmissionList = ({
                     );
                     navigate(`/${depositSlug}`);
                   }}
+                  disabled={params.processing}
                 />
               </Tooltip>
             ),
