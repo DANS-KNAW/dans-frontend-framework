@@ -51,6 +51,9 @@ export interface TargetOutput {
   "display-name": string;
   "output-response": any;
   "repo-name": string;
+  "deposited-identifiers"?: {
+    url: string;
+  }[];
   diff: {} | { data: any };
 }
 
