@@ -12,9 +12,15 @@ export const LoginPage = () => {
 
   useEffect(() => {
     // save data params to session storage to get them back after Keycloak login
+    // data = for repo advisor
+    // edit = for editing a dataset e.g. from Dataverse
     const data = searchParams.get("data");
+    const edit = searchParams.get("edit");
     if (data) {
       sessionStorage.setItem("preloadData", data);
+    }
+    if (edit) {
+      sessionStorage.setItem("preloadEdit", edit);
     }
   }, [searchParams]);
 

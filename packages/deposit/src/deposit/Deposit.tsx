@@ -52,6 +52,8 @@ import {
   useValidateAllKeysQuery,
   getFormActions,
   clearFormActions,
+  useFetchUserProfileQuery, 
+  useSaveUserDataMutation,
 } from "@dans-framework/user-auth";
 import { v4 as uuidv4 } from "uuid";
 
@@ -73,6 +75,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const formTouched = useAppSelector(getTouchedStatus);
   const currentConfig = useAppSelector(getData);
   const [dataMessage, setDataMessage] = useState(false);
+  const [sessionData, setSessionData] = useState<{url: string; key: string; token: string;}>();
 
   // Can load a saved form based on metadata id, passed along from UserSubmissions.
   // Set form behaviour based on action param.
@@ -175,6 +178,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       (t) => !auth.user?.profile[t.authKey] && t.authKey,
     ).length === 0;
 
+
   // Check if they are actually valid
   const validateTargets = config.targetCredentials.map((t) => ({
     key: auth.user?.profile[t.authKey],
@@ -182,13 +186,58 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     type: t.authKey,
   }));
 
-  const { error: apiKeyError } = useValidateAllKeysQuery(validateTargets, {
+  const { error: apiKeyError,  refetch: refetchValidateAllKeys } = useValidateAllKeysQuery(validateTargets, {
     skip: !targetCredentials,
   });
 
   const hasTargetCredentials =
     (targetCredentials && !apiKeyError) ||
     import.meta.env.VITE_DISABLE_API_KEY_MESSAGE;
+
+  // Logic for loading form data and api key from external source, e.g. from Dataverse
+  const { data: userProfileData } = useFetchUserProfileQuery(null, {skip: hasTargetCredentials});
+  const [ saveData, { isSuccess: saveKeySuccess } ] = useSaveUserDataMutation();
+
+  // Set the API key from the session storage, if available
+  useEffect(() => {
+    const sessionEditData = sessionStorage.getItem("preloadEdit");
+    if (sessionEditData) {
+      // Decode the Base64 URL-encoded string
+      const decodedData = atob(sessionEditData.replace(/-/g, '+').replace(/_/g, '/'));
+      // Parse the JSON string into an object
+      const data = JSON.parse(decodedData);
+      setSessionData(data);
+      // Clear storage
+      sessionStorage.removeItem("preloadEdit");
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save key only when present in session data and not saved already
+    if (sessionData?.key && userProfileData && !saveKeySuccess) {
+      saveData({
+        content: {
+          // need to pass along the entire account object to Keycloak
+          ...userProfileData,
+          attributes: {
+            ...userProfileData.attributes,
+            [sessionData.key]: sessionData.token,
+          },
+        },
+      });
+    }
+  }, [userProfileData, sessionData, saveKeySuccess]);
+
+  useEffect(() => {
+    if (saveKeySuccess) {
+      // refresh the user object
+      auth.signinSilent().catch(() => auth.removeUser());
+      // Trigger the refetch of the API key validation
+      refetchValidateAllKeys(); 
+    }
+  }, [saveKeySuccess, refetchValidateAllKeys]);
+
+  // TODO: fetch actual form data from the URL in sessionData
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
