@@ -13,7 +13,8 @@ export type Template =
   | "record"
   | "dashboard"
   | "advisor"
-  | "mapper";
+  | "mapper"
+  | "rda-annotator";
 
 export interface Page {
   id: string;
