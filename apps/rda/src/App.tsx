@@ -32,6 +32,7 @@ import {
 } from "@dans-framework/rdt-search-ui";
 import { Freshdesk } from "@dans-framework/freshdesk";
 import SupportDrawer from "@dans-framework/support-drawer";
+import RDAAnnotator from "./pages/rda-annotator";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -50,6 +51,8 @@ const App = () => {
             <Deposit config={form} page={page} />
           </AuthRoute>
         );
+      case "rda-annotator":
+        return <RDAAnnotator />;
       default:
         return <Generic {...page} />;
     }
