@@ -47,13 +47,14 @@ import {
 } from "@dans-framework/utils";
 import type { Page } from "@dans-framework/pages";
 import { useAuth } from "react-oidc-context";
-import { useFetchSavedMetadataQuery } from "../features/submit/submitApi";
+import { useFetchSavedMetadataQuery, useFetchExternalMetadataMutation } from "../features/submit/submitApi";
 import {
   useValidateAllKeysQuery,
   getFormActions,
   clearFormActions,
   useFetchUserProfileQuery, 
   useSaveUserDataMutation,
+  setFormActions,
 } from "@dans-framework/user-auth";
 import { v4 as uuidv4 } from "uuid";
 
@@ -86,6 +87,9 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     skip: !formAction.id,
   });
 
+  // Function for fetching external metadata from e.g. Dataverse
+  const [fetchExternalData, { data: fetchedExternalMetadata, isSuccess: fetchedExternalMetadataSuccess }] = useFetchExternalMetadataMutation();
+
   useEffect(() => {
     if (!sessionId && config.form) {
       // initialize form if no sessionId is set
@@ -103,12 +107,18 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
 
   // Load external form data
   useEffect(() => {
-    console.log(formAction?.id)
-    console.log(lastProcessedId.current)
-    if (!formAction?.id || !serverFormData?.md) return; // Ensure data is available
+    console.log('still here 1')
+
+    const loadedMetadata = fetchedExternalMetadata || serverFormData;
+    console.log(loadedMetadata)
+
+    if (!formAction?.id || !loadedMetadata?.md) return; // Ensure data is available
+
+    console.log('still here 2')
   
     // If formAction.id is the same as the last processed one, don't reinitialize
     if (lastProcessedId.current === formAction.id && formAction.action !== "copy") {
+      console.log('Already processed this form action, skipping reinitialization');
       return;
     }
   
@@ -121,16 +131,16 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     dispatch(resetFiles());
   
     // Determine the new session ID
-    const newSessionId = formAction.action === "copy" ? uuidv4() : serverFormData["dataset-id"];
+    const newSessionId = formAction.action === "copy" ? uuidv4() : loadedMetadata["dataset-id"];
   
     // Load the form data
     dispatch(setExternalFormData({ 
-      metadata: serverFormData.md.metadata, 
+      metadata: loadedMetadata.md.metadata, 
       action: formAction.action, 
       id: newSessionId 
     }));
   
-    formAction.action !== "copy" && dispatch(addFiles(serverFormData.md["file-metadata"]));
+    formAction.action !== "copy" && dispatch(addFiles(loadedMetadata.md["file-metadata"]));
 
     // update section status indicators
     dispatch(updateAllSections());
@@ -138,7 +148,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     // Handle form disabling logic
     dispatch(setFormDisabled(formAction.action === "view"));
   
-  }, [formAction, serverFormData]); 
+  }, [formAction, serverFormData, fetchedExternalMetadata]); 
 
   useEffect(() => {
     // Show a message when a saved form is loaded.
@@ -148,7 +158,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     // Update user on initial render, makes sure all target credentials are up-to-date.
     // Also remove user immediately, should there be an error..
     auth.signinSilent().catch(() => auth.removeUser());
-  }, []);
+  }, [formAction.id]);
 
   // For external form selection from the pre-form advisor without reloading the app,
   // we listen for changes to the form object, and initiate a new form when it changes
@@ -226,6 +236,10 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
         },
       });
     }
+    if (sessionData?.url) {
+      // fetch user form data 
+      fetchExternalData({url: sessionData.url, config: currentConfig});
+    }
   }, [userProfileData, sessionData, saveKeySuccess]);
 
   useEffect(() => {
@@ -237,7 +251,15 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     }
   }, [saveKeySuccess, refetchValidateAllKeys]);
 
-  // TODO: fetch actual form data from the URL in sessionData
+  // set form action based on external metadata
+  useEffect(() => {
+    if (fetchedExternalMetadataSuccess) {
+      setFormActions({
+        id: fetchedExternalMetadata["dataset-id"],
+        action: "resubmit"
+      });
+    }
+  }, [ fetchedExternalMetadataSuccess ]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
@@ -361,6 +383,7 @@ const ActionMessage = ({
   const { t } = useTranslation("generic");
   const dispatch = useAppDispatch();
   const formAction = getFormActions();
+  console.log(formAction)
   const currentConfig = useAppSelector(getData);
   const { data } = useFetchSavedMetadataQuery({ id: formAction.id, config: currentConfig }, {
     skip: !formAction.id,

@@ -138,7 +138,37 @@ export const submitApi = createApi({
         return modifiedResponse;
       },
     }),
+    fetchExternalMetadata: build.mutation({
+      query: ({url, config}) => {
+        const user = getUser(); 
+        const headers = {
+          Authorization: `Bearer ${config.submitKey || user?.access_token}`,
+          "user-id": user?.profile.sub,
+          "auth-env-name": config.target?.envName,
+          "assistant-config-name": config.target?.configName,
+          "targets-credentials": JSON.stringify(
+            config.targetCredentials.map((t: Target) => ({
+              "target-repo-name": t.repo,
+              credentials: {
+                username: t.auth,
+                password: Object.assign(
+                  {},
+                  ...config.targetCredentials.map((t: Target) => ({
+                    [t.authKey]: user?.profile[t.authKey],
+                  })),
+                )[t.authKey],
+              },
+            })),
+          ),
+        };
+        return ({
+          url: `${import.meta.env.VITE_PACKAGING_TARGET}/dataset/prefill/${encodeURI(url)}`,
+          headers: headers,
+          method: "POST",
+        });
+      },
+    }),
   }),
 });
 
-export const { useSubmitDataMutation, useFetchSavedMetadataQuery } = submitApi;
+export const { useSubmitDataMutation, useFetchSavedMetadataQuery, useFetchExternalMetadataMutation } = submitApi;
