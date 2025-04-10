@@ -44,9 +44,8 @@ export const fetchUserProfile = ({
   );
 
 export const getFormActions = () => store.getState().user.formAction;
+export const setFormActions = (action: any) => store.dispatch(setFormAction(action));
 export const clearFormActions = () => store.dispatch(resetFormActions());
-export const setFormActions = (action: any) =>
-  store.dispatch(setFormAction(action));
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;

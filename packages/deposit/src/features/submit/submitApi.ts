@@ -3,7 +3,7 @@ import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { setMetadataSubmitStatus } from "./submitSlice";
 import { setFormDisabled } from "../../deposit/depositSlice";
 import { store } from "../../redux/store";
-import type { Target } from "@dans-framework/user-auth";
+import { type Target, setFormActions } from "@dans-framework/user-auth";
 import moment from "moment";
 import { enqueueSnackbar } from "notistack";
 import i18n from "../../languages/i18n";
@@ -166,6 +166,14 @@ export const submitApi = createApi({
           headers: headers,
           method: "POST",
         });
+      },
+      transformResponse: (response: any) => {
+        // set form to resubmit mode
+        setFormActions({
+          action: "resubmit",
+          id: response["dataset-id"],
+        });
+        return;
       },
     }),
   }),

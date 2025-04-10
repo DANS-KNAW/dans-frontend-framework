@@ -11,4 +11,5 @@ export {
   setFormActions,
 } from "../src/redux/store";
 export { useValidateAllKeysQuery, validateKeyApi, useFetchUserProfileQuery, useSaveUserDataMutation, userApi } from "../src/user/userApi";
+export { default as userReducer, getFormAction } from "../src/user/userSlice";
 export type { Target, AuthProperty, SubmissionResponse, FormActionType } from "../src/types";

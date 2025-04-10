@@ -54,15 +54,9 @@ import {
   clearFormActions,
   useFetchUserProfileQuery, 
   useSaveUserDataMutation,
-  setFormActions,
 } from "@dans-framework/user-auth";
 import { v4 as uuidv4 } from "uuid";
-
-/*
- * TODO:
- * Resubmitting of (errored) forms does not work yet
- * It needs work on the API side
- */
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const dispatch = useAppDispatch();
@@ -83,12 +77,12 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   // load: loaded data from a saved form, to edit
   // copy: copy data from saved form to a new sessionId
   // resubmit: resubmit existing and already submitted data (save disabled), set submit button target to resubmit action in API
-  const { data: serverFormData } = useFetchSavedMetadataQuery({ id: formAction.id, config: currentConfig }, {
+  const { data: serverFormData, isLoading: serverDataLoading } = useFetchSavedMetadataQuery({ id: formAction.id, config: currentConfig }, {
     skip: !formAction.id,
   });
 
   // Function for fetching external metadata from e.g. Dataverse
-  const [fetchExternalData, { data: fetchedExternalMetadata, isSuccess: fetchedExternalMetadataSuccess }] = useFetchExternalMetadataMutation();
+  const [ fetchExternalData, { isLoading: externalDataLoading } ] = useFetchExternalMetadataMutation();
 
   useEffect(() => {
     if (!sessionId && config.form) {
@@ -107,48 +101,32 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
 
   // Load external form data
   useEffect(() => {
-    console.log('still here 1')
-
-    const loadedMetadata = fetchedExternalMetadata || serverFormData;
-    console.log(loadedMetadata)
-
-    if (!formAction?.id || !loadedMetadata?.md) return; // Ensure data is available
-
-    console.log('still here 2')
-  
+    if (!formAction?.id || !serverFormData?.md) return; // Ensure data is available
     // If formAction.id is the same as the last processed one, don't reinitialize
     if (lastProcessedId.current === formAction.id && formAction.action !== "copy") {
       console.log('Already processed this form action, skipping reinitialization');
       return;
     }
-  
     // Update the last processed ID (but allow copy to regenerate new UUID)
     lastProcessedId.current = formAction.id;
-  
     // Reset states before loading new data
     dispatch(resetMetadataSubmitStatus());
     dispatch(resetFilesSubmitStatus());
     dispatch(resetFiles());
-  
     // Determine the new session ID
-    const newSessionId = formAction.action === "copy" ? uuidv4() : loadedMetadata["dataset-id"];
-  
+    const newSessionId = formAction.action === "copy" ? uuidv4() : serverFormData["dataset-id"];
     // Load the form data
     dispatch(setExternalFormData({ 
-      metadata: loadedMetadata.md.metadata, 
+      metadata: serverFormData.md.metadata, 
       action: formAction.action, 
       id: newSessionId 
     }));
-  
-    formAction.action !== "copy" && dispatch(addFiles(loadedMetadata.md["file-metadata"]));
-
+    formAction.action !== "copy" && dispatch(addFiles(serverFormData.md["file-metadata"]));
     // update section status indicators
     dispatch(updateAllSections());
-  
     // Handle form disabling logic
     dispatch(setFormDisabled(formAction.action === "view"));
-  
-  }, [formAction, serverFormData, fetchedExternalMetadata]); 
+  }, [formAction?.id, serverFormData?.["dataset-id"]]); 
 
   useEffect(() => {
     // Show a message when a saved form is loaded.
@@ -188,7 +166,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
       (t) => !auth.user?.profile[t.authKey] && t.authKey,
     ).length === 0;
 
-
   // Check if they are actually valid
   const validateTargets = config.targetCredentials.map((t) => ({
     key: auth.user?.profile[t.authKey],
@@ -200,13 +177,11 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     skip: !targetCredentials,
   });
 
-  const hasTargetCredentials =
-    (targetCredentials && !apiKeyError) ||
-    import.meta.env.VITE_DISABLE_API_KEY_MESSAGE;
+  const hasTargetCredentials = (targetCredentials && !apiKeyError) || import.meta.env.VITE_DISABLE_API_KEY_MESSAGE;
 
   // Logic for loading form data and api key from external source, e.g. from Dataverse
   const { data: userProfileData } = useFetchUserProfileQuery(null, {skip: hasTargetCredentials});
-  const [ saveData, { isSuccess: saveKeySuccess } ] = useSaveUserDataMutation();
+  const [ saveData, { isLoading: saveKeyLoading, isSuccess: saveKeySuccess } ] = useSaveUserDataMutation();
 
   // Set the API key from the session storage, if available
   useEffect(() => {
@@ -223,7 +198,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   }, []);
 
   useEffect(() => {
-    // Save key only when present in session data and not saved already
+    // Save API key only when present in session data and not saved already
     if (sessionData?.key && userProfileData && !saveKeySuccess) {
       saveData({
         content: {
@@ -251,16 +226,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     }
   }, [saveKeySuccess, refetchValidateAllKeys]);
 
-  // set form action based on external metadata
-  useEffect(() => {
-    if (fetchedExternalMetadataSuccess) {
-      setFormActions({
-        id: fetchedExternalMetadata["dataset-id"],
-        action: "resubmit"
-      });
-    }
-  }, [ fetchedExternalMetadataSuccess ]);
-
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <Container>
@@ -271,10 +236,10 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
               dataMessage={dataMessage}
               setDataMessage={setDataMessage}
             />
-            {/* The form. Show an overlay if there's no API key filled in */}
+            {/* The form. Show an overlay if there's no API key filled in, or a loader when loading server data */}
             <Box sx={{ position: "relative" }}>
-              {!hasTargetCredentials &&
-                !import.meta.env.VITE_DISABLE_API_KEY_MESSAGE && (
+              {(!hasTargetCredentials || serverDataLoading || externalDataLoading)
+                && (
                   <Box
                     sx={{
                       position: "absolute",
@@ -289,23 +254,27 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
                       alignItems: "flex-start",
                     }}
                   >
-                    <Paper elevation={15} sx={{ mt: 15 }}>
-                      <Alert
-                        severity="warning"
-                        data-testid="invalid-api-keys"
-                        sx={{ p: 3 }}
-                      >
-                        <AlertTitle>{t("missingInfoHeader")}</AlertTitle>
-                        <Typography mb={2}>{t("missingInfoText")}</Typography>
-                        <Button
-                          variant="contained"
-                          component={RouterLink}
-                          to="/user-settings"
+                    {!hasTargetCredentials && !saveKeyLoading ?
+                      <Paper elevation={15} sx={{ mt: 15 }}>
+                        <Alert
+                          severity="warning"
+                          data-testid="invalid-api-keys"
+                          sx={{ p: 3 }}
                         >
-                          {t("missingInfoButton")}
-                        </Button>
-                      </Alert>
-                    </Paper>
+                          <AlertTitle>{t("missingInfoHeader")}</AlertTitle>
+                          <Typography mb={2}>{t("missingInfoText")}</Typography>
+                          <Button
+                            variant="contained"
+                            component={RouterLink}
+                            to="/user-settings"
+                          >
+                            {t("missingInfoButton")}
+                          </Button>
+                        </Alert>
+                      </Paper>
+                      :
+                      <CircularProgress sx={{ mt: 15 }} />
+                    }
                   </Box>
                 )}
 
@@ -383,7 +352,6 @@ const ActionMessage = ({
   const { t } = useTranslation("generic");
   const dispatch = useAppDispatch();
   const formAction = getFormActions();
-  console.log(formAction)
   const currentConfig = useAppSelector(getData);
   const { data } = useFetchSavedMetadataQuery({ id: formAction.id, config: currentConfig }, {
     skip: !formAction.id,
