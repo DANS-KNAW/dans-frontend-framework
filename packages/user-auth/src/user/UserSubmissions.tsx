@@ -221,6 +221,7 @@ const SubmissionList = ({
                     );
                     navigate(`/${depositSlug}`);
                   }}
+                  disabled={params.processing}
                 />
               </Tooltip>
             ),
@@ -581,6 +582,8 @@ const ViewAction = ({
   };
   const open = Boolean(anchorEl);
 
+  console.log(status)
+
   return (
     <>
       <Tooltip title={t("viewItem")} placement="bottom">
@@ -614,12 +617,11 @@ const ViewAction = ({
         {/* Open submission on target site. TODO: mod API to always return a response.url key */}
         {status.map(
           (target, i) =>
-            target["output-response"] &&
-            target["output-response"].response?.identifiers &&
+            target["deposited-identifiers"] &&
             (target["deposit-status"] === "accepted" ||
               target["deposit-status"] === "finish") && (
               <Link
-                href={target["output-response"].response.identifiers[0].url}
+                href={target["deposited-identifiers"][0].url}
                 color="inherit"
                 underline="none"
                 target="_blank"
