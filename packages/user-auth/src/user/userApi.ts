@@ -60,7 +60,8 @@ export const userSubmissionsApi = createApi({
   tagTypes: ["Submissions"],
   endpoints: (build) => ({
     fetchUserSubmissions: build.query({
-      query: ({targetCredentials: targetCredentials}) => {
+      // Note on pagination: api needs to support sorting and filtering for server side pagination to properly work with the MUI Data Grid. Since it doesn't at the moment, we set a very large page size and let the client handle pagination.
+      query: ({targetCredentials: targetCredentials, page = 1, pageSize = 1000}) => {
         // We need to pass on endpoint api keys with this call, like submitApi.ts does, 
         // for server to compare data with data on target repo 
         const user = getUser();
@@ -77,7 +78,7 @@ export const userSubmissionsApi = createApi({
           },
         }));
         return {
-          url: `progress-state/${user?.profile.sub}`,
+          url: `progress-state/${user?.profile.sub}?page=${page}&page_size=${pageSize}`,
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
             Accept: "application/json",

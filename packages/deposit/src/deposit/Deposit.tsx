@@ -100,8 +100,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
 
   // Load external form data
   useEffect(() => {
-    console.log(formAction?.id)
-    console.log(lastProcessedId.current)
     if (!formAction?.id || !serverFormData?.md) return; // Ensure data is available
   
     // If formAction.id is the same as the last processed one, don't reinitialize
@@ -338,7 +336,9 @@ const ActionMessage = ({
         }}
       >
         <AlertTitle>
-          {formAction.action === "resubmit" ?
+          {metadataSubmitStatus === "submitted" ?
+            t("dataMessageHeaderSubmitted")
+          : formAction.action === "resubmit" ?
             t("dataMessageHeaderResubmit", {
               title:  data?.title || t("untitled"),
             })
@@ -354,12 +354,12 @@ const ActionMessage = ({
             t("dataMessageHeaderView", {
               title: data?.title || t("untitled"),
             })
-          : metadataSubmitStatus === "submitted" ?
-            t("dataMessageHeaderSubmitted")
           : t("dataMessageHeader")}
         </AlertTitle>
         <Typography mb={1}>
-          {formAction.action === "resubmit" ?
+          {metadataSubmitStatus === "submitted" ?
+            t("dataMessageContentSubmitted")
+          : formAction.action === "resubmit" ?
             t("dataMessageContentResubmit")
           : formAction.action === "copy" ?
             t("dataMessageContentCopy")
@@ -367,8 +367,6 @@ const ActionMessage = ({
             t("dataMessageContentLoad")
           : formAction.action === "view" ?
             t("dataMessageContentView")
-          : metadataSubmitStatus === "submitted" ?
-            t("dataMessageContentSubmitted")
           : t("dataMessageContent")}
         </Typography>
         <Stack justifyContent="flex-end" direction="row" alignItems="center">

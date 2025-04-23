@@ -33,6 +33,7 @@ export interface ValidateTarget {
 
 export type ReleaseVersion = "DRAFT" | "PUBLISHED" | "PUBLISH" | "SUBMIT" | "SUBMITTED" | "RESUBMIT";
 
+type EmptyStatus = "preparing";
 type ActiveStatus =
   | "initial"
   | "processing"
@@ -41,8 +42,8 @@ type ActiveStatus =
   | "progress";
 type ErrorStatus = "rejected" | "failed" | "error";
 type SuccessStatus = "finish" | "accepted" | "success";
-export type IngestStatus = ActiveStatus | ErrorStatus | SuccessStatus;
-type IngestStatusKeys = "processing" | "error" | "success";
+export type IngestStatus = EmptyStatus | ActiveStatus | ErrorStatus | SuccessStatus;
+type IngestStatusKeys = "empty" | "processing" | "error" | "success";
 export type DepositStatus = { [key in IngestStatusKeys]: IngestStatus[] };
 
 export interface TargetOutput {
