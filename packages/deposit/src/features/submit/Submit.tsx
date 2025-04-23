@@ -120,7 +120,7 @@ const Submit = ({
     // Files are present or a warning has already been shown to the user
     setFileWarning(false);
 
-    // Clear any form action messages on submit, when saving a copy
+    // Clear any form action messages on save/submit, when saving a copy
     formAction.action === "copy" && clearFormActions();
 
     if (actionType === "resubmit" || actionType === "submit") {
@@ -138,6 +138,8 @@ const Submit = ({
       files: selectedFiles,
     }).then((result: { data?: any; error?: any }) => {
       if (result.data?.status === "OK") {
+        // clear any actions, as submit was successful
+        clearFormActions();
         // if metadata has been submitted ok, we start the file submit
         selectedFiles.map((file) => {
           const hasStatus = filesSubmitStatus.find((f) => f.id === file.id);
@@ -154,6 +156,10 @@ const Submit = ({
             )
           );
         });
+      }
+      else {
+        // if the submit failed, enable the form again
+        dispatch(setFormDisabled(false));
       }
     });
   };

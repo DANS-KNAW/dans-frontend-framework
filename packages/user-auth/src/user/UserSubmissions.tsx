@@ -70,6 +70,7 @@ import { useAppDispatch } from "../redux/hooks";
  */
 
 const depositStatus: DepositStatus = {
+  empty: ["preparing"],
   processing: ["initial", "processing", "submitted", "finalizing", "progress"],
   error: ["rejected", "failed", "error"],
   success: ["finish", "accepted", "success"],
@@ -489,6 +490,8 @@ const SingleTargetStatus = ({
               t("processing")
             : depositStatus.error.indexOf(target["deposit-status"]) !== -1 ?
               t("error")
+            : depositStatus.empty.indexOf(target["deposit-status"]) !== -1 ?
+              t("queue")
             : t("success")
           }
           placement="left"
@@ -581,8 +584,6 @@ const ViewAction = ({
     setAnchorEl(null);
   };
   const open = Boolean(anchorEl);
-
-  console.log(status)
 
   return (
     <>
