@@ -585,6 +585,8 @@ const ViewAction = ({
   };
   const open = Boolean(anchorEl);
 
+  console.log(status)
+
   return (
     <>
       <Tooltip title={t("viewItem")} placement="bottom">
