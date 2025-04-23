@@ -43,7 +43,7 @@ export default function RDAAnnotator() {
         <br />
         <span>
           Download the Annotator using this link. For instructions on how to
-          install and use the tool, please refer to this <Link target="_blank" href="https://dans-knaw.github.io/RDA-TIGER-PDFs/3.3.7%20-%20Annotator%20support%20documentation%20-%20v0.2.pdf">document</Link>
+          install and use the tool, please refer to this <Link target="_blank" href="https://dans-knaw.github.io/RDA-TIGER-PDFs/3.3.7%20-%20Annotator%20Guidelines%20-%20v0.3.pdf">document</Link>
         </span>
       </Typography>
 
