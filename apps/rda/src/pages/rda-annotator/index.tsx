@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Container,
+  Link,
   List,
   ListItemText,
   Typography,
@@ -34,10 +35,16 @@ export default function RDAAnnotator() {
         What is the RDA Annotator?
       </Typography>
       <Typography>
-        The RDA Annotator is a powerful browser plugin that helps you connect
-        web resources to the RDA (Research Data Alliance) Knowledge Base. This
-        tool allows you to discover, publish, and annotate research resources,
-        creating valuable links between web content and the RDA community.
+        The RDA Annotator is a browser extension that allows users to annotate
+        and tag web-based resources, which contextualises and categorises the
+        content. These annotations are then passed to the RDA Knowledge Base,
+        where it can be accessed by other RDA community members.
+        <br />
+        <br />
+        <span>
+          Download the Annotator using this link. For instructions on how to
+          install and use the tool, please refer to this <Link target="_blank" href="https://dans-knaw.github.io/RDA-TIGER-PDFs/3.3.7%20-%20Annotator%20support%20documentation%20-%20v0.2.pdf">document</Link>
+        </span>
       </Typography>
 
       <Typography marginTop={5} variant="h2">
@@ -90,9 +97,6 @@ export default function RDAAnnotator() {
       >
         <Button onClick={onDownload} variant="contained" color="primary">
           Chromium-based
-        </Button>
-        <Button onClick={onDownload} variant="contained" color="primary">
-          Firefox
         </Button>
       </Box>
     </Container>
