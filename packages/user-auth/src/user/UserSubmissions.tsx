@@ -204,7 +204,7 @@ const SubmissionList = ({
                 id={params.row.id}
                 depositSlug={depositSlug}
                 status={params.row.status}
-                legacy={params.row.legacy || new Date(params.row.created) < new Date("2025-03-12")}
+                legacy={params.row.legacy}
               />
             ),
             (resubmit || type !== "published") && (
@@ -222,7 +222,7 @@ const SubmissionList = ({
                     );
                     navigate(`/${depositSlug}`);
                   }}
-                  disabled={params.processing}
+                  disabled={params.processing || params.row.legacy}
                 />
               </Tooltip>
             ),
@@ -239,10 +239,11 @@ const SubmissionList = ({
                   );
                   navigate(`/${depositSlug}`);
                 }}
-              />
+                disabled={params.row.legacy}
+                />
             </Tooltip>,
             (type !== "published" || params.row.error) && (
-              // Delete an item, for drafts and for errored submissions. todo
+              // Delete an item, for drafts and for errored submissions
               <Tooltip
                 title={t(
                   toDelete === params.row.id 
@@ -288,7 +289,13 @@ const SubmissionList = ({
               }}
               alignItems="center"
               title={params.value}
+              spacing={1}
             >
+              {params.row.legacy && (
+                <Tooltip title={t("legacyForm")} placement="left">
+                  <ErrorOutlineIcon fontSize="small" color="warning" />
+                </Tooltip>
+              )}
               <AnimatePresence>
                 {toDelete === params.row.id && (
                   <motion.div
@@ -303,7 +310,6 @@ const SubmissionList = ({
                       variant="contained"
                       sx={{
                         fontSize: 11,
-                        mr: 1,
                       }}
                       color="error"
                       onClick={
@@ -379,7 +385,7 @@ const SubmissionList = ({
       created: type === "published" ? d["submitted-at"] : d["saved-at"],
       title: d["title"],
       remoteChanges: d["targets"].some(t => t.diff && t.diff.hasOwnProperty("data")),
-      legacy: d["legacy-form"],
+      legacy: d["legacy-form"] || d["acp-version"] === "unknown",
       ...(type === "published" ? { status: d["targets"] } : null),
     }));
 
