@@ -1,4 +1,4 @@
-import { type SyntheticEvent } from "react";
+import { useEffect, type SyntheticEvent } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -26,6 +26,16 @@ const Form = () => {
     (panel: string) => (_e: SyntheticEvent, isExpanded: boolean) => {
       dispatch(setOpenPanel(isExpanded ? panel : ""));
     };
+
+  // if no panel is open, and form panels have had no interaction, open the first one
+  useEffect(() => {
+    if (openPanel === undefined && formData.length > 0) {
+      const firstPanel = formData[0].id;
+      if (firstPanel) {
+        dispatch(setOpenPanel(firstPanel));
+      }
+    }
+  }, [openPanel, formData]);
 
   return (
     <>
