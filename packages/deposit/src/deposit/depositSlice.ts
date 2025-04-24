@@ -7,7 +7,7 @@ import type { FormConfig } from "../types/Metadata";
 const initialState: {
   config: FormConfig
   formDisabled: boolean;
-  panel: string;
+  panel?: string;
   tab: number;
   touched: boolean;
 } = {
@@ -20,7 +20,7 @@ const initialState: {
     filesUpload: {},
   },
   formDisabled: false,
-  panel: "",
+  panel: undefined,
   tab: 0,
   touched: false, 
 };
