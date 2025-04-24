@@ -45,6 +45,8 @@ export const UserSettings = ({
 
   const { data: profileData } = useFetchUserProfileQuery(null);
 
+  console.log(profileData)
+
   // Check if all API keys are valid, to enable/disable button, but make sure they're in the users profile first
   const validateTargets = target.map((t) => ({
     key:

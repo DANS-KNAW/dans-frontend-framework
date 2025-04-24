@@ -58,5 +58,6 @@
 	"viewItemReadOnly": "Als alleen-lezen form",
 	"viewItemTarget": "Op {{name}}",
 	"deleteSuccess": "Dataset succesvol verwijderd van server",
-	"remoteChanges": "Deze dataset is aangepast op de doelserver. Het opnieuw indienen van deze dataset zal deze wijzigingen overschrijven. Het bekijken of kopiëren van deze dataset in deze app zal de wijzigingen op de server niet weergeven."
+	"remoteChanges": "Deze dataset is aangepast op de doelserver. Het opnieuw indienen van deze dataset zal deze wijzigingen overschrijven. Het bekijken of kopiëren van deze dataset in deze app zal de wijzigingen op de server niet weergeven.",
+	"legacyForm": "Deze dataset is ingediend met een oude versie van deze app. Bewerken of kopiëren van deze dataset wordt niet ondersteund."
 }

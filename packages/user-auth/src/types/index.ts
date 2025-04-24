@@ -67,6 +67,7 @@ export interface SubmissionResponse {
   "legacy-form": boolean;
   targets: TargetOutput[];
   title: string;
+  "acp-version": string;
 }
 
 // Some values that the system can pull and fill in from the User Auth object
