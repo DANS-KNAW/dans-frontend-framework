@@ -72,8 +72,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const [dataMessage, setDataMessage] = useState(false);
   const [sessionData, setSessionData] = useState<{url: string; key: string; token: string;}>();
 
-  console.log(formAction);
-
   // Can load a saved form based on metadata id, passed along from UserSubmissions.
   // Set form behaviour based on action param.
   // load: loaded data from a saved form, to edit
@@ -106,7 +104,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     if (!formAction?.id || !serverFormData?.md) return; // Ensure data is available
     // If formAction.id is the same as the last processed one, don't reinitialize
     if (lastProcessedId.current === formAction.id && formAction.action !== "copy") {
-      console.log('Already processed this form action, skipping reinitialization');
       return;
     }
     // Update the last processed ID (but allow copy to regenerate new UUID)
@@ -360,9 +357,6 @@ const ActionMessage = ({
   });
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const form = useAppSelector(getForm);
-
-  console.log(formAction.action)
-  console.log(metadataSubmitStatus)
 
   return (
     <Collapse in={dataMessage}>
