@@ -15,7 +15,7 @@
 	"apiKeyDescription": "<0>Haal je sleutel hier op</0> en plak hem hieronder.",
 	"apiKeyHeader": "{{type}} API sleutel",
 	"apiKeyLabel": "Je persoonlijke {{type}} API sleutel",
-	"keyError": "Deze API sleutel is ongeldig",
+	"keyError": "Kan API sleutel niet valideren",
 	"fetchFormError": "Netwerkfout, kan je formulieren niet laden",
 	"deleteFormError": "Kan data verwijderen",
 	"fetchApiKeyError": "Kan niet verbinden met de API sleutel server",

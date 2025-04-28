@@ -72,6 +72,8 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const [dataMessage, setDataMessage] = useState(false);
   const [sessionData, setSessionData] = useState<{url: string; key: string; token: string;}>();
 
+  console.log(formAction);
+
   // Can load a saved form based on metadata id, passed along from UserSubmissions.
   // Set form behaviour based on action param.
   // load: loaded data from a saved form, to edit
@@ -358,6 +360,9 @@ const ActionMessage = ({
   });
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const form = useAppSelector(getForm);
+
+  console.log(formAction.action)
+  console.log(metadataSubmitStatus)
 
   return (
     <Collapse in={dataMessage}>

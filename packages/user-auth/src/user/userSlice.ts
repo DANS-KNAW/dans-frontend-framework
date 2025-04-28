@@ -19,6 +19,7 @@ export const userSlice = createSlice({
       state.formAction = action.payload;
     },
     resetFormActions: (state) => {
+      console.log('resetting')
       state.formAction = initialState.formAction;
     },
   },

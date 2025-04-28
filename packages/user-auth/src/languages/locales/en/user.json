@@ -15,7 +15,7 @@
 	"apiKeyDescription": "<0>Get your key here</0> and paste it below.",
 	"apiKeyHeader": "{{type}} API key",
 	"apiKeyLabel": "Your personal {{type}} API key",
-	"keyError": "This API key is invalid",
+	"keyError": "Could not validate API key",
 	"fetchFormError": "Network error, couldn't fetch your forms",
 	"deleteFormError": "Couldn't delete data",
 	"fetchApiKeyError": "Could not connect to the API key server",
