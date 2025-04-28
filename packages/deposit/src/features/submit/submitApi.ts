@@ -73,7 +73,7 @@ export const submitApi = createApi({
       transformResponse: (response, _meta, arg) => {
         store.dispatch(
           setMetadataSubmitStatus(
-            arg.actionType === "save" ? "saved" : "submitted",
+            arg.actionType === "save" || arg.actionType === "saveResubmit" ? "saved" : "submitted",
           ),
         );
         if (arg.actionType === "save" && !arg.autoSave) {

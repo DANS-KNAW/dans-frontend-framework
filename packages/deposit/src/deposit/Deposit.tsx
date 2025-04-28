@@ -104,7 +104,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     if (!formAction?.id || !serverFormData?.md) return; // Ensure data is available
     // If formAction.id is the same as the last processed one, don't reinitialize
     if (lastProcessedId.current === formAction.id && formAction.action !== "copy") {
-      console.log('Already processed this form action, skipping reinitialization');
       return;
     }
     // Update the last processed ID (but allow copy to regenerate new UUID)

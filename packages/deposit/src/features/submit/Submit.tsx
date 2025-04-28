@@ -125,6 +125,8 @@ const Submit = ({
 
     if (actionType === "resubmit" || actionType === "submit") {
       dispatch(setFormDisabled(true));
+      // clear actions when not saving and continuing, but actually submitting
+      clearFormActions();
     }
 
     dispatch(setMetadataSubmitStatus("submitting"));
@@ -138,8 +140,6 @@ const Submit = ({
       files: selectedFiles,
     }).then((result: { data?: any; error?: any }) => {
       if (result.data?.status === "OK") {
-        // clear any actions, as submit was successful
-        clearFormActions();
         // if metadata has been submitted ok, we start the file submit
         selectedFiles.map((file) => {
           const hasStatus = filesSubmitStatus.find((f) => f.id === file.id);
