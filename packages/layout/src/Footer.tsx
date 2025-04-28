@@ -78,7 +78,7 @@ const FooterContent = ({
           {lookupLanguageString(header, i18n.language)}
         </Typography>
       )}
-      {image && <img src={image.src} alt={image.alt} />}
+      {image && <img src={image.src} alt={image.alt} width={image.width} />}
       {freetext && (
         <Box
           sx={{

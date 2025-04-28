@@ -12,6 +12,7 @@ export interface FooterContent {
   image?: {
     src: string;
     alt: string;
+    width?: number;
   };
   align?: "center" | "right";
   bottom?: boolean;
