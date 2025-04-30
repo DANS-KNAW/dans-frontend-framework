@@ -407,7 +407,7 @@ const ActionMessage = ({
           : formAction.action === "load" ?
             t("dataMessageContentLoad")
           : formAction.action === "view" ?
-            t("dataMessageContentView")
+            t(import.meta.env.VITE_ALLOW_RESUBMIT ? "dataMessageContentView" : "dataMessageContentViewNoResubmit")
           : t("dataMessageContent")}
         </Typography>
         <Stack justifyContent="flex-end" direction="row" alignItems="center">
