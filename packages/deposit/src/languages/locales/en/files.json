@@ -38,6 +38,7 @@
   "fileSubmitError": "Try uploading again",
   "fileTypeCheckError": "Something went wrong checking the file type. Please try again.",
   "submittedFile": "File has been uploaded previously",
+  "generatedFile": "Auto generated file: will be regenerated on resubmit",
   "confirmDelete": "Confirm deletion",
   "fileLimitHeader": "Warning! Files larger than {{amount}} MB",
   "fileLimitDescription": "Unfortunately, we cannot handle files of this size automatically. Please <0>contact DANS directly</0>.",
@@ -47,5 +48,6 @@
   "dateInvalid": "Invalid date",
   "fileTooLarge": "Files over {{ size }} GB cannot be processed by the target repository",
   "fileNoSize": "Cannot upload files of 0 bytes",
-  "fileForbiddenCharacters": "File name contains forbidden characters: /:*?\"<>|;#"
+  "fileForbiddenCharacters": "File name contains forbidden characters: /:*?\"<>|;#",
+  "termsMapped": "Terms mapped"
 }

@@ -3,6 +3,7 @@ import {
   PieChartFacet,
   ListFacet,
   type RDTSearchUIProps,
+  type EndpointProps,
 } from "@dans-framework/rdt-search-ui";
 import { Rda2Result } from "../pages/search/result";
 
@@ -21,15 +22,40 @@ const fieldConfig: Partial<RDTSearchUIProps> = {
  * The config is for larger screens. For mobile, we use half width and full width cols.
  */
 
-export const elasticConfig = [
+export const elasticConfig: EndpointProps[] = [
   {
     name: "RDA Catalogue",
-    url: "https://tiger.laurenstobias.com/rda",
+    url: import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT + "/rda",
     fullTextFields: fieldConfig.fullTextFields,
     fullTextHighlight: fieldConfig.fullTextHighlight,
     resultBodyComponent: Rda2Result,
     onClickResultPath: "record",
     dashboard: [
+      <ListFacet
+        config={{
+          id: "pw",
+          field: "pathways.pathway.keyword",
+          title: {
+            en: "Pathways",
+            nl: "Paden",
+          },
+          cols: 2,
+          rows: 1,
+        }}
+      />,
+      <DateChartFacet
+        config={{
+          id: "date",
+          field: "dc_date",
+          title: {
+            en: "Timeline",
+            nl: "Tijdlijn",
+          },
+          interval: "year",
+          cols: 6,
+          rows: 1,
+        }}
+      />,
       <ListFacet
         config={{
           id: "indi",
@@ -43,75 +69,13 @@ export const elasticConfig = [
           rows: 1,
         }}
       />,
-      <DateChartFacet
-        config={{
-          id: "date",
-          field: "dc_date",
-          title: {
-            en: "Year",
-            nl: "Jaar",
-          },
-          interval: "year",
-          cols: 6,
-          rows: 1,
-        }}
-      />,
-      <ListFacet
-      config={{
-        id: "so",
-        field: "source.keyword",
-        title: {
-          en: "Source",
-          nl: "Bron",
-        },
-        size: 10,
-        cols: 2,
-        rows: 1,
-      }}
-    />,
       <PieChartFacet
-        config={{
-          id: "rights",
-          field: "rights.description.keyword",
-          title: {
-            en: "Rights",
-            nl: "Rechten",
-          },
-          cols: 3,
-          rows: 1,
-        }}
-      />,
-      <PieChartFacet
-        config={{
-          id: "lang",
-          field: "dc_language.keyword",
-          title: {
-            en: "Language",
-            nl: "Taal",
-          },
-          cols: 3,
-          rows: 1,
-        }}
-      />,
-      <ListFacet
         config={{
           id: "wf",
           field: "workflows.WorkflowState.keyword",
           title: {
             en: "Workflows",
             nl: "Workflows",
-          },
-          cols: 2,
-          rows: 1,
-        }}
-      />,
-      <PieChartFacet
-        config={{
-          id: "uritype",
-          field: "uri_type.uri_type.keyword",
-          title: {
-            en: "URI types",
-            nl: "URI types",
           },
           cols: 3,
           rows: 1,
@@ -131,17 +95,17 @@ export const elasticConfig = [
       />,
       <ListFacet
         config={{
-          id: "reltype",
-          field: "relations.relation_type.keyword",
+          id: "insttype",
+          field: "related_institutions.english_name.keyword",
           title: {
-            en: "Relation types",
-            nl: "Relatietype",
+            en: "Related institutions",
+            nl: "Gerelateerde instellingen",
           },
           cols: 2,
           rows: 1,
         }}
       />,
-      <PieChartFacet
+      <ListFacet
         config={{
           id: "wgs",
           field: "working_groups.title.keyword",
@@ -149,11 +113,11 @@ export const elasticConfig = [
             en: "Working groups",
             nl: "Werkgroepen",
           },
-          cols: 3,
+          cols: 2,
           rows: 1,
         }}
       />,
-      <PieChartFacet
+      <ListFacet
         config={{
           id: "igs",
           field: "interest_groups.title.keyword",
@@ -161,91 +125,19 @@ export const elasticConfig = [
             en: "Interest groups",
             nl: "Interesse groepen",
           },
-          cols: 3,
-          rows: 1,
-        }}
-      />,
-      <ListFacet
-      config={{
-        id: "keywords-vocab",
-        field: "keywords.keyword.keyword",
-        title: {
-          en: "Keywords",
-          nl: "Trefwoorden",
-        },
-        cols: 2,
-        rows: 1,
-      }}
-    />,
-      <PieChartFacet
-      config={{
-        id: "gorc-elements",
-        field: "gorc_elements.element.keyword",
-        title: {
-          en: "GORC Elements",
-          nl: "GORC Elementen",
-        },
-        cols: 3,
-        rows: 1,
-      }}
-    />,
-    <PieChartFacet
-      config={{
-        id: "gorc-attributes",
-        field: "gorc_attributes.attribute.keyword",
-        title: {
-          en: "GORC Attributes",
-          nl: "GORC Attributen",
-        },
-        cols: 3,
-        rows: 1,
-      }}
-    />,
-      <ListFacet
-        config={{
-          id: "pw",
-          field: "pathways.pathway.keyword",
-          title: {
-            en: "Pathways",
-            nl: "Paden",
-          },
           cols: 2,
           rows: 1,
         }}
       />,
       <ListFacet
         config={{
-          id: "restype",
-          field: "dc_type.keyword",
+          id: "so",
+          field: "source.keyword",
           title: {
-            en: "Resource type",
-            nl: "Brontype",
+            en: "Source",
+            nl: "Bron",
           },
-          size: 15,
-          cols: 2,
-          rows: 1,
-        }}
-      />,
-      <ListFacet
-        config={{
-          id: "disciplines",
-          field: "disciplines.list_item.keyword",
-          title: {
-            en: "Domains",
-            nl: "Domeinen",
-          },
-          cols: 2,
-          rows: 1,
-        }}
-      />,
-      <ListFacet
-        config={{
-          id: "insttype",
-          field: "related_institutions.english_name.keyword",
-          title: {
-            en: "Related institutions",
-            nl: "Gerelateerde instellingen",
-          },
+          size: 10,
           cols: 2,
           rows: 1,
         }}

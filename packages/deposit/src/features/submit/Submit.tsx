@@ -11,15 +11,14 @@ import Typography from "@mui/material/Typography";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import {
   getMetadataStatus,
-  resetMetadata,
-  setSectionStatus,
-  setOpenTab,
-  getMetadata,
-  getTouchedStatus,
+  initForm,
   getSessionId,
+  getTouchedStatus,
+  getFieldValues,
+  getForm,
 } from "../metadata/metadataSlice";
 import { getFiles, resetFiles } from "../files/filesSlice";
-import { useSubmitDataMutation, /*useSubmitFilesMutation*/ } from "./submitApi";
+import { useSubmitDataMutation /*useSubmitFilesMutation*/ } from "./submitApi";
 import { uploadFile } from "./submitFile";
 import {
   setMetadataSubmitStatus,
@@ -34,13 +33,13 @@ import {
   getData,
   setFormDisabled,
   getFormDisabled,
+  setOpenTab,
 } from "../../deposit/depositSlice";
-import { useAuth } from "react-oidc-context";
 import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
 import { getFormActions, clearFormActions } from "@dans-framework/user-auth";
 import { useDebouncedCallback } from "use-debounce";
-import { enqueueSnackbar } from "notistack";
+import { lookupLanguageString } from "@dans-framework/utils";
 
 const Submit = ({
   hasTargetCredentials,
@@ -48,16 +47,16 @@ const Submit = ({
   hasTargetCredentials: boolean;
 }) => {
   const dispatch = useAppDispatch();
-  const { t } = useTranslation("submit");
-  const auth = useAuth();
+  const { t, i18n } = useTranslation("submit");
   const metadataStatus = useAppSelector(getMetadataStatus);
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const selectedFiles = useAppSelector(getFiles);
   const formAction = getFormActions();
-  const metadata = useAppSelector(getMetadata);
   const isTouched = useAppSelector(getTouchedStatus);
   const [fileWarning, setFileWarning] = useState<boolean>(false);
   const sessionId = useAppSelector(getSessionId);
+  const metadata = useAppSelector(getFieldValues);
+  const form = useAppSelector(getForm);
 
   // get form config
   const formConfig = useAppSelector(getData);
@@ -77,7 +76,11 @@ const Submit = ({
   const fileStatusArray = [...new Set(filesSubmitStatus.map((f) => f.status))];
   const fileStatus =
     fileStatusArray.indexOf("error") !== -1 ? "error"
-    : fileStatusArray.indexOf("submitting") !== -1 || fileStatusArray.indexOf("queued") !== -1 ? "submitting"
+    : (
+      fileStatusArray.indexOf("submitting") !== -1 ||
+      fileStatusArray.indexOf("queued") !== -1
+    ) ?
+      "submitting"
     : fileStatusArray.indexOf("success") !== -1 ? "success"
     : "";
 
@@ -88,23 +91,8 @@ const Submit = ({
 
   const [
     submitData,
-    {
-      isLoading: isLoadingMeta,
-      isError: isErrorMeta,
-      reset: resetMeta,
-    },
+    { isLoading: isLoadingMeta, isError: isErrorMeta, reset: resetMeta, data: submittedMetaResponse },
   ] = useSubmitDataMutation();
-
-  // Access token might just be expiring, or user settings just changed
-  // So we do a callback to signinSilent, which refreshes the current user
-  const getUser = () =>
-    auth
-      .signinSilent()
-      .then(() => auth.user)
-      .catch(() => {
-        // make sure we display an error when there's an issue signing in/refreshing the user's token
-        enqueueSnackbar("Athentication error", { variant: "customError" });
-      });
 
   // remove warning when files get added
   useEffect(() => {
@@ -112,10 +100,16 @@ const Submit = ({
   }, [selectedFiles.length]);
 
   // submit the data
-  const handleButtonClick = (actionType: "submit" | "save" | "resubmit") => {
+  const handleButtonClick = (actionType: "submit" | "save" | "resubmit" | "saveResubmit") => {
     // check to see if any files have been added.
     // If not, and there is no warning yet, show a warning to confirm actual submission first
-    if (selectedFiles.length === 0 && !fileWarning && actionType === "submit") {
+    if (
+      !fileWarning && actionType === "submit" &&
+      (typeof formConfig.filesUpload?.disableFileWarning === "number" 
+        ? selectedFiles.length < formConfig.filesUpload?.disableFileWarning
+        : (selectedFiles.length === 0 && !formConfig.filesUpload?.disableFileWarning)
+      )
+    ) {
       setFileWarning(true);
       // move to files tab
       dispatch(setOpenTab(1));
@@ -126,52 +120,60 @@ const Submit = ({
     // Files are present or a warning has already been shown to the user
     setFileWarning(false);
 
-    // Clear any form action messages on submit
+    // Clear any form action messages on save/submit, when saving a copy
+    formAction.action === "copy" && clearFormActions();
+
     if (actionType === "resubmit" || actionType === "submit") {
-      clearFormActions();
       dispatch(setFormDisabled(true));
+      // clear actions when not saving and continuing, but actually submitting
+      clearFormActions();
     }
 
     dispatch(setMetadataSubmitStatus("submitting"));
 
     // do the actual submit
-    getUser().then((user) =>
-      // with fresh headerdata/user info, we can submit the metadata
-      submitData({
-        user: user,
-        actionType: actionType,
-        id: sessionId,
-        metadata: metadata, 
-        config: formConfig,
-        files: selectedFiles,
-      }).then((result: { data?: any; error?: any }) => {
-        if (result.data?.status === "OK") {
-          // if metadata has been submitted ok, we start the file submit
-          selectedFiles.map( file => {
-            const hasStatus = filesSubmitStatus.find( f => f.id === file.id);
-            // make sure file is not already submitted or currently submitting
-            return !file.submittedFile && (!hasStatus || hasStatus?.status === 'error') && dispatch(
+    submitData({
+      actionType: actionType,
+      id: sessionId,
+      metadata: metadata,
+      config: formConfig,
+      files: selectedFiles,
+    }).then((result: { data?: any; error?: any }) => {
+      if (result.data?.status === "OK") {
+        // if metadata has been submitted ok, we start the file submit
+        selectedFiles.map((file) => {
+          const hasStatus = filesSubmitStatus.find((f) => f.id === file.id);
+          // make sure file is not already submitted or currently submitting
+          return (
+            !file.submittedFile &&
+            (!hasStatus || hasStatus?.status === "error") &&
+            dispatch(
               setFilesSubmitStatus({
                 id: file.id,
                 progress: 0,
                 status: "queued",
               }),
             )
-          });
-        }
-      }),
-    );
+          );
+        });
+      }
+      else {
+        // if the submit failed, enable the form again
+        dispatch(setFormDisabled(false));
+      }
+    });
   };
 
   // Autosave functionality, debounced on metadata change
   const autoSave = useDebouncedCallback(() => {
     // on autosave, we send along file metadata, but not the actual files
+    // we also clear form actions for copy
+    formAction.action === "copy" && clearFormActions();
     if (!formDisabled && isTouched) {
-      submitData({ 
-        user: auth.user, 
-        actionType: "save",
+      submitData({
+        actionType: formAction.action === "resubmit" ? "saveResubmit" : "save",
         id: sessionId,
-        metadata: metadata, 
+        metadata: metadata,
         config: formConfig,
         files: selectedFiles,
         // set flag autoSave, so we don't show a snackbar each time
@@ -187,17 +189,14 @@ const Submit = ({
   // Reset the entire form to initial state
   const resetForm = () => {
     // reset RTK mutations
-    // resetSubmittedFiles();
     resetMeta();
-    // reset metadata in metadata slice
-    dispatch(resetMetadata());
+    // reinitialize form
+    dispatch(initForm(form));
     // reset status in submit slice
     dispatch(resetMetadataSubmitStatus());
     dispatch(resetFilesSubmitStatus());
     // reset files in file slice
     dispatch(resetFiles());
-    // finally reset all section statusses
-    dispatch(setSectionStatus(null));
     // and enable form
     dispatch(setFormDisabled(false));
   };
@@ -216,7 +215,7 @@ const Submit = ({
             exit={{ x: "100%" }}
           >
             <Alert severity="warning" sx={{ mb: 2 }}>
-              {t("fileWarning")}
+              {lookupLanguageString(formConfig.filesUpload?.customFileWarning, i18n.language) || t("fileWarning")}
             </Alert>
           </motion.div>
         )}
@@ -228,8 +227,9 @@ const Submit = ({
             {
               (
                 !metadataSubmitStatus ||
-                (metadataSubmitStatus === "saved" && !formDisabled) &&
-                fileStatus !== "submitting"
+                (metadataSubmitStatus === "saved" &&
+                  !formDisabled &&
+                  fileStatus !== "submitting")
               ) ?
                 // metadata has not yet been submitted, so let's just indicate metadata completeness
                 metadataStatus === "error" ?
@@ -340,8 +340,10 @@ const Submit = ({
         <Stack direction="row" alignItems="center" mb={2}>
           <Button
             variant="contained"
-            disabled={formDisabled || formAction.action === "resubmit"}
-            onClick={() => handleButtonClick("save")}
+            disabled={formDisabled}
+            onClick={() => handleButtonClick(
+              formAction.action === "resubmit" ? "saveResubmit" : "save"
+            )}
             size="large"
             sx={{ mr: 1 }}
             data-testid="save-form"
@@ -386,14 +388,14 @@ const Submit = ({
               t("resubmit")
             : t("submit")}
           </Button>
-          <FileUploader />
+          <FileUploader customId={submittedMetaResponse?.['dataset-id']}/>
         </Stack>
       </Stack>
     </Stack>
   );
 };
 
-const FileUploader = () => {
+const FileUploader = ({customId}: {customId: string}) => {
   // Component that manages file upload queue.
   // Check files that have status queued, and start uploading when a spot becomes available in the queue.
   const maxConcurrentUploads = 3;
@@ -403,19 +405,23 @@ const FileUploader = () => {
   const formConfig = useAppSelector(getData);
 
   useEffect(() => {
-    const currentlyUploading = filesSubmitStatus.filter(file => file.status === 'submitting');
+    const currentlyUploading = filesSubmitStatus.filter(
+      (file) => file.status === "submitting",
+    );
     if (currentlyUploading.length < maxConcurrentUploads) {
       // add first file of selectedFiles that is not currently uploading to the active uploads
-      selectedFiles.find(file => {
+      selectedFiles.find((file) => {
         // only call the upload function if file is queued
-        const hasStatus = filesSubmitStatus.find( f => f.id === file.id);
-        return hasStatus?.status === "queued" && uploadFile(file, sessionId, formConfig.target?.envName);
+        const hasStatus = filesSubmitStatus.find((f) => f.id === file.id);
+        return (
+          hasStatus?.status === "queued" &&
+          uploadFile(file, customId || sessionId, formConfig.target)
+        );
       });
     }
-  }, [filesSubmitStatus, selectedFiles, sessionId, formConfig])
+  }, [filesSubmitStatus, selectedFiles, sessionId, formConfig]);
 
   return null;
-
 };
 
 export default Submit;

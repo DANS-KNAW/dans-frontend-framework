@@ -1,5 +1,8 @@
 import type { LanguageStrings } from "@dans-framework/utils";
 import type { AuthProperty } from "@dans-framework/user-auth";
+import type { Feature, Point, Polygon, LineString, Geometry } from "geojson";
+import type { LngLatBoundsLike } from "react-map-gl";
+import { AutoFillProperty } from "@dans-framework/user-auth/src/types";
 
 // All user input field types
 export type InputField =
@@ -9,14 +12,14 @@ export type InputField =
   | AutocompleteFieldType
   | RadioFieldType
   | CheckFieldType
-  | RepeatTextFieldType;
+  | RepeatTextFieldType
+  | DrawMapFieldType;
 
 // General field, can be input or group
 export type Field = InputField | GroupedFieldType | RepeatGroupedFieldType;
 
 // All fields extend the basic field type
 interface BasisFieldType {
-  id: string; // auto generated uuid
   name: string; // gets mapped by packager
   label: string | LanguageStrings; // appears above field in UI
   touched?: boolean; // checks if user has interacted with field, for validation purposes
@@ -36,6 +39,7 @@ interface BasisFieldType {
   togglePrivateIds?: string[]; // filled programmatically with uuid's
   toggleTitleGeneration?: boolean; // determines if this field can toggle the forms auto title generation functionality
   fullWidth?: boolean; // set field to be 100% width instead of default 50%
+  deriveFrom?: string; // field name to derive value from
 }
 
 export interface TextFieldType extends BasisFieldType {
@@ -63,12 +67,13 @@ export interface DateFieldType extends BasisFieldType {
   fields?: never;
   multiApiValue?: never;
   options?: never;
-  autofill?: never;
+  autofill?: AutoFillProperty;
   minDateField?: string;
   maxDateField?: string;
 }
 
-export interface DateRangeFieldType extends Omit<DateFieldType, "type" | "value"> {
+export interface DateRangeFieldType
+  extends Omit<DateFieldType, "type" | "value"> {
   type: "daterange";
   value?: (string | null)[];
   optionalEndDate?: boolean;
@@ -94,6 +99,10 @@ export interface AutocompleteFieldType
 export interface GroupedFieldType
   extends Omit<BasisFieldType, "value" | "touched"> {
   type: "group"; // This type groups multiple single fields
+  /**
+   * If true, the group is required if at least one of the fields is set.
+   */
+  compleetGroup?: boolean;
   fields: InputField[];
   value?: never;
   validation?: never;
@@ -165,6 +174,35 @@ export interface CheckFieldType
   maxDateField?: never;
 }
 
+export type MapFeatureType = Point | Polygon | LineString;
+export interface ExtendedMapFeature<G extends Geometry = Geometry, P = any>
+  extends Feature<G, P> {
+  geonames?: OptionsType | undefined;
+  originalCoordinates?: number[] | number[][] | number[][][];
+  coordinateSystem?: OptionsType;
+  label?: never;
+  value?: never;
+}
+
+export interface CoordinateSystem extends OptionsType {
+  bbox?: LngLatBoundsLike;
+}
+
+export interface DrawMapFieldType extends Omit<BasisFieldType, "value"> {
+  type: "drawmap";
+  value?: ExtendedMapFeature[];
+  wmsLayers?: {
+    name: string;
+    source: string;
+  }[];
+  multiApiValue?: never;
+  fields?: never;
+  format?: never;
+  autofill?: never;
+  minDateField?: never;
+  maxDateField?: never;
+}
+
 // Date and time formats to be used in a Date field
 export type DateTimeFormat =
   | "DD-MM-YYYY HH:mm"
@@ -173,14 +211,13 @@ export type DateTimeFormat =
   | "YYYY";
 
 // API's that can be used by Autocomplete fields
-export type Datastations = "elsst" | "narcis" | "dansCollections";
+export type Datastations = "elsst" | "narcis" | "dansCollections" | "gettyAat";
 export type TypeaheadAPI =
   | "orcid"
   | "ror"
   | "gorc"
   | "licenses"
   | "geonames"
-  | "getty"
   | "sheets"
   | "dansFormats"
   | "rdaworkinggroups"
@@ -189,7 +226,10 @@ export type TypeaheadAPI =
   | "interest groups"
   | Datastations
   | "sshLicences"
-  | "languageList";
+  | "languageList"
+  | "biodiversity_species_scientific"
+  | "biodiversity_species_vernacular"
+  | "un_sustainable_development_goals";
 
 // Options that should be specified if Google Sheet API is used in Autocomplete
 interface SheetOptions {
@@ -215,13 +255,29 @@ export interface OptionsType {
   categoryLabel?: string; // used for nested options
   categoryContent?: string; // used for nested options
   url?: string;
+  coordinates?: number[];
 }
 
 // Validation for text fields
-export type ValidationType = "email" | "uri" | "number" | "github-uri";
+export type ValidationType = "email" | "uri" | "number" | "github-uri" | "pid";
 
 // Format to return API response in, used by RTK's transformResponse
-export interface AutocompleteAPIFieldData {
+export interface AutocompleteAPIFieldData<T = OptionsType[]> {
   arg?: string;
-  response: OptionsType[];
+  response: T;
+}
+
+  // Field structure that gets saved to metadata state
+export interface BaseField {
+  value?: any;
+  touched: boolean;
+  required?: boolean;
+  private?: boolean;
+  valid?: boolean;
+  format?: DateTimeFormat;
+  multiApiValue?: TypeaheadAPI;
+}
+
+export interface RepeatableField {
+  value: Record<string, BaseField>[];
 }

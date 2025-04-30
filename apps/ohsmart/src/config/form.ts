@@ -50,6 +50,11 @@ const form: FormConfig = {
     embargoDateMax: 18250,
     displayProcesses: false,
     maxSize: 10000000000, // max file size that can be uploaded in bytes
+    disableFileWarning: 2, // set to true to disable the file warning, can also be a number to disable the warning if the number of files is greater than the number
+    customFileWarning: {
+      en: "Have you uploaded your recording, transcript and subtitles?",
+      nl: "Heb je je opname, transcript en ondertiteling geüpload?",
+    }, // optional custom file warning, will default to a generic warning if not set
   },
 };
 

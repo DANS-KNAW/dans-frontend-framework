@@ -59,7 +59,8 @@ const section: InitialSectionType = {
         en: "Date of publication",
         nl: "Datum van publicatie",
       },
-      format: "DD-MM-YYYY HH:mm",
+      format: "DD-MM-YYYY",
+      autofill: "dateNow",
     },
     {
       type: "text",
@@ -73,6 +74,21 @@ const section: InitialSectionType = {
       description: {
         en: "Some context on the deposit.",
         nl: "Wat context bij het deposit.",
+      },
+    },
+    {
+      type: "autocomplete",
+      name: "firstAuthor",
+      label: {
+        en: "Author",
+        nl: "Auteur",
+      },
+      required: true,
+      options: "orcid",
+      allowFreeText: true,
+      description: {
+        en: "Author for this deposit. Every submission requires at least one author to be specified. Additional contributors can be added in the Contributors section below.",
+        nl: "Auteur voor dit deposit. Elke inzending vereist dat ten minste één auteur wordt opgegeven. Extra bijdragers kunnen worden toegevoegd in de sectie Bijdragers hieronder.",
       },
     },
     {
@@ -91,6 +107,7 @@ const section: InitialSectionType = {
         {
           type: "autocomplete",
           name: "contributor",
+          toggleRequired: ["contributorType"],
           label: {
             en: "Contributor",
             nl: "Bijdrager",
@@ -105,6 +122,7 @@ const section: InitialSectionType = {
         {
           type: "autocomplete",
           name: "contributorType",
+          toggleRequired: ["contributor"],
           label: {
             en: "Contributor type",
             nl: "Type bijdrager",

@@ -19,12 +19,16 @@ import { LanguageBar } from @dans-framework/layout;
 
 ## Menu bar
 
-The navigation menu of your app. Takes an array of Page props. See [@dans-framework/pages](pages.md)
+The navigation menu of your app. Takes an array of Page props. See [@dans-framework/pages](pages.md). Also see [@dans-framework/utils](utils.md) for a handy useEmbedHandler hook.
 
 ```tsx
 import { MenuBar } from @dans-framework/layout;
 
-<MenuBar pages={pages} />
+<MenuBar 
+  pages={pages} 
+  userMenu={true} // of set to false, no user settings and submissions menu will be present
+  embed={false} // if set to true, it will show a different style of menu bar, suitable to an embedded view, for e.g. iFrames.
+/>
 ```
 
 ## Footer

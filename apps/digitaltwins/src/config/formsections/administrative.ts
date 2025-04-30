@@ -10,20 +10,6 @@ const section: InitialSectionType = {
     {
       type: "autocomplete",
       label: {
-        en: "Language of interview",
-        nl: "Taal van interview",
-      },
-      name: "language_interview",
-      required: true,
-      description: {
-        en: "Provide the language the interview was held in",
-        nl: "Geef de taal waarin het interview is gehouden op",
-      },
-      options: "languageList",
-    },
-    {
-      type: "autocomplete",
-      label: {
         en: "Language of metadata",
         nl: "Taal van metadata",
       },

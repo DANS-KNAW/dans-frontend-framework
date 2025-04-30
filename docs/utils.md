@@ -43,3 +43,21 @@ import { setSiteTitle } from "@dans-framework/utils";
 ```
 
 Function to set document title `setSiteTitle('site name', 'page title')`
+
+## @dans-framework/utils/hooks
+
+```tsx
+import { useEmbedHandler } from "@dans-framework/utils";
+
+const { isEmbed } = useEmbedHandler();
+```
+Converts URL query paramater `?embed=true` to true, which should be set when app is loaded inside e.g. an iFrame. Useful for determining when to render certain components in an app, and can be passed to MenuBar.
+
+## @dans-framework/utils/user
+
+```tsx
+import { getUser } from "@dans-framework/utils";
+
+const user = getUser();
+```
+Gets the current OIDC user object from session storage.

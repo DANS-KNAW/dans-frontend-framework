@@ -8,6 +8,7 @@ const vocabMap: Record<Datastations, string> = {
   elsst: "ELSST_R3",
   narcis: "NARCIS",
   dansCollections: "DansCollections",
+  gettyAat: "AATC",
 };
 
 export const datastationsApi = createApi({

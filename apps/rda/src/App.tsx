@@ -4,7 +4,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
 import { ThemeWrapper } from "@dans-framework/theme";
-import { LanguageBar, MenuBar, Footer } from "@dans-framework/layout";
+import { LanguageBar, MenuBar, Footer, Banner } from "@dans-framework/layout";
 import { Deposit } from "@dans-framework/deposit";
 import { Generic, Page } from "@dans-framework/pages";
 import {
@@ -26,7 +26,13 @@ import languages from "./config/languages";
 import authProvider from "./config/auth";
 import form from "./config/form";
 import { elasticConfig } from "./config/elasticSearch";
-import { FacetedWrapper, FacetedSearchProvider } from "@dans-framework/rdt-search-ui";
+import {
+  FacetedWrapper,
+  FacetedSearchProvider,
+} from "@dans-framework/rdt-search-ui";
+import { Freshdesk } from "@dans-framework/freshdesk";
+import SupportDrawer from "@dans-framework/support-drawer";
+import RDAAnnotator from "./pages/rda-annotator";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -45,6 +51,8 @@ const App = () => {
             <Deposit config={form} page={page} />
           </AuthRoute>
         );
+      case "rda-annotator":
+        return <RDAAnnotator />;
       default:
         return <Generic {...page} />;
     }
@@ -54,6 +62,12 @@ const App = () => {
     <AuthWrapper authProvider={authProvider}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
         <FacetedSearchProvider config={elasticConfig}>
+          <Banner
+            text={{
+              en: "🚨This demo site is under active development—features may change or break unexpectedly.🚨",
+              nl: "🚨Deze demo-site is in actieve ontwikkeling - functies kunnen onverwacht veranderen of kapot gaan.🚨",
+            }}
+          />
           <BrowserRouter>
             {/* Need to pass along root i18n functions to the language bar */}
             <LanguageBar
@@ -83,7 +97,9 @@ const App = () => {
                   path="user-submissions"
                   element={
                     <AuthRoute>
-                      <UserSubmissions />
+                      <UserSubmissions
+                        targetCredentials={form.targetCredentials}
+                      />
                     </AuthRoute>
                   }
                 />
@@ -101,6 +117,10 @@ const App = () => {
           </BrowserRouter>
         </FacetedSearchProvider>
         <Footer {...footer} />
+        <Freshdesk widgetId={80000010123} />
+        <SupportDrawer
+          supportMaterialEndpoint={import.meta.env.VITE_SUPPORT_DRAWER_CONFIG}
+        />
       </ThemeWrapper>
     </AuthWrapper>
   );

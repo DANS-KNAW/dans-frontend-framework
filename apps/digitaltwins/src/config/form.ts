@@ -9,13 +9,7 @@ import rights from "./formsections/rights";
 // Section data are formatted as js/ts, so we can easily import things like option lists, or set a variable that gets reused
 // For now, see types/Metadata.ts to check the types of input fields you can use
 
-const sections = [
-  citation,
-  coverage,
-  relations,
-  administrative,
-  rights,
-];
+const sections = [citation, coverage, relations, administrative, rights];
 
 const form: FormConfig = {
   form: sections as InitialSectionType[],

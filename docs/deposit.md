@@ -83,16 +83,21 @@ import { Deposit } from "@dans-framework/deposit"
             en: "Create thumbnail",
             nl: "Genereer thumbnail",
           },
-          for: ["video", "images"], 
+          for: ["video", "images"],
         },
         // etc
       ],
       // enable/disable these columns (default value specified)
       embargoDate: false,
-      displayRoles: true, 
+      displayRoles: true,
       displayProcesses: true,
       // set an optional maximum file upload size in bytes
       maxSize: 10737418240, // e.g. 10 GB
+      disableFileWarning: 2, // set to true to disable the file warning, can also be a number to disable the warning if the number of files is greater than the number
+      customFileWarning: {
+        en: "Have you uploaded your recording, transcript and subtitles?",
+        nl: "Heb je je opname, transcript en ondertiteling geüpload?",
+      }, // optional custom file warning message, will default to a generic message if not set
     },
 
   }
@@ -129,6 +134,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       // * group - a field group, this group contains another fields array
       // * radio - a radio button selection field (one option is always selected)
       // * check - a checkbox selection field (select zero or more options)
+      // * drawmap - a map that indicating location: gives user the ability to draw shapes, change and convert coordinates to different coordinate systems, requires a Maptiler and Geonames API key in the .env file: VITE_MAPTILER_API_KEY and VITE_GEONAMES_API_KEY
       type: "text",
 
       // Label can be a string or preferably a language object
@@ -193,7 +199,7 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       // Autocomplete, radio and check fields only. Selectable options, can be:
       // * an array of option objects like below
       // * an API service: "orcid", "ror", "narcis", etc (autocomplete only). See TypeaheadAPI in types/Metadata.ts.
-      // * an array of API services ["orcid", "ror"] (autocomplete only)
+      // * an array of API services ["orcid", "ror"] from which the user can select one (autocomplete only)
       options: [
         // This is an options object
         {
@@ -246,6 +252,11 @@ Each section is a collapsible accordion in the front-end. A section is formatted
       // Auto generate the value of this field, based on a specific string. Only for text fields.
       // Value must be a string, or a language string object
       autoGenerateValue: "{{some_field_name}} has a value, and {{some_other_field}} also has one",
+
+      // Optional logic that enabled the field to be populated from the value derived from the specified field name.
+      // Value must be a single string.
+      // Will only trigger if the user hasn't `Touched` the field. (This is to prevent data loss)
+      deriveFrom: "name_of_field_to_derive_from"
     },
   ]
 }

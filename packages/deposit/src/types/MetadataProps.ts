@@ -1,6 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import type {
   Field,
+  InputField,
   GroupedFieldType,
   RepeatGroupedFieldType,
   TextFieldType,
@@ -12,13 +13,17 @@ import type {
   TypeaheadAPI,
   OptionsType,
   DateRangeFieldType,
+  DrawMapFieldType,
+  BaseField,
 } from "./MetadataFields";
-import type { AutocompleteRenderGetTagProps } from "@mui/material";
+import type { AutocompleteRenderGetTagProps, SxProps } from "@mui/material";
 
 // Props for components
 export interface SingleFieldProps {
-  field: Field;
-  sectionIndex: number;
+  field: InputField;
+  groupName?: string;
+  groupIndex?: number;
+  sx?: SxProps;
 }
 
 export interface GroupedFieldProps extends Omit<SingleFieldProps, "field"> {
@@ -56,6 +61,7 @@ export interface AutocompleteFieldProps
   field: AutocompleteFieldType;
   onOpen?: () => void;
   isLoading?: boolean;
+  variant?: string;
 }
 
 export interface AutocompleteAPIFieldProps extends AutocompleteFieldProps {
@@ -67,21 +73,29 @@ export interface AutocompleteAPIFieldProps extends AutocompleteFieldProps {
   isFetching: boolean;
 }
 
-interface FieldButtonProps {
-  sectionIndex: number;
-  groupedFieldId: string;
+export interface DrawMapFieldProps extends Omit<SingleFieldProps, "field"> {
+  field: DrawMapFieldType;
+}
+
+export interface BaseButtonProps {
+  field: Field;
+  sx?: any;
+  groupName?: string;
+  groupIndex?: number;
+}
+
+export interface AddButtonProps extends BaseButtonProps {
+  disabled?: boolean;
+}
+
+export interface DeleteButtonProps extends BaseButtonProps {
+  fieldIndex: number;
   size?: "small" | "medium" | "large";
-  mt?: number;
-  groupedFieldName?: string;
 }
 
-export interface DeleteFieldButtonProps extends FieldButtonProps {
-  deleteFieldIndex: number;
-  deleteGroupId?: string;
-}
-
-export interface AddFieldButtonProps extends FieldButtonProps {
-  type: "single" | "group";
+export interface AddDeleteControlsProps extends BaseButtonProps {
+  fieldIndex: number;
+  fieldValue: BaseField[];
 }
 
 export interface InfoLinkProps {
@@ -96,4 +110,10 @@ export interface InfoChipProps {
   apiValue?: TypeaheadAPI;
   getTagProps: AutocompleteRenderGetTagProps;
   index: number;
+}
+
+export interface CommonProps<T extends Field> {
+  field: T;
+  groupName?: string;
+  groupIndex?: number;
 }

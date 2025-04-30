@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
 import Typography from "@mui/material/Typography";
@@ -6,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { getFieldStatus } from "../metadataHelpers";
 import { StatusIcon } from "../../generic/Icons";
-import { setField } from "../metadataSlice";
+import { setField, getField } from "../metadataSlice";
 import type {
   AutocompleteFieldProps,
   InfoLinkProps,
@@ -22,14 +23,30 @@ import { getFormDisabled } from "../../../deposit/depositSlice";
 
 const AutocompleteField = ({
   field,
-  sectionIndex,
+  groupName,
+  groupIndex,
   isLoading,
   onOpen,
 }: AutocompleteFieldProps) => {
   const dispatch = useAppDispatch();
-  const status = getFieldStatus(field);
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
+  const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
+  const status = getFieldStatus(fieldValue, field);
+
+  // on initial render, check if field has a default value, and if so, add it to the value state
+  useEffect(() => {
+    if (field.value && !fieldValue) {
+      dispatch(
+        setField({
+          field: field,
+          value: field.value,
+          ...(groupName !== undefined && { groupName: groupName }),
+          ...(groupIndex !== undefined && { groupIndex: groupIndex }),
+        }),
+      );
+    }
+  }, []);
 
   const options =
     Array.isArray(field.options) ? (field.options as OptionsType[]) : [];
@@ -44,41 +61,42 @@ const AutocompleteField = ({
       <Autocomplete
         multiple={field.multiselect}
         fullWidth
-        data-testid={`${field.name}-${field.id}`}
+        data-testid={field.name}
         options={localizedOptions}
         groupBy={(option) =>
           (option.header &&
             lookupLanguageString(option.header, i18n.language)) ||
           ""
         }
-        value={field.value || (field.multiselect ? [] : null)}
+        // make sure default value gets selected if not changed yet by user
+        value={fieldValue.value || (field.multiselect ? [] : null)}
         renderInput={(params) => (
           <TextField
             {...params}
             label={`${lookupLanguageString(field.label, i18n.language)}${
               field.required ? " *" : ""
             }`}
-            error={status === "error" && field.touched}
-            helperText={status === "error" && field.touched && t("incorrect")}
+            error={status === "error" && fieldValue.touched}
+            helperText={status === "error" && fieldValue.touched && t("incorrect")}
             InputProps={{
               ...params.InputProps,
               startAdornment:
                 (
                   !field.multiselect &&
-                  field.value &&
-                  !Array.isArray(field.value) &&
-                  ((field.value.value &&
-                    field.value.value.startsWith("http")) ||
-                    field.value.url)
+                  fieldValue.value &&
+                  !Array.isArray(fieldValue.value) &&
+                  ((fieldValue.value.value &&
+                    fieldValue.value.value.startsWith("http")) ||
+                    fieldValue.value.url)
                 ) ?
                   <InfoLink
                     link={
-                      (field.value.value.startsWith("http") &&
-                        field.value.value) ||
-                      (field.value.url as string)
+                      (fieldValue.value.value.startsWith("http") &&
+                        fieldValue.value.value) ||
+                      (fieldValue.value.url as string)
                     }
                     checkValue={lookupLanguageString(
-                      field.value.label,
+                      fieldValue.value.label,
                       i18n.language,
                     )}
                   />
@@ -86,7 +104,7 @@ const AutocompleteField = ({
             }}
             inputProps={{
               ...params.inputProps,
-              "data-testid": `${field.name}-${field.id}`,
+              "data-testid": field.name,
             }}
           />
         )}
@@ -103,9 +121,10 @@ const AutocompleteField = ({
         onChange={(_e, newValue) =>
           dispatch(
             setField({
-              sectionIndex: sectionIndex,
-              id: field.id,
+              field: field,
               value: newValue,
+              ...(groupName !== undefined && { groupName: groupName }),
+              ...(groupIndex !== undefined && { groupIndex: groupIndex }),
             }),
           )
         }
@@ -223,9 +242,13 @@ export const InfoChip = ({
 }: InfoChipProps) => {
   const { i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
+  const tagProps = getTagProps({ index });
+  const { key, ...restTagProps } = tagProps;
+
   return (
     <Chip
-      {...getTagProps({ index })}
+      key={key} // Pass key directly
+      {...restTagProps} // Spread the rest of the props
       label={
         option.freetext ?
           option.value

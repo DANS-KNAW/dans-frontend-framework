@@ -42,7 +42,8 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Link from "@mui/material/Link";
 import EditIcon from "@mui/icons-material/Edit";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-// import ReplayIcon from "@mui/icons-material/Replay";
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import ReplayIcon from "@mui/icons-material/Replay";
 import PendingIcon from "@mui/icons-material/Pending";
 import ErrorIcon from "@mui/icons-material/Error";
 import PreviewIcon from "@mui/icons-material/Preview";
@@ -61,54 +62,54 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import { setFormAction } from "./userSlice";
 import { useAppDispatch } from "../redux/hooks";
 
-/*
- * Note TODO:
- * Resubmitting of (errored) forms does not work yet
- * It is partially implemented here and in Deposit.tsx,
- * but needs work on the API side
- */
-
 const depositStatus: DepositStatus = {
+  empty: ["preparing"],
   processing: ["initial", "processing", "submitted", "finalizing", "progress"],
   error: ["rejected", "failed", "error"],
   success: ["finish", "accepted", "success"],
 };
 
-export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
+export const UserSubmissions = ({ 
+  depositSlug, 
+  targetCredentials,
+}: { 
+  depositSlug?: string;
+  targetCredentials?: { repo: string; auth: string; authKey: string; }[];
+}) => {
   const { t } = useTranslation("user");
   const siteTitle = useSiteTitle();
-  const auth = useAuth();
   const dispatch = useAppDispatch();
 
   // Fetch the users submitted/saved forms, every 10 sec, to update submission status
-  const { data, isLoading } = useFetchUserSubmissionsQuery(
-    auth.user?.profile.sub,
-  );
+  const { data, isLoading } = useFetchUserSubmissionsQuery({
+    targetCredentials: targetCredentials,
+  });
+
+  useEffect(() => {
+    setSiteTitle(siteTitle, t("userSubmissions"));
+  }, [siteTitle]);
+
+  const drafts = data && data.filter((d) => d["status"] === "DRAFT") || [];
+  const resubmits = data && data.filter((d) => d["status"] === "RESUBMIT") || [];
+  const published = data && data.filter((d) => ["SUBMITTED", "SUBMIT", "PUBLISHED", "PUBLISH"].includes(d.status)) || [];
 
   // are there any targets that have been submitted not complete yet?
   const allTargetsComplete =
-    (data &&
-    data
-      .filter(
-        (d) =>
-          d["release-version"] === "PUBLISHED" ||
-          d["release-version"] === "PUBLISH",
-      )
-      .every(
-        // if all are finished, or one has an error, stop checking
-        (d) =>
-          d.targets.every(
-            (t) => depositStatus.success.indexOf(t["deposit-status"]) !== -1,
-          ) ||
-          d.targets.some(
-            (t) => depositStatus.error.indexOf(t["deposit-status"]) !== -1,
-          ) ||
-          d.targets.some(
-            // Something went wrong if status is null.
-            // Todo: modify API to give more consistent output
-            (t) => t["deposit-status"] === null,
-          ),
-      )) || 
+    published.every(
+      // if all are finished, or one has an error, stop checking
+      (d) =>
+        d.targets.every(
+          (t) => depositStatus.success.indexOf(t["deposit-status"]) !== -1,
+        ) ||
+        d.targets.some(
+          (t) => depositStatus.error.indexOf(t["deposit-status"]) !== -1,
+        ) ||
+        d.targets.some(
+          // Something went wrong if status is null.
+          // Todo: modify API to give more consistent output
+          (t) => t["deposit-status"] === null,
+        ),
+    ) ||
     // or when fetch is complete but there's no data for this user
     (data === undefined && !isLoading);
 
@@ -122,40 +123,33 @@ export const UserSubmissions = ({ depositSlug }: { depositSlug?: string }) => {
       );
     return () => (interval ? clearInterval(interval) : undefined);
   }, [allTargetsComplete]);
-
-  useEffect(() => {
-    setSiteTitle(siteTitle, t("userSubmissions"));
-  }, [siteTitle, name]);
-
+  
   return (
     <Container>
       <Grid container>
         <Grid xs={12} mdOffset={1} md={10}>
           <Typography variant="h1">{t("userSubmissions")}</Typography>
           <SubmissionList
-            data={
-              (data && data.filter((d) => d["release-version"] === "DRAFT")) ||
-              []
-            }
+            data={drafts}
             type="draft"
             isLoading={isLoading}
             header={t("userSubmissionsDrafts")}
             depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
           />
+          {import.meta.env.VITE_ALLOW_RESUBMIT && resubmits.length > 0 && <SubmissionList
+            data={resubmits}
+            type="resubmit"
+            isLoading={isLoading}
+            header={t("userSubmissionsResubmit")}
+            depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
+          />}
           <SubmissionList
-            data={
-              (data &&
-                data.filter(
-                  (d) =>
-                    d["release-version"] === "PUBLISHED" ||
-                    d["release-version"] === "PUBLISH",
-                )) ||
-              []
-            }
+            data={published}
             type="published"
             isLoading={isLoading}
             header={t("userSubmissionsCompleted")}
             depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
+            resubmit={import.meta.env.VITE_ALLOW_RESUBMIT}
           />
         </Grid>
       </Grid>
@@ -169,12 +163,14 @@ const SubmissionList = ({
   header,
   type,
   depositSlug,
+  resubmit,
 }: {
   data: SubmissionResponse[];
   isLoading: boolean;
   header: string;
-  type: "draft" | "published";
+  type: "draft" | "published" | "resubmit";
   depositSlug: string;
+  resubmit?: boolean;
 }) => {
   const { t, i18n } = useTranslation("user");
   const navigate = useNavigate();
@@ -191,27 +187,7 @@ const SubmissionList = ({
         headerName: "",
         getActions: (params: any) => {
           return [
-            type === "draft" && (
-              // Edit function for saved but not submitted forms
-              <Tooltip title={t("editItem")} placement="bottom">
-                <GridActionsCellItem
-                  icon={<EditIcon />}
-                  label={t("editItem")}
-                  onClick={() => {
-                    // set which form to load in userSlice (accessed in Deposit package)
-                    dispatch(
-                      setFormAction({
-                        id: params.row.id,
-                        action: "load",
-                      }),
-                    );
-                    // navigate to deposit page
-                    navigate(`/${depositSlug}`);
-                  }}
-                />
-              </Tooltip>
-            ),
-            type !== "draft" && (
+            type === "published" && (
               // Open a popover menu with these options:
               // Open a read only version of a submitted form, so user can check input values
               // Or go to the deposited data on the target website(s)
@@ -219,26 +195,28 @@ const SubmissionList = ({
                 id={params.row.id}
                 depositSlug={depositSlug}
                 status={params.row.status}
+                legacy={params.row.legacy}
               />
             ),
-            /*type !== "draft" && (
-              // Resubmit a form
-              <Tooltip title={t("retryItem")} placement="bottom">
+            (resubmit || type !== "published") && (
+              // Resubmit or edit a form
+              <Tooltip title={t(type === "draft" ? "editItem" : "retryItem")} placement="bottom">
                 <GridActionsCellItem
-                  icon={<ReplayIcon />}
-                  label={t("retryItem")}
+                  icon={resubmit ? <ReplayIcon /> : <EditIcon />}
+                  label={t(type === "draft" ? "editItem" : "retryItem")}
                   onClick={() => {
                     dispatch(
                       setFormAction({
                         id: params.row.id,
-                        action: "resubmit",
+                        action: type === "draft" ? "load" : "resubmit",
                       }),
                     );
                     navigate(`/${depositSlug}`);
                   }}
+                  disabled={params.processing || params.row.legacy}
                 />
               </Tooltip>
-            ),*/
+            ),
             <Tooltip title={t("copyItem")} placement="bottom">
               <GridActionsCellItem
                 icon={<ContentCopyIcon />}
@@ -252,13 +230,16 @@ const SubmissionList = ({
                   );
                   navigate(`/${depositSlug}`);
                 }}
-              />
+                disabled={params.row.legacy}
+                />
             </Tooltip>,
-            (type === "draft" || params.row.error) && (
-              // Delete an item, for drafts and for errored submissions. todo
+            (type !== "published" || params.row.error) && (
+              // Delete an item, for drafts and for errored submissions
               <Tooltip
                 title={t(
-                  toDelete === params.row.id ? "undeleteItem" : "deleteItem",
+                  toDelete === params.row.id 
+                  ? (type === "resubmit" ? "cancelUnstageItem" : "undeleteItem")
+                  : (type === "resubmit" ? "unstageItem" : "deleteItem"),
                 )}
                 placement="bottom"
               >
@@ -267,7 +248,9 @@ const SubmissionList = ({
                     toDelete === params.row.id ? <CloseIcon /> : <DeleteIcon />
                   }
                   label={t(
-                    toDelete === params.row.id ? "undeleteItem" : "deleteItem",
+                    toDelete === params.row.id 
+                    ? (type === "resubmit" ? "cancelUnstageItem" : "undeleteItem")
+                    : (type === "resubmit" ? "unstageItem" : "deleteItem"),
                   )}
                   onClick={() =>
                     setToDelete(toDelete === params.row.id ? "" : params.row.id)
@@ -280,7 +263,7 @@ const SubmissionList = ({
         type: "actions",
         align: "left",
         // adjust width for more icons. Add or remove 30 for an icon.
-        width: type === "draft" ? 125 : 125,
+        width: type === "draft" || !resubmit ? 125 : 165,
       },
       {
         field: "title",
@@ -297,7 +280,13 @@ const SubmissionList = ({
               }}
               alignItems="center"
               title={params.value}
+              spacing={1}
             >
+              {params.row.legacy && (
+                <Tooltip title={t("legacyForm")} placement="left">
+                  <ErrorOutlineIcon fontSize="small" color="warning" />
+                </Tooltip>
+              )}
               <AnimatePresence>
                 {toDelete === params.row.id && (
                   <motion.div
@@ -312,7 +301,6 @@ const SubmissionList = ({
                       variant="contained"
                       sx={{
                         fontSize: 11,
-                        mr: 1,
                       }}
                       color="error"
                       onClick={
@@ -320,11 +308,10 @@ const SubmissionList = ({
                         () =>
                           deleteSubmission({
                             id: params.row.id,
-                            user: auth.user,
                           })
                       }
                     >
-                      {t("confirmDelete")}
+                      {t(type === "resubmit" ? "confirmUnstage" : "confirmDelete")}
                     </Button>
                   </motion.div>
                 )}
@@ -342,11 +329,12 @@ const SubmissionList = ({
       },
       {
         field: "created",
-        headerName: type === "draft" ? t("savedOn") : t("submittedOn"),
+        headerName: type === "published" ? t("submittedOn") : t("savedOn"),
         width: 200,
         type: "dateTime",
         valueGetter: (params) => moment.utc(params.value).toDate(),
-        renderCell: (params) => moment(params.value).local().format("D-M-Y - HH:mm"),
+        renderCell: (params) =>
+          moment(params.value).local().format("D-M-Y - HH:mm"),
       },
       ...(type === "published" ?
         [
@@ -378,14 +366,17 @@ const SubmissionList = ({
       // Todo: API needs work and standardisation, also see types.
       error: d["targets"].some(
         // If there's an error, allow deletion
-        (t) => t["deposit-status"] === "rejected" || t["deposit-status"] === "error",
+        (t) =>
+          t["deposit-status"] === "rejected" || t["deposit-status"] === "error",
       ),
       processing: d["targets"].some(
         (t) => depositStatus.processing.indexOf(t["deposit-status"]) !== -1,
       ),
       id: d["dataset-id"],
-      created: type === "draft" ? d["saved-date"] : d["submitted-date"],
+      created: type === "published" ? d["submitted-at"] : d["saved-at"],
       title: d["title"],
+      remoteChanges: d["targets"].some(t => t.diff && t.diff.hasOwnProperty("data")),
+      legacy: d["legacy-form"] || d["acp-version"] === "unknown",
       ...(type === "published" ? { status: d["targets"] } : null),
     }));
 
@@ -481,7 +472,12 @@ const SingleTargetStatus = ({
 
   return (
     <>
-      <Stack direction="row" alignItems="center" pt={0.1} pb={0.1}>
+      <Stack direction="row" alignItems="center" pt={0.1} pb={0.1} spacing={0.5}>
+        {target.diff && target.diff.hasOwnProperty("data") && (
+          <Tooltip title={t("remoteChanges")} placement="left">
+            <ErrorOutlineIcon fontSize="small" color="warning" />
+          </Tooltip>
+        )}
         <Tooltip
           title={
             !target["deposit-status"] ? t("queue")
@@ -491,6 +487,8 @@ const SingleTargetStatus = ({
               t("processing")
             : depositStatus.error.indexOf(target["deposit-status"]) !== -1 ?
               t("error")
+            : depositStatus.empty.indexOf(target["deposit-status"]) !== -1 ?
+              t("queue")
             : t("success")
           }
           placement="left"
@@ -512,7 +510,7 @@ const SingleTargetStatus = ({
             <CheckCircleIcon fontSize="small" color="success" />
           : <PendingIcon fontSize="small" color="neutral" />}
         </Tooltip>
-        <Typography variant="body2" ml={1}>
+        <Typography variant="body2">
           {target["display-name"]}
         </Typography>
       </Stack>
@@ -563,10 +561,12 @@ const ViewAction = ({
   id,
   depositSlug,
   status,
+  legacy,
 }: {
   id: string;
   depositSlug: string;
   status: TargetOutput[];
+  legacy?: boolean;
 }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -581,6 +581,12 @@ const ViewAction = ({
     setAnchorEl(null);
   };
   const open = Boolean(anchorEl);
+  const hasChildren = status.some(
+    (target) =>
+      target["deposited-identifiers"] &&
+      (target["deposit-status"] === "accepted" ||
+        target["deposit-status"] === "finish")
+  );
 
   return (
     <>
@@ -589,35 +595,38 @@ const ViewAction = ({
           icon={<PreviewIcon />}
           label={t("viewItem")}
           onClick={handleClick}
+          disabled={!hasChildren && legacy}
         />
       </Tooltip>
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
         {/* Go to read only view */}
-        <MenuItem
-          onClick={() => {
-            dispatch(
-              setFormAction({
-                id: id,
-                action: "view",
-              }),
-            );
-            navigate(`/${depositSlug}`);
-          }}
-        >
-          <ListItemIcon>
-            <VisibilityIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>{t("viewItemReadOnly")}</ListItemText>
-        </MenuItem>
+        {!legacy && 
+          <MenuItem
+            onClick={() => {
+              dispatch(
+                setFormAction({
+                  id: id,
+                  action: "view",
+                }),
+              );
+              navigate(`/${depositSlug}`);
+            }}
+          >
+            <ListItemIcon>
+              <VisibilityIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>{t("viewItemReadOnly")}</ListItemText>
+          </MenuItem>
+        }
 
-        {/* Open submission on target site. TODO: mod API to always return a response.url key */}
+        {/* Open submission on target site */}
         {status.map(
           (target, i) =>
-            target["output-response"] &&
-            target["output-response"].response?.identifiers &&
-            (target["deposit-status"] === "accepted" || target["deposit-status"] === "finish") && (
+            target["deposited-identifiers"] &&
+            (target["deposit-status"] === "accepted" ||
+              target["deposit-status"] === "finish") && (
               <Link
-                href={target["output-response"].response.identifiers[0].url}
+                href={target["deposited-identifiers"][0].url}
                 color="inherit"
                 underline="none"
                 target="_blank"

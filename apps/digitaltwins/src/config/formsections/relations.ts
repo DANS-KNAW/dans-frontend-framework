@@ -52,15 +52,6 @@ const section: InitialSectionType = {
         nl: "Iets hier",
       },
       options: "dansCollections",
-      value: [
-        {
-          mandatory: true,
-          label: "Oral History",
-          value:
-            "https://vocabularies.dans.knaw.nl/collections/ssh/cfa04ed6-4cd0-4651-80cb-ed4ca8fa14f3",
-          id: "ssh/cfa04ed6-4cd0-4651-80cb-ed4ca8fa14f3",
-        },
-      ],
     },
     {
       type: "group",
@@ -71,8 +62,8 @@ const section: InitialSectionType = {
       name: "relation",
       repeatable: true,
       description: {
-        en: "Other interviews, publications, projects",
-        nl: "Andere interviews, publicaties, projecten",
+        en: "Other publications, projects",
+        nl: "Andere publicaties, projecten",
       },
       fields: [
         {
@@ -87,7 +78,10 @@ const section: InitialSectionType = {
             nl: "Type relatie met dit externe item",
           },
           noIndicator: true,
-          options: relationships.map((r: string) => ({ label: r, value: r.toLowerCase() })),
+          options: relationships.map((r: string) => ({
+            label: r,
+            value: r.toLowerCase(),
+          })),
           toggleRequired: ["relation_item", "relation_reference"],
         },
         {
@@ -99,8 +93,8 @@ const section: InitialSectionType = {
           name: "relation_item",
           noIndicator: true,
           description: {
-            en: "Other interviews, publications, projects, or initiatives can be linked here by providing a description, a URL, and selecting a relation type.",
-            nl: "Andere interviews, publicaties, projecten of initiatieven kunnen hier worden gelinkt door een beschrijving, een URL en een relatietype te verstrekken.",
+            en: "Other publications, projects, or initiatives can be linked here by providing a description, a URL, and selecting a relation type.",
+            nl: "Andere publicaties, projecten of initiatieven kunnen hier worden gelinkt door een beschrijving, een URL en een relatietype te verstrekken.",
           },
         },
         {

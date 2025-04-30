@@ -1,68 +1,83 @@
 import type { ResultBodyProps } from "@dans-framework/rdt-search-ui";
-import { useState } from "react";
-import { MetadataList } from "../record";
 import parse from "html-react-parser";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import Box from "@mui/material/Box";
+import Tooltip from "@mui/material/Tooltip";
+import Stack from "@mui/material/Stack";
 
-/* Custom component for search results */
+const ToolTipItem = ({ title, value }: {title: string; value?: string;}) => (
+  <Stack direction="row" spacing={1}>
+    <Typography variant="body2" sx={{ width: '6.5rem', textAlign: 'right' }}>{title}</Typography>
+    <Typography variant="body2">{value || '-'}</Typography>
+  </Stack>
+)
 
-export function Cat2Result(props: ResultBodyProps) {
-  const { result: item } = props;
-
-  const title = `${item.pid_stack} - ${item.entity} - ${item.role}` || "<i>empty</i>";
-
+export const gupriMap = (unique?: string, resolvable?: string, persistent?: string) => {
+  const sx = {
+    fontSize: '2rem',
+    fontWeight: 'bold',
+    marginBottom: 0,
+  };
   return (
-    <>
-      <Typography variant="h5">{parse(title)}</Typography>
-      {item.dc_date && (
-        <Typography variant="body2" gutterBottom>
-          {new Date(item.dc_date).toDateString()}
-        </Typography>
-      )}
-      <ReadMore item={item} />
-      <MetadataList record={item} />
-    </>
-  );
+    <Tooltip title={
+      <Box>
+        <ToolTipItem title="Globally Unique:" value={unique} />
+        <ToolTipItem title="Persistent:" value={persistent} />
+        <ToolTipItem title="Resolvable:" value={resolvable} />
+      </Box>
+    }>
+      <Stack direction="row" sx={{
+        backgroundColor: '#f1f1f1',
+        pl: 1,
+        pr: 1,
+        pt: 0,
+        pb: 0,
+        borderRadius: 1,
+      }}>
+        <Typography sx={sx} color={
+          unique?.toLowerCase().includes('global') 
+          ? 'success.main' 
+          : 'neutral.dark'}>G</Typography>
+        <Typography sx={sx} color={
+          unique?.toLowerCase().includes('global') || unique?.toLowerCase().includes('namespace') 
+          ? 'success.main' 
+          : unique?.toLowerCase().includes('local') 
+          ? 'warning.main' 
+          : 'neutral.dark'
+        }>U</Typography>
+        <Typography sx={sx} color={
+          persistent?.toLowerCase().includes('explicit') 
+          ? 'success.main' 
+          : persistent?.toLowerCase().includes('implicit') && !persistent?.toLowerCase().includes('no') 
+          ? 'warning.main' 
+          : 'neutral.dark'
+        }>P</Typography>
+        <Typography sx={sx} color={
+          resolvable?.toLowerCase() === 'direct' 
+          ? 'success.main' 
+          : resolvable?.toLowerCase() === 'indirect'
+          ? 'warning.main' 
+          : 'neutral.dark'
+        }>R</Typography>
+        <Typography sx={sx}>i</Typography>
+      </Stack>
+    </Tooltip>
+  )
 }
 
-function ReadMore({ item }: { item: ResultBodyProps["result"] }) {
-  const [active, setActive] = useState(false);
-
-  const description = item.dc_description || "";
-
-  const [visibleText, hiddenText] = [
-    description.substring(0, 180),
-    description.substring(180),
-  ];
-
-  // There is only one sentence, return it
-  if (hiddenText == null || hiddenText.trim().length === 0) {
-    return <Typography variant="body1">{visibleText}</Typography>;
-  }
+/* Custom component for search results */
+export function SingleResult(props: ResultBodyProps) {
+  const { result: item } = props;
+  const title = item.identifier || "<i>Untitled</i>";
+  const description = item.description || "No description found";
 
   return (
-    <>
-      <Typography mb={2}>
-        {`${visibleText}${
-          visibleText.length < description.length && !active ?
-            "..."
-          : hiddenText
-        }`}
-        <Button
-          size="small"
-          onClick={(ev) => {
-            ev.stopPropagation();
-            setActive(!active);
-          }}
-          sx={{ fontSize: 10, pt: 0.1, pb: 0.1 }}
-          endIcon={active ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-        >
-          {active ? "Read less" : "Read more"}
-        </Button>
-      </Typography>
-    </>
+    <Stack direction="row" spacing={2} justifyContent="space-between" alignItems="flex-start">
+      <Box>
+        <Typography variant="h5">{parse(title)}</Typography>
+        <Typography>{parse(description)}</Typography>
+      </Box>
+      {gupriMap(item.unique, item.resolvable, item.persistent)}
+    </Stack>
   );
 }

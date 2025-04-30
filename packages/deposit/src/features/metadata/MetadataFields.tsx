@@ -1,19 +1,15 @@
+import { lazy, Suspense } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
 import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
-import Collapse from "@mui/material/Collapse";
 import { memo } from "react";
-import type {
-  TextFieldType,
-  DateFieldType,
-  InputField,
-} from "../../types/MetadataFields";
 import type {
   SingleFieldProps,
   GroupedFieldProps,
+  CommonProps,
 } from "../../types/MetadataProps";
 import { DeleteButton, AddButtonText } from "./MetadataButtons";
 import {
@@ -21,7 +17,6 @@ import {
   RorField,
   MultiApiField,
   GeonamesField,
-  GettyField,
   SheetsField,
   DatastationsField,
   DansFormatsField,
@@ -33,116 +28,117 @@ import {
   RdaInterestGroupsField,
   SshLicencesField,
   LanguagesField,
+  BiodiversityField,
+  UnSustainableDevelopmentGoalsField,
 } from "./fields/AutocompleteAPIField";
 import AutocompleteField from "./fields/AutocompleteField";
 import TextField from "./fields/TextField";
 import { DateTimeField, DateRangeField } from "./fields/DateTimeField";
 import { RadioField, CheckField } from "./fields/RadioCheckField";
-import { TransitionGroup } from "react-transition-group";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
+import Skeleton from "@mui/material/Skeleton";
+import { useAppSelector } from "../../redux/hooks";
+import { getField } from "./metadataSlice";
+import type { TextFieldType, DateFieldType, DateRangeFieldType, RadioFieldType, CheckFieldType, DrawMapFieldType, AutocompleteFieldType, InputField } from "../../types/MetadataFields";
+
+// Lazy load the Draw map components, as it's quite large
+const DrawMap = lazy(() => import("./fields/Map"));
 
 // Memoized Field function, so only the affected field rerenders when form/metadata props change.
 // Loads the field specified in the type key
-const SingleField = memo(({ field, sectionIndex }: SingleFieldProps) => {
+const SingleField = memo(({ field, groupName, groupIndex, sx }: SingleFieldProps) => {
+  // Switch to determine which field type to render
+  const getField = () => {
+    const commonProps = {
+      field,
+      groupName,
+      groupIndex,
+    };
+
+    switch (field.type) {
+      case "text":
+      case "number":
+        return <TextField {...(commonProps as CommonProps<TextFieldType>)} />;
+      case "date":
+        return <DateTimeField {...(commonProps as CommonProps<DateFieldType>)} />;
+      case "daterange":
+        return <DateRangeField {...(commonProps as CommonProps<DateRangeFieldType>)} />;
+      case "radio":
+        return <RadioField {...(commonProps as CommonProps<RadioFieldType>)} />;
+      case "check":
+        return <CheckField {...(commonProps as CommonProps<CheckFieldType>)} />;
+      case "drawmap":
+        return (
+          <Suspense
+            fallback={
+              <Skeleton variant="rectangular" width="100%" height={140} />
+            }
+          >
+            <DrawMap {...(commonProps as CommonProps<DrawMapFieldType>)} />
+          </Suspense>
+        );
+      case "autocomplete":
+        if (field.multiApiValue)
+          return <MultiApiField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+        else {
+          switch (field.options) {
+            case "orcid":
+              return <OrcidField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            case "ror":
+              return <RorField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            case "gorc":
+              return <GorcField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            case "licenses":
+              return <LicensesField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            case "sshLicences":
+              return <SshLicencesField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            case "geonames":
+              return <GeonamesField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            case "sheets":
+              return <SheetsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            case "dansFormats":
+              return <DansFormatsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            case "rdaworkinggroups":
+              return <RdaWorkingGroupsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            case "pathways":
+              return <RdaPathwaysField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            case "domains":
+              return <RdaDomainsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            case "interest groups":
+              return <RdaInterestGroupsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            case "languageList":
+              return <LanguagesField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            case "elsst":
+            case "narcis":
+            case "dansCollections":
+            case "gettyAat":
+              return <DatastationsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            case "biodiversity_species_vernacular":
+              return <BiodiversityField {...(commonProps as CommonProps<AutocompleteFieldType>)} variant="vernacular" />;
+            case "biodiversity_species_scientific":
+              return <BiodiversityField {...(commonProps as CommonProps<AutocompleteFieldType>)} variant="scientific" />;
+            case "un_sustainable_development_goals":
+              return <UnSustainableDevelopmentGoalsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            default:
+              return <AutocompleteField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+          }
+        }
+      default:
+        return null;
+    }
+  };
+
   return (
-    <Grid xs={12} md={field.fullWidth ? 12 : 6}>
-      {(field.type === "text" || field.type === "number") && (
-        <TextField field={field} sectionIndex={sectionIndex} />
-      )}
-      {field.type === "date" && (
-        <DateTimeField field={field} sectionIndex={sectionIndex} />
-      )}
-      {field.type === "daterange" && (
-        <DateRangeField field={field} sectionIndex={sectionIndex} />
-      )}
-      {field.type === "repeatSingleField" && (
-        <TransitionGroup id={`group-${field.name}-${field.id}`}>
-          {field.fields.map((f: TextFieldType | DateFieldType, i: number) => (
-            <Collapse key={f.id}>
-              {(f.type === "text" || f.type === "number") && (
-                <TextField
-                  field={f}
-                  sectionIndex={sectionIndex}
-                  groupedFieldId={field.id}
-                  currentField={i}
-                  totalFields={field.fields.length}
-                />
-              )}
-              {f.type === "date" && (
-                <DateTimeField
-                  field={f}
-                  sectionIndex={sectionIndex}
-                  groupedFieldId={field.id}
-                  currentField={i}
-                  totalFields={field.fields.length}
-                />
-              )}
-            </Collapse>
-          ))}
-        </TransitionGroup>
-      )}
-      {field.type === "autocomplete" &&
-        Array.isArray(field.options) &&
-        !field.multiApiValue && (
-          <AutocompleteField field={field} sectionIndex={sectionIndex} />
-        )}
-      {field.type === "autocomplete" &&
-        (field.options === "orcid" ?
-          <OrcidField field={field} sectionIndex={sectionIndex} />
-        : field.options === "ror" ?
-          <RorField field={field} sectionIndex={sectionIndex} />
-        : field.options === "gorc" ?
-          <GorcField field={field} sectionIndex={sectionIndex} />
-        : field.options === "licenses" ?
-          <LicensesField field={field} sectionIndex={sectionIndex} />
-        : field.options === "sshLicences" ?
-          <SshLicencesField field={field} sectionIndex={sectionIndex} />
-        : field.options === "geonames" ?
-          <GeonamesField field={field} sectionIndex={sectionIndex} />
-        : field.options === "getty" ?
-          <GettyField field={field} sectionIndex={sectionIndex} />
-        : field.options === "sheets" ?
-          <SheetsField field={field} sectionIndex={sectionIndex} />
-        : (
-          field.options === "elsst" ||
-          field.options === "narcis" ||
-          field.options === "dansCollections"
-        ) ?
-          <DatastationsField field={field} sectionIndex={sectionIndex} />
-        : field.options === "dansFormats" ?
-          <DansFormatsField field={field} sectionIndex={sectionIndex} />
-        : field.options === "rdaworkinggroups" ?
-          <RdaWorkingGroupsField field={field} sectionIndex={sectionIndex} />
-        : field.options === "pathways" ?
-          <RdaPathwaysField field={field} sectionIndex={sectionIndex} />
-        : field.options === "domains" ?
-          <RdaDomainsField field={field} sectionIndex={sectionIndex} />
-        : field.options === "interest groups" ?
-          <RdaInterestGroupsField field={field} sectionIndex={sectionIndex} />
-        : field.options === "languageList" ?
-          <LanguagesField field={field} sectionIndex={sectionIndex} />
-        : field.multiApiValue ?
-          <MultiApiField field={field} sectionIndex={sectionIndex} />
-        : null)}
-      {field.type === "radio" && (
-        <RadioField field={field} sectionIndex={sectionIndex} />
-      )}
-      {field.type === "check" && (
-        <CheckField field={field} sectionIndex={sectionIndex} />
-      )}
+    <Grid xs={12} md={field.fullWidth ? 12 : 6} sx={sx || undefined}>
+      {getField()}
     </Grid>
   );
 });
 
-const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
+const GroupedField = ({ field }: GroupedFieldProps) => {
   const { i18n } = useTranslation();
-  // Check if group is repeatable. If not, lets wrap that single fieldgroup in an array, so we can use the same map function over it.
-  // We use the id of the first field of the group as key for transitions
-  const fieldArray =
-    field.repeatable ?
-      (field.fields as InputField[][])
-    : [field.fields as InputField[]];
+  const fieldValue = useAppSelector(getField(field.name));
 
   return (
     <Grid xs={12}>
@@ -157,60 +153,65 @@ const GroupedField = ({ field, sectionIndex }: GroupedFieldProps) => {
           subheaderTypographyProps={{ fontSize: 12 }}
           sx={{ pb: 0, pl: 2.25, pr: 2.25 }}
         />
-        {fieldArray && (
-          <CardContent data-testid={`group-${field.name}-${field.id}`}>
-            <TransitionGroup>
-              {fieldArray.map((groupedField, i) => (
-                <Collapse key={`group-${groupedField[0].id}`}>
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    key={i}
-                    sx={{
-                      borderTop: i > 0 ? "1px solid" : "none",
-                      borderColor: "neutral.main",
-                      pt: i > 0 ? 2 : 0,
-                      mt: i > 0 ? 2 : 0,
-                    }}
-                    data-testid={`single-${field.name}-group-${i}`}
-                  >
-                    <Grid container sx={{ flex: 1 }} spacing={2}>
-                      {groupedField.map((f) => (
-                        <SingleField
-                          key={f.id}
-                          field={f}
-                          sectionIndex={sectionIndex}
-                        />
-                      ))}
-                    </Grid>
-                    {field.repeatable && fieldArray.length > 1 && (
-                      <DeleteButton
-                        sectionIndex={sectionIndex}
-                        groupedFieldId={field.id}
-                        deleteFieldIndex={i}
-                        size="medium"
-                        deleteGroupId={`group-${i}`}
-                        groupedFieldName={field.name}
-                      />
-                    )}
-                  </Stack>
-                </Collapse>
-              ))}
-            </TransitionGroup>
-          </CardContent>
-        )}
-        {field.repeatable && 
+        <CardContent data-testid={`group-${field.name}`}>
+        <Stack direction="row" flexWrap="wrap">
+          {field.repeatable ? (
+            (fieldValue?.value as []).map((_repeatableItem, index) => (
+              <Stack
+                key={index}
+                direction="row"
+                alignItems="center"
+                sx={{
+                  width: '100%', 
+                  borderTop: index > 0 ? "1px solid" : "none",
+                  borderColor: "neutral.main",
+                  mt: index > 0 ? 1 : 0,
+                  pt: index > 0 ? 1 : 0,
+                }}
+              >
+                <Stack 
+                  direction="row"
+                  alignItems="center"
+                  flexWrap="wrap"
+                  sx={{ flex: 1 }}
+                >
+                  {(field.fields as InputField[]).map((f) => (
+                    <SingleField
+                      key={f.name}
+                      field={f}
+                      groupName={field.name}
+                      groupIndex={index}
+                    />
+                  ))}
+                </Stack>
+                {fieldValue?.value.length > 1 && (
+                  <DeleteButton
+                    size="medium"
+                    field={field}
+                    fieldIndex={index}
+                  />
+                )}
+              </Stack>
+            ))
+          ) : (
+            (field.fields as InputField[]).map((f) => (
+              <SingleField
+                key={f.name}
+                field={f}
+                groupName={field.name}
+                groupIndex={0}
+              />
+            ))
+          )}
+          </Stack>
+        </CardContent>
+        {field.repeatable && (
           <CardActions sx={{ pl: 3, pr: 3, justifyContent: "right" }}>
             <Stack direction="row" alignItems="center" justifyContent="end">
-              <AddButtonText
-                sectionIndex={sectionIndex}
-                groupedFieldId={field.id}
-                groupedFieldName={field.name}
-                type="group"
-              />
+              <AddButtonText field={field} />
             </Stack>
           </CardActions>
-        }
+        )}
       </Card>
     </Grid>
   );

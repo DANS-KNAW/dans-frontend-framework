@@ -8,19 +8,35 @@ const section: InitialSectionType = {
   },
   fields: [
     {
-      type: "autocomplete",
-      name: "rightsholder",
+      type: "group",
+      name: "rightsholders",
       label: {
-        en: "Rights holder",
-        nl: "Rechthebbende",
+        en: "Rights holders",
+        nl: "Rechthebbenden",
       },
-      required: true,
       description: {
-        en: "Name of the organisation or individual(s) owning the work",
-        nl: "Naam van de organisatie of personen die eigenaar zijn van het werk",
+        en: "The organisation or individual(s) owning the work",
+        nl: "De organisatie of personen die eigenaar zijn van het werk",
       },
-      multiApiValue: "orcid",
-      options: ["ror", "orcid"],
+      repeatable: true,
+      fields: [
+        {
+          type: "autocomplete",
+          name: "rightsholder",
+          label: {
+            en: "Rights holder",
+            nl: "Rechthebbende",
+          },
+          required: true,
+          description: {
+            en: "Name of the organisation or individual(s) owning the work",
+            nl: "Naam van de organisatie of personen die eigenaar zijn van het werk",
+          },
+          deriveFrom: "firstAuthor",
+          multiApiValue: "orcid",
+          options: ["ror", "orcid"],
+        },
+      ],
     },
     {
       type: "autocomplete",
@@ -64,6 +80,7 @@ const section: InitialSectionType = {
           value: "closed",
         },
       ],
+      value: { label: "Open", value: "open" },
     },
     {
       type: "autocomplete",
@@ -78,6 +95,11 @@ const section: InitialSectionType = {
         nl: "Eén of meerdere specifieke licenties",
       },
       options: "licenses",
+      value: {
+        label: "CC-BY-4.0 Creative Commons Attribution 4.0",
+        value: "https://creativecommons.org/licenses/by/4.0/",
+        id: "CC-BY-4.0",
+      },
     },
   ],
 };

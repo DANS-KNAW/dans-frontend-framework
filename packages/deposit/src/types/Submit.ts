@@ -1,7 +1,4 @@
 import type { Target } from "@dans-framework/user-auth";
-import type { AxiosHeaders } from "axios";
-import type { SelectedFile } from "./Files";
-import type { SectionType, FormConfig } from "./Metadata";
 
 export interface SubmitError {
   status?: string;
@@ -36,36 +33,18 @@ export interface InitialStateType {
   submittedFiles: ReduxFileSubmitActions[];
 }
 
+export interface EndpointTarget {
+  envName?: string;
+  configName?: string;
+}
+
 export interface HeaderData {
   submitKey: string;
   userId: string;
-  target: {
-    envName: string;
-    configName: string;
-  };
+  target: EndpointTarget;
   targetCredentials: Target[];
   targetKeys: {
     [k: string]: string;
   };
   title?: string;
-}
-
-export interface SubmitHeaders extends AxiosHeaders {
-  Authorization: string;
-  "user-id": string;
-  "auth-env-name": string;
-  "assistant-config-name": string;
-  "targets-credentials": string;
-  title?: string;
-}
-
-export interface SubmitData {
-  metadata: {
-    form: SectionType[];
-    id: string;
-  };
-  files: SelectedFile[];
-  deposit: {
-    config: Omit<FormConfig, "form">;
-  };
 }

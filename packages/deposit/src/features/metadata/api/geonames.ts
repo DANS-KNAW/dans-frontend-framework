@@ -23,7 +23,8 @@ export const geonamesApi = createApi({
                   item.countryName ? `, ${item.countryName}` : ""
                 }`,
                 value: `https://www.geonames.org/${item.geonameId}`,
-                coordinates: [item.lat, item.lng],
+                coordinates: [parseFloat(item.lng), parseFloat(item.lat)],
+                id: item.geonameId.toString(),
               })),
             }
           : [];
@@ -32,7 +33,50 @@ export const geonamesApi = createApi({
         error: i18n.t("metadata:apiFetchError", { api: "Geonames" }),
       }),
     }),
+    fetchPlaceReverseLookup: build.query({
+      query: ({ lat, lng }) => ({
+        url: `extendedFindNearby?lat=${lat}&lng=${lng}&radius=1&maxRows=100&username=${
+          import.meta.env.VITE_GEONAMES_API_KEY
+        }`,
+        headers: { Accept: "application/json" },
+      }),
+      transformResponse: (response: GeonamesResponse, _meta, arg) => {
+        // Return an empty array when no results, which is what the Autocomplete field expects
+        return (
+          response.geonames?.length > 0 ?
+            {
+              arg: arg,
+              response: response.geonames.map((item) => ({
+                label: `${item.name}${
+                  item.countryName ? `, ${item.countryName}` : ""
+                }`,
+                value: `https://www.geonames.org/${item.geonameId}`,
+                coordinates: [parseFloat(item.lng), parseFloat(item.lat)],
+                id: item.geonameId.toString(),
+              })),
+            }
+          : response.ocean ?
+            {
+              arg: arg,
+              response: [
+                {
+                  label: response.ocean.name,
+                  value: `https://www.geonames.org/${response.ocean.geonameId}`,
+                  id: response.ocean.geonameId,
+                },
+              ],
+            }
+          : []
+        );
+      },
+      transformErrorResponse: () => ({
+        error: i18n.t("metadata:apiFetchError", { api: "Geonames" }),
+      }),
+    }),
   }),
 });
 
-export const { useFetchGeonamesFreeTextQuery } = geonamesApi;
+export const {
+  useFetchGeonamesFreeTextQuery,
+  useFetchPlaceReverseLookupQuery,
+} = geonamesApi;

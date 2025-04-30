@@ -1,0 +1,9 @@
+{
+  "active": "{{value}} actief",
+  "viewMore": "Meer ({{value}})",
+  "viewLess": "Minder",
+  "filter": "Filter",
+  "noData": "Niets gevonden",
+  "sortAz": "Sorteer alfabetisch",
+  "sortCount": "Sorteer op aantal"
+}

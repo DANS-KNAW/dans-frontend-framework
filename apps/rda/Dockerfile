@@ -9,7 +9,7 @@ COPY . .
 RUN git submodule update --init --recursive
 
 ## RUN turbo prune --scope=@dans-framework/rda --docker
-RUN pnpm i && pnpm build --filter=@dans-framework/rda
+RUN pnpm i && pnpm build:rda
 
 # Fetching the latest nginx image
 FROM nginx

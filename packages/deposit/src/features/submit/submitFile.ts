@@ -1,4 +1,4 @@
-import * as tus from 'tus-js-client';
+import * as tus from "tus-js-client";
 import { store } from "../../redux/store";
 import { setFilesSubmitStatus } from "./submitSlice";
 import { setFileMeta } from "../files/filesSlice";
@@ -7,29 +7,38 @@ import { enqueueSnackbar } from "notistack";
 import { getUser } from "@dans-framework/utils/user";
 import i18n from "../../languages/i18n";
 import { sendTicket } from "@dans-framework/utils/error";
+import type { EndpointTarget } from "../../types/Submit"
 
-const manualError = async (fileName: string, fileId: string, error: any, type: string) => {
+const manualError = async (
+  fileName: string,
+  fileId: string,
+  error: any,
+  type: string,
+) => {
   console.error("Error", error);
   // Since this process is not connected to Redux, we manually
   // display a message, send a Freshdesk ticket or error, and set file status to errored
   let ticket;
   if (import.meta.env.VITE_FRESHDESK_API_KEY) {
-    ticket = await sendTicket({error: error, function: type});
+    ticket = await sendTicket({ error: error, function: type });
   }
-  enqueueSnackbar(`Uploading ${fileName} - ${error}`, { variant: "customError", ticket: ticket });
+  enqueueSnackbar(`Uploading ${fileName} - ${error}`, {
+    variant: "customError",
+    ticket: ticket,
+  });
   store.dispatch(
     setFilesSubmitStatus({
       id: fileId,
       status: "error",
     }),
   );
-}
+};
 
 // Create a new tus upload
 export const uploadFile = async (
-  file: SelectedFile, 
+  file: SelectedFile,
   sessionId: string,
-  target: string = ''
+  target?: EndpointTarget,
 ) => {
   // set file status to submitting, to add it to actual upload queue, while we create the blob
   store.dispatch(
@@ -44,13 +53,13 @@ export const uploadFile = async (
   const fetchedFile = await fetch(file.url);
 
   if (!fetchedFile.ok) {
-    throw new Error(`Failed to fetch file: ${fetchedFile.statusText}`);
     store.dispatch(
       setFilesSubmitStatus({
         id: file.id,
         status: "error",
       }),
     );
+    throw new Error(`Failed to fetch file: ${fetchedFile.statusText}`);
   }
 
   const fileBlob = await fetchedFile.blob();
@@ -71,21 +80,23 @@ export const uploadFile = async (
     },
     headers: {
       Authorization: `Bearer ${userBeforeUpload?.access_token}`,
-      "auth-env-name": target,
+      "auth-env-name": target?.envName || "",
+      "assistant-config-name": target?.configName || "",
     },
     removeFingerprintOnSuccess: true,
     onError: (error) => {
-      manualError(file.name, file.id, error, 'onError function in TUS upload');
+      manualError(file.name, file.id, error, "onError function in TUS upload");
     },
     onShouldRetry: (error, retryAttempt, _options) => {
-      console.error("Error", error)
-      console.log("Request", error.originalRequest)
-      console.log("Response", error.originalResponse)
+      console.error("Error", error);
+      console.log("Request", error.originalRequest);
+      console.log("Response", error.originalResponse);
 
-      var status = error.originalResponse ? error.originalResponse.getStatus() : 0
+      var status =
+        error.originalResponse ? error.originalResponse.getStatus() : 0;
       // Do not retry if the status is a 403.
       if (status === 403) {
-        return false
+        return false;
       }
 
       enqueueSnackbar(
@@ -100,10 +111,11 @@ export const uploadFile = async (
       );
 
       // For any other status code, we should retry.
-      return true
+      return true;
     },
     onProgress: (bytesUploaded, bytesTotal) => {
-      var percentage = parseFloat(((bytesUploaded / bytesTotal) * 100).toFixed(0)) || 0;
+      var percentage =
+        parseFloat(((bytesUploaded / bytesTotal) * 100).toFixed(0)) || 0;
       store.dispatch(
         setFilesSubmitStatus({
           id: file.id,
@@ -113,11 +125,11 @@ export const uploadFile = async (
       );
     },
     onSuccess: async () => {
-      const tusId = upload.url?.split('/').pop();
+      const tusId = upload.url?.split("/").pop();
 
       // User key might have changed during upload, so let's get it again
       const userAfterUpload = getUser();
-      
+
       // Due to incomplete Python TUS implementation,
       // we do an extra api PATCH call to the server to signal succesful upload.
       // Response might take a while, so lets display a spinner that informs the user
@@ -129,13 +141,19 @@ export const uploadFile = async (
       );
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_PACKAGING_TARGET}/inbox/files/${sessionId}/${tusId}`, {
-          method: 'PATCH',
-          headers: {
-            Authorization: `Bearer ${userAfterUpload?.access_token}`,
-            "auth-env-name": target,
+        const response = await fetch(
+          `${
+            import.meta.env.VITE_PACKAGING_TARGET
+          }/inbox/files/${sessionId}/${tusId}`,
+          {
+            method: "PATCH",
+            headers: {
+              Authorization: `Bearer ${userAfterUpload?.access_token}`,
+              "auth-env-name": target?.envName || "",
+              "assistant-config-name": target?.configName || "",
+            },
           },
-        });
+        );
         // check if patch result is ok
         if (response.status === 200) {
           // set file status to success
@@ -162,12 +180,22 @@ export const uploadFile = async (
             },
           );
         } else {
-          manualError(file.name, file.id, 'PATCH call failed', `PATCH call gave an invalid response ${response.status}`);
+          manualError(
+            file.name,
+            file.id,
+            "PATCH call failed",
+            `PATCH call gave an invalid response ${response.status}`,
+          );
         }
-      } catch(error){
+      } catch (error) {
         // on error, file must be set to failed, as server can't processed it properly
-        manualError(file.name, file.id, error, 'error dispatching PATCH call to inbox/files/{sessionID}/{tusID}');
-      };
+        manualError(
+          file.name,
+          file.id,
+          error,
+          "error dispatching PATCH call to inbox/files/{sessionID}/{tusID}",
+        );
+      }
     },
   });
 
@@ -181,4 +209,4 @@ export const uploadFile = async (
     // Start the upload
     upload.start();
   });
-}
+};

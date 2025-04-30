@@ -60,11 +60,30 @@ export const userSubmissionsApi = createApi({
   tagTypes: ["Submissions"],
   endpoints: (build) => ({
     fetchUserSubmissions: build.query({
-      query: (userId) => {
+      // Note on pagination: api needs to support sorting and filtering for server side pagination to properly work with the MUI Data Grid. Since it doesn't at the moment, we set a very large page size and let the client handle pagination.
+      query: ({targetCredentials: targetCredentials, page = 1, pageSize = 1000}) => {
+        // We need to pass on endpoint api keys with this call, like submitApi.ts does, 
+        // for server to compare data with data on target repo 
+        const user = getUser();
+        const targets = targetCredentials.map((t: { repo: string; auth: string; authKey: string; }) => ({
+          "target-repo-name": t.repo,
+          credentials: {
+            username: t.auth,
+            password: Object.assign(
+              {},
+              ...targetCredentials.map((t: { authKey: string }) => ({
+                [t.authKey]: user?.profile[t.authKey],
+              })),
+            )[t.authKey],
+          },
+        }));
         return {
-          url: `progress-state/${userId}`,
+          url: `progress-state/${user?.profile.sub}?page=${page}&page_size=${pageSize}`,
           headers: {
+            Authorization: `Bearer ${user?.access_token}`,
             Accept: "application/json",
+            "assistant-config-name": import.meta.env.VITE_CONFIG_NAME,
+            "targets-credentials": JSON.stringify(targets),
           },
         };
       },
@@ -78,14 +97,16 @@ export const userSubmissionsApi = createApi({
       },
     }),
     deleteSubmission: build.mutation({
-      query: ({ id, user }) => {
+      query: ({ id }) => {
+        const user = getUser();
         return {
           url: `inbox/dataset/${id}`,
           method: "DELETE",
           headers: {
-            Authorization: `Bearer ${user.access_token}`,
+            Authorization: `Bearer ${user?.access_token}`,
             Accept: "application/json",
             "auth-env-name": import.meta.env.VITE_ENV_NAME,
+            "assistant-config-name": import.meta.env.VITE_CONFIG_NAME,
             "user-id": user?.profile.sub,
           },
         };

@@ -1,5 +1,5 @@
-import { Suspense } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Suspense, useState } from "react";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
@@ -7,95 +7,116 @@ import { ThemeWrapper } from "@dans-framework/theme";
 import { LanguageBar, MenuBar } from "@dans-framework/layout";
 import { Generic, Page } from "@dans-framework/pages";
 import {
-  AuthWrapper,
   AuthRoute,
   UserSettings,
   UserSubmissions,
   SignInCallback,
 } from "@dans-framework/user-auth";
-import { RdaRecord } from "./pages/record";
-
-// Load config variables
+import { SingleRecord } from "./pages/record";
+import { AnimatePresence } from "framer-motion";
 import theme from "./config/theme";
 import pages from "./config/pages";
 import siteTitle from "./config/siteTitle";
 import languages from "./config/languages";
-import authProvider from "./config/auth";
 import form from "./config/form";
 import { elasticConfig } from "./config/elasticSearch";
 import {
   FacetedWrapper,
   FacetedSearchProvider,
 } from "@dans-framework/rdt-search-ui";
+import { useEmbedHandler } from "@dans-framework/utils";
 
 const App = () => {
   const { i18n } = useTranslation();
+  const { isEmbed } = useEmbedHandler();
+  const navigate = useNavigate();
+
+  const [isExiting, setIsExiting] = useState(false); // Track exit state
+
+  const handleExit = () => {
+    setIsExiting(true);
+    setTimeout(() => {
+      setIsExiting(false);
+      navigate("/search"); // Redirect after animation completes
+    }, 300); // Match this duration to your animation's exit duration
+  };
+
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
-        return <FacetedWrapper dashboard />;
+        return <FacetedWrapper dashboard dashRoute="/" resultRoute="/search" />;
       case "search":
-        return <FacetedWrapper />;
+        return <FacetedWrapper dashRoute="/" resultRoute="/search" />;
       case "record":
-        return <RdaRecord />;
+        return (
+          <FacetedWrapper dashRoute="/" resultRoute="/search">
+            <AnimatePresence>
+              {!isExiting && <SingleRecord onClose={handleExit} />}
+            </AnimatePresence>
+          </FacetedWrapper>
+        );
       default:
         return <Generic {...page} />;
     }
   };
 
   return (
-    <AuthWrapper authProvider={authProvider}>
-      <ThemeWrapper theme={theme} siteTitle={siteTitle}>
-        <FacetedSearchProvider config={elasticConfig}>
-          <BrowserRouter>
-            {/* Need to pass along root i18n functions to the language bar */}
-            <LanguageBar
-              languages={languages}
-              changeLanguage={i18n.changeLanguage}
-            />
-            <MenuBar pages={pages} logo={"CAT"} />
-            {/* Suspense to make sure languages can load first */}
-            <Suspense
-              fallback={
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <Skeleton height={600} width={900} />
-                </Box>
+    <ThemeWrapper theme={theme} siteTitle={siteTitle}>
+      <FacetedSearchProvider config={elasticConfig}>
+        {/* Need to pass along root i18n functions to the language bar */}
+        {!isEmbed && <LanguageBar
+          languages={languages}
+          changeLanguage={i18n.changeLanguage}
+        />}
+        <MenuBar pages={pages} userMenu={false} embed={isEmbed} />
+        {/* Suspense to make sure languages can load first */}
+        <Suspense
+          fallback={
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Skeleton height={600} width={900} />
+            </Box>
+          }
+        >
+          <Routes>
+            <Route path="signin-callback" element={<SignInCallback />} />
+            <Route
+              path="user-settings"
+              element={
+                <AuthRoute>
+                  <UserSettings target={form.targetCredentials} />
+                </AuthRoute>
               }
-            >
-              <Routes>
-                <Route path="signin-callback" element={<SignInCallback />} />
+            />
+            <Route
+              path="user-submissions"
+              element={
+                <AuthRoute>
+                  <UserSubmissions targetCredentials={form.targetCredentials} />
+                </AuthRoute>
+              }
+            />
+            {(pages as Page[]).map((page) => {
+              return (
                 <Route
-                  path="user-settings"
-                  element={
-                    <AuthRoute>
-                      <UserSettings target={form.targetCredentials} />
-                    </AuthRoute>
-                  }
+                  key={page.id}
+                  path={page.slug}
+                  element={createElementByTemplate(page)}
                 />
-                <Route
-                  path="user-submissions"
-                  element={
-                    <AuthRoute>
-                      <UserSubmissions />
-                    </AuthRoute>
-                  }
-                />
-                {(pages as Page[]).map((page) => {
-                  return (
-                    <Route
-                      key={page.id}
-                      path={page.slug}
-                      element={createElementByTemplate(page)}
-                    />
-                  );
-                })}
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
-        </FacetedSearchProvider>
-      </ThemeWrapper>
-    </AuthWrapper>
+              );
+            })}
+          </Routes>
+        </Suspense>
+      </FacetedSearchProvider>
+    </ThemeWrapper>
   );
 };
 
-export default App;
+const RouterApp = () => {
+  return (
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  );
+};
+
+export default RouterApp;

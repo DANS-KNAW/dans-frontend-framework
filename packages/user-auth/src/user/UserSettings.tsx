@@ -45,6 +45,8 @@ export const UserSettings = ({
 
   const { data: profileData } = useFetchUserProfileQuery(null);
 
+  console.log(profileData)
+
   // Check if all API keys are valid, to enable/disable button, but make sure they're in the users profile first
   const validateTargets = target.map((t) => ({
     key:
@@ -71,7 +73,11 @@ export const UserSettings = ({
 
           <Link
             component={RouterLink}
-            to={apiKeyError !== undefined ? "" : `/${depositSlug !== undefined ? depositSlug : `deposit`}`}
+            to={
+              apiKeyError !== undefined ? "" : (
+                `/${depositSlug !== undefined ? depositSlug : `deposit`}`
+              )
+            }
             data-testid="deposit-data"
           >
             <Button

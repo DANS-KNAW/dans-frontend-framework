@@ -20,8 +20,8 @@ const section: InitialSectionType = {
         nl: "<p>Een beschrijvende titel voor de interview dataset, voor gebruik in citaties.</p><p>Er wordt automatisch een titel gegenereerd, als de aan volgende voorwaarden wordt voldaan:</p><ul><li>Onder de geïnterviewde is 'Voor- en achternaam zijn openbaar' aangevinkt</li><li>Locatie van het interview is ingevoerd</li><li>Datum van het interview is ingevoerd</li></ul><p>De automatisch gegenereerde titel kan altijd worden aangepast.</p>",
       },
       autoGenerateValue: {
-        en: "Interview with {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} on {{interview_date_time_range}}",
-        nl: "Interview met {{interviewee_first_name}} {{interviewee_last_name}} in {{interview_location}} op {{interview_date_time_range}}",
+        en: "Interview with {{interviewee.interviewee_first_name}} {{interviewee.interviewee_last_name}}, {{interview_location}}, {{interview_date_time.interview_date_time_range}}",
+        nl: "Interview met {{interviewee.interviewee_first_name}} {{interviewee.interviewee_last_name}}, {{interview_location}}, {{interview_date_time.interview_date_time_range}}",
       },
     },
     {
@@ -33,8 +33,8 @@ const section: InitialSectionType = {
       name: "subtitle",
       noIndicator: true,
       description: {
-        en: "You can provide a subtitle if you wish - not mandatory.",
-        nl: "Je kunt een optionele ondertitel opgeven als je wilt.",
+        en: "<p>You can provide a subtitle if you wish.</p><p>The subtitle you provide here will <b>not</b> be added to the citation line in Dataverse.</p>",
+        nl: "<p>Je kunt een optionele ondertitel opgeven als je wilt.</p><p>De ondertitel die je hier opgeeft wordt <b>niet</b> aan de citation in Dataverse toegevoegd.</p>",
       },
     },
     {

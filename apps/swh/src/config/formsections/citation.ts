@@ -154,6 +154,20 @@ const section: InitialSectionType = {
       disabled: true,
     },
     {
+      type: "text",
+      label: {
+        en: "Software Author",
+        nl: "Software auteur",
+      },
+      name: "software_author",
+      autofill: "name",
+      required: true,
+      description: {
+        en: "Author of the software",
+        nl: "Auteur van de software",
+      },
+    },
+    {
       type: "group",
       label: {
         en: "Additional Authors",
@@ -173,6 +187,7 @@ const section: InitialSectionType = {
             en: "Additional Author",
             nl: "Extra auteur",
           },
+          toggleRequired: ["additional_author_type"],
         },
         {
           type: "autocomplete",
@@ -181,6 +196,7 @@ const section: InitialSectionType = {
             en: "Type",
             nl: "Type",
           },
+          toggleRequired: ["additional_author"],
           options: [
             {
               label: {

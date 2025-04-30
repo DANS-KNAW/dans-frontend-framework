@@ -31,14 +31,18 @@ import LinearProgress from "@mui/material/LinearProgress";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { getSingleFileSubmitStatus, setFilesSubmitStatus } from "../submit/submitSlice";
+import Chip from "@mui/material/Chip";
+import {
+  getSingleFileSubmitStatus,
+  setFilesSubmitStatus,
+} from "../submit/submitSlice";
 import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
 import { getFormDisabled, getData } from "../../deposit/depositSlice";
 import FileStatusIndicator from "./FileStatusIndicator";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useFetchGroupedListQuery } from "./api/dansFormats";
 import { findFileGroup } from "./filesHelpers";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import moment, { Moment } from "moment";
 import type { DateValidationError } from "@mui/x-date-pickers/models";
 
@@ -47,8 +51,8 @@ const FilesTable = () => {
   const selectedFiles = useAppSelector<SelectedFile[]>(getFiles);
   const formConfig = useAppSelector(getData);
 
-  const { 
-    displayRoles = true, 
+  const {
+    displayRoles = true,
     displayProcesses = true,
     displayPrivate = true,
     embargoDate = false,
@@ -76,10 +80,14 @@ const FilesTable = () => {
               )}
               {embargoDate && (
                 <TableCell sx={{ p: 1, width: 161 }}>
-                  <Box sx={{ display: "flex",alignItems: "center" }}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
                     {t("embargoDate")}
                     <Tooltip title={t("embargoDateDescription")}>
-                      <InfoRoundedIcon color="neutral" fontSize="small" sx={{ml: 0.25}} />
+                      <InfoRoundedIcon
+                        color="neutral"
+                        fontSize="small"
+                        sx={{ ml: 0.25 }}
+                      />
                     </Tooltip>
                   </Box>
                 </TableCell>
@@ -102,6 +110,7 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
   const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation("files");
   const formDisabled = useAppSelector(getFormDisabled);
+  const rowDisabled = (file.state && file.state === "generated") || formDisabled;
   const config = useAppSelector(getData);
   const fileRoles = config.filesUpload?.fileRoles || defaultFileRoles;
   const options = type === "process" ? fileProcessing : fileRoles;
@@ -150,7 +159,7 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
       )}
       options={filteredOptions}
       value={file[type] || (type === "process" ? [] : null)}
-      disabled={formDisabled}
+      disabled={rowDisabled}
       isOptionEqualToValue={(option, value) => option.value === value.value}
     />
   );
@@ -164,6 +173,7 @@ const EmbargoDate = ({ file }: { file: SelectedFile }) => {
   const dateFormat = "DD-MM-YYYY";
   const serverDateFormat = "YYYY-MM-DD";
   const config = useAppSelector(getData);
+  const rowDisabled = (file.state && file.state === "generated") || formDisabled;
 
   const errorMessage = useMemo(() => {
     switch (error) {
@@ -180,12 +190,14 @@ const EmbargoDate = ({ file }: { file: SelectedFile }) => {
   }, [error]);
 
   return (
-    <DatePicker 
+    <DatePicker
       format={dateFormat}
       onChange={(value: Moment | null, context) => {
         // Serialize the date value we get from the component so we can store it using Redux
         const dateValue =
-          !context.validationError && value ? value.format(serverDateFormat) : "";
+          !context.validationError && value ?
+            value.format(serverDateFormat)
+          : "";
         dispatch(
           setFileMeta({
             id: file.id,
@@ -195,9 +207,12 @@ const EmbargoDate = ({ file }: { file: SelectedFile }) => {
         );
       }}
       value={moment(file.embargo, serverDateFormat) || null}
-      disabled={formDisabled}
-      minDate={moment().add(config.filesUpload?.embargoDateMin || 1, 'days')}
-      maxDate={moment().add(config.filesUpload?.embargoDateMax || 10000, 'days')}
+      disabled={rowDisabled}
+      minDate={moment().add(config.filesUpload?.embargoDateMin || 1, "days")}
+      maxDate={moment().add(
+        config.filesUpload?.embargoDateMax || 10000,
+        "days",
+      )}
       onError={(newError) => setError(newError as DateValidationError)}
       slotProps={{
         textField: {
@@ -223,6 +238,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const formDisabled = useAppSelector(getFormDisabled);
   const formConfig = useAppSelector(getData);
+  const rowDisabled = (file.state && file.state === "generated") || formDisabled;
 
   const {
     displayRoles = true,
@@ -248,20 +264,22 @@ const FileTableRow = ({ file }: FileItemProps) => {
         }}
       >
         <TableCell sx={{ p: 0, pl: 1, borderWidth: fileStatus ? 0 : 1 }}>
-          <IconButton
-            color="primary"
-            size="small"
-            onClick={() =>
-              !formDisabled &&
-              (!file.submittedFile ?
-                dispatch(removeFile(file))
-              : setToDelete(!toDelete))
-            }
-            disabled={formDisabled}
-            data-testid={`delete-${file.name}`}
-          >
-            <DeleteIcon fontSize="small" color="error" />
-          </IconButton>
+          {!(file.state && file.state === "generated") && 
+            <IconButton
+              color="primary"
+              size="small"
+              onClick={() =>
+                !rowDisabled &&
+                (!file.submittedFile ?
+                  dispatch(removeFile(file))
+                : setToDelete(!toDelete))
+              }
+              disabled={rowDisabled}
+              data-testid={`delete-${file.name}`}
+            >
+              <DeleteIcon fontSize="small" color="error" />
+            </IconButton>
+          }
         </TableCell>
         <TableCell
           sx={{
@@ -298,13 +316,32 @@ const FileTableRow = ({ file }: FileItemProps) => {
                   </Button>
                 </motion.div>
               )}
-              <motion.div layout key="name">
+              <motion.div layout key="name" style={{ opacity: file.state && file.state === "generated" ? 0.5 : 1 }}>
                 {file.name}
+                {file.mapping && (
+                  <Tooltip
+                    title={
+                      <Box>
+                        {Object.entries(file.mapping).map(([key, value], i) => (
+                          <Typography variant="body2" key={i}>
+                            {key}: {value.label}
+                          </Typography>
+                        ))}
+                      </Box>
+                    }
+                  >
+                    <Chip
+                      sx={{ ml: 1, fontSize: "80%" }}
+                      label={t("termsMapped")}
+                      size="small"
+                    />
+                  </Tooltip>
+                )}
               </motion.div>
             </AnimatePresence>
           </Box>
         </TableCell>
-        <TableCell sx={{ p: 1, borderWidth: fileStatus ? 0 : 1 }}>
+        <TableCell sx={{ p: 1, borderWidth: fileStatus ? 0 : 1, opacity: file.state && file.state === "generated" ? 0.5 : 1 }}>
           {file.size ? `${(file.size / 1048576).toFixed(2)} MB` : "-"}
         </TableCell>
         <TableCell sx={{ p: 1, borderWidth: fileStatus ? 0 : 1 }}>
@@ -312,20 +349,20 @@ const FileTableRow = ({ file }: FileItemProps) => {
         </TableCell>
         {displayPrivate && (
           <TableCell sx={{ p: 0, borderWidth: fileStatus ? 0 : 1 }}>
-          <Checkbox
-            checked={file.private}
-            onChange={(e) =>
-              dispatch(
-                setFileMeta({
-                  id: file.id,
-                  type: "private",
-                  value: e.target.checked,
-                }),
+            <Checkbox
+              checked={file.private}
+              onChange={(e) =>
+                dispatch(
+                  setFileMeta({
+                    id: file.id,
+                    type: "private",
+                    value: e.target.checked,
+                  }),
                 )
               }
               data-testid={`private-${file.name}`}
-              disabled={file.valid === false || formDisabled}
-              />
+              disabled={file.valid === false || rowDisabled}
+            />
           </TableCell>
         )}
         {displayRoles && (
@@ -358,7 +395,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
         exit={{ opacity: 0 }}
       >
         <AnimatePresence>
-          <UploadProgress file={file} key={`progress-${file.name}`} />
+          <UploadProgress file={file} key={`progress-${file.id}`} />
         </AnimatePresence>
       </MotionRow>
     </>
@@ -371,11 +408,13 @@ const UploadProgress = ({ file }: FileItemProps) => {
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));
   const { t } = useTranslation("files");
   const handleSingleFileUpload = () => {
-    dispatch(setFilesSubmitStatus({
-      id: file.id,
-      progress: 0,
-      status: "queued",
-    }));
+    dispatch(
+      setFilesSubmitStatus({
+        id: file.id,
+        progress: 0,
+        status: "queued",
+      }),
+    );
   };
 
   return (
@@ -402,7 +441,8 @@ const UploadProgress = ({ file }: FileItemProps) => {
             />
           </Box>
           <Box sx={{ minWidth: 35, textAlign: "right" }}>
-            {(fileStatus.status === "submitting" || fileStatus.status === "queued") && (
+            {(fileStatus.status === "submitting" ||
+              fileStatus.status === "queued") && (
               <Typography variant="body2" color="text.secondary">{`${
                 fileStatus.progress || 0
               }%`}</Typography>

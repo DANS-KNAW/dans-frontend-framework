@@ -1,13 +1,12 @@
-import type { LanguageStrings, RecursiveOmit } from "@dans-framework/utils";
-import type { Field } from "./MetadataFields";
-import type { Target, SubmissionResponse } from "@dans-framework/user-auth";
-import type { SelectedFile } from "./Files";
+import type { LanguageStrings } from "@dans-framework/utils";
+import type { Field, BaseField, RepeatableField } from "./MetadataFields";
+import type { FormActionType, Target } from "@dans-framework/user-auth";
 
 // Accordion sections
 export interface InitialSectionType {
   id: string;
   title: string | LanguageStrings;
-  fields: RecursiveOmit<Field, "id">[];
+  fields: Field[];
   description?: string | LanguageStrings;
 }
 
@@ -18,32 +17,35 @@ export type SectionStatus =
   | "neutral"
   | undefined;
 
-export interface SectionType extends Omit<InitialSectionType, "fields"> {
-  fields: Field[];
-  status: SectionStatus;
-}
-
+// Initial state of the form's metadata
 export interface InitialStateType {
   id: string;
-  form: SectionType[];
-  panel: string;
-  tab: number;
   touched: boolean;
-}
-
-export interface InitialFormType {
-  metadata: SectionType[];
-  id?: string;
-  "file-metadata"?: SelectedFile[];
-  files?: SelectedFile[];
-}
-
-export interface SavedFormResponse extends SubmissionResponse {
-  md: InitialFormType;
-}
-
-export interface FormConfig {
   form: InitialSectionType[];
+  sections: DynamicSections;
+  fields: MetadataStructure;
+  fieldMap: FieldMapStructure;
+}
+
+type SectionKey = string; // Variable section keys 
+
+export interface DynamicSection {
+  fields: string[]; // List of field names
+  status: SectionStatus; // Possible status values
+}
+export type DynamicSections = Record<SectionKey, DynamicSection>; // Dynamic section keys
+
+export interface MetadataStructure {
+  [key: string]: BaseField | RepeatableField;
+}
+
+export interface FieldMapStructure {
+  [key: string]: Field;
+}
+
+// Config for the form, specified by app
+export interface FormConfig {
+  form?: InitialSectionType[];
   target?: {
     envName?: string;
     configName?: string;
@@ -68,8 +70,17 @@ export interface FormConfig {
     embargoDateMin?: number;
     embargoDateMax?: number;
     maxSize?: number;
+    disableFileWarning?: boolean | number;
+    customFileWarning?: string | LanguageStrings;
   };
   displayName?: string | LanguageStrings;
   description?: string | LanguageStrings;
   external?: string;
+}
+
+// What you get from server API (previously saved/submitted forms)
+export interface ExternalMetadata {
+  metadata: MetadataStructure;
+  action: FormActionType | undefined;
+  id: string;
 }

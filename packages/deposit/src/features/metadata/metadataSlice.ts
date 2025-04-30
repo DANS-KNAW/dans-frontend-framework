@@ -1,43 +1,37 @@
-import { createSlice, PayloadAction, /*current*/ } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../redux/store";
 import type {
-  SetFieldPayload,
-  AddFieldPayload,
-  DeleteFieldPayload,
-  SectionStatusPayload,
-  FieldValue,
+  SetFieldValuePayload,
+  SetFieldMultiApiPayload,
+  SetFieldFormatPayload,
+  AddDeleteFieldPayload,
 } from "../../types/MetadataPayloads";
-import type {
-  RepeatTextFieldType,
-  RepeatGroupedFieldType,
-  TextFieldType,
-  InputField,
-  TypeaheadAPI,
-  DateTimeFormat,
-} from "../../types/MetadataFields";
 import type {
   InitialStateType,
   InitialSectionType,
-  InitialFormType,
+  MetadataStructure,
+  DynamicSections,
+  ExternalMetadata,
+  FieldMapStructure,
 } from "../../types/Metadata";
+import type { BaseField, Field } from "../../types/MetadataFields";
 import {
-  getValid,
-  getFieldStatus,
-  getSectionStatus,
-  formatInitialState,
-  findByIdOrName,
-  changeConditionalState,
-  // findFieldInGroup,
+  evaluateSection,
+  isEmpty,
+  fieldFormatter,
+  updateSection,
+  resetObject,
+  getValidField,
 } from "./metadataHelpers";
 import { v4 as uuidv4 } from "uuid";
 
-// load the imported form and close all accordion panels by default
 const initialState: InitialStateType = {
-  id: "",
-  form: [],
-  panel: "",
-  tab: 0,
+  id: '',
   touched: false,
+  form: [],
+  sections: {},
+  fields: {},
+  fieldMap: {},
 };
 
 export const metadataSlice = createSlice({
@@ -46,216 +40,228 @@ export const metadataSlice = createSlice({
   reducers: {
     initForm: (
       state,
-      action: PayloadAction<InitialFormType | InitialSectionType[]>,
+      action: PayloadAction<InitialSectionType[]>,
     ) => {
-      if (!Array.isArray(action.payload) && action.payload.id) {
-        // form is loaded from existing data
-        state.id = action.payload.id;
-        state.form = action.payload.metadata;
-        state.panel = action.payload.metadata[0].id;
-      } else {
-        // otherwise initialize a brand new form
-        state.id = uuidv4();
-        state.form = formatInitialState(action.payload as InitialSectionType[]);
-        state.touched = false;
-        // open up the first panel by default
-        state.panel = (action.payload as InitialSectionType[])[0].id;
-        // and set initial validation status
-        metadataSlice.caseReducers.setSectionStatus(state, {
-          payload: null,
-          type: "",
+      state.id = uuidv4();
+      state.form = action.payload;
+      state.touched = false;
+
+      // Temporary fields object to ensure correct section evaluation
+      let newFields: MetadataStructure = {};
+
+      // Also create a map of all the original fields, so we can easily lookup fixed values like field type, validation type, etc.
+      let fieldMap: FieldMapStructure = {};
+      
+      // Populate fields object
+      action.payload.forEach((section) => {
+        section.fields.forEach((field) => {
+          if (field.type === 'group') {
+            newFields[field.name] = {
+              value: [
+                field.fields.reduce((acc, f) => {
+                  (acc as Record<string, any>)[(f as Field).name] = (f as Field).repeatable ? { value: [fieldFormatter(f as Field)] } : fieldFormatter(f as Field);
+                  return acc;
+                }, {}),
+              ],
+            };
+            (field.fields as Field[]).forEach(f => {
+              fieldMap[f.name] = f;
+            });
+          } else if (field.repeatable) {
+            newFields[field.name] = {
+              value: [fieldFormatter(field as Field)] as any,
+            };
+            fieldMap[field.name] = field;
+          } else {
+            newFields[field.name] = fieldFormatter(field as Field);
+            fieldMap[field.name] = field;
+          }
         });
-      }
+      });
+
+      // Assign fields after processing
+      state.fields = newFields;
+      state.fieldMap = fieldMap;
+
+      state.sections = action.payload.reduce<DynamicSections>((acc, section) => {
+        acc[section.id] = {
+          fields: section.fields.map(field => field.name),
+          status: evaluateSection({fields: section.fields.map(field => field.name), status: undefined}, newFields, fieldMap),
+        };
+        return acc;
+      }, {});
+    },
+    setExternalFormData: (state, action: PayloadAction<ExternalMetadata>) => {
+      // Set external form data (e.g. from API) to the state
+      state.fields = {
+        ...state.fields,
+        ...action.payload.metadata,
+      };
+      state.id = action.payload.action === 'view' || action.payload.action === 'load' || action.payload.action === 'resubmit' ? action.payload.id : uuidv4();
     },
     // keep track of form state
-    setField: (state, action: PayloadAction<SetFieldPayload>) => {
-      const section = state.form[action.payload.sectionIndex];
-      const field = findByIdOrName(action.payload.id, section.fields);
+    setField: (state, action: PayloadAction<SetFieldValuePayload>) => {
+      const { field, fieldIndex, value, groupName, groupIndex } = action.payload;
+      // set field touched state to true
+      metadataSlice.caseReducers.setTouched(state, { payload: true, type: '' } );
 
-      if (!state.touched && field && !field.autofill) {
-        state.touched = true;
-      }
-
-      // field is found, lets set it
-      if (field) {
-        field.value = action.payload.value as FieldValue;
-        field.touched = true;
-
-        // For setting required state of 'conditional' fields,
-        // we need to find the parent array and change the fields inside
-        if (field.toggleRequired) {
-          changeConditionalState(
-            action.payload.id,
-            section.fields,
-            action.payload.value,
-            field,
-            "toggleRequired",
-            "toggleRequiredIds",
-            "required",
-          );
+      // helper function to update field value
+      const updateField = (target: any, key: string, newValue: any) => {
+        target[key] = { ...target[key], ...getValidField(newValue, field) };
+      };
+    
+      if (groupName !== undefined && groupIndex !== undefined) {
+        let group = state.fields[groupName].value;
+        let groupItem = group[groupIndex];
+    
+        if (field.repeatable && fieldIndex !== undefined) {
+          groupItem[field.name].value[fieldIndex] = {
+            ...groupItem[field.name].value[fieldIndex],
+            ...getValidField(value, field),
+          };
+        } else {
+          updateField(groupItem, field.name, value);
         }
-
-        // Same for private state of 'conditional' fields
-        if (field.togglePrivate) {
-          changeConditionalState(
-            action.payload.id,
-            section.fields,
-            action.payload.value,
-            field,
-            "togglePrivate",
-            "togglePrivateIds",
-            "private",
-          );
-        }
-
-        // After every input, we need to update field valid status and section status as well.
-        field.valid = getValid(
-          action.payload.value as string,
-          field
-        );
-        // then set the section/accordion
-        metadataSlice.caseReducers.setSectionStatus(state, action);
-      }
-    },
-    setMultiApiField: (state, action: PayloadAction<SetFieldPayload>) => {
-      const section = state.form[action.payload.sectionIndex];
-      const field = findByIdOrName(action.payload.id, section.fields);
-      if (field) {
-        field.multiApiValue = action.payload.value as TypeaheadAPI;
-      }
-    },
-    setDateTypeField: (state, action: PayloadAction<SetFieldPayload>) => {
-      const section = state.form[action.payload.sectionIndex];
-      const field = findByIdOrName(action.payload.id, section.fields);
-      if (field) {
-        field.format = action.payload.value as DateTimeFormat;
-      }
-    },
-    setFieldValid: (state, action: PayloadAction<SetFieldPayload>) => {
-      const section = state.form[action.payload.sectionIndex];
-      const field = findByIdOrName(action.payload.id, section.fields);
-      if (field) {
-        field.valid = action.payload.value as boolean;
-      }
-    },
-    // functionality for adding new single (repeatable) fields/field groups
-    addField: (state, action: PayloadAction<AddFieldPayload>) => {
-      const section = state.form[action.payload.sectionIndex];
-      const field = findByIdOrName(
-        action.payload.groupedFieldId,
-        section.fields,
-      );
-      if (field) {
-        const newField =
-          action.payload.type === "single" ?
-            // single repeatable field is just a copy with a new id, value, valid, touched state
-            {
-              ...(field as RepeatTextFieldType).fields[0],
-              id: uuidv4(),
-              value: "",
-              valid: "",
-              touched: false,
-            }
-            // grouped fields a bit more complicated, since grouped fields can also contain single repeatable fields
-          : (field as RepeatGroupedFieldType).fields[0].map((f) =>
-              f.type === "repeatSingleField" ?
-                {
-                  ...f,
-                  id: uuidv4(),
-                  fields: [
-                    {
-                      ...f.fields[0],
-                      id: uuidv4(),
-                      value: "",
-                      valid: "",
-                      touched: false,
-                    },
-                  ],
-                }
-              : {
-                  // Omit the toggleRequiredIds property
-                  ...(({ toggleRequiredIds, ...rest }) => rest)(f),
-                  // reset what needs resetting
-                  id: uuidv4(),
-                  value: "",
-                  valid: "",
-                  touched: false,
-                  required: f.noIndicator ? undefined : f.required,
-                },
-            );
-
-        field.fields = [
-          ...(field as RepeatGroupedFieldType | RepeatTextFieldType).fields,
-          newField,
-        ] as InputField[][] | TextFieldType[];
-      }
-    },
-    deleteField: (state, action: PayloadAction<DeleteFieldPayload>) => {
-      const section = state.form[action.payload.sectionIndex];
-      const field = findByIdOrName(
-        action.payload.groupedFieldId,
-        section.fields,
-      );
-      if (field) {
-        (field as RepeatTextFieldType | RepeatGroupedFieldType).fields.splice(
-          action.payload.deleteField,
-          1,
-        );
-        // need to also update the section/accordion status
-        metadataSlice.caseReducers.setSectionStatus(state, action);
-      }
-    },
-    // keep track of the accordion state
-    setOpenPanel: (state, action: PayloadAction<string>) => {
-      state.panel = action.payload;
-    },
-    // keep track of open tab (metadata/files)
-    setOpenTab: (state, action: PayloadAction<number>) => {
-      state.tab = action.payload;
-    },
-    setSectionStatus: (
-      state,
-      action: PayloadAction<SectionStatusPayload | null>,
-    ) => {
-      if (action.payload) {
-        // setting status based on user interaction
-        set(action.payload.sectionIndex);
+    
+        state.fields[groupName] = { ...state.fields[groupName], value: group };
       } else {
-        // initial setting of status
-        Array.from(Array(state.form.length).keys()).forEach((i) => set(i));
+        if (field.repeatable && fieldIndex !== undefined) {
+          state.fields[field.name].value[fieldIndex] = {
+            ...state.fields[field.name].value[fieldIndex],
+            ...getValidField(value, field),
+          };
+        } else {
+          updateField(state.fields, field.name, value);
+        }
+      }
+    
+      // Handle toggling required/private state
+      if (field.togglePrivate || field.toggleRequired) {
+        const toggleType = field.togglePrivate ? "private" : "required";
+        (field.togglePrivate || field.toggleRequired)?.forEach((toggleField) => {
+          const target = groupName !== undefined && groupIndex !== undefined
+            ? state.fields[groupName].value[groupIndex]
+            : state.fields;
+          target[toggleField][toggleType] = toggleType === "private" ? isEmpty(value) : !isEmpty(value);
+        });
       }
 
-      function set(sectionIndex: number) {
-        const status = getSectionStatus(
-          state.form[sectionIndex].fields.flatMap((field) => {
-            if (field.type !== "group" && field.fields) {
-              // this is a single repeatable field
-              return field.fields.flatMap((f) => getFieldStatus(f));
+      // This logic will populate fields that have the `deriveFrom` property set.
+      // Currently it just sets the value of the field to the value of the field it derives from.
+      // @TODO: Currently it doesn't check if the field can support the value of the field it derives from.
+      Object.entries(state.fieldMap).forEach(([fieldName, fieldDef]) => {
+        if (fieldDef.deriveFrom === field.name) {
+          // Handle top-level fields
+          if (state.fields[fieldName] && "touched" in state.fields[fieldName]) {
+            const isTouched = state.fields[fieldName].touched;
+            
+            // Only update if the field hasn't been touched by the user
+            if (!isTouched) {
+              state.fields[fieldName] = {
+                ...state.fields[fieldName],
+                value,
+                valid: true,
+                touched: false
+              };
+              
+              // Force the derived field to be updated in the section status
+              updateSection(state.sections, state.fields, fieldDef, state.fieldMap);
             }
-            if (field.type === "group" && field.fields) {
-              // grouped field, can have either a fields key with a single array as value, or an array of arrays
-              // note the check for a single repeatable field inside a grouped or repeatable grouped field
-              return field.fields.flatMap((f) =>
-                Array.isArray(f) ?
-                  f.flatMap((inner) =>
-                    inner.fields ?
-                      inner.fields.flatMap((f) => getFieldStatus(f))
-                    : getFieldStatus(inner),
-                  )
-                : f.fields ? f.fields.flatMap((f) => getFieldStatus(f))
-                : getFieldStatus(f),
-              );
-            } else {
-              return getFieldStatus(field);
+          }
+          
+          // Handle fields within groups
+          Object.entries(state.fields).forEach(([stateGroupName, stateGroup]) => {
+            if (stateGroup.value && Array.isArray(stateGroup.value)) {
+              stateGroup.value.forEach((groupItem) => {
+                // Check if the group item contains the field we're looking for
+                if (groupItem[fieldName] && "touched" in groupItem[fieldName]) {
+                  const isTouched = groupItem[fieldName].touched;
+                  
+                  // Only update if the field hasn't been touched by the user
+                  if (!isTouched) {
+                    groupItem[fieldName] = {
+                      ...groupItem[fieldName],
+                      value,
+                      valid: true,
+                      touched: false
+                    };
+                    
+                    // Force the derived field to be updated in the section status
+                    updateSection(state.sections, state.fields, fieldDef, state.fieldMap, stateGroupName);
+                  }
+                }
+              });
             }
-          }),
-        );
-        state.form[sectionIndex].status = status;
+          });
+        }
+      });
+
+      // Now set section status to reflect all field changes
+      updateSection(state.sections, state.fields, field, state.fieldMap, groupName);
+    },
+    updateAllSections: (state) => {
+      // Update all sections to reflect the current field values
+      Object.entries(state.sections).forEach(([sectionId, section]) => {
+        state.sections[sectionId].status = evaluateSection(section, state.fields, state.fieldMap);
+      });
+    },
+    addField: (state, action: PayloadAction<AddDeleteFieldPayload>) => {
+      // add a repeatable single field or a whole group
+      const { field, groupName, groupIndex } = action.payload;
+      const appendField = (target: any, key: string, formatter: (val: any) => any) => {
+        target[key] = { ...target[key], value: [...target[key].value, formatter(target[key].value[0])] };
+      };
+      if (field.type === "group") {
+        appendField(state.fields, field.name, (val) => resetObject(val, state.fieldMap));
+      } else if (groupName !== undefined && groupIndex !== undefined) {
+        appendField(state.fields[groupName].value[groupIndex], field.name, (val) => fieldFormatter(val, true));
+      } else {
+        appendField(state.fields, field.name, (val) => fieldFormatter(val, true));
+      }
+      updateSection(state.sections, state.fields, field, state.fieldMap, groupName);
+    },
+    deleteField: (state, action: PayloadAction<AddDeleteFieldPayload>) => {
+      const { field, fieldIndex, groupName, groupIndex } = action.payload;
+      // Fields inside a grouped field
+      if (groupName !== undefined && groupIndex !== undefined) {
+        const group = state.fields[groupName]?.value || [];
+        group[groupIndex][field.name].value.splice(fieldIndex, 1);
+        state.fields[groupName].value[groupIndex] = group[groupIndex];
+      }
+      // For single fields and whole groups
+      else {
+        const repeatableValues = state.fields[field.name]?.value || [];
+        repeatableValues.splice(fieldIndex, 1);
+      }
+      // update section status
+      updateSection(state.sections, state.fields, field, state.fieldMap, groupName);
+    },
+    setMultiApiField: (state, action: PayloadAction<SetFieldMultiApiPayload>) => {
+      // Sets the multiApiValue (selectable api by user) of a field
+      const { field, value, groupName, groupIndex } = action.payload;
+      if (groupName !== undefined && groupIndex !== undefined) {
+        const group = state.fields[groupName];
+        const item = group.value[groupIndex];
+        item[field.name].multiApiValue = value;
+        item[field.name].value = undefined;
+      } else {
+        (state.fields[field.name] as BaseField).multiApiValue = value;
+        (state.fields[field.name] as BaseField).value = undefined;
       }
     },
-    resetMetadata: (state) => {
-      // We only need to remove the id. Deposit.tsx will then reinit the form
-      state.id = "";
+    setDateTypeField: (state, action: PayloadAction<SetFieldFormatPayload>) => {
+      // Sets the format of a date field
+      const { field, value, groupName, groupIndex } = action.payload;
+      if (groupName !== undefined && groupIndex !== undefined) {
+        const group = state.fields[groupName];
+        const item = group.value[groupIndex];
+        item[field.name].format = value;
+      } else {
+        (state.fields[field.name] as BaseField).format = value;
+      }
+    },
+    setTouched: (state, action: PayloadAction<boolean>) => {
+      state.touched = action.payload
     },
   },
 });
@@ -263,26 +269,36 @@ export const metadataSlice = createSlice({
 export const {
   initForm,
   setField,
-  setFieldValid,
   setMultiApiField,
-  setOpenPanel,
-  setOpenTab,
-  setSectionStatus,
   addField,
   deleteField,
-  resetMetadata,
   setDateTypeField,
+  setTouched,
+  setExternalFormData,
+  updateAllSections,
 } = metadataSlice.actions;
 
 // Select values from state
 export const getSessionId = (state: RootState) => state.metadata.id;
-export const getMetadata = (state: RootState) => state.metadata.form;
-export const getOpenPanel = (state: RootState) => state.metadata.panel;
-export const getOpenTab = (state: RootState) => state.metadata.tab;
+export const getForm = (state: RootState) => state.metadata.form;
 export const getMetadataStatus = (state: RootState) => {
-  const statusArray = state.metadata.form.map((section) => section.status);
-  return getSectionStatus(statusArray);
+  const overallStatus = Object.values(state.metadata.sections).some(s => s.status === "error") 
+    ? "error" 
+    : Object.values(state.metadata.sections).some(s => s.status === "warning") 
+      ? "warning" 
+      : "success";
+  return overallStatus;
 };
+export const getFieldValues = (state: RootState) => state.metadata.fields;
+export const getField = (name: string, groupName?: string, groupIndex?: number) => (state: RootState) => {
+  if (groupName !== undefined && groupIndex !== undefined) {
+    return state.metadata.fields[groupName]?.value[groupIndex][name];
+  }
+  return state.metadata.fields[name];
+}
+export const getSections = (state: RootState) => state.metadata.sections;
 export const getTouchedStatus = (state: RootState) => state.metadata.touched;
+
+export const getAll = (state: RootState) => state.metadata;
 
 export default metadataSlice.reducer;

@@ -10,7 +10,10 @@ export interface AuthProviderConfig {
 }
 
 // Define the types of targets here, so we can use this in the key checking API
-export type AuthKeys = "dataverse_api_key" | "zenodo_api_key" | "dataverse_nl_api_key";
+export type AuthKeys =
+  | "dataverse_api_key"
+  | "zenodo_api_key"
+  | "dataverse_nl_api_key";
 
 export interface Target {
   name: string;
@@ -28,8 +31,9 @@ export interface ValidateTarget {
   type: AuthKeys;
 }
 
-export type ReleaseVersion = "DRAFT" | "PUBLISHED" | "PUBLISH";
+export type ReleaseVersion = "DRAFT" | "PUBLISHED" | "PUBLISH" | "SUBMIT" | "SUBMITTED" | "RESUBMIT";
 
+type EmptyStatus = "preparing";
 type ActiveStatus =
   | "initial"
   | "processing"
@@ -38,8 +42,8 @@ type ActiveStatus =
   | "progress";
 type ErrorStatus = "rejected" | "failed" | "error";
 type SuccessStatus = "finish" | "accepted" | "success";
-export type IngestStatus = ActiveStatus | ErrorStatus | SuccessStatus;
-type IngestStatusKeys = "processing" | "error" | "success";
+export type IngestStatus = EmptyStatus | ActiveStatus | ErrorStatus | SuccessStatus;
+type IngestStatusKeys = "empty" | "processing" | "error" | "success";
 export type DepositStatus = { [key in IngestStatusKeys]: IngestStatus[] };
 
 export interface TargetOutput {
@@ -48,16 +52,22 @@ export interface TargetOutput {
   "display-name": string;
   "output-response": any;
   "repo-name": string;
+  "deposited-identifiers"?: {
+    url: string;
+  }[];
+  diff: {} | { data: any };
 }
 
 export interface SubmissionResponse {
   "created-date": string;
   "dataset-id": string;
-  "release-version": ReleaseVersion;
-  "saved-date": string | null;
-  "submitted-date": string | null;
+  "status": ReleaseVersion;
+  "saved-at": string | null;
+  "submitted-at": string | null;
+  "legacy-form": boolean;
   targets: TargetOutput[];
   title: string;
+  "acp-version": string;
 }
 
 // Some values that the system can pull and fill in from the User Auth object
@@ -68,9 +78,13 @@ export type AuthProperty =
   | "family_name"
   | "given_name";
 
+export type AutoFillProperty = "dateNow";
+
+export type FormActionType = "load" | "copy" | "resubmit" | "view";
+
 export interface FormAction {
   id?: string;
-  action?: "load" | "copy" | "resubmit" | "view";
+  action?: FormActionType;
   actionDone?: boolean;
 }
 

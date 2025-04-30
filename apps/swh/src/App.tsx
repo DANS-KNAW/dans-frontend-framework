@@ -14,7 +14,6 @@ import {
   UserSubmissions,
   SignInCallback,
 } from "@dans-framework/user-auth";
-import logo from "./config/images/logo.png";
 
 // import { AuthWrapper, AuthRoute, SignInCallback } from '@dans-framework/auth';
 // import { UserSettings, UserSubmissions } from '@dans-framework/user';
@@ -39,7 +38,7 @@ const App = () => {
             languages={languages}
             changeLanguage={i18n.changeLanguage}
           />
-          <MenuBar pages={pages} logo={logo} />
+          <MenuBar pages={pages} />
           {/* Suspense to make sure languages can load first */}
           <Suspense
             fallback={
@@ -62,7 +61,7 @@ const App = () => {
                 path="user-submissions"
                 element={
                   <AuthRoute>
-                    <UserSubmissions />
+                    <UserSubmissions targetCredentials={form.targetCredentials} />
                   </AuthRoute>
                 }
               />

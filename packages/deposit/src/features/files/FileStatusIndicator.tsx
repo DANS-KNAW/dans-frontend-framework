@@ -41,6 +41,7 @@ const FileStatusIndicator = ({
    * @returns The tooltip title string.
    */
   const getTooltipTitle = () => {
+    if (file.state === "generated") return t("generatedFile");
     if (file.submittedFile) return t("submittedFile");
     if (file.valid === false) return t("invalid", { type: file.type });
     if (!convertFiles && data?.preferred) return t("noConversionHead");

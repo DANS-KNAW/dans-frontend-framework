@@ -13,13 +13,16 @@ export const sshLicenceApi = createApi({
         // Order alphabetically
         return response.data?.length > 0 ?
             {
-              response: response.data.map((d) => ({
-                label: d.name,
-                value: d.uri,
-              })).sort((a, b) => 
-                a.label.toLowerCase() < b.label.toLowerCase() ? -1 : 
-                a.label.toLowerCase() > b.label.toLowerCase() ? 1 : 0
-              )
+              response: response.data
+                .map((d) => ({
+                  label: d.name,
+                  value: d.uri,
+                }))
+                .sort((a, b) =>
+                  a.label.toLowerCase() < b.label.toLowerCase() ? -1
+                  : a.label.toLowerCase() > b.label.toLowerCase() ? 1
+                  : 0,
+                ),
             }
           : [];
       },

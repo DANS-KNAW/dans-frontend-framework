@@ -29,7 +29,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useFetchSimpleListQuery } from "./api/dansFormats";
 import { enqueueSnackbar } from "notistack";
 import { getFormDisabled, getData } from "../../deposit/depositSlice";
-import { getSessionId } from "../metadata/metadataSlice";
+import { getSessionId, setTouched } from "../metadata/metadataSlice";
 
 const FilesUpload = () => {
   const dispatch = useAppDispatch();
@@ -51,10 +51,15 @@ const FilesUpload = () => {
     }
 
     // No files over the file size limit set in formConfig
-    if (formConfig?.filesUpload?.maxSize && file.size > formConfig?.filesUpload?.maxSize) {
+    if (
+      formConfig?.filesUpload?.maxSize &&
+      file.size > formConfig?.filesUpload?.maxSize
+    ) {
       return {
         code: "file-too-large",
-        message: t("fileTooLarge", { size: (formConfig?.filesUpload?.maxSize / 1073741824).toFixed(2) }),
+        message: t("fileTooLarge", {
+          size: (formConfig?.filesUpload?.maxSize / 1073741824).toFixed(2),
+        }),
       };
     }
 
@@ -89,10 +94,10 @@ const FilesUpload = () => {
 
     // No files with these file names
     if (
-      file.name.indexOf("__generated__form-metadata") !== -1
+      file.name.indexOf("__generated__form-metadata") !== -1 ||
       // oh smart specific. todo: move this all to form config.
-      || file.name.toLowerCase() === "oral history metadata private.txt"
-      || file.name.toLowerCase() === "oral history metadata public.txt"
+      file.name.toLowerCase() === "oral history metadata private.txt" ||
+      file.name.toLowerCase() === "oral history metadata public.txt"
     ) {
       return {
         code: "file-not-allowed",
@@ -143,6 +148,7 @@ const FilesUpload = () => {
     });
 
     dispatch(addFiles(serializedFiles));
+    dispatch(setTouched(true));
   };
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } =
@@ -226,7 +232,7 @@ const FileAlert = ({
 }: {
   color: "warning" | "error";
   title: string;
-  files: SelectedFile[] | RejectedFiles[];
+  files: SelectedFile[] | readonly RejectedFiles[];
   description?: string;
 }) => {
   const [open, setOpen] = useState(true);

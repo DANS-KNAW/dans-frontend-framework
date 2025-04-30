@@ -31,3 +31,6 @@ dist-ssr
 # Testing related
 playwright-report
 test-results
+
+# Rollup visualiser
+stats.html

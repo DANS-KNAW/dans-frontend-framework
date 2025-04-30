@@ -8,53 +8,58 @@ const section: InitialSectionType = {
   },
   fields: [
     {
-      type: "autocomplete",
+      type: "drawmap",
       label: {
-        en: "Subject keywords",
-        nl: "Trefwoorden bij onderwerp",
+        en: "Indicate location",
+        nl: "Map",
       },
-      name: "subject_keywords",
+      name: "map",
       required: true,
-      multiselect: true,
       description: {
-        en: "Enter keywords that describe the content of your dataset in terms of artistic or architectural subject matter. Keywords may either be selected from the Getty Art & Architecture Thesaurus (AAT), or entered as free text. These keywords have a different scope from the 'Humanities' domain-specific keywords (below), which should be selected from the European Languages Social Sciences Thesaurus (ELSST), and which describe the content of your dataset in terms of social relations, interactions or phenomena, or ways to study them.",
-        nl: "Voer trefwoorden in die de inhoud van de dataset beschrijven op het gebied van artistieke of architectonische onderwerpen. Trefwoorden kunnen worden geselecteerd uit de Getty Art & Architecture Thesaurus (AAT) of worden ingevoerd als vrije tekst. Deze trefwoorden hebben een andere reikwijdte dan de 'Geesteswetenschappen' domeinspecifieke trefwoorden (hieronder), die moeten worden geselecteerd uit de European Languages Social Sciences Thesaurus (ELSST) en die de inhoud van uw dataset beschrijven in termen van sociale relaties, interacties of verschijnselen, of manieren om ze te bestuderen.",
+        en: "Search and select to open and focus a map on this location. Then select a shape type and start drawing.",
+        nl: "Iets van beschrijving",
       },
-      options: "getty",
-      allowFreeText: true,
-      value: [
+      fullWidth: true,
+      wmsLayers: [
         {
-          label: "oral history (discipline)",
-          value: "http://vocab.getty.edu/page/aat/300054402",
-          mandatory: true,
+          name: "natura2000",
+          source:
+            "https://service.pdok.nl/rvo/natura2000/wms/v1_0?service=WMS&version=1.3.0&layers=natura2000",
+        },
+        {
+          name: "nationaleparken",
+          source:
+            "https://service.pdok.nl/rvo/nationaleparken/wms/v2_0?service=WMS&version=1.3.0&layers=nationaleparken",
         },
       ],
     },
     {
       type: "autocomplete",
       label: {
-        en: "Location(s) covered in the interview",
-        nl: "Locatie(s) besproken in het interview",
+        en: "Species covered",
+        nl: "Soorten",
       },
-      name: "subject_location",
+      name: "species",
       multiselect: true,
+      required: true,
       description: {
-        en: "The location(s) that the interview material deals with",
-        nl: "De locatie(s) waar het interview over gaat",
+        en: "Something here",
+        nl: "Iets hier",
       },
-      options: "geonames",
+      multiApiValue: "biodiversity_species_scientific",
+      options: [ "biodiversity_species_scientific", "biodiversity_species_vernacular" ],
     },
     {
       type: "group",
       label: {
-        en: "Period covered in the interview",
-        nl: "Periode besproken in het interview",
+        en: "Period covered",
+        nl: "Periode besproken",
       },
       name: "subject_date_time",
       repeatable: true,
       description: {
-        en: "The dates and times the interview material deals with",
-        nl: "De data en tijden waarover het interview gaat",
+        en: "",
+        nl: "",
       },
       fields: [
         {

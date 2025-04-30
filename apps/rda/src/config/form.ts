@@ -39,7 +39,7 @@ const form: FormConfig = {
     displayProcesses: false,
     displayRoles: false,
     displayPrivate: false,
-  }
+  },
 };
 
 export default form;

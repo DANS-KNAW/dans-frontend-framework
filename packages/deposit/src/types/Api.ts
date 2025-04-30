@@ -1,4 +1,4 @@
-import type { AutocompleteAPIFieldData } from "./MetadataFields";
+import type { AutocompleteAPIFieldData, OptionsType } from "./MetadataFields";
 
 export interface GorcResponse {
   id: string;
@@ -108,6 +108,26 @@ interface GeonamesItem {
 export interface GeonamesResponse {
   totalResultsCount: number;
   geonames: GeonamesItem[];
+  ocean?: GeonamesItem;
+}
+
+export interface MaptilerCoordinateSystemResponse {
+  results: {
+    id: {
+      authority: string;
+      code: number;
+    };
+    name: string;
+    transformations: number[] | null;
+    bbox: number[];
+  }[];
+}
+
+export interface MaptilerConversionResponse {
+  results: {
+    x: number;
+    y: number;
+  }[];
 }
 
 export interface ProxyResponse {
@@ -115,22 +135,8 @@ export interface ProxyResponse {
   text: string;
 }
 
-export interface GettyResponse {
-  Vocabulary: GettyVocabulary;
-}
-
-export interface GettyVocabulary {
-  Count: number;
-  Subject: GettyItem[];
-}
-
-export interface GettyItem {
-  Preferred_Term: string;
-  Subject_ID: number;
-}
-
-export interface QueryReturnType {
-  data: AutocompleteAPIFieldData;
+export interface QueryReturnType<T = OptionsType[]> {
+  data: AutocompleteAPIFieldData<T>;
   isLoading: boolean;
   isFetching: boolean;
 }
@@ -149,4 +155,29 @@ export interface DatastationsItem {
 
 export interface DatastationsResponse {
   results: DatastationsItem[];
+}
+
+export interface BiodiversityItem {
+  item: {
+    sourceSystemId: string;
+    recordURI: string;
+    acceptedName: {
+      fullScientificName: string;
+    };
+    vernacularNames?: {
+      name: string;
+      language: string;
+    }[];
+  };
+}
+
+export interface BiodiversityResponse {
+  resultSet: BiodiversityItem[];
+}
+
+export interface UnsdgResponse {
+  code: string;
+  title: string;
+  description: string;
+  uri: string;
 }

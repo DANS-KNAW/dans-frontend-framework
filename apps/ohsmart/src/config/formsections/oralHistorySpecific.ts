@@ -16,8 +16,8 @@ const section: InitialSectionType = {
       },
       name: "interviewee",
       description: {
-        en: "Information about the person being interviewed. This data will not be public.",
-        nl: "Informatie over de persoon die wordt geïnterviewd. Deze data worden niet gepubliceerd.",
+        en: "Information about the person being interviewed. This data will not be public by default.",
+        nl: "Informatie over de persoon die wordt geïnterviewd. Deze data worden niet standaard gepubliceerd.",
       },
       fields: [
         {
@@ -136,8 +136,8 @@ const section: InitialSectionType = {
       name: "interviewer",
       repeatable: true,
       description: {
-        en: "Information about the person(s) taking the interview. This data will not be public.",
-        nl: "Informatie over de persoon die het interview afneemt. Deze data worden niet gepubliceerd.",
+        en: "Information about the person(s) taking the interview. This data will not be public by default.",
+        nl: "Informatie over de persoon die het interview afneemt. Deze data worden niet standaard gepubliceerd.",
       },
       fields: [
         {
@@ -159,6 +159,25 @@ const section: InitialSectionType = {
           name: "interviewer_last_name",
           required: true,
           private: true,
+        },
+        {
+          type: "check",
+          name: "interviewer_public",
+          description: {
+            en: "First and last name of interviewer will be publicy viewable if checked.",
+            nl: "Voor- en achternaam zijn openbaar als dit is aangevinkt.",
+          },
+          options: [
+            {
+              value: "interviewer_public_data",
+              label: {
+                en: "First and last name are public data",
+                nl: "Voor- en achternaam zijn openbaar",
+              },
+            },
+          ],
+          togglePrivate: ["interviewer_first_name", "interviewer_last_name"],
+          fullWidth: true,
         },
         {
           type: "text",
@@ -237,8 +256,8 @@ const section: InitialSectionType = {
       name: "interpreter",
       repeatable: true,
       description: {
-        en: "Information about the person(s) translating during the interview. This data will not be public.",
-        nl: "Informatie over de persoon die tijdens het interview heeft getolkt. Deze data worden niet gepubliceerd.",
+        en: "Information about the person(s) translating during the interview. This data will not be public by default.",
+        nl: "Informatie over de persoon die tijdens het interview heeft getolkt. Deze data worden niet standaard gepubliceerd.",
       },
       fields: [
         {
@@ -262,6 +281,26 @@ const section: InitialSectionType = {
           private: true,
           noIndicator: true,
           toggleRequired: ["interpreter_consent", "interpreter_first_name"],
+        },
+        {
+          type: "check",
+          name: "interpreter_public",
+          description: {
+            en: "First and last name of interpreter will be publicy viewable if checked.",
+            nl: "Voor- en achternaam zijn openbaar als dit is aangevinkt.",
+          },
+          options: [
+            {
+              value: "interpreter_public_data",
+              label: {
+                en: "First and last name are public data",
+                nl: "Voor- en achternaam zijn openbaar",
+              },
+            },
+          ],
+          togglePrivate: ["interpreter_first_name", "interpreter_last_name"],
+          noIndicator: true,
+          fullWidth: true,
         },
         {
           type: "text",
@@ -327,8 +366,8 @@ const section: InitialSectionType = {
       name: "others",
       repeatable: true,
       description: {
-        en: "Information about other person(s) being present during the interview. This data will not be public.",
-        nl: "Informatie over andere aanwezigen bij het interview. Deze data worden niet gepubliceerd.",
+        en: "Information about other person(s) being present during the interview. This data will not be public by default.",
+        nl: "Informatie over andere aanwezigen bij het interview. Deze data worden niet standaard gepubliceerd.",
       },
       fields: [
         {
@@ -352,6 +391,26 @@ const section: InitialSectionType = {
           private: true,
           noIndicator: true,
           toggleRequired: ["others_consent", "others_first_name"],
+        },
+        {
+          type: "check",
+          name: "others_public",
+          description: {
+            en: "First and last name of other person present will be publicy viewable if checked.",
+            nl: "Voor- en achternaam zijn openbaar als dit is aangevinkt.",
+          },
+          options: [
+            {
+              value: "others_public_data",
+              label: {
+                en: "First and last name are public data",
+                nl: "Voor- en achternaam zijn openbaar",
+              },
+            },
+          ],
+          togglePrivate: ["others_first_name", "others_last_name"],
+          noIndicator: true,
+          fullWidth: true,
         },
         {
           type: "text",
@@ -561,8 +620,8 @@ const section: InitialSectionType = {
       name: "transcript_human",
       repeatable: true,
       description: {
-        en: "In case of transcript by human. This data will not be public.",
-        nl: "Wanneer de transcriptie door een persoon is gedaan. Deze data worden niet gepubliceerd.",
+        en: "In case of transcript by human. This data will not be public by default.",
+        nl: "Wanneer de transcriptie door een persoon is gedaan. Deze data worden niet standaard gepubliceerd.",
       },
       fields: [
         {

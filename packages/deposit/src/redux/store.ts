@@ -5,7 +5,6 @@ import submitReducer from "../features/submit/submitSlice";
 import depositReducer from "../deposit/depositSlice";
 import { orcidApi } from "../features/metadata/api/orcid";
 import { rorApi } from "../features/metadata/api/ror";
-import { gettyApi } from "../features/metadata/api/getty";
 import { geonamesApi } from "../features/metadata/api/geonames";
 import { sheetsApi } from "../features/metadata/api/sheets";
 import { datastationsApi } from "../features/metadata/api/datastations";
@@ -16,8 +15,12 @@ import { dansUtilityApi } from "../features/files/api/dansUtility";
 import { errorLogger } from "@dans-framework/utils/error";
 import { licenceApi } from "../features/metadata/api/licences";
 import { sshLicenceApi } from "../features/metadata/api/sshLicences";
+import { maptilerApi } from "../features/metadata/api/maptiler";
 import { rdaApi } from "../features/metadata/api/rdaApi";
-import { validateKeyApi } from "@dans-framework/user-auth";
+import { wmsApi } from "../features/metadata/api/wms";
+import { biodiversityApi } from "../features/metadata/api/biodiversity";
+import { validateKeyApi, userApi } from "@dans-framework/user-auth";
+import { unsdgApi } from "../features/metadata/api/unsdg";
 
 export const store = configureStore({
   reducer: {
@@ -27,7 +30,6 @@ export const store = configureStore({
     [rorApi.reducerPath]: rorApi.reducer,
     [licenceApi.reducerPath]: licenceApi.reducer,
     [sshLicenceApi.reducerPath]: sshLicenceApi.reducer,
-    [gettyApi.reducerPath]: gettyApi.reducer,
     [geonamesApi.reducerPath]: geonamesApi.reducer,
     [sheetsApi.reducerPath]: sheetsApi.reducer,
     [submitApi.reducerPath]: submitApi.reducer,
@@ -37,6 +39,11 @@ export const store = configureStore({
     [rdaApi.reducerPath]: rdaApi.reducer,
     [languagesApi.reducerPath]: languagesApi.reducer,
     [validateKeyApi.reducerPath]: validateKeyApi.reducer,
+    [userApi.reducerPath]: userApi.reducer,
+    [maptilerApi.reducerPath]: maptilerApi.reducer,
+    [wmsApi.reducerPath]: wmsApi.reducer,
+    [biodiversityApi.reducerPath]: biodiversityApi.reducer,
+    [unsdgApi.reducerPath]: unsdgApi.reducer,
     submit: submitReducer,
     deposit: depositReducer,
   },
@@ -46,7 +53,6 @@ export const store = configureStore({
       .concat(rorApi.middleware)
       .concat(licenceApi.middleware)
       .concat(sshLicenceApi.middleware)
-      .concat(gettyApi.middleware)
       .concat(geonamesApi.middleware)
       .concat(sheetsApi.middleware)
       .concat(datastationsApi.middleware)
@@ -56,6 +62,11 @@ export const store = configureStore({
       .concat(rdaApi.middleware)
       .concat(languagesApi.middleware)
       .concat(validateKeyApi.middleware)
+      .concat(userApi.middleware)
+      .concat(maptilerApi.middleware)
+      .concat(wmsApi.middleware)
+      .concat(biodiversityApi.middleware)
+      .concat(unsdgApi.middleware)
       .concat(errorLogger),
 });
 

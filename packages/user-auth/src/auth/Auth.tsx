@@ -12,7 +12,7 @@ import i18nProvider from "../languages/i18n";
 import type { AuthProviderConfig } from "../types";
 import { store } from "../redux/store";
 import { LoginPage } from "./Login";
-import { WebStorageStateStore } from 'oidc-client-ts';
+import { WebStorageStateStore } from "oidc-client-ts";
 
 export const AuthWrapper = ({
   authProvider,
@@ -25,8 +25,8 @@ export const AuthWrapper = ({
   const authProviderConfig = {
     ...authProvider,
     userStore: new WebStorageStateStore({ store: window.sessionStorage }),
-    monitorSession: true // this allows cross tab login/logout detection
-  }
+    monitorSession: true, // this allows cross tab login/logout detection
+  };
   return (
     <ReduxProvider store={store}>
       <AuthProvider {...authProviderConfig}>

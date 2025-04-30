@@ -12,14 +12,16 @@
     "build:ohsmart": "turbo build --filter=@dans-framework/ohsmart",
     "dev:cat": "turbo dev --filter=@dans-framework/cat",
     "build:cat": "turbo build --filter=@dans-framework/cat",
-    "dev:rda": "turbo dev --filter=@dans-framework/rda",
-    "build:rda": "turbo build --filter=@dans-framework/rda",
+    "dev:rda": "turbo dev --filter=@dans-framework/rda...",
+    "build:rda": "turbo build --filter=@dans-framework/rda...",
     "dev:swh": "turbo dev --filter=@dans-framework/swh",
     "build:swh": "turbo build --filter=@dans-framework/swh",
     "dev:4tu": "turbo dev --filter=@dans-framework/4tu",
     "build:4tu": "turbo build --filter=@dans-framework/4tu",
     "dev:digitaltwins": "turbo dev --filter=@dans-framework/digitaltwins",
-    "build:digitaltwins": "turbo build --filter=@dans-framework/digitaltwins"
+    "build:digitaltwins": "turbo build --filter=@dans-framework/digitaltwins",
+    "dev:supercatalog": "turbo dev --filter=@dans-framework/supercatalog",
+    "build:supercatalog": "turbo build --filter=@dans-framework/supercatalog"
   },
   "keywords": [],
   "author": "",
@@ -27,11 +29,9 @@
   "devDependencies": {
     "@dans-framework/eslint-config": "workspace:*",
     "@dans-framework/typescript-config": "workspace:*",
-    "@types/node": "^18.0.6",
-    "eslint": "^8.54.0",
-    "prettier": "^3.1.0",
-    "turbo": "^1.10.16",
-    "typescript": "^5.1.6"
+    "@types/node": "^20.11.27",
+    "turbo": "^1.13.4",
+    "typescript": "^5.7.2"
   },
-  "packageManager": "pnpm@8.6.12"
+  "packageManager": "pnpm@10.3.0"
 }

@@ -38,6 +38,7 @@
   "fileSubmitError": "Probeer opnieuw te uploaden",
   "fileTypeCheckError": "Er ging iets mis met het controleren van het bestandstype. Probeer het nog eens.",
   "submittedFile": "Bestand is al eerder geupload",
+  "generatedFile": "Automatisch gegenereerd bestand: wordt opnieuw gegenereerd bij herindiening",
   "confirmDelete": "Bevestig verwijderen",
   "fileLimitHeader": "Waarschuwing! Bestanden groter dan {{amount}} MB",
   "fileLimitDescription": "Bestanden van deze grootte kunnen wij helaas niet goed verwerken. Neem s.v.p. direct <0>contact met DANS</0> op.",
@@ -47,5 +48,6 @@
   "dateInvalid": "Ongeldige datum",
   "fileTooLarge": "Bestanden groter dan {{ size }} GB kunnen niet worden verwerkt door het doelrepository",
   "fileNoSize": "Kan geen bestanden van 0 bytes uploaden",
-  "fileForbiddenCharacters": "Bestandsnaam bevat tekens die niet zijn toegestaan: /:*?\"<>|;#"
+  "fileForbiddenCharacters": "Bestandsnaam bevat tekens die niet zijn toegestaan: /:*?\"<>|;#",
+  "termsMapped": "Terms mapped"
 }
