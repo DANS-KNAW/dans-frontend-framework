@@ -62,13 +62,6 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import { setFormAction } from "./userSlice";
 import { useAppDispatch } from "../redux/hooks";
 
-/*
- * Note TODO:
- * Resubmitting of (errored) forms does not work yet
- * It is partially implemented here and in Deposit.tsx,
- * but needs work on the API side
- */
-
 const depositStatus: DepositStatus = {
   empty: ["preparing"],
   processing: ["initial", "processing", "submitted", "finalizing", "progress"],
@@ -79,11 +72,9 @@ const depositStatus: DepositStatus = {
 export const UserSubmissions = ({ 
   depositSlug, 
   targetCredentials,
-  resubmit,
 }: { 
   depositSlug?: string;
   targetCredentials?: { repo: string; auth: string; authKey: string; }[];
-  resubmit?: boolean;
 }) => {
   const { t } = useTranslation("user");
   const siteTitle = useSiteTitle();
@@ -145,7 +136,7 @@ export const UserSubmissions = ({
             header={t("userSubmissionsDrafts")}
             depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
           />
-          {resubmit && resubmits.length > 0 && <SubmissionList
+          {import.meta.env.VITE_ALLOW_RESUBMIT && resubmits.length > 0 && <SubmissionList
             data={resubmits}
             type="resubmit"
             isLoading={isLoading}
@@ -158,7 +149,7 @@ export const UserSubmissions = ({
             isLoading={isLoading}
             header={t("userSubmissionsCompleted")}
             depositSlug={depositSlug !== undefined ? depositSlug : "deposit"}
-            resubmit={resubmit}
+            resubmit={import.meta.env.VITE_ALLOW_RESUBMIT}
           />
         </Grid>
       </Grid>
@@ -590,6 +581,12 @@ const ViewAction = ({
     setAnchorEl(null);
   };
   const open = Boolean(anchorEl);
+  const hasChildren = status.some(
+    (target) =>
+      target["deposited-identifiers"] &&
+      (target["deposit-status"] === "accepted" ||
+        target["deposit-status"] === "finish")
+  );
 
   return (
     <>
@@ -598,6 +595,7 @@ const ViewAction = ({
           icon={<PreviewIcon />}
           label={t("viewItem")}
           onClick={handleClick}
+          disabled={!hasChildren && legacy}
         />
       </Tooltip>
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
@@ -621,7 +619,7 @@ const ViewAction = ({
           </MenuItem>
         }
 
-        {/* Open submission on target site. TODO: mod API to always return a response.url key */}
+        {/* Open submission on target site */}
         {status.map(
           (target, i) =>
             target["deposited-identifiers"] &&

@@ -15,6 +15,7 @@
   "dataMessageContentLoad": "Vul het formulier verder in, en sla opnieuw op of submit.",
   "dataMessageHeaderView": "Je bekijkt een alleen-lezen versie van \"{{title}}\"",
   "dataMessageContentView": "Als je deze data wilt aanpassen, selecteer dan 'hersubmissie' vanuit je submissieovericht.",
+  "dataMessageContentViewNoResubmit": "Data kan niet aangepast worden in deze app.",
   "dataMessageHeaderSubmitted": "Metadata is verstuurd",
   "dataMessageContentSubmitted": "Je metadata en bestanden zijn verstuurd en worden verwerkt door de server.",
   "dataMessageHeader": "Ga verder met je metadata",
