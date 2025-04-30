@@ -16,8 +16,8 @@ const section: InitialSectionType = {
       },
       name: "interviewee",
       description: {
-        en: "Information about the person being interviewed. This data will not be public.",
-        nl: "Informatie over de persoon die wordt geïnterviewd. Deze data worden niet gepubliceerd.",
+        en: "Information about the person being interviewed. This data will not be public by default.",
+        nl: "Informatie over de persoon die wordt geïnterviewd. Deze data worden niet standaard gepubliceerd.",
       },
       fields: [
         {
@@ -136,8 +136,8 @@ const section: InitialSectionType = {
       name: "interviewer",
       repeatable: true,
       description: {
-        en: "Information about the person(s) taking the interview. This data will not be public.",
-        nl: "Informatie over de persoon die het interview afneemt. Deze data worden niet gepubliceerd.",
+        en: "Information about the person(s) taking the interview. This data will not be public by default.",
+        nl: "Informatie over de persoon die het interview afneemt. Deze data worden niet standaard gepubliceerd.",
       },
       fields: [
         {
@@ -256,8 +256,8 @@ const section: InitialSectionType = {
       name: "interpreter",
       repeatable: true,
       description: {
-        en: "Information about the person(s) translating during the interview. This data will not be public.",
-        nl: "Informatie over de persoon die tijdens het interview heeft getolkt. Deze data worden niet gepubliceerd.",
+        en: "Information about the person(s) translating during the interview. This data will not be public by default.",
+        nl: "Informatie over de persoon die tijdens het interview heeft getolkt. Deze data worden niet standaard gepubliceerd.",
       },
       fields: [
         {
@@ -366,8 +366,8 @@ const section: InitialSectionType = {
       name: "others",
       repeatable: true,
       description: {
-        en: "Information about other person(s) being present during the interview. This data will not be public.",
-        nl: "Informatie over andere aanwezigen bij het interview. Deze data worden niet gepubliceerd.",
+        en: "Information about other person(s) being present during the interview. This data will not be public by default.",
+        nl: "Informatie over andere aanwezigen bij het interview. Deze data worden niet standaard gepubliceerd.",
       },
       fields: [
         {
@@ -620,8 +620,8 @@ const section: InitialSectionType = {
       name: "transcript_human",
       repeatable: true,
       description: {
-        en: "In case of transcript by human. This data will not be public.",
-        nl: "Wanneer de transcriptie door een persoon is gedaan. Deze data worden niet gepubliceerd.",
+        en: "In case of transcript by human. This data will not be public by default.",
+        nl: "Wanneer de transcriptie door een persoon is gedaan. Deze data worden niet standaard gepubliceerd.",
       },
       fields: [
         {
