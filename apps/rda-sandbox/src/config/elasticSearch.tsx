@@ -25,7 +25,7 @@ const fieldConfig: Partial<RDTSearchUIProps> = {
 export const elasticConfig: EndpointProps[] = [
   {
     name: "RDA Catalogue",
-    url: import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT + "/rda",
+    url: import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT + "/rda-sandbox",
     fullTextFields: fieldConfig.fullTextFields,
     fullTextHighlight: fieldConfig.fullTextHighlight,
     resultBodyComponent: Rda2Result,
