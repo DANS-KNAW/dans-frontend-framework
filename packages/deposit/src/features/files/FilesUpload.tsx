@@ -141,6 +141,7 @@ const FilesUpload = () => {
         size: file.size,
         lastModified: file.lastModified,
         type: file.name.substring(file.name.lastIndexOf(".") + 1),
+        mimeType: file.type,
         location: "local" as FileLocation,
         url: URL.createObjectURL(file),
         private: false,
