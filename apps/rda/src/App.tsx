@@ -33,9 +33,13 @@ import {
 import { Freshdesk } from "@dans-framework/freshdesk";
 import SupportDrawer from "@dans-framework/support-drawer";
 import RDAAnnotator from "./pages/rda-annotator";
+import { useEmbedHandler } from "@dans-framework/utils";
 
 const App = () => {
   const { i18n } = useTranslation();
+  const { isEmbed } = useEmbedHandler();
+
+  console.log(isEmbed);
 
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
@@ -61,62 +65,62 @@ const App = () => {
   return (
     <AuthWrapper authProvider={authProvider}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
+        <Banner
+          text={{
+            en: "🚨This demo site is under active development—features may change or break unexpectedly.🚨",
+            nl: "🚨Deze demo-site is in actieve ontwikkeling - functies kunnen onverwacht veranderen of kapot gaan.🚨",
+          }}
+        />
         <FacetedSearchProvider config={elasticConfig}>
-          <Banner
-            text={{
-              en: "🚨This demo site is under active development—features may change or break unexpectedly.🚨",
-              nl: "🚨Deze demo-site is in actieve ontwikkeling - functies kunnen onverwacht veranderen of kapot gaan.🚨",
-            }}
-          />
-          <BrowserRouter>
-            {/* Need to pass along root i18n functions to the language bar */}
+          {/* Need to pass along root i18n functions to the language bar */}
+          {!isEmbed && (
             <LanguageBar
               languages={languages}
               changeLanguage={i18n.changeLanguage}
             />
-            <MenuBar pages={pages} logo={logo} />
-            {/* Suspense to make sure languages can load first */}
-            <Suspense
-              fallback={
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <Skeleton height={600} width={900} />
-                </Box>
-              }
-            >
-              <Routes>
-                <Route path="signin-callback" element={<SignInCallback />} />
-                <Route
-                  path="user-settings"
-                  element={
-                    <AuthRoute>
-                      <UserSettings target={form.targetCredentials} />
-                    </AuthRoute>
-                  }
-                />
-                <Route
-                  path="user-submissions"
-                  element={
-                    <AuthRoute>
-                      <UserSubmissions
-                        targetCredentials={form.targetCredentials}
-                      />
-                    </AuthRoute>
-                  }
-                />
-                {(pages as Page[]).map((page) => {
-                  return (
-                    <Route
-                      key={page.id}
-                      path={page.slug}
-                      element={createElementByTemplate(page)}
+          )}
+          <MenuBar pages={pages} logo={logo} embed={isEmbed} />
+          {/* Suspense to make sure languages can load first */}
+          <Suspense
+            fallback={
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Skeleton height={600} width={900} />
+              </Box>
+            }
+          >
+            <Routes>
+              <Route path="signin-callback" element={<SignInCallback />} />
+              <Route
+                path="user-settings"
+                element={
+                  <AuthRoute>
+                    <UserSettings target={form.targetCredentials} />
+                  </AuthRoute>
+                }
+              />
+              <Route
+                path="user-submissions"
+                element={
+                  <AuthRoute>
+                    <UserSubmissions
+                      targetCredentials={form.targetCredentials}
                     />
-                  );
-                })}
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
+                  </AuthRoute>
+                }
+              />
+              {(pages as Page[]).map((page) => {
+                return (
+                  <Route
+                    key={page.id}
+                    path={page.slug}
+                    element={createElementByTemplate(page)}
+                  />
+                );
+              })}
+            </Routes>
+          </Suspense>
         </FacetedSearchProvider>
-        <Footer {...footer} />
+        {!isEmbed && <Footer {...footer} />}
         <Freshdesk widgetId={80000010123} />
         <SupportDrawer
           supportMaterialEndpoint={import.meta.env.VITE_SUPPORT_DRAWER_CONFIG}
@@ -126,4 +130,12 @@ const App = () => {
   );
 };
 
-export default App;
+const RouterApp = () => {
+  return (
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  );
+};
+
+export default RouterApp;
