@@ -7,6 +7,7 @@ import { SortBy, SortDirection } from "../../enum";
 
 export interface ListFacetConfig extends BaseFacetConfig {
   size?: number;
+  cutoff?: number;
   sort?: ListFacetSort;
 }
 
