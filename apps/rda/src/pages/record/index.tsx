@@ -147,6 +147,7 @@ export function RdaRecord() {
                       target="_blank"
                       rel="noopener noreferrer"
                       underline="hover"
+                      variant="body2"
                       sx={{
                         display: "flex",
                         alignItems: "center",
