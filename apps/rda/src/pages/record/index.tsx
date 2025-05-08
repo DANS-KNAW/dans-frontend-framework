@@ -1,10 +1,11 @@
-import { Chip, Container } from "@mui/material";
+import { Chip, Container, Link } from "@mui/material";
 import { getCurrentEndpoint, type Result } from "@dans-framework/rdt-search-ui";
 import React from "react";
 import { useParams } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2";
+import orcid from "../../config/images/orcid.png";
 
 interface RdaRecord {
   card_url: string;
@@ -13,7 +14,9 @@ interface RdaRecord {
   dc_language: string;
   dc_type: string;
   individuals: {
-    fullname: string;
+    fullName: string;
+    identifier_type: string;
+    identifier: string;
   }[];
   page_url: string;
   pathways?: {
@@ -110,15 +113,76 @@ export function RdaRecord() {
           <Typography variant="h3">
             {record.title || <i>Untitled</i>}
           </Typography>
-
           <Typography gutterBottom>{record.dc_description || ""}</Typography>
-
           {record.fragment && (
             <>
               <Typography variant="h5">Fragment</Typography>
               <Typography gutterBottom>{record.fragment || ""}</Typography>
             </>
           )}
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 4fr",
+              marginBottom: "0.25rem",
+            }}
+          >
+            <Typography variant="body2" color="neutral.dark" pr={1}>
+              Individuals
+            </Typography>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "8px",
+              }}
+            >
+              {record.individuals?.length ? (
+                record.individuals.map((i) =>
+                  i.identifier_type === "ORCID" && i.identifier ? (
+                    <Link
+                      key={i.fullName}
+                      href={`https://orcid.org/${i.identifier}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      underline="hover"
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        color: "inherit",
+                      }}
+                    >
+                      {i.fullName}
+                      <img
+                        src={orcid}
+                        alt="ORCID"
+                        style={{
+                          width: "16px",
+                          height: "16px",
+                          marginLeft: "0.5rem",
+                          verticalAlign: "middle",
+                        }}
+                      />
+                    </Link>
+                  ) : (
+                    <Typography
+                      key={i.fullName}
+                      variant="body2"
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      {i.fullName}
+                    </Typography>
+                  )
+                )
+              ) : (
+                <Typography variant="body2">-</Typography>
+              )}
+            </div>
+          </div>
 
           <Metadata
             name="Pathways"
@@ -156,9 +220,7 @@ export function RdaRecord() {
             }
             options={{ turnicate: false }}
           />
-
           {/* <MetadataList record={record} /> */}
-
           <div style={{ margin: "2rem 0" }}>
             {record.page_url && (
               <a href={record.page_url} style={{ marginRight: "1rem" }}>
@@ -229,14 +291,18 @@ function Metadata({
 }
 
 export function MetadataList({ record }: { record: RdaRecord | Result }) {
-  const individuals =
-    record.individuals ? record.individuals.map((i: any) => i.fullName) : [];
-  const workflows =
-    record.workflows ? record.workflows.map((w: any) => w.WorkflowState) : [];
-  const rights =
-    record.rights ? record.rights.map((r: any) => r.description) : [];
-  const pathways =
-    record.pathways ? record.pathways.map((p: any) => p.pathway) : [];
+  const individuals = record.individuals
+    ? record.individuals.map((i: any) => i.fullName)
+    : [];
+  const workflows = record.workflows
+    ? record.workflows.map((w: any) => w.WorkflowState)
+    : [];
+  const rights = record.rights
+    ? record.rights.map((r: any) => r.description)
+    : [];
+  const pathways = record.pathways
+    ? record.pathways.map((p: any) => p.pathway)
+    : [];
 
   return (
     <div>
