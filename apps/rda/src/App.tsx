@@ -34,6 +34,7 @@ import { Freshdesk } from "@dans-framework/freshdesk";
 import SupportDrawer from "@dans-framework/support-drawer";
 import RDAAnnotator from "./pages/rda-annotator";
 import { useEmbedHandler } from "@dans-framework/utils";
+import { Link } from "@mui/material";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -120,6 +121,27 @@ const App = () => {
             </Routes>
           </Suspense>
         </FacetedSearchProvider>
+        {isEmbed && (
+          <Box
+            sx={{
+              position: "absolute",
+              backgroundColor: "white",
+              bottom: 6,
+              right: 25,
+              borderRadius: 1,
+            }}
+          >
+            <Link
+              href={window.location.href
+                .replace(/(\?|&)embed=true/, "")
+                .replace(/[\?&]$/, "")}
+              variant="body2"
+              sx={{ padding: 1 }}
+            >
+              RDA Knowledge Base
+            </Link>
+          </Box>
+        )}
         {!isEmbed && <Footer {...footer} />}
         <Freshdesk widgetId={80000010123} />
         <SupportDrawer
