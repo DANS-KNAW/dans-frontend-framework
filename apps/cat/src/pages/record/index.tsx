@@ -2,7 +2,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
 import { getCurrentEndpoint, type EndpointProps } from "@dans-framework/rdt-search-ui";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -39,8 +39,19 @@ export function SingleRecord({ onClose }: { onClose: () => void }) {
   const [record, setRecord] = useState<SingleRecord | null>(null);
   const endpoint = getCurrentEndpoint();
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  // Normalize URL on load
+  useEffect(() => {
+    if (id && !id.startsWith("pid_graph:")) {
+      const normalized = `pid_graph:${id}`;
+      navigate(`/identifier/${encodeURIComponent(normalized)}`, { replace: true });
+    }
+  }, [id, navigate]);
 
   useEffect(() => {
+    if (!id?.startsWith("pid_graph:")) return;
+
     const currentEndpointConfig: EndpointProps | undefined = elasticConfig.find((config) => config.url === endpoint);
     if (id) {
       fetch(

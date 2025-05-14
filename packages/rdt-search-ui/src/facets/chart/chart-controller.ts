@@ -11,6 +11,7 @@ import type { FacetsDataReducerAction } from "../../context/state/actions";
 
 import { addFilter } from "../../context/state/use-search/request-with-facets-creator";
 import { FacetController } from "../controller";
+import type { EChartsOption } from 'echarts';
 
 function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -28,7 +29,7 @@ export class ChartController extends FacetController<
     this.chartType = config.chartType || "pie"; // Default to pie chart
   }
   
-  setOptions() {
+  setOptions(): EChartsOption {
     return this.chartType === "pie"
     ? {
         tooltip: {},
@@ -51,6 +52,7 @@ export class ChartController extends FacetController<
             selectedMode: false,
           },
         }),
+        ...this.config.chartOptions,
       }
     : {
         tooltip: {},
@@ -74,6 +76,7 @@ export class ChartController extends FacetController<
           bottom: '3%',
           containLabel: true
         },
+        ...this.config.chartOptions,
       };
   }
 

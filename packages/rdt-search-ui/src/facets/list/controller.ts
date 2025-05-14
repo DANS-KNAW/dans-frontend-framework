@@ -191,7 +191,21 @@ export class ListFacetController extends FacetController<
     }
 
     const agg = {
-      ...addFilter(this.ID, { terms }, postFilters),
+      ...addFilter(this.ID, { 
+        terms,
+        ...(this.config.fieldLabel && {
+          aggs: {
+            original_value: {
+              top_hits: {
+                _source: { 
+                  includes: this.config.fieldLabel,
+                },
+                size: 1,
+              },
+            },
+          },
+        })
+      }, postFilters),
       ...addFilter(
         `${this.ID}-count`,
         {
@@ -218,10 +232,14 @@ export class ListFacetController extends FacetController<
       bucketsCount: buckets.length,
       total:
         response.aggregations[`${this.ID}-count`][`${this.ID}-count`].value,
-      values: buckets.map((b: Bucket) => ({
-        key: b.key.toString(),
-        count: b.doc_count,
-      })),
+      values: buckets.map((b: Bucket) => {
+        const extraLabel = b.original_value?.hits?.hits?.[0]?._source?.[`${this.config.fieldLabel}`];
+        return {
+          key: b.key.toString().trim(),
+          count: b.doc_count,
+          label: extraLabel ?? b.key.toString(),
+        }
+      }),
     };
   }
 }

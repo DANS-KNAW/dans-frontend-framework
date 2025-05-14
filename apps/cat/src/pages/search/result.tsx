@@ -24,6 +24,7 @@ export const gupriMap = (unique?: string, resolvable?: string, persistent?: stri
         <ToolTipItem title="Globally Unique:" value={unique} />
         <ToolTipItem title="Persistent:" value={persistent} />
         <ToolTipItem title="Resolvable:" value={resolvable} />
+        <Typography variant="body2" sx={{ pt: 1 }}>Our current GUPRi assessment evaluates the design and implementation of the identifier service, and not its performance.</Typography>
       </Box>
     }>
       <Stack direction="row" sx={{
@@ -48,8 +49,10 @@ export const gupriMap = (unique?: string, resolvable?: string, persistent?: stri
         <Typography sx={sx} color={
           persistent?.toLowerCase().includes('explicit') 
           ? 'success.main' 
-          : persistent?.toLowerCase().includes('implicit') && !persistent?.toLowerCase().includes('no') 
+          : persistent?.toLowerCase().includes('implicit') && persistent?.toLowerCase().includes('yes') 
           ? 'warning.main' 
+          : persistent?.toLowerCase().includes('implicit') && persistent?.toLowerCase().includes('no') 
+          ? 'error.main' 
           : 'neutral.dark'
         }>P</Typography>
         <Typography sx={sx} color={
@@ -57,6 +60,8 @@ export const gupriMap = (unique?: string, resolvable?: string, persistent?: stri
           ? 'success.main' 
           : resolvable?.toLowerCase() === 'indirect'
           ? 'warning.main' 
+          : resolvable?.toLowerCase().includes('not')
+          ? 'error.main' 
           : 'neutral.dark'
         }>R</Typography>
         <Typography sx={sx}>i</Typography>
