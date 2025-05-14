@@ -164,7 +164,7 @@ export const elasticConfig: EndpointProps[] = [
           id: "managers",
           field: "managers",
           title: "Managers",
-          groupByLabel: "label",
+          groupByLabel: "identifier",
           cols: 12,
           rows: 1,
           chartType: "bar",
