@@ -16,7 +16,7 @@ import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 import { UserMenu } from "@dans-framework/user-auth";
 import { useAuth } from "react-oidc-context";
-import { Typography } from "@mui/material";
+import { Tooltip, Typography } from "@mui/material";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
@@ -185,7 +185,17 @@ const TabBar = ({ pages }: { pages: Page[] }) => {
               page.inMenu &&
               page.menuTitle &&
               !page.restricted && (
-                <Tab key={i} value={(page.slug || page.link) as string} label={lookupLanguageString(page.menuTitle, i18n.language)} />
+                <Tab 
+                  key={i} 
+                  value={(page.slug || page.link) as string} 
+                  label={
+                    page.icon ?
+                    <Tooltip title={lookupLanguageString(page.menuTitle, i18n.language)}>
+                      <page.icon />
+                    </Tooltip> :
+                    lookupLanguageString(page.menuTitle, i18n.language)
+                  } 
+                />
               ),
           )}
         </Tabs>

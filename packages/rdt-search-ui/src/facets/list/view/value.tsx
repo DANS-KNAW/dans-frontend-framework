@@ -33,7 +33,7 @@ function ListFacetValueView({
     <div title={value.key} onClick={toggleFilter}>
       <Stack direction="row" mb={0.5} justifyContent="space-between" sx={style}>
         <Typography variant="body2">
-          {parse(keyFormatter(value.key, query))}
+          {parse(keyFormatter(value.label ?? value.key, query))}
         </Typography>
         <Typography variant="body2">{value.count}</Typography>
       </Stack>

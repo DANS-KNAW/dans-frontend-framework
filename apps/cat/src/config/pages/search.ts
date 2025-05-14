@@ -1,4 +1,5 @@
 import type { Page } from "@dans-framework/pages";
+import ListIcon from '@mui/icons-material/List';
 
 const page: Page = {
   id: "search",
@@ -13,6 +14,7 @@ const page: Page = {
     en: "Search",
     nl: "Zoeken",
   },
+  icon: ListIcon,
 };
 
 export default page;

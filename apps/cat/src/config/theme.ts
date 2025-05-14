@@ -21,10 +21,13 @@ const customTheme = createTheme({
       secondary: "#6B7280", // Muted Gray
     },
     error: {
-      main: "#D97777", // Soft Brick Red
+      main: "#db4141", // Soft Brick Red
     },
     success: {
-      main: "#5B9279", // Desaturated Green
+      main: "#6fb460", // Desaturated Green
+    },
+    warning: {
+      main: "#efa51e", // Soft Brick Red
     },
   },
   typography: {

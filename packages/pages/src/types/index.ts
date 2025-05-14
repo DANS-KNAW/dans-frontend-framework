@@ -1,4 +1,5 @@
 import type { LanguageStrings } from "@dans-framework/utils";
+import type { FunctionComponent } from 'react';
 
 interface PageAction {
   link: string;
@@ -29,4 +30,5 @@ export interface Page {
   restricted?: boolean; // display only when logged in
   link?: string; // for external links
   newTab?: boolean; // for external links
+  icon?: FunctionComponent;
 }

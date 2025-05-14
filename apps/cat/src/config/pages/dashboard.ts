@@ -1,4 +1,5 @@
 import type { Page } from "@dans-framework/pages";
+import DashboardIcon from '@mui/icons-material/Dashboard';
 
 const page: Page = {
   id: "dashboard",
@@ -10,6 +11,7 @@ const page: Page = {
     en: "Dashboard",
     nl: "Dashboard",
   },
+  icon: DashboardIcon,
 };
 
 export default page;

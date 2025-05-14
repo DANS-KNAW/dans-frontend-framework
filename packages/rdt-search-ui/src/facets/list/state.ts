@@ -9,6 +9,7 @@ export interface ListFacetConfig extends BaseFacetConfig {
   size?: number;
   cutoff?: number;
   sort?: ListFacetSort;
+  fieldLabel?: string;
 }
 
 export interface ListFacetState extends BaseFacetState {
@@ -23,6 +24,7 @@ export interface ListFacetState extends BaseFacetState {
 export interface KeyCount {
   key: string;
   count: number;
+  label?: string;
 }
 
 export interface ListFacetValues {

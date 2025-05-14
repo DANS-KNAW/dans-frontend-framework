@@ -17,3 +17,7 @@ export {
   FacetedSearchProvider,
   getCurrentEndpoint,
 } from "../src/context/Provider";
+export {
+  SortBy,
+  SortDirection,
+} from "../src/enum";
