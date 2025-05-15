@@ -1,11 +1,11 @@
 import type { ResultBodyProps } from "@dans-framework/rdt-search-ui";
 import { useState } from "react";
-import { MetadataList } from "../record";
 import parse from "html-react-parser";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { MetadataList } from "../record";
 
 /* Custom component for search results */
 
@@ -47,9 +47,9 @@ function ReadMore({ item }: { item: ResultBodyProps["result"] }) {
     <>
       <Typography mb={2}>
         {`${visibleText}${
-          visibleText.length < description.length && !active ?
-            "..."
-          : hiddenText
+          visibleText.length < description.length && !active
+            ? "..."
+            : hiddenText
         }`}
         <Button
           size="small"
