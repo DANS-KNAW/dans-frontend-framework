@@ -8,7 +8,7 @@ const page: Page = {
   },
   slug: "search",
   template: "search",
-  inMenu: true,
+  inMenu: false,
   menuTitle: {
     en: "Search",
     nl: "Zoeken",
