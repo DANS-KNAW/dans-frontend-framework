@@ -30,6 +30,7 @@ export const elasticConfig: EndpointProps[] = [
     fullTextHighlight: fieldConfig.fullTextHighlight,
     resultBodyComponent: Rda2Result,
     onClickResultPath: "record",
+    dashboardSearchIconToggle: true,
     dashboard: [
       <ListFacet
         config={{
