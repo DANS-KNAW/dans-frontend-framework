@@ -235,8 +235,6 @@ export function RdaRecord() {
 
   if (record == null) return;
 
-  console.log(record);
-
   const items = [
     {
       label: "Contributors",
