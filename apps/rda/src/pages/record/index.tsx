@@ -149,14 +149,9 @@ const PlainContributor = ({ person }: { person: Individual }) => (
 );
 
 const AccessUrls = ({
-  pid_lod,
-  pid_lod_type,
   uri,
   uri2,
 }: {
-  pid_lod: string;
-
-  pid_lod_type: string;
   uri: string;
   backupUri: string;
   uri2: string;
@@ -195,19 +190,6 @@ const AccessUrls = ({
 
   return (
     <Stack direction="row" spacing={1} flexWrap="wrap">
-      {pid_lod && pid_lod_type && (
-        <Button
-          variant="outlined"
-          size="small"
-          component="a"
-          href={pid_lod}
-          target="_blank"
-          rel="noopener"
-        >
-          {pid_lod_type}
-        </Button>
-      )}
-
       {uri && (
         <Button
           variant="outlined"
@@ -343,12 +325,47 @@ export function RdaRecord() {
         : [],
     },
     {
+      label: "DOI",
+      value:
+        record.pid_lod_type === "DOI"
+          ? [
+              <Link
+                href={record.pid_lod}
+                target="_blank"
+                rel="noopener noreferrer"
+                underline="hover"
+                variant="body2"
+                sx={{ color: "#374151", display: "flex", alignItems: "top" }}
+              >
+                {record.pid_lod}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  style={{
+                    width: 16,
+                    height: 16,
+                    marginLeft: "0.25rem",
+                    color: "#4F8E31",
+                  }}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                  />
+                </svg>
+              </Link>,
+            ]
+          : [],
+    },
+    {
       label: "Access URLs",
       value: [
         <AccessUrls
           key="access-urls"
-          pid_lod={record.pid_lod}
-          pid_lod_type={record.pid_lod_type}
           uri={record.uri}
           backupUri={record.backupUri}
           uri2={record.uri2}
