@@ -38,11 +38,12 @@ import type { Result } from "./context/state/use-search/types";
 import { motion, AnimatePresence } from "framer-motion";
 import { FacetedSearchContext } from "./context/Provider";
 import LZString from "lz-string";
+import IconViewToggle from "./icon-view-toggle";
 
 export function FacetedSearch(props: ExternalSearchProps) {
   const [children, setChildren] = React.useState<React.ReactNode>(undefined);
   const [searchProps, setSearchProps] = React.useState<SearchProps | undefined>(
-    undefined,
+    undefined
   );
 
   React.useEffect(() => {
@@ -51,14 +52,11 @@ export function FacetedSearch(props: ExternalSearchProps) {
 
     const _children =
       // Make sure it is an element and not a string, number, ...
-      (
-        isValidElement(props.children) &&
-        // If children is a fragment, get the children of the fragment
-        props.children.type.toString() ===
-          Symbol.for("react.fragment").toString()
-      ) ?
-        props.children.props.children
-      : props.children;
+      isValidElement(props.children) &&
+      // If children is a fragment, get the children of the fragment
+      props.children.type.toString() === Symbol.for("react.fragment").toString()
+        ? props.children.props.children
+        : props.children;
 
     setChildren(_children);
   }, [props.children, props.url]);
@@ -88,7 +86,7 @@ export function FacetedSearch(props: ExternalSearchProps) {
       const value = (sp.style as any)[key];
       document.documentElement.style.setProperty(
         `--rdt-${camelCaseToKebabCase(key)}`,
-        value,
+        value
       );
     });
 
@@ -117,7 +115,7 @@ interface AppLoaderProps {
 function AppLoader({ children, controllers, searchProps }: AppLoaderProps) {
   // Check to see if there's a search query present in the url
   const queryParams = Object.fromEntries(
-    new URLSearchParams(window.location.search).entries(),
+    new URLSearchParams(window.location.search).entries()
   );
   const searchParams =
     queryParams.search &&
@@ -126,13 +124,13 @@ function AppLoader({ children, controllers, searchProps }: AppLoaderProps) {
   const storageState = deserializeObject(
     searchParams ||
       (sessionStorage.getItem(
-        `rdt-search-state-${window.location.origin}-${searchProps.url}`,
-      ) as string),
+        `rdt-search-state-${window.location.origin}-${searchProps.url}`
+      ) as string)
   );
   const [state, dispatch] = React.useReducer(
     searchStateReducer(controllers),
     // set storageState if available
-    { ...intialSearchState, ...storageState },
+    { ...intialSearchState, ...storageState }
   );
 
   useSearch({
@@ -170,7 +168,7 @@ function AppLoader({ children, controllers, searchProps }: AppLoaderProps) {
       serializeObject({
         facetFilters: state.facetFilters,
         query: state.query,
-      }),
+      })
     );
   }, [state.facetFilters, state.query]);
 
@@ -189,31 +187,30 @@ function AppLoader({ children, controllers, searchProps }: AppLoaderProps) {
               }}
             />
           )}
-          {
-            state.error ?
-              <Stack
-                justifyContent="center"
-                alignItems="center"
-                sx={{ height: "24rem" }}
-              >
-                <Stack>
-                  <Typography variant="h3">{t("error.header")}</Typography>
-                  <Typography paragraph>
-                    {t("error.p1", { message: state.error.message })}
-                  </Typography>
-                  <Typography paragraph>{t("error.p2")}</Typography>
-                </Stack>
+          {state.error ? (
+            <Stack
+              justifyContent="center"
+              alignItems="center"
+              sx={{ height: "24rem" }}
+            >
+              <Stack>
+                <Typography variant="h3">{t("error.header")}</Typography>
+                <Typography paragraph>
+                  {t("error.p1", { message: state.error.message })}
+                </Typography>
+                <Typography paragraph>{t("error.p2")}</Typography>
               </Stack>
-              // no error, show components
-            : <Component
-                controllers={controllers}
-                searchProps={searchProps}
-                searchState={state}
-              >
-                {children}
-              </Component>
-
-          }
+            </Stack>
+          ) : (
+            // no error, show components
+            <Component
+              controllers={controllers}
+              searchProps={searchProps}
+              searchState={state}
+            >
+              {children}
+            </Component>
+          )}
         </SearchStateContext.Provider>
       </SearchStateDispatchContext.Provider>
     </FacetControllersContext.Provider>
@@ -225,7 +222,7 @@ function AppLoader({ children, controllers, searchProps }: AppLoaderProps) {
  */
 function useControllers(children: React.ReactNode): FacetControllers {
   const [controllers, setControllers] = React.useState<FacetControllers>(
-    new Map(),
+    new Map()
   );
 
   React.useEffect(() => {
@@ -234,11 +231,11 @@ function useControllers(children: React.ReactNode): FacetControllers {
     // Initialise the facet controllers
     const facets = Children.map(
       children,
-      (child: any) => new child.type.controller(child.props.config),
+      (child: any) => new child.type.controller(child.props.config)
     );
 
     setControllers(
-      new Map(facets.map((f: FacetController<any, any, any>) => [f.ID, f])),
+      new Map(facets.map((f: FacetController<any, any, any>) => [f.ID, f]))
     );
   }, [children, controllers]);
 
@@ -265,7 +262,8 @@ export const FacetedWrapper = ({
   resultRoute?: string;
   children?: ReactNode;
 }) => {
-  const { config, endpoint, fixedFacets } = React.useContext(FacetedSearchContext);
+  const { config, endpoint, fixedFacets } =
+    React.useContext(FacetedSearchContext);
   const navigate = useNavigate();
   const currentConfig = config.find((e) => e.url === endpoint) as EndpointProps;
 
@@ -274,13 +272,18 @@ export const FacetedWrapper = ({
   return (
     <I18nextProvider i18n={i18nProvider}>
       <Container sx={{ pt: 4 }}>
+        {dashRoute &&
+          resultRoute &&
+          currentConfig.dashboardSearchIconToggle && (
+            <IconViewToggle dashRoute={dashRoute} resultRoute={resultRoute} />
+          )}
         {config.length > 1 && (
           // show selector if there's more than 1 endpoint
           <EndpointSelector />
         )}
-        {currentConfig.fixedFacets && currentConfig.fixedFacets.length > 0 &&
+        {currentConfig.fixedFacets && currentConfig.fixedFacets.length > 0 && (
           <FixedFacetSelector initialFixedFacets={currentConfig.fixedFacets} />
-        }
+        )}
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={currentConfig.url}
@@ -293,7 +296,11 @@ export const FacetedWrapper = ({
               fullTextFields={currentConfig.fullTextFields}
               fullTextHighlight={currentConfig.fullTextHighlight}
               onClickResult={(result: Result) =>
-                navigate(`/${currentConfig.onClickResultPath}/${encodeURIComponent(result.id)}`)
+                navigate(
+                  `/${currentConfig.onClickResultPath}/${encodeURIComponent(
+                    result.id
+                  )}`
+                )
               }
               ResultBodyComponent={currentConfig.resultBodyComponent}
               url={currentConfig.url}
@@ -306,7 +313,10 @@ export const FacetedWrapper = ({
               fixedFacets={fixedFacets}
             >
               {currentConfig?.dashboard.map((node, i) =>
-                React.cloneElement(node, { key: i, customColumns: currentConfig.customColumns }),
+                React.cloneElement(node, {
+                  key: i,
+                  customColumns: currentConfig.customColumns,
+                })
               )}
             </FacetedSearch>
           </motion.div>

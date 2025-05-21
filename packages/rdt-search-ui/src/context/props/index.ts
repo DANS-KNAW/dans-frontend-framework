@@ -31,7 +31,7 @@ interface OptionalWithDefaultsSearchProps {
   excludeResultFields?: string[];
   onClickResult?: (
     result: any,
-    ev: React.MouseEvent<HTMLButtonElement>,
+    ev: React.MouseEvent<HTMLButtonElement>
   ) => void;
   resultFields?: string[];
   resultBodyProps?: Record<string, any>;
@@ -98,6 +98,7 @@ export interface EndpointProps extends EndpointBaseProps {
   resultBodyComponent: React.FC<ResultBodyProps>;
   fixedFacets?: FixedFacetsProps[];
   customColumns?: number;
+  dashboardSearchIconToggle?: boolean;
 }
 
 /**
