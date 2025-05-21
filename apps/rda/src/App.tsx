@@ -40,8 +40,6 @@ const App = () => {
   const { i18n } = useTranslation();
   const { isEmbed } = useEmbedHandler();
 
-  console.log(isEmbed);
-
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
