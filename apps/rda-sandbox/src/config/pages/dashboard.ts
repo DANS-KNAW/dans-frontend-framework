@@ -7,8 +7,8 @@ const page: Page = {
   template: "dashboard",
   inMenu: true,
   menuTitle: {
-    en: "Dashboard/List",
-    nl: "Dashboard/Lijst",
+    en: "Discovery",
+    nl: "Ontdekken",
   },
 };
 
