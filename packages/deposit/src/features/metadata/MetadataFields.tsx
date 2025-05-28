@@ -30,6 +30,7 @@ import {
   LanguagesField,
   BiodiversityField,
   UnSustainableDevelopmentGoalsField,
+  WikidataField
 } from "./fields/AutocompleteAPIField";
 import AutocompleteField from "./fields/AutocompleteField";
 import TextField from "./fields/TextField";
@@ -120,6 +121,8 @@ const SingleField = memo(({ field, groupName, groupIndex, sx }: SingleFieldProps
               return <BiodiversityField {...(commonProps as CommonProps<AutocompleteFieldType>)} variant="scientific" />;
             case "un_sustainable_development_goals":
               return <UnSustainableDevelopmentGoalsField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
+            case "wikidata":
+              return <WikidataField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
             default:
               return <AutocompleteField {...(commonProps as CommonProps<AutocompleteFieldType>)} />;
           }

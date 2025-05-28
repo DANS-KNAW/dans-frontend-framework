@@ -19,6 +19,7 @@ import { maptilerApi } from "../features/metadata/api/maptiler";
 import { rdaApi } from "../features/metadata/api/rdaApi";
 import { wmsApi } from "../features/metadata/api/wms";
 import { biodiversityApi } from "../features/metadata/api/biodiversity";
+import { wikidataApi } from "../features/metadata/api/wikidata";
 import { validateKeyApi, userApi } from "@dans-framework/user-auth";
 import { unsdgApi } from "../features/metadata/api/unsdg";
 
@@ -44,6 +45,7 @@ export const store = configureStore({
     [wmsApi.reducerPath]: wmsApi.reducer,
     [biodiversityApi.reducerPath]: biodiversityApi.reducer,
     [unsdgApi.reducerPath]: unsdgApi.reducer,
+    [wikidataApi.reducerPath]: wikidataApi.reducer,
     submit: submitReducer,
     deposit: depositReducer,
   },
@@ -67,6 +69,7 @@ export const store = configureStore({
       .concat(wmsApi.middleware)
       .concat(biodiversityApi.middleware)
       .concat(unsdgApi.middleware)
+      .concat(wikidataApi.middleware)
       .concat(errorLogger),
 });
 
