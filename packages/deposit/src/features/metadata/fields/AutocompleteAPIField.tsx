@@ -33,6 +33,7 @@ import { useFetchLicencesQuery } from "../api/licences";
 import { useFetchSshLicencesQuery } from "../api/sshLicences";
 import { useFetchLanguagesQuery } from "../api/languages";
 import { useFetchSpeciesQuery } from "../api/biodiversity";
+import { useFetchWikidataQuery } from "../api/wikidata";
 import {
   useFetchGorcQuery,
   useFetchRdaWorkingGroupQuery,
@@ -401,6 +402,30 @@ export const UnSustainableDevelopmentGoalsField = ({ field, groupName, groupInde
     />
   );
 }
+
+export const WikidataField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
+  const [inputValue, setInputValue] = useState<string>("");
+  const debouncedInputValue = useDebounce(inputValue, 500)[0];
+  // Fetch data on input change
+  const { data, isFetching, isLoading } =
+    useFetchWikidataQuery<QueryReturnType>(debouncedInputValue, {
+      skip: debouncedInputValue === "",
+    });
+
+  return (
+    <AutocompleteAPIField
+      field={field}
+      groupName={groupName}
+      groupIndex={groupIndex}
+      inputValue={inputValue}
+      setInputValue={setInputValue}
+      debouncedInputValue={debouncedInputValue}
+      data={data}
+      isLoading={isLoading}
+      isFetching={isFetching}
+    />
+  );
+};
 
 export const MultiApiField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
   const dispatch = useAppDispatch();

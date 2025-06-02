@@ -181,3 +181,13 @@ export interface UnsdgResponse {
   description: string;
   uri: string;
 }
+
+export interface WikidataResponse {
+  search: {
+    id: string;
+    label: string;
+    description: string;
+    concepturi: string;
+  }[];
+  "search-continue": number;
+}
