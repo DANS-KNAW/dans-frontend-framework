@@ -13,7 +13,7 @@ export const wikidataApi = createApi({
     fetchWikidata: build.query({
       query: (content) => {
         return {
-          url: `api.php?action=wbsearchentities&format=json&type=item&language=en&search=${content}`
+          url: `api.php?action=wbsearchentities&format=json&type=item&language=en&origin=*&search=${content}`,
         };
       },
       transformResponse: (response: WikidataResponse, _meta, arg) => {

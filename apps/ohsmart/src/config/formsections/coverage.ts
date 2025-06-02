@@ -53,8 +53,8 @@ const section: InitialSectionType = {
       noIndicator: true,
       repeatable: true,
       description: {
-        en: "Enter keywords that cannot be found in Getty AAT.",
-        nl: "Voer trefwoorden in die niet in Getty AAT te vinden zijn.",
+        en: "Enter keywords that cannot be found in Getty AAT and Wikidata. For more than one keyword, add additional input fields by clicking the plus icon.",
+        nl: "Voer trefwoorden in die niet in Getty AAT en Wikidata te vinden zijn. Voor meer dan één trefwoord, voeg extra invoervelden toe door op het plusicoon te klikken.",
       },
     },
     {
