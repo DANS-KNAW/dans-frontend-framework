@@ -18,10 +18,10 @@ export const wikidataApi = createApi({
       },
       transformResponse: (response: WikidataResponse, _meta, arg) => {
         // Return an empty array when no results, which is what the Autocomplete field expects
-        return response["search-continue"] > 0 ?
+        return response.search.length > 0 ?
             {
               arg: arg,
-              response: response["search"].map((item) => ({
+              response: response.search.map((item) => ({
                 label: item.label,
                 value: item.concepturi,
                 extraLabel: "Description",
