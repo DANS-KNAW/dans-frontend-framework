@@ -178,7 +178,7 @@ export const DateRangeField = ({
 
   // Initial load with an existing value, we need to check for mismatch between range and fieldValue
   useEffect(() => {
-    if ( (fieldValue.value[0] && !range[0]) || (fieldValue.value[1] && !range[1]) ) {
+    if ( (fieldValue.value?.[0] && !range[0]) || (fieldValue.value?.[1] && !range[1]) ) {
       setRange(fieldValue.value);
     }
   }, [fieldValue.value, range]);
