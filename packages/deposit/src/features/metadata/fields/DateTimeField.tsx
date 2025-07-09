@@ -159,10 +159,8 @@ export const DateRangeField = ({
   groupIndex,
 }: DateRangeFieldProps) => {
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  const fieldFormat = fieldValue.format || field.format;  // Can be variable, set by user
   const [range, setRange] = useState<(string | null)[]>(fieldValue.value || field.value || [null, null]);
   const [isDirty, setIsDirty] = useState(false); // Track if user interacted
-  const [format, setFormat] = useState<string>(fieldFormat);
   const dispatch = useAppDispatch();
 
   const setStart = (dateString: string) => {
@@ -175,21 +173,13 @@ export const DateRangeField = ({
     setIsDirty(true);
   };
 
-  // reset when format is changed
-  useEffect(() => {
-    if (format !== fieldFormat) {
-      setRange(["", ""]);
-      setFormat(fieldFormat);
-    }
-  }, [fieldFormat]);
-
   // On first async value load: update only if user hasn't typed yet
   useEffect(() => {
     const hasExternalValue = fieldValue.value?.some((v: string | null) => v !== null && v !== "");
     if (!isDirty && hasExternalValue) {
       setRange(fieldValue.value);
     }
-  }, [fieldValue.value, isDirty, fieldFormat]);
+  }, [fieldValue.value, isDirty]);
 
   // Dispatch form action when range is changed by user. Don't dispatch when range is still empty
   useEffect(() => {
@@ -210,6 +200,7 @@ export const DateRangeField = ({
         field={field}
         groupName={groupName}
         groupIndex={groupIndex}
+        setRange={setRange}
       />
 
       <RangeFieldWrapper
@@ -364,10 +355,12 @@ const DateTypeWrapper = ({
   field,
   groupName,
   groupIndex,
+  setRange
 }: {
   field: DateFieldType | DateRangeFieldType;
   groupName?: string;
   groupIndex?: number;
+  setRange?: (v: string[]) => void;
 }) => {
   const formDisabled = useAppSelector(getFormDisabled);
   const dispatch = useAppDispatch();
@@ -389,6 +382,16 @@ const DateTypeWrapper = ({
                 ...(groupIndex !== undefined && { groupIndex: groupIndex }),
               }),
             );
+            // reset field value
+            dispatch(
+              setField({
+                field: field,
+                value: ["", ""],
+                ...(groupName !== undefined && { groupName: groupName }),
+                ...(groupIndex !== undefined && { groupIndex: groupIndex }),
+              }),
+            );
+            setRange && setRange(["", ""]); // reset range if applicable
           }}
           value={fieldValue.format || field.format}
           disabled={formDisabled}
