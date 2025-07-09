@@ -153,41 +153,47 @@ export const DateTimeField = ({
 // Date range field, allows user to select start and end date
 // Always checks if end date is later than start date
 // End date can be optional
-
 export const DateRangeField = ({
   field,
   groupName,
   groupIndex,
 }: DateRangeFieldProps) => {
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  // can be variable, set by user
-  const fieldFormat = fieldValue.format || field.format;
-  const [range, setRange] = useState<(string | null)[]>(
-    fieldValue.value || field.value || [null, null],
-  );
+  const fieldFormat = fieldValue.format || field.format;  // Can be variable, set by user
+  const [range, setRange] = useState<(string | null)[]>(fieldValue.value || field.value || [null, null]);
+  const [isDirty, setIsDirty] = useState(false); // Track if user interacted
   const [format, setFormat] = useState<string>(fieldFormat);
   const dispatch = useAppDispatch();
 
   const setStart = (dateString: string) => {
     setRange([dateString, range[1]]);
+    setIsDirty(true);
   };
 
   const setEnd = (dateString: string) => {
     setRange([range[0], dateString]);
+    setIsDirty(true);
   };
 
-  // Initial load with an existing value, we need to check for mismatch between range and fieldValue
+  // reset when format is changed
   useEffect(() => {
-    if ( (fieldValue.value?.[0] && !range[0]) || (fieldValue.value?.[1] && !range[1]) ) {
+    if (format !== fieldFormat) {
+      setRange(["", ""]);
+      setFormat(fieldFormat);
+    }
+  }, [fieldFormat]);
+
+  // On first async value load: update only if user hasn't typed yet
+  useEffect(() => {
+    const hasExternalValue = fieldValue.value?.some((v: string | null) => v !== null && v !== "");
+    if (!isDirty && hasExternalValue) {
       setRange(fieldValue.value);
     }
-  }, [fieldValue.value, range]);
+  }, [fieldValue.value, isDirty, fieldFormat]);
 
-  // Dispatch form action when range is changed
-  // Don't dispatch when range is still null, to keep initial
-  // 'touched' status of field
+  // Dispatch form action when range is changed. Don't dispatch when range is still empty
   useEffect(() => {
-    !range.every((el) => el === null) &&
+    range.some((el) => el !== null && el !== '') &&
       dispatch(
         setField({
           field: field,
@@ -197,14 +203,6 @@ export const DateRangeField = ({
         }),
       );
   }, [range]);
-
-  // and reset when format is changed
-  useEffect(() => {
-    if (format !== fieldFormat) {
-      setRange(["", ""]);
-      setFormat(fieldFormat);
-    }
-  }, [fieldFormat]);
 
   return (
     <Stack direction="row" alignItems="start">

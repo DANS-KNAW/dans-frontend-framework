@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, /*useRef*/ } from "react";
 import Container from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -62,7 +62,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const dispatch = useAppDispatch();
   const auth = useAuth();
   const sessionId = useAppSelector(getSessionId);
-  const lastProcessedId = useRef<string | null>(null);
+  // const lastProcessedId = useRef<string | null>(null);
   const openTab = useAppSelector(getOpenTab);
   const { t, i18n } = useTranslation("generic");
   const siteTitle = useSiteTitle();
@@ -103,11 +103,16 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   useEffect(() => {
     if (!formAction?.id || !serverFormData?.md) return; // Ensure data is available
     // If formAction.id is the same as the last processed one, don't reinitialize
-    if (lastProcessedId.current === formAction.id && formAction.action !== "copy") {
+    // Changed to use sessionId instead of lastProcessedId.current, to prevent reloading old values when rendering form again (in line with editing an unsaved form).
+    // TODO: some fine tuning for user experience:
+    // Ideally, we should add another state (like load, copy we have now) to be able to track unsaved edits in a loaded form, to give feedback to the user.
+    // Right now, when a user is editing a saved form and does not save, but goes to submission overview and clicks edit on that same form, the form does not reload the data again.
+    // Maybe it should? But it should not reload when just switching between pages.
+    if ( /*lastProcessedId.current*/ sessionId === formAction.id && formAction.action !== "copy") {
       return;
     }
     // Update the last processed ID (but allow copy to regenerate new UUID)
-    lastProcessedId.current = formAction.id;
+    // lastProcessedId.current = formAction.id;
     // Reset states before loading new data
     dispatch(resetMetadataSubmitStatus());
     dispatch(resetFilesSubmitStatus());
