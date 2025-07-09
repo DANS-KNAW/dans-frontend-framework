@@ -191,9 +191,9 @@ export const DateRangeField = ({
     }
   }, [fieldValue.value, isDirty, fieldFormat]);
 
-  // Dispatch form action when range is changed. Don't dispatch when range is still empty
+  // Dispatch form action when range is changed by user. Don't dispatch when range is still empty
   useEffect(() => {
-    range.some((el) => el !== null && el !== '') &&
+    range.some((el) => el !== null && el !== '') && isDirty &&
       dispatch(
         setField({
           field: field,
@@ -202,7 +202,7 @@ export const DateRangeField = ({
           ...(groupIndex !== undefined && { groupIndex: groupIndex }),
         }),
       );
-  }, [range]);
+  }, [range, isDirty]);
 
   return (
     <Stack direction="row" alignItems="start">
