@@ -28,6 +28,7 @@ import {
   resetFilesSubmitStatus,
   resetMetadataSubmitStatus,
   getMetadataSubmitStatus,
+  getFilesSubmitStatus,
 } from "../features/submit/submitSlice";
 import { getFiles, resetFiles, addFiles } from "../features/files/filesSlice";
 import { StatusIcon } from "../features/generic/Icons";
@@ -362,6 +363,21 @@ const ActionMessage = ({
   });
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const form = useAppSelector(getForm);
+  const filesSubmitStatus = useAppSelector(getFilesSubmitStatus).filter(
+    (f) => f.id !== "",
+  );
+  // Check for file statuses
+  const fileStatusArray = [...new Set(filesSubmitStatus.map((f) => f.status))];
+  const fileStatus =
+    fileStatusArray.indexOf("error") !== -1 ? "error"
+    : (
+      fileStatusArray.indexOf("submitting") !== -1 ||
+      fileStatusArray.indexOf("queued") !== -1
+    ) ?
+      "submitting"
+    : fileStatusArray.indexOf("success") !== -1 ? "success"
+    : "";
+
 
   return (
     <Collapse in={dataMessage}>
@@ -382,8 +398,12 @@ const ActionMessage = ({
         }}
       >
         <AlertTitle>
-          {metadataSubmitStatus === "submitted" ?
+          {metadataSubmitStatus === "submitted" && (fileStatus === 'success' || !fileStatus) ?
             t("dataMessageHeaderSubmitted")
+          : metadataSubmitStatus === "submitted" && fileStatus === 'submitting' ?
+            t("dataMessageHeaderSubmittedFilesPending")
+          : metadataSubmitStatus === "submitted" && fileStatus === 'error' ?
+            t("dataMessageHeaderSubmittedFilesError")
           : formAction.action === "resubmit" ?
             t("dataMessageHeaderResubmit", {
               title:  data?.title || t("untitled"),
@@ -403,8 +423,12 @@ const ActionMessage = ({
           : t("dataMessageHeader")}
         </AlertTitle>
         <Typography mb={1}>
-          {metadataSubmitStatus === "submitted" ?
+          {metadataSubmitStatus === "submitted" && (fileStatus === 'success' || !fileStatus) ?
             t("dataMessageContentSubmitted")
+          : metadataSubmitStatus === "submitted" && fileStatus === 'submitting' ?
+            t("dataMessageContentSubmittedFilesPending")
+          : metadataSubmitStatus === "submitted" && fileStatus === 'error' ?
+            t("dataMessageContentSubmittedFilesError")
           : formAction.action === "resubmit" ?
             t("dataMessageContentResubmit")
           : formAction.action === "copy" ?
@@ -433,6 +457,7 @@ const ActionMessage = ({
               setDataMessage(false);
               clearFormActions();
             }}
+            disabled={fileStatus === 'submitting'}
             color="warning"
           >
             {t("dataResetButton")}
