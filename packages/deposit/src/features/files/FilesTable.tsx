@@ -264,7 +264,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
         }}
       >
         <TableCell sx={{ p: 0, pl: 1, borderWidth: fileStatus ? 0 : 1 }}>
-          {!(file.state && file.state === "generated") && 
+          {!(file.state && file.state === "generated") && !rowDisabled &&
             <IconButton
               color="primary"
               size="small"
