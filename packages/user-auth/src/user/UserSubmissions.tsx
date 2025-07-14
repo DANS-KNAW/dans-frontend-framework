@@ -332,7 +332,10 @@ const SubmissionList = ({
         headerName: type === "published" ? t("submittedOn") : t("savedOn"),
         width: 200,
         type: "dateTime",
-        valueGetter: (params) => moment.utc(params.value).toDate(),
+        valueGetter: (params) => {
+          if (!params.value) return null;
+          return moment.utc(params.value, "YYYY-MM-DD HH:mm:ss").toDate();
+        },
         renderCell: (params) =>
           moment(params.value).local().format("D-M-Y - HH:mm"),
       },
