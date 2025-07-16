@@ -59,5 +59,6 @@
 	"viewItemTarget": "On {{name}}",
 	"deleteSuccess": "Dataset succesfully deleted from server",
 	"remoteChanges": "This dataset has been modified on the target server. Resubmitting this dataset will overwrite these changes. Viewing or copying this dataset in this app will not reflect the changes on the server.",
+	"remoteDeleted": "This dataset has been deleted on (one of) the target server(s).",
 	"legacyForm": "This dataset has been submitted using an old version of this app. Editing, viewing or copying this dataset is not supported."
 }

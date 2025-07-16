@@ -213,7 +213,7 @@ const SubmissionList = ({
                     );
                     navigate(`/${depositSlug}`);
                   }}
-                  disabled={params.processing || params.row.legacy}
+                  disabled={params.processing || params.row.legacy || params.row.remoteDeleted}
                 />
               </Tooltip>
             ),
@@ -332,7 +332,10 @@ const SubmissionList = ({
         headerName: type === "published" ? t("submittedOn") : t("savedOn"),
         width: 200,
         type: "dateTime",
-        valueGetter: (params) => moment.utc(params.value).toDate(),
+        valueGetter: (params) => {
+          if (!params.value) return null;
+          return moment.utc(params.value, "YYYY-MM-DD HH:mm:ss").toDate();
+        },
         renderCell: (params) =>
           moment(params.value).local().format("D-M-Y - HH:mm"),
       },
@@ -347,7 +350,8 @@ const SubmissionList = ({
                 {params.value.map((v: TargetOutput, i: number) => (
                   <SingleTargetStatus
                     target={v}
-                    depositStatus={depositStatus}
+                    remoteChanges={params.row.remoteChanges}
+                    remoteDeleted={params.row.remoteDeleted}
                     key={i}
                   />
                 ))}
@@ -375,7 +379,8 @@ const SubmissionList = ({
       id: d["dataset-id"],
       created: type === "published" ? d["submitted-at"] : d["saved-at"],
       title: d["title"],
-      remoteChanges: d["targets"].some(t => t.diff && t.diff.hasOwnProperty("data")),
+      remoteChanges: d["targets"].some(t => t.diff && Object.keys(t.diff).length > 0),
+      remoteDeleted: d["targets"].some(t => t.diff && Object.values(t.diff).includes(404)),
       legacy: d["legacy-form"] || d["acp-version"] === "unknown",
       ...(type === "published" ? { status: d["targets"] } : null),
     }));
@@ -453,11 +458,13 @@ const MotionGridRow = motion(ForwardRow);
 
 // A separate component for a target, needs to have it's own state to display popover
 const SingleTargetStatus = ({
-  depositStatus,
   target,
+  remoteChanges,
+  remoteDeleted,
 }: {
-  depositStatus: DepositStatus;
   target: TargetOutput;
+  remoteChanges: boolean;
+  remoteDeleted: boolean;
 }) => {
   const { t } = useTranslation("user");
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -473,8 +480,8 @@ const SingleTargetStatus = ({
   return (
     <>
       <Stack direction="row" alignItems="center" pt={0.1} pb={0.1} spacing={0.5}>
-        {target.diff && target.diff.hasOwnProperty("data") && (
-          <Tooltip title={t("remoteChanges")} placement="left">
+        {remoteChanges && (
+          <Tooltip title={t(remoteDeleted ? "remoteDeleted" : "remoteChanges")} placement="left">
             <ErrorOutlineIcon fontSize="small" color="warning" />
           </Tooltip>
         )}

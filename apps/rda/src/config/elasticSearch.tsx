@@ -30,6 +30,7 @@ export const elasticConfig: EndpointProps[] = [
     fullTextHighlight: fieldConfig.fullTextHighlight,
     resultBodyComponent: Rda2Result,
     onClickResultPath: "record",
+    dashboardSearchIconToggle: true,
     dashboard: [
       <ListFacet
         config={{
@@ -39,6 +40,8 @@ export const elasticConfig: EndpointProps[] = [
             en: "Pathways",
             nl: "Paden",
           },
+          cutoff: 10,
+          size: 8,
           cols: 2,
           rows: 1,
         }}
@@ -101,6 +104,7 @@ export const elasticConfig: EndpointProps[] = [
             en: "Related institutions",
             nl: "Gerelateerde instellingen",
           },
+          cutoff: 10,
           cols: 2,
           rows: 1,
         }}
@@ -113,6 +117,7 @@ export const elasticConfig: EndpointProps[] = [
             en: "Working groups",
             nl: "Werkgroepen",
           },
+          cutoff: 10,
           cols: 2,
           rows: 1,
         }}
@@ -125,6 +130,7 @@ export const elasticConfig: EndpointProps[] = [
             en: "Interest groups",
             nl: "Interesse groepen",
           },
+          cutoff: 10,
           cols: 2,
           rows: 1,
         }}
@@ -137,7 +143,7 @@ export const elasticConfig: EndpointProps[] = [
             en: "Source",
             nl: "Bron",
           },
-          size: 10,
+          cutoff: 10,
           cols: 2,
           rows: 1,
         }}

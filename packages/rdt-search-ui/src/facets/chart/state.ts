@@ -6,10 +6,12 @@ import type {
 } from "../../context/state/facets";
 import type { KeyCount } from "../list/state";
 import { FacetsDataReducerAction } from "../../context/state/actions";
+import type { EChartsOption } from 'echarts';
 
 export interface ChartFacetConfig extends BaseFacetConfig {
   chartType?: string;
   legend?: boolean;
+  chartOptions?: EChartsOption;
 }
 
 export interface DateChartFacetConfig extends ChartFacetConfig {

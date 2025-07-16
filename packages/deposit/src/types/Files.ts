@@ -29,6 +29,7 @@ export interface SelectedFile {
   name: string;
   size: number;
   type: string;
+  mimeType: string;
   location: FileLocation;
   url: string;
   lastModified: number;

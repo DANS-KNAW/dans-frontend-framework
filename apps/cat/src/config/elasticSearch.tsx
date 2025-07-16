@@ -5,6 +5,8 @@ import {
   MapFacet,
   type EndpointProps,
   type RDTSearchUIProps,
+  SortBy,
+  SortDirection,
 } from "@dans-framework/rdt-search-ui";
 import { SingleResult } from "../pages/search/result";
 
@@ -32,14 +34,19 @@ export const elasticConfig: EndpointProps[] = [
     fullTextFields: fieldConfig.fullTextFields,
     fullTextHighlight: fieldConfig.fullTextHighlight,
     resultBodyComponent: SingleResult,
-    onClickResultPath: "record",
+    onClickResultPath: "identifier",
     customColumns: 12,
     dashboard: [
       <ListFacet
         config={{
-          id: "entity",
-          field: "entity",
-          title: "Referenced Entity",
+          id: "identifier",
+          field: "identifier.normalized",
+          fieldLabel: "identifier",
+          title: "Identifier",
+          sort: {
+            by: SortBy.Key,	
+            direction: SortDirection.Asc,
+          },
           cols: 3,
           rows: 1,
           tooltip: "Use this to filter the dashboard or the searchable listing for the entities being referenced by the Identifier. Some Identifiers are entity-specific, but many are aimed at a variety of entities or are entity-agnostic.",
@@ -67,13 +74,23 @@ export const elasticConfig: EndpointProps[] = [
           disableSort: true,
         }}
       />,
+      <ListFacet
+        config={{
+          id: "entity",
+          field: "entity",
+          title: "Referenced Entity",
+          cols: 3,
+          rows: 1,
+          tooltip: "Use this to filter the dashboard or the searchable listing for the entities being referenced by the Identifier. Some Identifiers are entity-specific, but many are aimed at a variety of entities or are entity-agnostic.",
+        }}
+      />,
       <DateChartFacet
         config={{
           id: "start_date",
           field: "start_date",
           title:  "Year of First Use",
           interval: "year",
-          cols: 12,
+          cols: 9,
           rows: 1,
           tooltip: "The facet shows the year of first use of a persistent identifier. The facet shows the year of first use of a persistent identifier. Hover over the bars to see detail, and click to use as a filter. Some identifiers precede the digital age and were converted to digital services afterwards.",
         }}
@@ -85,7 +102,7 @@ export const elasticConfig: EndpointProps[] = [
           title: "Resolution Topology",
           cols: 4,
           rows: 1,
-          tooltip: "The Resolution Topology indicates how Identifiers are resolved.<ul><li><strong>Discontinued:</strong> does not resolve anymore</li><li><strong>Distributed:</strong> Many resolution nodes exist, all with the same information (blockchain-like)</li><li><strong>centralised:</strong> Many resolution nodes exist, but they resolve only their own scope (for example URN:NBN)</li><li><strong>Cascading:</strong> A central entry point exists for resolution, but additional metadata and actions can be obtained by redirecting to lower-level resolvers in a hierarchy (for example DOIs and ePICS).</li><li><strong>Centralised:</strong> all Identifiers are resolved at a central point (for example ORCIDs).</li></ul>",
+          tooltip: "The Resolution Topology indicates how Identifiers are resolved.<ul><li><strong>Discontinued:</strong> does not resolve anymore</li><li><strong>Distributed:</strong> Many resolution nodes exist, all with the same information (blockchain-like)</li><li><strong>Federated:</strong> Many resolution nodes exist, but they resolve only their own scope (for example URN:NBN)</li><li><strong>Cascading:</strong> A central entry point exists for resolution, but additional metadata and actions can be obtained by redirecting to lower-level resolvers in a hierarchy (for example DOIs and ePICS).</li><li><strong>Centralised:</strong> all Identifiers are resolved at a central point (for example ORCIDs).</li></ul>",
           legend: true,
         }}
       />,
@@ -102,7 +119,7 @@ export const elasticConfig: EndpointProps[] = [
       <PieChartFacet
         config={{
           id: "metaResolvers",
-          field: "metaresovers",
+          field: "metaresolvers",
           title: "Meta Resolvers",
           cols: 4,
           rows: 1,
@@ -151,6 +168,11 @@ export const elasticConfig: EndpointProps[] = [
           cols: 12,
           rows: 1,
           chartType: "bar",
+          chartOptions: {
+            xAxis: {
+              type: "log",
+            },
+          },
           tooltip: "<p>Identifiers often rely on Managers to assist owners of digital objects, physical objects, or concepts to create and maintain a PID for the resource. This facet provides a view of the number of Managers involved in provision of Identifiers. As an example, DataCite and CrossRef support more than 3,000 Managers each for this purpose. These Managers are more often than not the repositories used to publish and preserve outputs.</p><p>For most Identifiers, though, the role of Manager is taken up by the Provider directly.</p>"
         }}
       />,
@@ -206,15 +228,6 @@ export const elasticConfig: EndpointProps[] = [
           tooltip: "Most Identifiers are domain-agnostic, but there are important examples of domain-specific identifiers - especially in the life sciences.",
         }}
       />,
-      // This is hacky, fake facet to add this to sorting options
-      <ListFacet
-        config={{
-          id: "identifier",
-          field: "identifier",
-          title: "Name",
-          hidden: true,
-        }}
-      />
     ],
   },
 ];

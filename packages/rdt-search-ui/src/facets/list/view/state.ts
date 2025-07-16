@@ -41,7 +41,7 @@ export const listFacetViewStates: Record<number, ListFacetViewState> = {
 export function getViewState(
   values: ListFacetValues,
   state: ListFacetState,
-  config: ListFacetConfig,
+  config: ListFacetConfig
 ) {
   if (values == null) return listFacetViewStates[0];
 
@@ -53,17 +53,19 @@ export function getViewState(
     else if (total === config.size!) return listFacetViewStates[5];
     else
       throw new Error(
-        `[viewState not set] Unexpected total (${total}) for query "${state.query}"`,
+        `[viewState not set] Unexpected total (${total}) for query "${state.query}"`
       );
   }
 
+  const customCutoff = config.cutoff ?? LIST_FACET_SCROLL_CUT_OFF;
+
   if (total < config.size!) {
     return listFacetViewStates[0];
-  } else if (total <= LIST_FACET_SCROLL_CUT_OFF) {
-    return state.size === total ?
-        listFacetViewStates[2]
+  } else if (total <= customCutoff) {
+    return state.size === total
+      ? listFacetViewStates[2]
       : listFacetViewStates[1];
-  } else if (total > LIST_FACET_SCROLL_CUT_OFF) {
+  } else if (total > customCutoff) {
     return listFacetViewStates[3];
   } else {
     throw new Error(`[viewState not set] unexpected total (${total})`);

@@ -20,6 +20,8 @@ export const formatFormData = (
       process: f.process,
       // convert date to preferred date format
       embargo: f.embargo,
+      size: f.size,
+      mimetype: f.mimeType,
     }));
 
   return {

@@ -422,6 +422,91 @@ importers:
         specifier: ^0.6.2
         version: 0.6.4(eslint@9.16.0(jiti@2.4.2))(optionator@0.9.4)(typescript@5.7.3)(vite@4.5.5(@types/node@20.17.9)(lightningcss@1.29.1))
 
+  apps/rda-sandbox:
+    dependencies:
+      '@dans-framework/deposit':
+        specifier: workspace:*
+        version: link:../../packages/deposit
+      '@dans-framework/freshdesk':
+        specifier: workspace:*
+        version: link:../../packages/freshdesk
+      '@dans-framework/layout':
+        specifier: workspace:*
+        version: link:../../packages/layout
+      '@dans-framework/pages':
+        specifier: workspace:*
+        version: link:../../packages/pages
+      '@dans-framework/rdt-search-ui':
+        specifier: workspace:*
+        version: link:../../packages/rdt-search-ui
+      '@dans-framework/support-drawer':
+        specifier: workspace:*
+        version: link:../../packages/support-drawer
+      '@dans-framework/theme':
+        specifier: workspace:*
+        version: link:../../packages/theme
+      '@dans-framework/user-auth':
+        specifier: workspace:*
+        version: link:../../packages/user-auth
+      '@dans-framework/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      '@fontsource/roboto':
+        specifier: ^5.0.7
+        version: 5.1.0
+      '@mui/icons-material':
+        specifier: ^5.14.3
+        version: 5.16.8(@mui/material@5.16.8(@emotion/react@11.13.5(@types/react@18.2.15)(react@18.2.0))(@emotion/styled@11.13.5(@emotion/react@11.13.5(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react-dom@18.3.1(react@18.2.0))(react@18.2.0))(@types/react@18.2.15)(react@18.2.0)
+      '@mui/material':
+        specifier: ^5.16.7
+        version: 5.16.8(@emotion/react@11.13.5(@types/react@18.2.15)(react@18.2.0))(@emotion/styled@11.13.5(@emotion/react@11.13.5(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react@18.2.0))(@types/react@18.2.15)(react-dom@18.3.1(react@18.2.0))(react@18.2.0)
+      html-react-parser:
+        specifier: ^4.2.2
+        version: 4.2.10(react@18.2.0)
+      i18next:
+        specifier: ^23.4.1
+        version: 23.16.8
+      i18next-browser-languagedetector:
+        specifier: ^7.1.0
+        version: 7.2.1
+      i18next-resources-to-backend:
+        specifier: ^1.1.4
+        version: 1.2.1
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.3.1(react@18.2.0)
+      react-i18next:
+        specifier: ^13.0.3
+        version: 13.5.0(i18next@23.16.8)(react-dom@18.3.1(react@18.2.0))(react@18.2.0)
+      react-router-dom:
+        specifier: ^6.14.2
+        version: 6.28.0(react-dom@18.3.1(react@18.2.0))(react@18.2.0)
+      web-vitals:
+        specifier: ^3.4.0
+        version: 3.5.2
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.15
+        version: 18.2.15
+      '@types/react-dom':
+        specifier: ^18.2.7
+        version: 18.3.1
+      '@vitejs/plugin-react':
+        specifier: ^4.0.3
+        version: 4.3.4(vite@4.5.5(@types/node@20.17.9)(lightningcss@1.29.1))
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.0.0(eslint@9.16.0(jiti@2.4.2))
+      vite:
+        specifier: ^4.4.5
+        version: 4.5.5(@types/node@20.17.9)(lightningcss@1.29.1)
+      vite-plugin-checker:
+        specifier: ^0.6.2
+        version: 0.6.4(eslint@9.16.0(jiti@2.4.2))(optionator@0.9.4)(typescript@5.7.3)(vite@4.5.5(@types/node@20.17.9)(lightningcss@1.29.1))
+
   apps/supercatalog:
     dependencies:
       '@dans-framework/layout':

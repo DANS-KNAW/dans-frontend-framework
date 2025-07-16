@@ -153,34 +153,37 @@ export const DateTimeField = ({
 // Date range field, allows user to select start and end date
 // Always checks if end date is later than start date
 // End date can be optional
-
 export const DateRangeField = ({
   field,
   groupName,
   groupIndex,
 }: DateRangeFieldProps) => {
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
-  // can be variable, set by user
-  const fieldFormat = fieldValue.format || field.format;
-  const [range, setRange] = useState<(string | null)[]>(
-    fieldValue.value || field.value || [null, null],
-  );
-  const [format, setFormat] = useState<string>(fieldFormat);
+  const [range, setRange] = useState<(string | null)[]>(fieldValue.value || field.value || [null, null]);
+  const [isDirty, setIsDirty] = useState(false); // Track if user interacted
   const dispatch = useAppDispatch();
 
   const setStart = (dateString: string) => {
     setRange([dateString, range[1]]);
+    setIsDirty(true);
   };
 
   const setEnd = (dateString: string) => {
     setRange([range[0], dateString]);
+    setIsDirty(true);
   };
 
-  // Dispatch form action when range is changed
-  // Don't dispatch when range is still null, to keep initial
-  // 'touched' status of field
+  // On first async value load: update only if user hasn't typed yet
   useEffect(() => {
-    !range.every((el) => el === null) &&
+    const hasExternalValue = fieldValue.value?.some((v: string | null) => v !== null && v !== "");
+    if (!isDirty && hasExternalValue) {
+      setRange(fieldValue.value);
+    }
+  }, [fieldValue.value, isDirty]);
+
+  // Dispatch form action when range is changed by user. Don't dispatch when range is still empty
+  useEffect(() => {
+    range.some((el) => el !== null && el !== '') && isDirty &&
       dispatch(
         setField({
           field: field,
@@ -189,15 +192,7 @@ export const DateRangeField = ({
           ...(groupIndex !== undefined && { groupIndex: groupIndex }),
         }),
       );
-  }, [range]);
-
-  // and reset when format is changed
-  useEffect(() => {
-    if (format !== fieldFormat) {
-      setRange(["", ""]);
-      setFormat(fieldFormat);
-    }
-  }, [fieldFormat]);
+  }, [range, isDirty]);
 
   return (
     <Stack direction="row" alignItems="start">
@@ -205,6 +200,7 @@ export const DateRangeField = ({
         field={field}
         groupName={groupName}
         groupIndex={groupIndex}
+        setRange={setRange}
       />
 
       <RangeFieldWrapper
@@ -359,10 +355,12 @@ const DateTypeWrapper = ({
   field,
   groupName,
   groupIndex,
+  setRange
 }: {
   field: DateFieldType | DateRangeFieldType;
   groupName?: string;
   groupIndex?: number;
+  setRange?: (v: string[]) => void;
 }) => {
   const formDisabled = useAppSelector(getFormDisabled);
   const dispatch = useAppDispatch();
@@ -384,6 +382,16 @@ const DateTypeWrapper = ({
                 ...(groupIndex !== undefined && { groupIndex: groupIndex }),
               }),
             );
+            // reset field value
+            dispatch(
+              setField({
+                field: field,
+                value: ["", ""],
+                ...(groupName !== undefined && { groupName: groupName }),
+                ...(groupIndex !== undefined && { groupIndex: groupIndex }),
+              }),
+            );
+            setRange && setRange(["", ""]); // reset range if applicable
           }}
           value={fieldValue.format || field.format}
           disabled={formDisabled}
