@@ -107,14 +107,14 @@ export const submitApi = createApi({
       },
     }),
     fetchSavedMetadata: build.query({
-      query: ({id, config}) => {
+      query: ({id}) => {
         const user = getUser(); 
         return ({
           url: `dataset/${id}`,
           headers: { 
-            Authorization: `Bearer ${config.submitKey || user?.access_token}`,
+            Authorization: `Bearer ${import.meta.env.VITE_PACKAGING_KEY || user?.access_token}`,
             Accept: "application/json",
-            "assistant-config-name": config.target?.configName,
+            "assistant-config-name": import.meta.env.VITE_CONFIG_NAME,
           },
         });
       },
