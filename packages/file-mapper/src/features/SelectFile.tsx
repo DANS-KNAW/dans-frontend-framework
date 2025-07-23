@@ -42,6 +42,7 @@ const SelectFile = () => {
       name: files[0].name,
       size: files[0].size,
       url: URL.createObjectURL(files[0]),
+      type: files[0].type,
     };
 
     dispatch(setFile(serializedFile));

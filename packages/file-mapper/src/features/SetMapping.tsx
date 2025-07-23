@@ -46,7 +46,7 @@ export const SetMapping = () => {
 
   useEffect(() => {
     const loadXLSX = async () => {
-      const XLSX = await import("xlsx"); // Lazy load the library here
+      const XLSX = await import("@e965/xlsx"); // Lazy load the library here
 
       const reader = new FileReader();
       reader.onload = (event) => {

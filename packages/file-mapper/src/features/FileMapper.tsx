@@ -98,6 +98,7 @@ const FileMapper = ({
         private: false,
         lastModified: 0,
         mapping: mapping,
+        mimeType: file.type,
       };
 
       // must initialize the form here, otherwise files will get overwritten

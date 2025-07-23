@@ -15,7 +15,7 @@ export const darwinCoreApi = createApi({
       }),
       transformResponse: async (response, _meta, _arg) => {
         // Dynamically import XLSX
-        const XLSX = await import("xlsx"); // Lazy load the library here
+        const XLSX = await import("@e965/xlsx"); // Lazy load the library here
 
         // Convert CSV text string to JSON
         const workbook = XLSX.read(response, { type: "binary" });
