@@ -23,6 +23,10 @@ import authProvider from "./config/auth";
 import Dashboard from "./components/Dashboard";
 import UserSettings from "./components/User";
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
+
 const createElementByTemplate = (page: Page) => {
   switch (page.template) {
     case "dashboard":
@@ -35,48 +39,50 @@ const createElementByTemplate = (page: Page) => {
 const App = () => {
   const { i18n } = useTranslation();
   return (
-    <AuthWrapper authProvider={authProvider}>
-      <ThemeWrapper theme={theme} siteTitle={siteTitle}>
-        <BrowserRouter>
-          {/* Need to pass along root i18n functions to the language bar */}
-          <LanguageBar
-            languages={languages}
-            changeLanguage={i18n.changeLanguage}
-          />
-          <MenuBar pages={pages} userSubmissions={false} />
-          {/* Suspense to make sure languages can load first */}
-          <Suspense
-            fallback={
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
-                <Skeleton height={600} width={900} />
-              </Box>
-            }
-          >
-            <Routes>
-              <Route path="signin-callback" element={<SignInCallback />} />
-              <Route
-                path="user-settings"
-                element={
-                  <AuthRoute>
-                    <UserSettings />
-                  </AuthRoute>
-                }
-              />
-              {(pages as Page[]).map((page) => {
-                return (
-                  <Route
-                    key={page.id}
-                    path={page.slug}
-                    element={createElementByTemplate(page)}
-                  />
-                );
-              })}
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-        <Footer {...footer} />
-      </ThemeWrapper>
-    </AuthWrapper>
+    <QueryClientProvider client={queryClient}>
+      <AuthWrapper authProvider={authProvider}>
+        <ThemeWrapper theme={theme} siteTitle={siteTitle}>
+          <BrowserRouter>
+            {/* Need to pass along root i18n functions to the language bar */}
+            <LanguageBar
+              languages={languages}
+              changeLanguage={i18n.changeLanguage}
+            />
+            <MenuBar pages={pages} userSubmissions={false} />
+            {/* Suspense to make sure languages can load first */}
+            <Suspense
+              fallback={
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <Skeleton height={600} width={900} />
+                </Box>
+              }
+            >
+              <Routes>
+                <Route path="signin-callback" element={<SignInCallback />} />
+                <Route
+                  path="user-settings"
+                  element={
+                    <AuthRoute>
+                      <UserSettings />
+                    </AuthRoute>
+                  }
+                />
+                {(pages as Page[]).map((page) => {
+                  return (
+                    <Route
+                      key={page.id}
+                      path={page.slug}
+                      element={createElementByTemplate(page)}
+                    />
+                  );
+                })}
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+          <Footer {...footer} />
+        </ThemeWrapper>
+      </AuthWrapper>
+    </QueryClientProvider>
   );
 };
 
