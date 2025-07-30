@@ -21,6 +21,16 @@ import languages from "./config/languages";
 import authProvider from "./config/auth";
 
 import Dashboard from "./components/Dashboard";
+import UserSettings from "./components/User";
+
+const createElementByTemplate = (page: Page) => {
+  switch (page.template) {
+    case "dashboard":
+      return <Dashboard />;
+    default:
+      return <Generic {...page} />;
+  }
+};
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -48,6 +58,7 @@ const App = () => {
                 path="user-settings"
                 element={
                   <AuthRoute>
+                    <UserSettings />
                   </AuthRoute>
                 }
               />
@@ -56,14 +67,7 @@ const App = () => {
                   <Route
                     key={page.id}
                     path={page.slug}
-                    element={
-                      page.template === "dashboard" ?
-                      <Dashboard /> :
-                      page.template === "assessments" ?
-                      <AuthRoute>
-                      </AuthRoute>
-                      : <Generic {...page} />
-                    }
+                    element={createElementByTemplate(page)}
                   />
                 );
               })}

@@ -1,13 +1,13 @@
 import type { Page } from "@dans-framework/pages";
 
 const page: Page = {
-  id: "assessments",
-  name: "Assessments",
-  slug: "assessments",
+  id: "create",
+  name: "Create Assessment",
+  slug: "create",
   inMenu: true,
   menuTitle: {
-    en: "Assessments",
-    nl: "Beoordelingen",
+    en: "Create assessment",
+    nl: "Maak beoordeling",
   },
 };
 
