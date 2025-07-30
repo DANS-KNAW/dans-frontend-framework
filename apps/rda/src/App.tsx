@@ -4,7 +4,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
 import { ThemeWrapper } from "@dans-framework/theme";
-import { LanguageBar, MenuBar, Footer, Banner } from "@dans-framework/layout";
+import { LanguageBar, MenuBar, Footer } from "@dans-framework/layout";
 import { Deposit } from "@dans-framework/deposit";
 import { Generic, Page } from "@dans-framework/pages";
 import {
@@ -81,12 +81,6 @@ const App = () => {
   return (
     <AuthWrapper authProvider={authProvider}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
-        <Banner
-          text={{
-            en: "🚨This demo site is under active development—features may change or break unexpectedly.🚨",
-            nl: "🚨Deze demo-site is in actieve ontwikkeling - functies kunnen onverwacht veranderen of kapot gaan.🚨",
-          }}
-        />
         <FacetedSearchProvider config={elasticConfig}>
           {/* Need to pass along root i18n functions to the language bar */}
           {!isEmbed && (
