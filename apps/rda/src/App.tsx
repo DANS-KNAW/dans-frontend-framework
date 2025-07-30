@@ -35,6 +35,7 @@ import SupportDrawer from "@dans-framework/support-drawer";
 import RDAAnnotator from "./pages/rda-annotator";
 import { useEmbedHandler } from "@dans-framework/utils";
 import { Link } from "@mui/material";
+import SiteTitleWrapper from "./config/sitetitle-wrapper";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -43,11 +44,23 @@ const App = () => {
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
-        return <FacetedWrapper dashboard dashRoute="/" resultRoute="/search" />;
+        return (
+          <SiteTitleWrapper page={page}>
+            <FacetedWrapper dashboard dashRoute="/" resultRoute="/search" />
+          </SiteTitleWrapper>
+        );
       case "search":
-        return <FacetedWrapper dashRoute="/" resultRoute="/search" />;
+        return (
+          <SiteTitleWrapper page={page}>
+            <FacetedWrapper dashRoute="/" resultRoute="/search" />
+          </SiteTitleWrapper>
+        );
       case "record":
-        return <RdaRecord />;
+        return (
+          <SiteTitleWrapper page={page}>
+            <RdaRecord />
+          </SiteTitleWrapper>
+        );
       case "deposit":
         return (
           <AuthRoute>
@@ -55,7 +68,11 @@ const App = () => {
           </AuthRoute>
         );
       case "rda-annotator":
-        return <RDAAnnotator />;
+        return (
+          <SiteTitleWrapper page={page}>
+            <RDAAnnotator />
+          </SiteTitleWrapper>
+        );
       default:
         return <Generic {...page} />;
     }
