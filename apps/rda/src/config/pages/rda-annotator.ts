@@ -1,17 +1,17 @@
 import type { Page } from "@dans-framework/pages";
 
 const page: Page = {
-  id: "rda-annotator",
+  id: "annotator",
   name: {
-    en: "RDA Annotator",
-    nl: "RDA Annotator",
+    en: "Annotator",
+    nl: "Annotator",
   },
-  slug: "rda-annotator",
+  slug: "annotator",
   template: "rda-annotator",
   inMenu: true,
   menuTitle: {
-    en: "RDA Annotator",
-    nl: "RDA Annotator",
+    en: "Annotator",
+    nl: "Annotator",
   },
 };
 
