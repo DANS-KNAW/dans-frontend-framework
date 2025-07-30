@@ -34,7 +34,7 @@ import { Freshdesk } from "@dans-framework/freshdesk";
 import SupportDrawer from "@dans-framework/support-drawer";
 import RDAAnnotator from "./pages/rda-annotator";
 import { useEmbedHandler } from "@dans-framework/utils";
-import { Link } from "@mui/material";
+import { Container, Link, Typography } from "@mui/material";
 import SiteTitleWrapper from "./config/sitetitle-wrapper";
 
 const App = () => {
@@ -46,6 +46,42 @@ const App = () => {
       case "dashboard":
         return (
           <SiteTitleWrapper page={page}>
+            {!isEmbed && (
+              <Box sx={{ pt: { xs: 4, sm: 8 } }}>
+                <Container maxWidth="lg" sx={{ px: { xs: 3, lg: 4 } }}>
+                  <Box
+                    sx={{
+                      mx: { xs: "auto", lg: 0 },
+                      maxWidth: { xs: "100%", md: "672px" },
+                    }}
+                  >
+                    <Typography
+                      component="h1"
+                      sx={{
+                        fontSize: { xs: "3rem", sm: "4rem" },
+                        fontWeight: 600,
+                        letterSpacing: "-0.025em",
+                        lineHeight: 1.1,
+                      }}
+                    >
+                      RDA Knowledge Base
+                    </Typography>
+                    <Typography
+                      component="p"
+                      sx={{
+                        mt: 4,
+                        fontSize: { xs: "1.125rem", sm: "1.25rem" },
+                        fontWeight: 400,
+                        lineHeight: 2,
+                      }}
+                    >
+                      The Knowledge Base is a suite of applications that helps
+                      users find, annotate, and publish RDA-related materials
+                    </Typography>
+                  </Box>
+                </Container>
+              </Box>
+            )}
             <FacetedWrapper dashboard dashRoute="/" resultRoute="/search" />
           </SiteTitleWrapper>
         );
