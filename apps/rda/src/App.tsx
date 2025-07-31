@@ -196,6 +196,7 @@ const App = () => {
             </Link>
           </Box>
         )}
+        
         {!isEmbed && <Footer {...footer} />}
         <Freshdesk widgetId={80000010123} />
         <SupportDrawer

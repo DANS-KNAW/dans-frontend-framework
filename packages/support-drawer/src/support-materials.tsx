@@ -1,5 +1,4 @@
 type MaterialType = "PDF" | "HTML";
-
 export interface Material {
   topic: string;
   type: MaterialType;
@@ -45,9 +44,9 @@ export default function SupportMaterials({
   }, []);
 
   return (
-    <dl className="tw:mt-16 tw:space-y-12">
+    <dl className="tw:mt-16">
       {materialGroups.map((materialGroup) => (
-        <div key={materialGroup.group}>
+        <div className="tw:pb-12" key={materialGroup.group}>
           <p className="tw:text-lg tw:font-medium tw:border-b tw:border-gray-200 tw:pb-2">
             {materialGroup.group}
           </p>
