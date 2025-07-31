@@ -19,7 +19,7 @@ import { RdaRecord } from "./pages/record";
 
 // Load config variables
 import theme from "./config/theme";
-import footer from "./config/footer";
+import { useFooterData } from "./config/footer";
 import pages from "./config/pages";
 import siteTitle from "./config/siteTitle";
 import languages from "./config/languages";
@@ -41,7 +41,8 @@ const App = () => {
   const { i18n } = useTranslation();
   const { isEmbed } = useEmbedHandler();
 
-  
+  const footer = useFooterData();
+
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
@@ -196,7 +197,7 @@ const App = () => {
             </Link>
           </Box>
         )}
-        
+
         {!isEmbed && <Footer {...footer} />}
         <Freshdesk widgetId={80000010123} />
         <SupportDrawer
