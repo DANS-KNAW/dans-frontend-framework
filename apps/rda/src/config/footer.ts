@@ -41,13 +41,6 @@ const footer: Footer = {
         },
         {
           name: {
-            en: "Our team",
-            nl: "Ons team",
-          },
-          link: "",
-        },
-        {
-          name: {
             en: "Legal information",
             nl: "Juridische informatie",
           },
@@ -130,7 +123,6 @@ const footer: Footer = {
         src: rdaTiger,
         alt: "RDA TIGER PROJECT",
         width: 300,
-
       },
     },
     {
