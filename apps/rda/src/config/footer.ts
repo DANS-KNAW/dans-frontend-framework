@@ -28,8 +28,8 @@ const footer: Footer = {
     },
     {
       header: {
-        en: "About RDA",
-        nl: "Over RDA",
+        en: "About RDA TIGER",
+        nl: "Over RDA TIGER",
       },
       links: [
         {
