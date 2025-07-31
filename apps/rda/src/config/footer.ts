@@ -65,7 +65,7 @@ const footer: Footer = {
             en: "Disclaimer",
             nl: "Disclaimer",
           },
-          link: "",
+          link: "/disclaimer",
         },
         {
           name: {
