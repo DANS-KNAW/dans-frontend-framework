@@ -79,22 +79,9 @@ const page: Page = {
           fontFamily: "system-ui, -apple-system, BlinkMacSystemFont",
         }}
       >
-        <Typography
-          variant="h3"
-          component="h1"
-          gutterBottom
-          sx={{ fontFamily: "serif", fontWeight: 600, mb: 1 }}
-        >
-          Disclaimer
-        </Typography>
         <Box mb={4}>
-          <Typography
-            variant="h5"
-            component="h2"
-            gutterBottom
-            sx={{ fontFamily: "serif" }}
-          >
-            RDA TIGER / Research Data Alliance
+          <Typography variant="h4" component="h2" gutterBottom>
+            RDA TIGER Output Services Disclaimer
           </Typography>
           <Typography variant="body1" paragraph>
             Het werk van RDA TIGER wordt in nauwe samenwerking met de Research
@@ -140,7 +127,7 @@ const page: Page = {
             variant="caption"
             sx={{ display: "block", textAlign: { xs: "left", sm: "right" } }}
           >
-            © Research Data Alliance
+            © RDA Tiger
           </Typography>
         </Box>
       </Box>
