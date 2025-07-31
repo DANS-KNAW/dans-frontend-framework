@@ -37,7 +37,7 @@ const footer: Footer = {
             en: "About us",
             nl: "Over ons",
           },
-          link: "",
+          link: "https://www.rd-alliance.org/working-groups/rda-tiger/",
         },
         {
           name: {
