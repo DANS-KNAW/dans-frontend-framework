@@ -33,7 +33,7 @@ import {
 import { Freshdesk } from "@dans-framework/freshdesk";
 import SupportDrawer from "@dans-framework/support-drawer";
 import RDAAnnotator from "./pages/rda-annotator";
-import { useEmbedHandler } from "@dans-framework/utils";
+import { lookupLanguageString, useEmbedHandler } from "@dans-framework/utils";
 import { Container, Link, Typography } from "@mui/material";
 import SiteTitleWrapper from "./config/sitetitle-wrapper";
 
@@ -64,7 +64,10 @@ const App = () => {
                         lineHeight: 1.1,
                       }}
                     >
-                      RDA Knowledge Base
+                      {lookupLanguageString(
+                        { en: "RDA Knowledge Base", nl: "RDA Kennisbank" },
+                        i18n.language
+                      )}
                     </Typography>
                     <Typography
                       component="p"
@@ -75,8 +78,13 @@ const App = () => {
                         lineHeight: 2,
                       }}
                     >
-                      The Knowledge Base is a suite of applications that helps
-                      users find, annotate, and publish RDA-related materials
+                      {lookupLanguageString(
+                        {
+                          en: "The Knowledge Base is a suite of applications that helps users find, annotate, and publish RDA-related materials",
+                          nl: "De Kennisbank is een suite van applicaties die gebruikers helpt bij het vinden, annoteren en publiceren van RDA-gerelateerde materialen",
+                        },
+                        i18n.language
+                      )}
                     </Typography>
                   </Box>
                 </Container>
