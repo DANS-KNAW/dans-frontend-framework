@@ -41,61 +41,10 @@ const footer: Footer = {
         },
         {
           name: {
-            en: "Legal information",
-            nl: "Juridische informatie",
+            en: "Privacy Statement",
+            nl: "Privacyverklaring",
           },
           link: "",
-        },
-        {
-          name: {
-            en: "Press Releases",
-            nl: "Pers",
-          },
-          link: "",
-        },
-        {
-          name: {
-            en: "Disclaimer",
-            nl: "Disclaimer",
-          },
-          link: "/disclaimer",
-        },
-        {
-          name: {
-            en: "Data Licenses",
-            nl: "Datalicenties",
-          },
-          link: "",
-        },
-        {
-          name: {
-            en: "Privacy",
-            nl: "Privacy",
-          },
-          link: "",
-        },
-      ],
-    },
-    {
-      header: {
-        en: "Follow us",
-        nl: "Volg ons",
-      },
-      links: [
-        {
-          name: "Newsletter",
-          link: "",
-          icon: "email",
-        },
-        {
-          name: "YouTube",
-          link: "",
-          icon: "youtube",
-        },
-        {
-          name: "Twitter",
-          link: "",
-          icon: "twitter",
         },
       ],
     },
