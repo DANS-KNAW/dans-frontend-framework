@@ -296,6 +296,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.83.0
         version: 5.83.0(react@18.2.0)
+      framer-motion:
+        specifier: ^10.15.0
+        version: 10.18.0(react-dom@18.3.1(react@18.2.0))(react@18.2.0)
       i18next:
         specifier: ^23.4.1
         version: 23.16.8
@@ -323,6 +326,9 @@ importers:
       simple-xml-to-json:
         specifier: ^1.2.3
         version: 1.2.3
+      use-debounce:
+        specifier: ^9.0.4
+        version: 9.0.4(react@18.2.0)
       web-vitals:
         specifier: ^3.4.0
         version: 3.5.2

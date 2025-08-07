@@ -1,4 +1,4 @@
-import { useState, type SyntheticEvent, type ReactNode, useEffect, useMemo, type SetStateAction, type Dispatch } from "react";
+import { useState, type SyntheticEvent, type ReactNode, useEffect, useMemo, type SetStateAction, type Dispatch, forwardRef } from "react";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -8,19 +8,18 @@ import { useAuth } from "react-oidc-context";
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { useQuery } from "@tanstack/react-query";
-import { fetchPid, fetchRepositories, fetchRepositoryDetails, type Pid, type Obj } from "./api";
+import { fetchPid, fetchRepositories, fetchRepositoryDetails, fetchRor, type Pid, type Obj, type RorResponse } from "./api";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
 import Switch from '@mui/material/Switch';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
+import ListItem, { type ListItemProps } from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -31,6 +30,10 @@ import Link from '@mui/material/Link';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { useDebounce } from "use-debounce";
+import DatasetIcon from '@mui/icons-material/Dataset';
+import { LayoutGroup, motion, AnimatePresence, type HTMLMotionProps } from "framer-motion";
 
 const tempRoles = [
   { label: "Depositor", value: "depositor" },
@@ -58,6 +61,7 @@ export default function UserSettings() {
   const [roles, setRoles] = useState([...fixedOptions]);
   const [objects, setObjects] = useState<Pid[]>([]);
   const [repositories, setRepositories] = useState<Obj[]>([]);
+  const [institutions, setInstitutions] = useState<any[]>([]);
   const [tabValue, setTabValue] = useState(0);
 
   const handleChange = (_event: SyntheticEvent, newValue: number) => {
@@ -99,7 +103,7 @@ export default function UserSettings() {
                 <TabPanel value={tabValue} index={index} key={index}>
                   {tab.id === 'objects' && <Objects objects={objects} setObjects={setObjects} />}
                   {tab.id === 'repositories' && <Repositories repositories={repositories} setRepositories={setRepositories} />}
-                  {tab.id === 'institutions' && <Institutions />}
+                  {tab.id === 'institutions' && <Institutions selectedRepositories={repositories} institutions={institutions} setInstitutions={setInstitutions} />}
                 </TabPanel>
               )}
             </CardContent>
@@ -143,13 +147,15 @@ function UserInfo() {
 
 function UserRoles({value, setValue}: { value: { label: string, value: string }[], setValue: (value: { label: string, value: string }[]) => void }) {
   return (
-    <Card>
+    <Card sx={{ height: '100%' }}>
       <CardContent>
         <Typography variant="h5" mb={1}>
           My role(s)
         </Typography>
+        <Typography variant="body2" mb={1}>
+          Select one or more roles that apply to you. These roles will be used to determine your access and permissions within the FAIR assessment system.
+        </Typography>
         <FormControl component="fieldset" variant="standard">
-          <FormHelperText>Select one or more roles that apply to you. These roles will be used to determine your access and permissions within the FAIR assessment system.</FormHelperText>
           <FormGroup>
             {tempRoles.map((role) => {
               const isFixed = fixedOptions.some((opt) => opt.value === role.value);
@@ -195,9 +201,10 @@ function Objects({ objects, setObjects }: { objects: Pid[], setObjects: Dispatch
   const [ activeId, setActiveId ] = useState<string>("");
   const [ id, setId ] = useState<string>("");
   const { data } = useQuery({ queryKey: ['pid', id], queryFn: () => fetchPid(id), enabled: !!id });
+  const isSelected = data && objects.some(r => r.id === data.id)
 
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={6}>
       <Grid xs={12} md={6}>
         <Typography variant="h6" mb={1}>
           Add new PID
@@ -209,12 +216,12 @@ function Objects({ objects, setObjects }: { objects: Pid[], setObjects: Dispatch
           <TextField label="PID" fullWidth value={activeId} onChange={(e) => setActiveId(e.target.value)} />
           <Button variant="contained" onClick={() => setId(activeId)}>Find</Button>
         </Stack>
-        {data?.dataset && activeId === id && activeId && (
+        {data && activeId === id && activeId && (
           <Alert severity="info" sx={{ mt: 1, '.MuiAlert-message': { flex: 1 } }}>
             <AlertTitle>Dataset found</AlertTitle>
             <Box>
               <Typography variant="body2">
-                Dataset: {data.dataset.name}
+                Dataset: {data.name}
               </Typography>
               <Typography variant="body2">
                 Repository: {data.repository.name}
@@ -225,54 +232,27 @@ function Objects({ objects, setObjects }: { objects: Pid[], setObjects: Dispatch
               <Button 
                 variant="outlined" 
                 sx={{ mt: 1, float: 'right' }} 
+                disabled={isSelected}
                 onClick={() => {
                   setActiveId("");
                   setId("");
                   setObjects([...objects, data])
                 }}
               >
-                Add to selected PIDs
+                {!isSelected ? "Add to selected PIDs" : "Selected"}
               </Button>
             </Box>
           </Alert>
         )}
       </Grid>
-      <Grid xs={12} md={6}>
-        <Typography variant="h6">
-          Currently selected PIDs
-        </Typography>
-        <List dense>
-          {objects.length > 0 ? objects.map((obj, index) => 
-            <ListItem
-              disableGutters
-              key={index}
-              secondaryAction={
-                <IconButton edge="end" aria-label="delete" onClick={() => {
-                  setObjects(objects.filter((_, i) => i !== index));
-                }}>
-                  <DeleteIcon />
-                </IconButton>
-              }
-            >
-              <ListItemButton component="a" href={obj.dataset.url} target="_blank">
-                <ListItemAvatar>
-                  <Avatar>
-                    <FolderIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={obj.dataset.name}
-                  secondary={`${obj.repository.name} / DOI ${obj.dataset.id}`}
-                />
-              </ListItemButton>
-            </ListItem>,
-          ) :
-            <ListItem key="empty" disableGutters>
-              <ListItemText primary="No PIDs selected" />
-            </ListItem>
-          }
-        </List>
-      </Grid>
+      <SelectedItems
+        header="Selected PIDs"
+        icon={<DatasetIcon />}
+        items={objects}
+        setItems={setObjects}
+        emptyMessage="No PIDs selected"
+        type="pid"
+      />
     </Grid>
   );
 }
@@ -281,13 +261,10 @@ function Repositories({ repositories, setRepositories }: { repositories: Obj[], 
   const [ repo, setRepo ] = useState<Obj>();
   const { data, isLoading } = useQuery({ queryKey: ['repositories'], queryFn: () => fetchRepositories() });
   const { data: dataDetails, } = useQuery({ queryKey: ['repositoryDetails', repo?.id], queryFn: () => fetchRepositoryDetails(repo!.id), enabled: !!repo?.id });
-
-  console.log(data)
-  console.log(dataDetails)
-  console.log(repositories)
+  const isSelected = dataDetails && repositories.some(r => r.id === dataDetails.id)
 
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={6}>
       <Grid xs={12} md={6}>
         <Typography variant="h6" mb={1}>
           Add repository
@@ -298,7 +275,7 @@ function Repositories({ repositories, setRepositories }: { repositories: Obj[], 
           loading={isLoading}
           getOptionLabel={(option) => option.name || ""}
           isOptionEqualToValue={(option, value) => option.id === value.id}
-          value={repo}
+          value={repo || null}
           renderOption={(props, option) => (
             <li {...props} key={option.id}>
               {option.name}
@@ -322,67 +299,223 @@ function Repositories({ repositories, setRepositories }: { repositories: Obj[], 
               <Button 
                 variant="outlined" 
                 sx={{ mt: 1, float: 'right' }} 
-                onClick={() => setRepositories([...repositories, {...repo, url: dataDetails.url}])}
+                disabled={isSelected}
+                onClick={() => {
+                  setRepositories([...repositories, {...repo, url: dataDetails.url, institutions: dataDetails.institutions}])
+                  setRepo(undefined);
+                }}
               >
-                Add to selected repositories
+                {!isSelected ? "Add to selected repositories" : "Selected"}
               </Button>
             </Box>
           </Alert>
         )}
       </Grid>
-      <Grid xs={12} md={6}>
-        <Typography variant="h6">
-          Currently selected repositories
-        </Typography>
-        <List dense>
-          {repositories.length > 0 ? repositories.map((repo, index) => 
-            <ListItem
-              key={index}
+      <SelectedItems
+        header="Selected repositories"
+        icon={<FolderIcon />}
+        items={repositories}
+        setItems={setRepositories}
+        emptyMessage="No repositories selected"
+      />
+    </Grid>
+  );
+}
+
+function Institutions({ selectedRepositories, institutions, setInstitutions }: { selectedRepositories?: Obj[], institutions: Obj[], setInstitutions: Dispatch<SetStateAction<Obj[]>> }) {
+  const [ rorList, setRorList ] = useState<Obj[]>([]);
+  const [ rorValue, setRorValue ] = useState<string>("");
+  const debouncedRorValue = useDebounce(rorValue, 500)[0];
+  const [ customRor, setCustomRor ] = useState<RorResponse>();
+  const { data: rorData, isLoading } = useQuery({ queryKey: ['ror', debouncedRorValue], queryFn: () => fetchRor(debouncedRorValue), enabled: !!debouncedRorValue });
+
+  useEffect(() => {
+    const list = selectedRepositories?.map((repo) => (
+      repo.institutions?.map((institution) => {
+        const ror = institution.id.filter( id => id.type === "ROR" )[0];
+        if (ror) {
+          return {
+            name: institution.name,
+            id: ror.value,
+          };
+        }
+        return null;
+      }).filter((item): item is { name: string; id: string } => item !== null)
+    )).flat();
+    const uniqueByRor = Array.from(
+      new Map(list?.map(item => [item?.id, item])).values()
+    );
+    const notSelectedRors = uniqueByRor.filter(item => !institutions.some(inst => inst.id === item?.id));
+    Array.isArray(notSelectedRors) && setRorList(notSelectedRors as Obj[]);
+  }, [selectedRepositories, institutions]);
+
+  return (
+    <LayoutGroup>
+      <Grid container spacing={6}>
+        <Grid xs={12} md={6}>
+          <Typography variant="h6" mb={1}>
+            Add institution
+          </Typography>
+          <Typography variant="body2" mb={1}>
+            {selectedRepositories && selectedRepositories.length > 0 ? "Select an institution associated with one of your repositories" : "Please select a repository first to see associated institutions."}
+          </Typography>
+          {rorList.length > 0 && (
+            <List dense>
+              <AnimatePresence initial={false} mode="popLayout">
+                {rorList.map((item) => (
+                  <MotionListItem 
+                    key={item.id} 
+                    disableGutters 
+                    layout 
+                    initial={{ opacity: 0, x: 100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 100 }}
+                  >
+                    <ListItemButton onClick={() => setInstitutions([...institutions, {...item, url: item.id?.replace("ROR:", "https://ror.org/") }])}>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <AccountBalanceIcon />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={item.name}
+                        secondary={`${item.id}`}
+                      />
+                    </ListItemButton>
+                  </MotionListItem>
+                  ))}
+              </AnimatePresence>
+            </List>
+          )}
+          <Typography variant="body2" mb={1}>
+            Or find your insitution in the RoR database
+          </Typography>
+          <Autocomplete
+            options={rorData ?? []}
+            renderInput={(params) => <TextField {...params} label="Search for institution"/>}
+            loading={isLoading}
+            getOptionLabel={(option) => option?.names?.map(name => name.value).join(" | ") || ""}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            value={customRor}
+            inputValue={rorValue}
+            onInputChange={(_e, newValue) => {
+              setRorValue(newValue);
+            }}
+            renderOption={(props, option) => (
+              <li {...props} key={option.id}>
+                {option?.names?.map(name => name.value).join(" | ") || ""}
+              </li>
+            )}
+            onChange={(_event, newValue) => {
+              if (newValue) {
+                !institutions.some(inst => inst.id === newValue.id) && setInstitutions([...institutions, {
+                  name: newValue.names?.map(name => name.value).join(" | "),
+                  url: newValue.id,
+                  id: newValue.id.replace("https://ror.org/", "ROR:"),
+                }]);
+                setCustomRor(undefined);
+              }
+            }}
+          />
+        </Grid>
+        <SelectedItems
+          header="Selected institutions"
+          icon={<AccountBalanceIcon />}
+          items={institutions}
+          setItems={setInstitutions}
+          emptyMessage="No institutions selected"
+        />
+      </Grid>
+    </LayoutGroup>
+  );
+}
+
+type BaseProps = {
+  header: string;
+  icon: ReactNode;
+  emptyMessage: string;
+};
+
+type PidProps = BaseProps & {
+  type: "pid";
+  items: Pid[];
+  setItems: Dispatch<SetStateAction<Pid[]>>;
+};
+
+type ObjProps = BaseProps & {
+  type?: undefined; // optional or undefined
+  items: Obj[];
+  setItems: Dispatch<SetStateAction<Obj[]>>;
+};
+
+type SelectedItemsProps = PidProps | ObjProps;
+
+const rightListVariants = {
+  initial: { opacity: 0, x: -100 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -100 },
+};
+
+function SelectedItems({
+  header,
+  icon,
+  items,
+  setItems,
+  emptyMessage,
+  type,
+}: SelectedItemsProps) {
+  return (
+    <Grid xs={12} md={6}>
+      <Typography variant="h6">
+        {header}
+      </Typography>
+      <List dense>
+        <AnimatePresence initial={false} mode="popLayout">
+          {items.length > 0 ? items.map((item, index) => 
+            <MotionListItem
+              layout
+              variants={rightListVariants}
+              initial="initial" 
+              animate="animate" 
+              exit="exit"
+              disableGutters
+              key={item.id}
               secondaryAction={
                 <IconButton edge="end" aria-label="delete" onClick={() => {
-                  setRepositories(repositories.filter((_, i) => i !== index));
+                  if (type === "pid") {
+                    const typedItems = items as Pid[];
+                    setItems(typedItems.filter((_, i) => i !== index));
+                  } else {
+                    const typedItems = items as Obj[];
+                    setItems(typedItems.filter((_, i) => i !== index));
+                  }
                 }}>
                   <DeleteIcon />
                 </IconButton>
               }
             >
-              <ListItemButton component="a" href={repo.url} target="_blank">
+              <ListItemButton component="a" href={item.url} target="_blank">
                 <ListItemAvatar>
                   <Avatar>
-                    <FolderIcon />
+                    {icon}
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary={repo.name}
-                  secondary={`${repo.id}`}
+                  primary={item.name}
+                  secondary={type === "pid" ? `${item.repository?.name} / DOI ${item.id}` : item.id}
                 />
               </ListItemButton>
-            </ListItem>,
+            </MotionListItem>,
           ) :
-            <ListItem key="empty" disableGutters>
-              <ListItemText primary="No repositories selected" />
-            </ListItem>
+            <MotionListItem key="empty" disableGutters variants={rightListVariants} initial="initial" animate="animate" exit="exit">
+              <ListItemText primary={emptyMessage} />
+            </MotionListItem>
           }
-        </List>
-      </Grid>
+        </AnimatePresence>
+      </List>
     </Grid>
-  );
+  )
 }
 
-function Institutions() {
-  const [ activeId, setActiveId ] = useState<string>("");
-  const [ id, setId ] = useState<string>("");
-  const { data } = useQuery({ queryKey: ['pid', id], queryFn: () => fetchPid(id), enabled: !!id });
-
-  return (
-    <Box>
-      <Typography variant="body2" mb={1}>
-        Provide an institution you manage.
-      </Typography>
-      <Stack direction="row" spacing={1} sx={{ mb: 1 }} >
-        <TextField label="Search for insitution" fullWidth value={activeId} onChange={(e) => setActiveId(e.target.value)} />
-        {data && <Button variant="contained" onClick={() => setId(activeId)}>Add</Button>}
-      </Stack>
-    </Box>
-  );
-}
+const ForwardListItem = forwardRef<HTMLLIElement, ListItemProps & HTMLMotionProps<"li">>((props, ref) => <ListItem ref={ref} {...props} />);
+const MotionListItem = motion(ForwardListItem);
