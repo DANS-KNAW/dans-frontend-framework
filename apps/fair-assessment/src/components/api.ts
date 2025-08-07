@@ -174,6 +174,7 @@ const ROR_URL = "https://api.ror.org/v2";
 export type RorResponse = {
   id: string;
   names: {
+    types: string[];
     value: string;
   }[];
 };

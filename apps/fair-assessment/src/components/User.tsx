@@ -394,7 +394,7 @@ function Institutions({ selectedRepositories, institutions, setInstitutions }: {
             options={rorData ?? []}
             renderInput={(params) => <TextField {...params} label="Search for institution"/>}
             loading={isLoading}
-            getOptionLabel={(option) => option?.names?.map(name => name.value).join(" | ") || ""}
+            getOptionLabel={(option) => option?.names.filter(name => name.types.indexOf("ror_display") !== -1)[0].value || ""}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             value={customRor}
             inputValue={rorValue}
@@ -403,13 +403,13 @@ function Institutions({ selectedRepositories, institutions, setInstitutions }: {
             }}
             renderOption={(props, option) => (
               <li {...props} key={option.id}>
-                {option?.names?.map(name => name.value).join(" | ") || ""}
+                {option?.names?.filter(name => name.types.indexOf("ror_display") !== -1)[0].value || ""}
               </li>
             )}
             onChange={(_event, newValue) => {
               if (newValue) {
                 !institutions.some(inst => inst.id === newValue.id) && setInstitutions([...institutions, {
-                  name: newValue.names?.map(name => name.value).join(" | "),
+                  name: newValue.names.filter(name => name.types.indexOf("ror_display") !== -1)[0].value,
                   url: newValue.id,
                   id: newValue.id.replace("https://ror.org/", "ROR:"),
                 }]);
