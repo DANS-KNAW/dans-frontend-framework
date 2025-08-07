@@ -1,5 +1,4 @@
-type MaterialType = "PDF" | "FAQ";
-
+type MaterialType = "PDF" | "HTML";
 export interface Material {
   topic: string;
   type: MaterialType;
@@ -10,13 +9,9 @@ interface MaterialGroup {
   group: string;
   materials: Material[];
 }
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-} from "@headlessui/react";
+
 import { useEffect, useState } from "react";
-import PdfMaterial from "./pdf-material";
+import DocumentModel from "./document-model";
 
 export default function SupportMaterials({
   supportMaterialEndpoint,
@@ -49,61 +44,20 @@ export default function SupportMaterials({
   }, []);
 
   return (
-    <dl className="tw:mt-16 tw:divide-y tw:divide-gray-900/10">
+    <dl className="tw:mt-16">
       {materialGroups.map((materialGroup) => (
-        <Disclosure
-          key={materialGroup.group}
-          as="div"
-          className="tw:py-6 tw:first:pt-0 tw:last:pb-0"
-        >
-          <dt>
-            <DisclosureButton className="tw:group tw:flex tw:w-full tw:items-start tw:justify-between tw:text-left tw:text-gray-900">
-              <span className="tw:text-base/7 tw:font-semibold tw:cursor-pointer tw:hover:underline">
-                {materialGroup.group}
-              </span>
-              <span className="tw:ml-6 tw:flex tw:h-7 tw:items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  aria-hidden="true"
-                  className="tw:size-6 tw:group-data-open:hidden"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 4.5v15m7.5-7.5h-15"
-                  />
-                </svg>
-
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  aria-hidden="true"
-                  className="tw:size-6 tw:group-not-data-open:hidden"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 12h14"
-                  />
-                </svg>
-              </span>
-            </DisclosureButton>
-          </dt>
-          <DisclosurePanel as="dd" className="tw:mt-2">
+        <div className="tw:pb-12" key={materialGroup.group}>
+          <p className="tw:text-lg tw:font-medium tw:border-b tw:border-gray-200 tw:pb-2">
+            {materialGroup.group}
+          </p>
+          <ul>
             {materialGroup.materials.map((material) => (
               <div key={material.topic} className="tw:mt-4">
-                <PdfMaterial material={material} />
+                <DocumentModel material={material} />
               </div>
             ))}
-          </DisclosurePanel>
-        </Disclosure>
+          </ul>
+        </div>
       ))}
     </dl>
   );

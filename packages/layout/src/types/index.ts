@@ -7,7 +7,7 @@ export interface Footer {
 
 export interface FooterContent {
   header?: string | LanguageStrings;
-  links?: Link[];
+  links?: (Link | Button)[];
   freetext?: string | LanguageStrings;
   image?: {
     src: string;
@@ -21,5 +21,11 @@ export interface FooterContent {
 interface Link {
   name: string | LanguageStrings;
   link: string;
+  icon?: string;
+}
+
+interface Button {
+  name: string | LanguageStrings;
+  onClick: () => void;
   icon?: string;
 }

@@ -34,6 +34,7 @@ export default function SupportDrawer({
         </svg>
         <span className="tw:text-sm tw:font-medium tw:ml-1">Support</span>
       </button>
+      
       <Drawer open={open} setOpen={setOpen}>
         <SupportMaterials supportMaterialEndpoint={supportMaterialEndpoint} />
       </Drawer>

@@ -1,14 +1,17 @@
 import type { Page } from "@dans-framework/pages";
 
 const page: Page = {
-  id: "deposit",
-  name: "Deposit",
-  slug: "deposit",
+  id: "publisher",
+  name: {
+    en: "Publisher",
+    nl: "Uitgever",
+  },
+  slug: "publisher",
   template: "deposit",
   inMenu: true,
   menuTitle: {
-    en: "Deposit",
-    nl: "Indienen",
+    en: "Publisher",
+    nl: "Uitgever",
   },
 };
 

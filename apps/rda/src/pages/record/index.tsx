@@ -15,6 +15,8 @@ import {
 import React from "react";
 import { useParams } from "react-router-dom";
 import orcid from "../../config/images/orcid.png";
+import { lookupLanguageString } from "@dans-framework/utils";
+import { useTranslation } from "react-i18next";
 
 interface Individual {
   fullName: string;
@@ -225,6 +227,7 @@ export function RdaRecord() {
   const endpoint = getCurrentEndpoint();
 
   const theme = useTheme();
+  const { i18n } = useTranslation();
   const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
 
   React.useEffect(() => {
@@ -237,7 +240,10 @@ export function RdaRecord() {
 
   const items = [
     {
-      label: "Contributors",
+      label: lookupLanguageString(
+        { en: "Contributors", nl: "Bijdragers" },
+        i18n.language
+      ),
       value: record.individuals
         ? record.individuals.map((i) => (
             <React.Fragment key={i.identifier + i.fullName}>
@@ -251,7 +257,10 @@ export function RdaRecord() {
         : [],
     },
     {
-      label: "Pathways",
+      label: lookupLanguageString(
+        { en: "Pathways", nl: "Paden" },
+        i18n.language
+      ),
       value: record.pathways
         ? record.pathways.map((p) => (
             <Typography
@@ -265,7 +274,10 @@ export function RdaRecord() {
         : [],
     },
     {
-      label: "Interest Groups",
+      label: lookupLanguageString(
+        { en: "Interest Groups", nl: "Belangengroepen" },
+        i18n.language
+      ),
       value: record.interest_groups
         ? record.interest_groups.map((ig) => (
             <Typography key={ig.url} variant="body2" sx={{ color: "#374151" }}>
@@ -275,7 +287,10 @@ export function RdaRecord() {
         : [],
     },
     {
-      label: "Working Groups",
+      label: lookupLanguageString(
+        { en: "Working Groups", nl: "Werkgroepen" },
+        i18n.language
+      ),
       value: record.working_groups
         ? record.working_groups.map((wg) => (
             <Typography key={wg.url} variant="body2" sx={{ color: "#374151" }}>
@@ -285,7 +300,10 @@ export function RdaRecord() {
         : [],
     },
     {
-      label: "GORC Elements",
+      label: lookupLanguageString(
+        { en: "GORC Elements", nl: "GORC elementen" },
+        i18n.language
+      ),
       value: record.gorc_elements
         ? record.gorc_elements.map((ge) => (
             <Typography
@@ -299,7 +317,10 @@ export function RdaRecord() {
         : [],
     },
     {
-      label: "GORC Attributes",
+      label: lookupLanguageString(
+        { en: "GORC Attributes", nl: "GORC attributen" },
+        i18n.language
+      ),
       value: record.gorc_attributes
         ? record.gorc_attributes.map((ga) => (
             <Typography
@@ -313,7 +334,10 @@ export function RdaRecord() {
         : [],
     },
     {
-      label: "Domains",
+      label: lookupLanguageString(
+        { en: "Domains", nl: "Domeinen" },
+        i18n.language
+      ),
       value: record.disciplines
         ? record.disciplines.map((d) => (
             <Typography key={d.uuid} variant="body2" sx={{ color: "#374151" }}>
@@ -360,8 +384,10 @@ export function RdaRecord() {
           : [],
     },
     {
-
-      label: "Access URLs",
+      label: lookupLanguageString(
+        { en: "Access URLs", nl: "Toegang URL's" },
+        i18n.language
+      ),
       value: [
         <AccessUrls
           key="access-urls"
@@ -376,6 +402,35 @@ export function RdaRecord() {
 
   return (
     <Container sx={{ mt: 6 }}>
+      <Link
+        href="/search"
+        underline="none"
+        sx={{ display: "flex", alignItems: "center", mb: 3 }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          style={{ width: 16, height: 16, color: "#4F8E31" }}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18"
+          />
+        </svg>
+        <Typography
+          variant="body2"
+          sx={{ color: "#4F8E31", fontWeight: 500, ml: 0.5 }}
+        >
+          {lookupLanguageString(
+            { en: "Return to search", nl: "Terug naar zoeken" },
+            i18n.language
+          )}
+        </Typography>
+      </Link>
       <Typography
         variant="subtitle1"
         sx={{ color: "#111827", fontWeight: 600 }}
@@ -415,7 +470,13 @@ export function RdaRecord() {
       )}
 
       <Typography variant="body2" color="#6b7280" sx={{ mt: 3 }}>
-        Deposit metadata and status
+        {lookupLanguageString(
+          {
+            en: "Deposit metadata and status",
+            nl: "Depositeren metadata en status",
+          },
+          i18n.language
+        )}
       </Typography>
 
       <List disablePadding sx={{ mt: 3 }}>

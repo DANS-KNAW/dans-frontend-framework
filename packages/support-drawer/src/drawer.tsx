@@ -13,7 +13,7 @@ export default function Drawer({
     <Dialog
       open={open}
       onClose={setOpen}
-      className="tw:relative tw:z-[99999999999999]"
+      className="tw:relative tw:z-[99999999999]"
     >
       <div className="tw:fixed tw:inset-0" />
 

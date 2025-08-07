@@ -2,7 +2,10 @@ import type { Page } from "@dans-framework/pages";
 
 const page: Page = {
   id: "record",
-  name: "Record",
+  name: {
+    en: "Knowledge Base Record",
+    nl: "Kennisbank Dossier",
+  },
   slug: "record/:id",
   template: "record",
   inMenu: false,
