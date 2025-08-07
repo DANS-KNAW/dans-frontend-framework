@@ -1,11 +1,9 @@
 const USE_MOCK = true;
 
 const mockPidData = {
-  dataset: {
-    name: 'Dataset Name',
-    id: 'dataset_id',
-    url: 'https://google.com',
-  },
+  name: 'Dataset Name',
+  id: 'dataset_id',
+  url: 'https://google.com',
   repository: {
     name: 'De Repo namee',
     id: 'repo_id'
@@ -38,9 +36,20 @@ export type Obj = {
   name: string;
   id: string;
   url?: string;
+  institutions?: {
+    name: string;
+    id: {
+      type: string;
+      value: string;
+    }[];
+  }[];
+  repository?: never;
 }
+
 export type Pid = {
-  dataset: Obj;
+  name: string;
+  id: string;
+  url?: string;
   repository: Obj;
   collections: Obj[];
   institutions: Obj[];
@@ -158,4 +167,23 @@ export async function fetchRepositoryDetails(id: string): Promise<SingleRepo> {
     if (!res.ok) throw new Error("Network response was not ok");
     const text = await res.text();
     return parseRepositoryInfoXML(text);
+}
+
+const ROR_URL = "https://api.ror.org/v2";
+
+export type RorResponse = {
+  id: string;
+  names: {
+    value: string;
+  }[];
+};
+
+export async function fetchRor(value: string): Promise<RorResponse[]> {
+  const res = await fetch(`${ROR_URL}/organizations?query=${value}*`, {
+    method: 'GET',
+    headers: { Accept: "application/json" },
+  });
+  if (!res.ok) throw new Error("Network response was not ok");
+  const json = await res.json();
+  return json.items;
 }
