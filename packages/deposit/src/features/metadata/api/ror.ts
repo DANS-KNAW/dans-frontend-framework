@@ -4,11 +4,11 @@ import i18n from "../../../languages/i18n";
 
 export const rorApi = createApi({
   reducerPath: "ror",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://api.ror.org/" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "https://api.ror.org/v2" }),
   endpoints: (build) => ({
     fetchRorByName: build.query({
       query: (content) => ({
-        url: `organizations?query.advanced=name:${content}*`,
+        url: `organizations?query.advanced=names.value:${content}*`,
         headers: { Accept: "application/json" },
       }),
       transformResponse: (response: RorResponse, _meta, arg) => {
@@ -17,10 +17,10 @@ export const rorApi = createApi({
             {
               arg: arg,
               response: response.items.map((item) => ({
-                label: item.name,
+                label: item.names.filter(name => name.types.indexOf("ror_display") !== -1)[0].value || "Unknown",
                 value: item.id,
                 extraLabel: "country",
-                extraContent: item.country.country_name,
+                extraContent: item.locations.map(loc=> loc.geonames_details.country_name).join(", ") || "Unknown",
               })),
             }
           : [];
