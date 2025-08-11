@@ -2,9 +2,8 @@ import { Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
-import { useTranslation } from "react-i18next";
 import { ThemeWrapper } from "@dans-framework/theme";
-import { LanguageBar, MenuBar, Footer } from "@dans-framework/layout";
+import { MenuBar, Footer } from "@dans-framework/layout";
 import { Generic, type Page } from "@dans-framework/pages";
 import {
   AuthWrapper,
@@ -17,7 +16,6 @@ import theme from "./config/theme";
 import footer from "./config/footer";
 import pages from "./config/pages";
 import siteTitle from "./config/siteTitle";
-import languages from "./config/languages";
 import authProvider from "./config/auth";
 
 import Dashboard from "./components/Dashboard";
@@ -37,17 +35,11 @@ const createElementByTemplate = (page: Page) => {
 };
 
 const App = () => {
-  const { i18n } = useTranslation();
   return (
     <QueryClientProvider client={queryClient}>
       <AuthWrapper authProvider={authProvider}>
         <ThemeWrapper theme={theme} siteTitle={siteTitle}>
           <BrowserRouter>
-            {/* Need to pass along root i18n functions to the language bar */}
-            <LanguageBar
-              languages={languages}
-              changeLanguage={i18n.changeLanguage}
-            />
             <MenuBar pages={pages} userSubmissions={false} />
             {/* Suspense to make sure languages can load first */}
             <Suspense
