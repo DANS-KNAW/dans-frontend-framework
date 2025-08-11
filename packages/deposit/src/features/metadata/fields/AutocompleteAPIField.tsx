@@ -84,8 +84,6 @@ export const RorField = ({ field, groupName, groupIndex }: AutocompleteFieldProp
       skip: debouncedInputValue === "",
     });
 
-  console.log(data)
-
   return (
     <AutocompleteAPIField
       field={field}
