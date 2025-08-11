@@ -1,4 +1,13 @@
-import { useState, type SyntheticEvent, type ReactNode, useEffect, useMemo, type SetStateAction, type Dispatch, forwardRef } from "react";
+import { 
+  useState, 
+  type SyntheticEvent, 
+  type ReactNode, 
+  useEffect, 
+  useMemo, 
+  type SetStateAction, 
+  type Dispatch, 
+  forwardRef 
+} from "react";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -8,7 +17,15 @@ import { useAuth } from "react-oidc-context";
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { useQuery } from "@tanstack/react-query";
-import { fetchPid, fetchRepositories, fetchRepositoryDetails, fetchRor, type Pid, type Obj, type RorResponse } from "./api";
+import { 
+  fetchPid, 
+  fetchRepositories, 
+  fetchRepositoryDetails, 
+  fetchRor, 
+  type Pid, 
+  type Obj, 
+  type RorResponse
+} from "./api";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -202,7 +219,7 @@ function Objects({ objects, setObjects }: { objects: Pid[], setObjects: Dispatch
   const [ activeId, setActiveId ] = useState<string>("");
   const [ id, setId ] = useState<string>("");
   const { data } = useQuery({ queryKey: ['pid', id], queryFn: () => fetchPid(id), enabled: !!id });
-  const isSelected = data && objects.some(r => r.id === data.id);
+  const isSelected = data && objects.some(r => r.identifier === data.identifier);
 
   return (
     <Grid container spacing={6}>
@@ -266,9 +283,13 @@ function Repositories({ repositories, setRepositories, objects }: { repositories
   const isSelected = dataDetails && repositories.some(r => r.id === dataDetails.id);
 
   useEffect(() => {
-    const list = objects?.map((obj) => obj.repository);
-    const notSelectedItems = list.filter(item => !repositories.some(r => r.id === item?.id));
-    setObjectList(notSelectedItems)
+    const pidList = objects?.map((obj) => obj.repository);
+    const uniqueByRepo = (() => {
+      const seen = new Set();
+      return pidList.filter(item => !seen.has(item.id) && seen.add(item.id));
+    })();
+    const notSelectedItems = uniqueByRepo.filter(item => !repositories.some(r => r.id === item?.id));
+    Array.isArray(notSelectedItems) && setObjectList(notSelectedItems)
   }, [repositories, objects]);
 
   return (
@@ -541,7 +562,7 @@ function SelectedItems({
               animate="animate" 
               exit="exit"
               disableGutters
-              key={item.id}
+              key={item.id || item.identifier}
               secondaryAction={
                 <IconButton edge="end" aria-label="delete" onClick={() => {
                   if (type === "pid") {
