@@ -15,7 +15,8 @@ export type Template =
   | "dashboard"
   | "advisor"
   | "mapper"
-  | "rda-annotator";
+  | "rda-annotator"
+  | "fair-guidance";
 
 export interface Page {
   id: string;

@@ -13,6 +13,7 @@
     "@dans-framework/deposit": "workspace:*",
     "@dans-framework/layout": "workspace:*",
     "@dans-framework/pages": "workspace:*",
+    "@dans-framework/rdt-search-ui": "workspace:*",
     "@dans-framework/theme": "workspace:*",
     "@dans-framework/user-auth": "workspace:*",
     "@dans-framework/utils": "workspace:*",

@@ -9,6 +9,7 @@ const page: Page = {
     en: "Guidance",
     nl: "Begeleiding",
   },
+  template: "fair-guidance",
 };
 
 export default page;
