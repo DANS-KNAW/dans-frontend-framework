@@ -275,6 +275,9 @@ importers:
       '@dans-framework/pages':
         specifier: workspace:*
         version: link:../../packages/pages
+      '@dans-framework/rdt-search-ui':
+        specifier: workspace:*
+        version: link:../../packages/rdt-search-ui
       '@dans-framework/theme':
         specifier: workspace:*
         version: link:../../packages/theme

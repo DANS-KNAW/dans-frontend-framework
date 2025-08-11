@@ -15,7 +15,8 @@ export type Template =
   | "dashboard"
   | "advisor"
   | "mapper"
-  | "rda-annotator";
+  | "rda-annotator"
+  | "fair-guidance";
 
 /**
  * Type for language-specific content that can be either string or JSX
