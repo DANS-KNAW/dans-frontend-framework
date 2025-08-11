@@ -34,6 +34,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { useDebounce } from "use-debounce";
 import DatasetIcon from '@mui/icons-material/Dataset';
 import { LayoutGroup, motion, AnimatePresence, type HTMLMotionProps } from "framer-motion";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const tempRoles = [
   { label: "Depositor", value: "depositor" },
@@ -102,7 +103,7 @@ export default function UserSettings() {
               {activeTabs.map((tab, index) =>
                 <TabPanel value={tabValue} index={index} key={index}>
                   {tab.id === 'objects' && <Objects objects={objects} setObjects={setObjects} />}
-                  {tab.id === 'repositories' && <Repositories repositories={repositories} setRepositories={setRepositories} />}
+                  {tab.id === 'repositories' && <Repositories objects={objects} repositories={repositories} setRepositories={setRepositories} />}
                   {tab.id === 'institutions' && <Institutions selectedRepositories={repositories} institutions={institutions} setInstitutions={setInstitutions} />}
                 </TabPanel>
               )}
@@ -201,7 +202,7 @@ function Objects({ objects, setObjects }: { objects: Pid[], setObjects: Dispatch
   const [ activeId, setActiveId ] = useState<string>("");
   const [ id, setId ] = useState<string>("");
   const { data } = useQuery({ queryKey: ['pid', id], queryFn: () => fetchPid(id), enabled: !!id });
-  const isSelected = data && objects.some(r => r.id === data.id)
+  const isSelected = data && objects.some(r => r.id === data.id);
 
   return (
     <Grid container spacing={6}>
@@ -221,13 +222,13 @@ function Objects({ objects, setObjects }: { objects: Pid[], setObjects: Dispatch
             <AlertTitle>Dataset found</AlertTitle>
             <Box>
               <Typography variant="body2">
-                Dataset: {data.name}
+                Dataset: {data.title}
               </Typography>
               <Typography variant="body2">
                 Repository: {data.repository.name}
               </Typography>
               <Typography variant="body2">
-                Collections: {data.collections.map(c => c.name).join(', ')}
+                Collections: {data.collections.join(', ')}
               </Typography>
               <Button 
                 variant="outlined" 
@@ -257,17 +258,39 @@ function Objects({ objects, setObjects }: { objects: Pid[], setObjects: Dispatch
   );
 }
 
-function Repositories({ repositories, setRepositories }: { repositories: Obj[], setRepositories: Dispatch<SetStateAction<Obj[]>> }) {
+function Repositories({ repositories, setRepositories, objects }: { repositories: Obj[]; setRepositories: Dispatch<SetStateAction<Obj[]>>; objects: Pid[] }) {
+  const [ objectList, setObjectList ] = useState<Obj[]>([]);
   const [ repo, setRepo ] = useState<Obj>();
   const { data, isLoading } = useQuery({ queryKey: ['repositories'], queryFn: () => fetchRepositories() });
   const { data: dataDetails, } = useQuery({ queryKey: ['repositoryDetails', repo?.id], queryFn: () => fetchRepositoryDetails(repo!.id), enabled: !!repo?.id });
-  const isSelected = dataDetails && repositories.some(r => r.id === dataDetails.id)
+  const isSelected = dataDetails && repositories.some(r => r.id === dataDetails.id);
+
+  useEffect(() => {
+    const list = objects?.map((obj) => obj.repository);
+    const notSelectedItems = list.filter(item => !repositories.some(r => r.id === item?.id));
+    setObjectList(notSelectedItems)
+  }, [repositories, objects]);
 
   return (
     <Grid container spacing={6}>
       <Grid xs={12} md={6}>
         <Typography variant="h6" mb={1}>
           Add repository
+        </Typography>
+        <Typography variant="body2" mb={1}>
+          {objects && objects.length > 0 ? "Select a repository associated with one of your datasets" : "Please select a dataset first to see associated repositories."}
+        </Typography>
+        {objectList.length > 0 && (
+          <List dense>
+            <AnimatePresence initial={false} mode="popLayout">
+              {objectList.map((item) => (
+                <PreselectedRepo key={item.id} id={item.id} setRepositories={setRepositories} repositories={repositories}/>
+              ))}
+            </AnimatePresence>
+          </List>
+        )}
+        <Typography variant="body2" mb={1}>
+          Or find your repository in the Re3Data database
         </Typography>
         <Autocomplete
           options={data || []}
@@ -320,6 +343,45 @@ function Repositories({ repositories, setRepositories }: { repositories: Obj[], 
       />
     </Grid>
   );
+}
+
+const PreselectedRepo = ({ id, setRepositories, repositories }: { id: string; setRepositories: Dispatch<SetStateAction<Obj[]>>; repositories: Obj[] }) => {
+  const { data } = useQuery({ queryKey: ['repositoryDetails', id], queryFn: () => fetchRepositoryDetails(id) });
+  return (
+    <MotionListItem 
+      key={id} 
+      disableGutters 
+      layout 
+      initial={{ opacity: 0, x: 100 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 100 }}
+    >
+      {data ?
+        <ListItemButton onClick={() => setRepositories([...repositories, {...data, url: data.url, institutions: data.institutions}])}>
+          <ListItemAvatar>
+            <Avatar>
+              <AccountBalanceIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            primary={data.name}
+            secondary={`${data.id}`}
+          />
+        </ListItemButton>
+        : 
+        <ListItemButton>
+          <ListItemAvatar>
+            <Avatar>
+              <CircularProgress size={12} />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            primary="Loading repository..."
+          />
+        </ListItemButton>
+      }
+    </MotionListItem>
+  )
 }
 
 function Institutions({ selectedRepositories, institutions, setInstitutions }: { selectedRepositories?: Obj[], institutions: Obj[], setInstitutions: Dispatch<SetStateAction<Obj[]>> }) {
@@ -407,7 +469,7 @@ function Institutions({ selectedRepositories, institutions, setInstitutions }: {
               </li>
             )}
             onChange={(_event, newValue) => {
-              if (newValue) {
+              if (newValue && !institutions.some(i => i.id === newValue.id.replace("https://ror.org/", "ROR:"))) {
                 !institutions.some(inst => inst.id === newValue.id) && setInstitutions([...institutions, {
                   name: newValue.names.filter(name => name.types.indexOf("ror_display") !== -1)[0].value,
                   url: newValue.id,
@@ -494,15 +556,15 @@ function SelectedItems({
                 </IconButton>
               }
             >
-              <ListItemButton component="a" href={item.url} target="_blank">
+              <ListItemButton component="a" href={item.url || item.identifier} target="_blank">
                 <ListItemAvatar>
                   <Avatar>
                     {icon}
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary={item.name}
-                  secondary={type === "pid" ? `${item.repository?.name} / DOI ${item.id}` : item.id}
+                  primary={item.name || item.title}
+                  secondary={type === "pid" ? `${item.repository?.name}` : item.id}
                 />
               </ListItemButton>
             </MotionListItem>,
