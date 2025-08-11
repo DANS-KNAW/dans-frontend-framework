@@ -4,7 +4,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
 import { ThemeWrapper } from "@dans-framework/theme";
-import { LanguageBar, MenuBar, Footer, Banner } from "@dans-framework/layout";
+import { LanguageBar, MenuBar, Footer } from "@dans-framework/layout";
 import { Deposit } from "@dans-framework/deposit";
 import { Generic, Page } from "@dans-framework/pages";
 import {
@@ -19,7 +19,7 @@ import { RdaRecord } from "./pages/record";
 
 // Load config variables
 import theme from "./config/theme";
-import footer from "./config/footer";
+import { useFooterData } from "./config/footer";
 import pages from "./config/pages";
 import siteTitle from "./config/siteTitle";
 import languages from "./config/languages";
@@ -33,21 +33,80 @@ import {
 import { Freshdesk } from "@dans-framework/freshdesk";
 import SupportDrawer from "@dans-framework/support-drawer";
 import RDAAnnotator from "./pages/rda-annotator";
-import { useEmbedHandler } from "@dans-framework/utils";
-import { Link } from "@mui/material";
+import { lookupLanguageString, useEmbedHandler } from "@dans-framework/utils";
+import { Container, Link, Typography } from "@mui/material";
+import SiteTitleWrapper from "./config/sitetitle-wrapper";
 
 const App = () => {
   const { i18n } = useTranslation();
   const { isEmbed } = useEmbedHandler();
 
+  const footer = useFooterData();
+
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
-        return <FacetedWrapper dashboard dashRoute="/" resultRoute="/search" />;
+        return (
+          <SiteTitleWrapper page={page}>
+            {!isEmbed && (
+              <Box sx={{ pt: { xs: 4, sm: 8 } }}>
+                <Container maxWidth="lg" sx={{ px: { xs: 3, lg: 4 } }}>
+                  <Box
+                    sx={{
+                      mx: { xs: "auto", lg: 0 },
+                      maxWidth: { xs: "100%", md: "672px" },
+                    }}
+                  >
+                    <Typography
+                      component="h1"
+                      sx={{
+                        fontSize: { xs: "3rem", sm: "4rem" },
+                        fontWeight: 600,
+                        letterSpacing: "-0.025em",
+                        lineHeight: 1.1,
+                      }}
+                    >
+                      {lookupLanguageString(
+                        { en: "RDA Knowledge Base", nl: "RDA Kennisbank" },
+                        i18n.language
+                      )}
+                    </Typography>
+                    <Typography
+                      component="p"
+                      sx={{
+                        mt: 4,
+                        fontSize: { xs: "1.125rem", sm: "1.25rem" },
+                        fontWeight: 400,
+                        lineHeight: 2,
+                      }}
+                    >
+                      {lookupLanguageString(
+                        {
+                          en: "The Knowledge Base is a suite of applications that helps users find, annotate, and publish RDA-related materials",
+                          nl: "De Kennisbank is een suite van applicaties die gebruikers helpt bij het vinden, annoteren en publiceren van RDA-gerelateerde materialen",
+                        },
+                        i18n.language
+                      )}
+                    </Typography>
+                  </Box>
+                </Container>
+              </Box>
+            )}
+            <FacetedWrapper dashboard dashRoute="/" resultRoute="/search" />
+          </SiteTitleWrapper>
+        );
       case "search":
-        return <FacetedWrapper dashRoute="/" resultRoute="/search" />;
+        return (
+          <SiteTitleWrapper page={page}>
+            <FacetedWrapper dashRoute="/" resultRoute="/search" />
+          </SiteTitleWrapper>
+        );
       case "record":
-        return <RdaRecord />;
+        return (
+          <SiteTitleWrapper page={page}>
+            <RdaRecord />
+          </SiteTitleWrapper>
+        );
       case "deposit":
         return (
           <AuthRoute>
@@ -55,7 +114,11 @@ const App = () => {
           </AuthRoute>
         );
       case "rda-annotator":
-        return <RDAAnnotator />;
+        return (
+          <SiteTitleWrapper page={page}>
+            <RDAAnnotator />
+          </SiteTitleWrapper>
+        );
       default:
         return <Generic {...page} />;
     }
@@ -64,12 +127,6 @@ const App = () => {
   return (
     <AuthWrapper authProvider={authProvider}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
-        <Banner
-          text={{
-            en: "🚨This demo site is under active development—features may change or break unexpectedly.🚨",
-            nl: "🚨Deze demo-site is in actieve ontwikkeling - functies kunnen onverwacht veranderen of kapot gaan.🚨",
-          }}
-        />
         <FacetedSearchProvider config={elasticConfig}>
           {/* Need to pass along root i18n functions to the language bar */}
           {!isEmbed && (
@@ -140,6 +197,7 @@ const App = () => {
             </Link>
           </Box>
         )}
+
         {!isEmbed && <Footer {...footer} />}
         <Freshdesk widgetId={80000010123} />
         <SupportDrawer

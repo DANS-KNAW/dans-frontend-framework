@@ -11,6 +11,7 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import EmailIcon from "@mui/icons-material/Email";
 import parse from "html-react-parser";
+import { Button } from "@mui/material";
 
 const Footer = ({ top, bottom }: FooterType) => {
   const columnsTop = top.length;
@@ -71,6 +72,22 @@ const FooterContent = ({
   bottom,
 }: FooterContent) => {
   const { i18n } = useTranslation();
+
+  const renderIcon = (icon?: string) => {
+    if (!icon) return null;
+
+    switch (icon) {
+      case "twitter":
+        return <TwitterIcon sx={{ mr: 1 }} fontSize="small" />;
+      case "youtube":
+        return <YouTubeIcon sx={{ mr: 1 }} fontSize="small" />;
+      case "email":
+        return <EmailIcon sx={{ mr: 1 }} fontSize="small" />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <Stack direction="column" alignItems="start">
       {header && (
@@ -97,26 +114,49 @@ const FooterContent = ({
         </Box>
       )}
       {links &&
-        links.map((link, j) => (
-          <Link
-            href={link.link}
-            underline="none"
-            target="_blank"
-            key={`link-${j}`}
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            {link.icon && link.icon === "twitter" && (
-              <TwitterIcon sx={{ mr: 1 }} fontSize="small" />
-            )}
-            {link.icon && link.icon === "youtube" && (
-              <YouTubeIcon sx={{ mr: 1 }} fontSize="small" />
-            )}
-            {link.icon && link.icon === "email" && (
-              <EmailIcon sx={{ mr: 1 }} fontSize="small" />
-            )}
-            {lookupLanguageString(link.name, i18n.language)}
-          </Link>
-        ))}
+        links.map((item, j) => {
+          // Type guard: check if item has onClick property (Button)
+          if ("onClick" in item) {
+            return (
+              <Button
+                key={`button-${j}`}
+                onClick={item.onClick}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  textDecoration: "none",
+                  textTransform: "none",
+                  padding: 0,
+                  minWidth: "auto",
+                  justifyContent: "flex-start",
+                  fontWeight: 400,
+                  // Font 13 px in rem
+                  fontSize: 16,
+                  "&:hover": {
+                    backgroundColor: "transparent",
+                  },
+                }}
+              >
+                {renderIcon(item.icon)}
+                {lookupLanguageString(item.name, i18n.language)}
+              </Button>
+            );
+          } else {
+            // It's a Link
+            return (
+              <Link
+                href={item.link}
+                underline="none"
+                target="_blank"
+                key={`link-${j}`}
+                sx={{ display: "flex", alignItems: "center" }}
+              >
+                {renderIcon(item.icon)}
+                {lookupLanguageString(item.name, i18n.language)}
+              </Link>
+            );
+          }
+        })}
     </Stack>
   );
 };

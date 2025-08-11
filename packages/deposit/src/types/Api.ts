@@ -74,9 +74,15 @@ interface RorCountry {
 }
 
 interface RorItem {
-  name: string;
+  names: {
+    lang: string;
+    value: string;
+    types: "ror_display";
+  }[];
   id: string;
-  country: RorCountry;
+  locations: {
+    geonames_details: RorCountry;
+  }[];
 }
 
 export interface RorResponse {
