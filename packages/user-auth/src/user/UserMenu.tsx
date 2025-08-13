@@ -79,13 +79,22 @@ const SettingsMenu = ({
       {userSubmissions && (
         <Link component={RouterLink} to="/user-submissions" color="inherit">
           <Tooltip title={t("userSubmissions")}>
-            <IconButton size="large" color="inherit">
+            <IconButton
+              size="large" 
+              color="inherit"
+              aria-label="View your submissions"
+            >
               <CollectionsBookmarkIcon />
             </IconButton>
           </Tooltip>
         </Link>
       )}
-      <IconButton onClick={handleOpenUserMenu} size="large" color="inherit">
+      <IconButton 
+        onClick={handleOpenUserMenu} 
+        size="large" 
+        color="inherit"
+        aria-label="Open user menu"
+      >
         <AccountCircle />
       </IconButton>
       <Menu

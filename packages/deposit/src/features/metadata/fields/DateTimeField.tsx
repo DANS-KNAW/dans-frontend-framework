@@ -369,9 +369,11 @@ const DateTypeWrapper = ({
 
   return field.formatOptions ?
       <FormControl sx={{ minWidth: 110, mr: 1, }}>
-        <InputLabel>{t("selectDateType")}</InputLabel>
+        <InputLabel id="date-type-selector-label">{t("selectDateType")}</InputLabel>
         <Select
           label={t("selectDateType")}
+          labelId="date-type-selector-label"
+          id="date-type-selector"
           onChange={(e) => {
             // set the type of date
             dispatch(
@@ -398,7 +400,7 @@ const DateTypeWrapper = ({
           inputProps={{ "data-testid": `datetype-${field.name}` }}
         >
           {field.formatOptions.map((option) => (
-            <MenuItem key={option} value={option}>
+            <MenuItem key={option} value={option} aria-label={t(option)}>
               {t(option)}
             </MenuItem>
           ))}

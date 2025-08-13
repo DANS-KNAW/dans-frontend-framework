@@ -95,6 +95,7 @@ export const AddButtonText = ({ field }: BaseButtonProps) => {
         size="medium"
         startIcon={<AddCircleOutlineIcon />}
         disabled={formDisabled}
+        aria-label={t("add") as string}
       >
         {t("add")}
       </Button>

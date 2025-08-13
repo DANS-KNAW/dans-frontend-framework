@@ -8,9 +8,9 @@ import grey from "@mui/material/colors/grey";
 const customTheme = createTheme({
   palette: {
     primary: {
-      light: "#E4F9FF",
-      main: "#38a7d4",
-      dark: "#1f97c8",
+      light: "#0095c9",
+      main: "#007ea9",
+      dark: "#006F94",
       contrastText: "#fff",
     },
     secondary: {
@@ -18,6 +18,13 @@ const customTheme = createTheme({
       main: "#f44336",
       dark: "#ba000d",
       contrastText: "#000",
+    },
+    footerBottom: {
+      main: grey[400],
+      light: grey[300],
+      dark: grey[500],
+      contrastText: grey[700],
+      link: "#006F94",
     },
   },
   typography: {
@@ -66,6 +73,16 @@ const customTheme = createTheme({
         colorDefault: {
           backgroundColor: grey[300],
           color: "black",
+        },
+      },
+    },
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          color: "#005673",
+          "&:hover": {
+            textDecoration: "underline",
+          },
         },
       },
     },
