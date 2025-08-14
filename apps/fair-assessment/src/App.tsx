@@ -19,7 +19,7 @@ import siteTitle from "./config/siteTitle";
 import authProvider from "./config/auth";
 
 import Dashboard from "./components/Dashboard";
-import UserSettings from "./components/User";
+import UserSettings from "./components/user/UserSettings";
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
