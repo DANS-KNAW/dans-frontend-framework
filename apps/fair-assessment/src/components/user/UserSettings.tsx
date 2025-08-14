@@ -336,6 +336,8 @@ function Institutions({ selectedRepositories, institutions, setInstitutions }: {
       .filter((i): i is { id: string; name: string } => i !== null)
   );
 
+  console.log(rorList)
+
   return (
     <LayoutGroup>
       <Grid container spacing={6}>
