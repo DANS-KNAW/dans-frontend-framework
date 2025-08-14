@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 
 type Item = { id: string; name: string; };
 
