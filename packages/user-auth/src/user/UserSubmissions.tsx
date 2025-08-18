@@ -184,23 +184,36 @@ const SubmissionList = ({
     () => [
       {
         field: "viewLink",
-        headerName: "",
+        headerName: t("actions"),
+        renderHeader: () => (
+          <Box sx={{
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: 0,
+            margin: '-1px',
+            overflow: 'hidden',
+            clip: 'rect(0, 0, 0, 0)',
+            whiteSpace: 'nowrap',
+            borderWidth: 0,
+          }}>{t("actions")}</Box>
+        ),
         getActions: (params: any) => {
           return [
             type === "published" && (
               // Open a popover menu with these options:
               // Open a read only version of a submitted form, so user can check input values
               // Or go to the deposited data on the target website(s)
-              <ViewAction
+              (<ViewAction
                 id={params.row.id}
                 depositSlug={depositSlug}
                 status={params.row.status}
                 legacy={params.row.legacy}
-              />
+              />)
             ),
             (resubmit || type !== "published") && (
               // Resubmit or edit a form
-              <Tooltip title={t(type === "draft" ? "editItem" : "retryItem")} placement="bottom">
+              (<Tooltip title={t(type === "draft" ? "editItem" : "retryItem")} placement="bottom">
                 <GridActionsCellItem
                   icon={resubmit ? <ReplayIcon /> : <EditIcon />}
                   label={t(type === "draft" ? "editItem" : "retryItem")}
@@ -215,7 +228,7 @@ const SubmissionList = ({
                   }}
                   disabled={params.processing || params.row.legacy || params.row.remoteDeleted}
                 />
-              </Tooltip>
+              </Tooltip>)
             ),
             <Tooltip title={t("copyItem")} placement="bottom">
               <GridActionsCellItem
@@ -235,7 +248,7 @@ const SubmissionList = ({
             </Tooltip>,
             (type !== "published" || params.row.error) && (
               // Delete an item, for drafts and for errored submissions
-              <Tooltip
+              (<Tooltip
                 title={t(
                   toDelete === params.row.id 
                   ? (type === "resubmit" ? "cancelUnstageItem" : "undeleteItem")
@@ -256,7 +269,7 @@ const SubmissionList = ({
                     setToDelete(toDelete === params.row.id ? "" : params.row.id)
                   }
                 />
-              </Tooltip>
+              </Tooltip>)
             ),
           ].filter(Boolean);
         },
@@ -271,7 +284,7 @@ const SubmissionList = ({
         width: 250,
         renderCell: (params) => (
           // render a confirm delete button in the title cell
-          <LayoutGroup>
+          (<LayoutGroup>
             <Stack
               direction="row"
               sx={{
@@ -324,7 +337,7 @@ const SubmissionList = ({
                 {params.value ? params.value : t("noTitle")}
               </motion.div>
             </Stack>
-          </LayoutGroup>
+          </LayoutGroup>)
         ),
       },
       {
@@ -387,12 +400,13 @@ const SubmissionList = ({
 
   return (
     <>
-      <Typography sx={{ mt: 4, mb: 1 }} variant="h5">
+      <Typography sx={{ mt: 4, mb: 1 }} variant="h5" component="h2">
         {header}
       </Typography>
 
       <Paper sx={{ height: data.length === 0 ? 160 : "auto", width: "100%" }}>
         <DataGrid
+          experimentalFeatures={{ ariaV7: true }}
           loading={isLoading}
           slots={{
             columnMenu: CustomColumnMenu,

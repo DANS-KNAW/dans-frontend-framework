@@ -45,8 +45,6 @@ export const UserSettings = ({
 
   const { data: profileData } = useFetchUserProfileQuery(null);
 
-  console.log(profileData)
-
   // Check if all API keys are valid, to enable/disable button, but make sure they're in the users profile first
   const validateTargets = target.map((t) => ({
     key:
@@ -175,7 +173,7 @@ const UserSettingsItem = ({ target }: { target: Target }) => {
 
   return (
     <Stack direction="column" alignItems="flex-start" mb={4}>
-      <Typography variant="h6">
+      <Typography variant="h6" component="h2">
         {t("apiKeyHeader", { type: target.name })}
       </Typography>
       <Typography mb={3} sx={{ display: "flex", alignItems: "center" }}>

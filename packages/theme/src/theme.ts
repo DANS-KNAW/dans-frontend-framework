@@ -1,7 +1,7 @@
 import { createTheme } from "@mui/material/styles";
 import grey from "@mui/material/colors/grey";
 
-export const theme = createTheme({
+const base = createTheme({
   palette: {
     neutral: {
       light: grey[300],
@@ -22,19 +22,42 @@ export const theme = createTheme({
       contrastText: grey[500],
     },
   },
+  components: {
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          '&.Mui-disabled': {
+            opacity: 0.7,
+          }
+        }
+      }
+    }
+  }
 });
 
+base.palette.footerBottom!.link = base.palette.primary.main;
+
+export const theme = base;
+
 declare module "@mui/material/styles" {
+  interface PaletteColor {
+    link?: string;
+  }
+
+  interface SimplePaletteColorOptions {
+    link?: string;
+  }
+
   interface Palette {
     neutral?: Palette["primary"];
     footerTop?: Palette["primary"];
-    footerBottom?: Palette["primary"];
+    footerBottom?: PaletteColor;
   }
 
   interface PaletteOptions {
     neutral?: PaletteOptions["primary"];
     footerTop?: Palette["primary"];
-    footerBottom?: Palette["primary"];
+    footerBottom?: SimplePaletteColorOptions;
   }
 }
 

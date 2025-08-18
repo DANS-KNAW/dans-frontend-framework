@@ -249,6 +249,7 @@ export const InfoChip = ({
     <Chip
       key={key} // Pass key directly
       {...restTagProps} // Spread the rest of the props
+      role="none" // For accessibility
       label={
         option.freetext ?
           option.value
