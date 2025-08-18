@@ -49,7 +49,7 @@ const MenuBar = ({
     !embed ?
     <AppBar position="static">
       <Container>
-        <Toolbar disableGutters>
+        <Toolbar disableGutters role="navigation">
           {/* mobile menu */}
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton

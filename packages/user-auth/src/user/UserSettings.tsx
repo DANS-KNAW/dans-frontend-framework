@@ -175,7 +175,7 @@ const UserSettingsItem = ({ target }: { target: Target }) => {
 
   return (
     <Stack direction="column" alignItems="flex-start" mb={4}>
-      <Typography variant="h6">
+      <Typography variant="h6" component="h2">
         {t("apiKeyHeader", { type: target.name })}
       </Typography>
       <Typography mb={3} sx={{ display: "flex", alignItems: "center" }}>

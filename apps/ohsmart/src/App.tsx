@@ -44,6 +44,7 @@ const App = () => {
               </Box>
             }
           >
+            <main role="main">
             <Routes>
               <Route path="signin-callback" element={<SignInCallback />} />
               <Route
@@ -81,6 +82,7 @@ const App = () => {
                 );
               })}
             </Routes>
+            </main>
           </Suspense>
         </BrowserRouter>
         <Footer {...footer} />

@@ -63,7 +63,21 @@ const FilesTable = () => {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ p: 1, width: 10 }} />
+              <TableCell sx={{ p: 1, width: 10 }}>
+                <Box sx={{
+                  position: 'absolute',
+                  width: '1px',
+                  height: '1px',
+                  padding: 0,
+                  margin: '-1px',
+                  overflow: 'hidden',
+                  clip: 'rect(0, 0, 0, 0)',
+                  whiteSpace: 'nowrap',
+                  borderWidth: 0,
+                }}>
+                  {t("actions")}
+                </Box>
+              </TableCell>
               <TableCell sx={{ p: 1 }}>{t("fileName")}</TableCell>
               <TableCell sx={{ p: 1 }}>{t("fileSize")}</TableCell>
               <TableCell sx={{ p: 1 }}>{t("fileType")}</TableCell>

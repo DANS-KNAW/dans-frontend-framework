@@ -17,7 +17,7 @@ const Footer = ({ top, bottom }: FooterType) => {
   const columnsTop = top.length;
   const columnsBottom = bottom.length;
   return (
-    <>
+    <footer role="contentinfo">
       <Box
         sx={{
           color: "footerTop.contrastText",
@@ -59,7 +59,7 @@ const Footer = ({ top, bottom }: FooterType) => {
           </Grid>
         </Container>
       </Box>
-    </>
+    </footer>
   );
 };
 
@@ -91,7 +91,7 @@ const FooterContent = ({
   return (
     <Stack direction="column" alignItems="start">
       {header && (
-        <Typography variant="h6">
+        <Typography variant="h6" component="h2">
           {lookupLanguageString(header, i18n.language)}
         </Typography>
       )}
