@@ -100,7 +100,7 @@ const FooterContent = ({
         <Box
           sx={{
             a: {
-              color: "primary.main",
+              color: "footerBottom.link",
               textDecoration: "none",
             },
             textAlign: {
@@ -108,6 +108,7 @@ const FooterContent = ({
               md: align || "left",
               width: "100%",
             },
+            color: "footerBottom.contrastText",
           }}
         >
           {parse(lookupLanguageString(freetext, i18n.language) as string)}

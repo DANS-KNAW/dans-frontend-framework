@@ -176,6 +176,7 @@ const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
                 mt: status === "error" && fieldValue?.touched ? -3 : 0,
               }}
               disabled={!generatedValue ? true : false}
+              aria-label={t("generate")}
             >
               <RefreshIcon />
             </IconButton>

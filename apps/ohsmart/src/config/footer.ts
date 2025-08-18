@@ -118,8 +118,8 @@ const footer = {
     },
     {
       freetext: {
-        en: 'DANS is an institute of <a href="https://www.knaw.nl/" target="_blank">KNAW</a> and <a href="https://www.nwo.nl/" target="_blank">NWO</a>',
-        nl: 'DANS is een intituut van <a href="https://www.knaw.nl/" target="_blank">KNAW</a> en <a href="https://www.nwo.nl/" target="_blank">NWO</a>',
+        en: 'DANS is an institute of <strong><a href="https://www.knaw.nl/" target="_blank">KNAW</a></strong> and <strong><a href="https://www.nwo.nl/" target="_blank">NWO</a></strong>',
+        nl: 'DANS is een intituut van <strong><a href="https://www.knaw.nl/" target="_blank">KNAW</a></strong> en <strong><a href="https://www.nwo.nl/" target="_blank">NWO</a></strong>',
       },
     },
   ],
