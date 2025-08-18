@@ -39,7 +39,6 @@ export const biodiversityApi = createApi({
         // Return an empty array when no results, which is what the Autocomplete field expects
         // Otherwise, format the set of results to something useful
         // Todo: language
-        console.log(response);
         return response.resultSet?.length > 0 ?
             {
               arg: arg.value,
