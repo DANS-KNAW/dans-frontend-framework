@@ -1,4 +1,5 @@
 {
+  "deposit": "Deposit data",
   "error": "Required: please supply some data",
   "warning": "Recommended you supply some data",
   "success": "Good to go!",
