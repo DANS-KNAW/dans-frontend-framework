@@ -30,6 +30,7 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import Alert from '@mui/material/Alert';
 import FormControl from '@mui/material/FormControl';
 import Switch from '@mui/material/Switch';
 import List from '@mui/material/List';
@@ -172,9 +173,9 @@ function UserRoles({value, setValue}: { value: { label: string, value: string }[
 function Objects({ objects, setObjects }: { objects: Pid[], setObjects: Dispatch<SetStateAction<Pid[]>> }) {
   const [ activeId, setActiveId ] = useState<string>("");
   const [ id, setId ] = useState<string>("");
-  const { data, isLoading } = useQuery({ queryKey: ['pid', id], queryFn: () => fetchPid(id), enabled: !!id });
+  const { data, isLoading, isError } = useQuery({ queryKey: ['pid', id], queryFn: () => fetchPid(id), enabled: !!id });
   const isSelected = data && objects.some(r => r.identifier === data.identifier) || false;
-
+  
   return (
     <Grid container spacing={6}>
       <Grid xs={12} md={6}>
@@ -209,6 +210,11 @@ function Objects({ objects, setObjects }: { objects: Pid[], setObjects: Dispatch
             </Typography>
           </Notice>
         )}
+        {((data === null && !isLoading) || isError) && 
+          <Alert severity="error" sx={{ mt: 1 }}>
+              Data could not be found for PID: {id}. Please check the PID and try again.
+          </Alert>
+        }
       </Grid>
       <SelectedItems
         header="Selected PIDs"

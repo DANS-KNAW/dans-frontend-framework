@@ -10,4 +10,15 @@ export default defineConfig({
       typescript: true,
     }),
   ],
+  // DEV only: this circumvents CORS issues by proxying requests through the Vite dev server
+  // to the re3data API
+  server: {
+    proxy: {
+      '/re3data': {
+        target: 'https://www.re3data.org',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/re3data/, ''),
+      },
+    },
+  },
 });

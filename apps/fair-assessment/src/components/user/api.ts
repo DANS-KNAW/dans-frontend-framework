@@ -34,20 +34,31 @@ export type Pid = {
 
 const PID_FETCH_BASE_URL = "https://pid-fetcher.labs.dansdemo.nl";
 
-export async function fetchPid(pid: string): Promise<Pid> {
-  const res = await fetch(`${PID_FETCH_BASE_URL}/repository-info/${pid}`);
-  if (!res.ok) throw new Error("Network response was not ok");
-  const result = await res.json();
-  return ({
-    ...result,
-    repository: {
-      ...result.repository,
-      id: result.repository['re3-id'],
-    },
-  })
+export async function fetchPid(pid: string): Promise<Pid | null> {
+  try {
+    const res = await fetch(`${PID_FETCH_BASE_URL}/repository-info/${pid}`);
+    if (!res.ok) {
+      const text = await res.text();
+      // check if the error message contains a 404 from DataCite
+      if (text.includes("404 Client Error")) return null;
+      throw new Error(`Network response was not ok: ${text}`);
+    }
+    const result = await res.json();
+    return {
+      ...result,
+      repository: {
+        ...result.repository,
+        id: result.repository['re3-id'],
+      },
+    };
+  } catch (err) {
+    console.error("Error fetching PID:", err);
+    return null; // fallback for network/server errors
+  }
 }
 
-const RE3DATA_URL = "https://www.re3data.org/api/v1";
+// re3data API URL, Currently DEV ONLY as re3data API does not support CORS
+const RE3DATA_URL = "/re3data/api/v1";
 
 // helper to parse XML response for all repos
 function parseRepositoriesXML(xmlString: string): Obj[] {
