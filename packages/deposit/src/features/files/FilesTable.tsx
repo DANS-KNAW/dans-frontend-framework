@@ -276,6 +276,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
               }
               disabled={rowDisabled}
               data-testid={`delete-${file.name}`}
+              aria-label={t("deleteFile", { file: file.name })}
             >
               <DeleteIcon fontSize="small" color="error" />
             </IconButton>
@@ -362,6 +363,9 @@ const FileTableRow = ({ file }: FileItemProps) => {
               }
               data-testid={`private-${file.name}`}
               disabled={file.valid === false || rowDisabled}
+              inputProps={{
+                "aria-label": t("privateToggle"),
+              }}
             />
           </TableCell>
         )}

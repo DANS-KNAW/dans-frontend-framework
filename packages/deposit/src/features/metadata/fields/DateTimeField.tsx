@@ -368,43 +368,43 @@ const DateTypeWrapper = ({
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
 
   return field.formatOptions ?
-      <FormControl sx={{ minWidth: 110, mr: 1, }}>
-        <InputLabel id="date-type-selector-label">{t("selectDateType")}</InputLabel>
-        <Select
-          label={t("selectDateType")}
-          labelId="date-type-selector-label"
-          id="date-type-selector"
-          onChange={(e) => {
-            // set the type of date
-            dispatch(
-              setDateTypeField({
-                field: field,
-                value: e.target.value as DateTimeFormat,
-                ...(groupName !== undefined && { groupName: groupName }),
-                ...(groupIndex !== undefined && { groupIndex: groupIndex }),
-              }),
-            );
-            // reset field value
-            dispatch(
-              setField({
-                field: field,
-                value: ["", ""],
-                ...(groupName !== undefined && { groupName: groupName }),
-                ...(groupIndex !== undefined && { groupIndex: groupIndex }),
-              }),
-            );
-            setRange && setRange(["", ""]); // reset range if applicable
-          }}
-          value={fieldValue.format || field.format}
-          disabled={formDisabled}
-          inputProps={{ "data-testid": `datetype-${field.name}` }}
-        >
-          {field.formatOptions.map((option) => (
-            <MenuItem key={option} value={option} aria-label={t(option)}>
-              {t(option)}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    : null;
+    <FormControl sx={{ minWidth: 110, mr: 1, }}>
+      <InputLabel id="date-type-selector-label">{t("selectDateType")}</InputLabel>
+      <Select
+        label={t("selectDateType")}
+        labelId="date-type-selector-label"
+        id="date-type-selector"
+        onChange={(e) => {
+          // set the type of date
+          dispatch(
+            setDateTypeField({
+              field: field,
+              value: e.target.value as DateTimeFormat,
+              ...(groupName !== undefined && { groupName: groupName }),
+              ...(groupIndex !== undefined && { groupIndex: groupIndex }),
+            }),
+          );
+          // reset field value
+          dispatch(
+            setField({
+              field: field,
+              value: ["", ""],
+              ...(groupName !== undefined && { groupName: groupName }),
+              ...(groupIndex !== undefined && { groupIndex: groupIndex }),
+            }),
+          );
+          setRange && setRange(["", ""]); // reset range if applicable
+        }}
+        value={fieldValue.format || field.format}
+        disabled={formDisabled}
+        inputProps={{ "data-testid": `datetype-${field.name}` }}
+      >
+        {field.formatOptions.map((option) => (
+          <MenuItem key={option} value={option} aria-label={t(option)}>
+            {t(option)}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  : null;
 };

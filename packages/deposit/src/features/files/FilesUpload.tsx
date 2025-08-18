@@ -180,7 +180,7 @@ const FilesUpload = () => {
           >
             {data ?
               <>
-                <input {...getInputProps()} />
+                <input {...getInputProps()} aria-label={t("drop")} />
                 <Typography
                   color="neutral.contrastText"
                   sx={{ textAlign: "center", cursor: "pointer" }}

@@ -15,6 +15,7 @@
   "errorURL": "Foutief URL",
   "add": "Voeg toe",
   "private": "Privé",
+  "privateToggle": "Markeer als privé bestand",
   "access": "Toegang",
   "role": "Rol",
   "processing": "Taken",
@@ -49,5 +50,6 @@
   "fileTooLarge": "Bestanden groter dan {{ size }} GB kunnen niet worden verwerkt door het doelrepository",
   "fileNoSize": "Kan geen bestanden van 0 bytes uploaden",
   "fileForbiddenCharacters": "Bestandsnaam bevat tekens die niet zijn toegestaan: /:*?\"<>|;#",
-  "termsMapped": "Terms mapped"
+  "termsMapped": "Terms mapped",
+  "deleteFile": "Verwijder bestand {{file}}"
 }
