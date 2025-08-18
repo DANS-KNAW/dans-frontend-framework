@@ -184,7 +184,20 @@ const SubmissionList = ({
     () => [
       {
         field: "viewLink",
-        headerName: "",
+        headerName: t("actions"),
+        renderHeader: () => (
+          <Box sx={{
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: 0,
+            margin: '-1px',
+            overflow: 'hidden',
+            clip: 'rect(0, 0, 0, 0)',
+            whiteSpace: 'nowrap',
+            borderWidth: 0,
+          }}>{t("actions")}</Box>
+        ),
         getActions: (params: any) => {
           return [
             type === "published" && (
@@ -387,7 +400,7 @@ const SubmissionList = ({
 
   return (
     <>
-      <Typography sx={{ mt: 4, mb: 1 }} variant="h5">
+      <Typography sx={{ mt: 4, mb: 1 }} variant="h5" component="h2">
         {header}
       </Typography>
 
