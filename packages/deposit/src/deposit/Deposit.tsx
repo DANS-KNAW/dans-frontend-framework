@@ -235,7 +235,8 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <Container>
         <Grid container>
-          <Grid xs={12} mt={4}>
+          <Grid xs={12}>
+            <Typography variant="h1">{t("deposit")}</Typography>
             {/* Shows user a message about current form state */}
             <ActionMessage
               dataMessage={dataMessage}
