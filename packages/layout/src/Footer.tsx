@@ -12,6 +12,7 @@ import YouTubeIcon from "@mui/icons-material/YouTube";
 import EmailIcon from "@mui/icons-material/Email";
 import parse from "html-react-parser";
 import { Button } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 
 const Footer = ({ top, bottom }: FooterType) => {
   const columnsTop = top.length;
@@ -146,11 +147,13 @@ const FooterContent = ({
             // It's a Link
             return (
               <Link
-                href={item.link}
+                href={item.internal ? undefined : item.link}
+                to={item.internal ? item.link : undefined}
                 underline="none"
-                target="_blank"
+                target={item.internal ? "_self" : "_blank"}
                 key={`link-${j}`}
                 sx={{ display: "flex", alignItems: "center" }}
+                component={item.internal ? RouterLink : "a"}
               >
                 {renderIcon(item.icon)}
                 {lookupLanguageString(item.name, i18n.language)}

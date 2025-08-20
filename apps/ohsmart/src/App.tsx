@@ -14,6 +14,7 @@ import {
   UserSubmissions,
   SignInCallback,
 } from "@dans-framework/user-auth";
+import { ScrollToTop } from "@dans-framework/utils/scroll";
 
 // Load config variables
 import theme from "./config/theme";
@@ -30,6 +31,7 @@ const App = () => {
     <AuthWrapper authProvider={authProvider}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
         <BrowserRouter>
+          <ScrollToTop />
           {/* Need to pass along root i18n functions to the language bar */}
           <LanguageBar
             languages={languages}
@@ -45,47 +47,47 @@ const App = () => {
             }
           >
             <main role="main">
-            <Routes>
-              <Route path="signin-callback" element={<SignInCallback />} />
-              <Route
-                path="user-settings"
-                element={
-                  <AuthRoute>
-                    <UserSettings
-                      target={form.targetCredentials}
-                      depositSlug="deposit"
+              <Routes>
+                <Route path="signin-callback" element={<SignInCallback />} />
+                <Route
+                  path="user-settings"
+                  element={
+                    <AuthRoute>
+                      <UserSettings
+                        target={form.targetCredentials}
+                        depositSlug="deposit"
+                      />
+                    </AuthRoute>
+                  }
+                />
+                <Route
+                  path="user-submissions"
+                  element={
+                    <AuthRoute>
+                      <UserSubmissions targetCredentials={form.targetCredentials} />
+                    </AuthRoute>
+                  }
+                />
+                {(pages as Page[]).map((page) => {
+                  return (
+                    <Route
+                      key={page.id}
+                      path={page.slug}
+                      element={
+                        page.template === "deposit" ?
+                          <AuthRoute>
+                            <Deposit config={form} page={page} />
+                          </AuthRoute>
+                        : <Generic {...page} />
+                      }
                     />
-                  </AuthRoute>
-                }
-              />
-              <Route
-                path="user-submissions"
-                element={
-                  <AuthRoute>
-                    <UserSubmissions targetCredentials={form.targetCredentials} />
-                  </AuthRoute>
-                }
-              />
-              {(pages as Page[]).map((page) => {
-                return (
-                  <Route
-                    key={page.id}
-                    path={page.slug}
-                    element={
-                      page.template === "deposit" ?
-                        <AuthRoute>
-                          <Deposit config={form} page={page} />
-                        </AuthRoute>
-                      : <Generic {...page} />
-                    }
-                  />
-                );
-              })}
-            </Routes>
+                  );
+                })}
+              </Routes>
             </main>
           </Suspense>
+          <Footer {...footer} />
         </BrowserRouter>
-        <Footer {...footer} />
       </ThemeWrapper>
     </AuthWrapper>
   );
