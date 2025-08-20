@@ -10,7 +10,7 @@ import { LanguageStrings, lookupLanguageString } from "@dans-framework/utils";
 import { useAuth } from "react-oidc-context";
 import { useTranslation } from "react-i18next";
 import { LoginButton } from "@dans-framework/user-auth";
-import { useSiteTitle, setSiteTitle } from "@dans-framework/utils";
+import { useSiteTitle, setSiteTitle, parseOptionsRichText } from "@dans-framework/utils";
 import parse from "html-react-parser";
 
 const Generic = ({ logo, name, content, action }: Page) => {
@@ -30,7 +30,7 @@ const Generic = ({ logo, name, content, action }: Page) => {
     }
 
     if (typeof content === "string") {
-      return parse(content);
+      return parse(content, parseOptionsRichText);
     }
 
     // If content is an object, it could be LanguageStrings or LanguageContent
@@ -43,7 +43,7 @@ const Generic = ({ logo, name, content, action }: Page) => {
         }
 
         if (typeof currentLangContent === "string") {
-          return parse(currentLangContent);
+          return parse(currentLangContent, parseOptionsRichText);
         }
       }
 
@@ -54,7 +54,7 @@ const Generic = ({ logo, name, content, action }: Page) => {
           content as LanguageStrings,
           i18n.language
         );
-        return stringContent ? parse(stringContent) : null;
+        return stringContent ? parse(stringContent, parseOptionsRichText) : null;
       }
     }
 
@@ -76,7 +76,7 @@ const Generic = ({ logo, name, content, action }: Page) => {
           xs={logo ? 8 : 12}
           xsOffset={logo ? 2 : 0}
         >
-          <Typography variant="h1" sx={{ textAlign: "center" }}>
+          <Typography variant="h1">
             {logo ? (
               <img src={logo} alt={siteTitle} title={siteTitle} />
             ) : (
