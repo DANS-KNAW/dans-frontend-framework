@@ -11,7 +11,7 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import EmailIcon from "@mui/icons-material/Email";
 import parse from "html-react-parser";
-import { Button } from "@mui/material";
+import Button from "@mui/material/Button";
 import { Link as RouterLink } from "react-router-dom";
 
 const Footer = ({ top, bottom }: FooterType) => {

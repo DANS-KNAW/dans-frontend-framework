@@ -16,7 +16,8 @@ import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 import { UserMenu } from "@dans-framework/user-auth";
 import { useAuth } from "react-oidc-context";
-import { Tooltip, Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
