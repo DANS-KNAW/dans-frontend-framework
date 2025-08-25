@@ -32,11 +32,9 @@ export type Pid = {
   institutions: Obj[];
 }
 
-const PID_FETCH_BASE_URL = "https://pid-fetcher.labs.dansdemo.nl";
-
 export async function fetchPid(pid: string): Promise<Pid | null> {
   try {
-    const res = await fetch(`${PID_FETCH_BASE_URL}/repository-info/${pid}`);
+    const res = await fetch(`${import.meta.env.VITE_PID_FETCH_BASE_URL}/repository-info/${pid}`);
     if (!res.ok) {
       const text = await res.text();
       // check if the error message contains a 404 from DataCite
@@ -56,9 +54,6 @@ export async function fetchPid(pid: string): Promise<Pid | null> {
     return null; // fallback for network/server errors
   }
 }
-
-// re3data API URL, Currently DEV ONLY as re3data API does not support CORS
-const RE3DATA_URL = "/re3data/api/v1";
 
 // helper to parse XML response for all repos
 function parseRepositoriesXML(xmlString: string): Obj[] {
@@ -91,15 +86,15 @@ function parseRepositoriesXML(xmlString: string): Obj[] {
 
 // Fetches a full list of repositories from re3data in xml format
 export async function fetchRepositories() {
-    const res = await fetch(`${RE3DATA_URL}/repositories`, {
+    const res = await fetch(`${import.meta.env.VITE_PROXY_API_BASE_URL}${encodeURIComponent(`https://www.re3data.org/api/v1/repositories`)}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json'
       }
     });
     if (!res.ok) throw new Error("Network response was not ok");
-    const text = await res.text();
-    return parseRepositoriesXML(text);
+    const text = await res.json();
+    return parseRepositoriesXML(text.text);
 }
 
 // helper for parsing xml for single repo
@@ -151,15 +146,15 @@ export type SingleRepo = {
   repository?: never;
 }
 export async function fetchRepositoryDetails(id: string): Promise<SingleRepo> {
-    const res = await fetch(`${RE3DATA_URL}/repository/${id}`, {
+    const res = await fetch(`${import.meta.env.VITE_PROXY_API_BASE_URL}${encodeURIComponent(`https://www.re3data.org/api/v1/repository/${id}`)}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json'
       }
     });
     if (!res.ok) throw new Error("Network response was not ok");
-    const text = await res.text();
-    return parseRepositoryInfoXML(text);
+    const text = await res.json();
+    return parseRepositoryInfoXML(text.text);
 }
 
 const ROR_URL = "https://api.ror.org/v2";
