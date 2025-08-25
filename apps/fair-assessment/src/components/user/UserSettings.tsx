@@ -73,8 +73,13 @@ export default function UserSettings() {
 }, [activeTabs.length, tabValue]);
 
   return (
-    <Container sx={{ mt: 6 }}>
+    <Container>
       <Grid container spacing={2}>
+        <Grid xs={12}>
+          <Typography variant="h1">
+            Manage your profile
+          </Typography>
+        </Grid>
         <Grid xs={12} md={6}>
           <UserInfo />
         </Grid>

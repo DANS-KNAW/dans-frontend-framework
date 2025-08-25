@@ -10,7 +10,7 @@ import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
 import CircularProgress from '@mui/material/CircularProgress';
 
-export const LIST_FACET_SCROLL_CUT_OFF = 50;
+export const LIST_FACET_SCROLL_CUT_OFF = 10;
 
 export function ListView(props: ListFacetProps) {
   const ulRef = React.useRef<HTMLDivElement>(null);

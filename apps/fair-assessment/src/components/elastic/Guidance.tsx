@@ -10,11 +10,13 @@ import {
 import { SingleResult } from './Single';
 
 const fieldConfig: Partial<RDTSearchUIProps> = {
-  fullTextFields: ["bodyguidanceelement", "descguidanceelement"],
+  fullTextFields: ["bodyguidanceelement", "descguidanceelement", "lodgde", "labelguidanceelement"],
   fullTextHighlight: {
     fields: {
       bodyguidanceelement: { number_of_fragments: 0 },
       descguidanceelement: { number_of_fragments: 0 },
+      lodgde: { number_of_fragments: 0 },
+      labelguidanceelement: { number_of_fragments: 0 },
     },
   },
 };
@@ -33,12 +35,66 @@ export const elasticConfig: EndpointProps[] = [
     resultBodyComponent: SingleResult,
     onClickResultPath: "guidance/identifier",
     customColumns: 12,
+    resultsPerPage: 15,
     dashboard: [
+      <ListFacet
+        config={{
+          id: "criterion",
+          field: "criterion",
+          title: "Criterion",
+          sort: {
+            by: SortBy.Key,	
+            direction: SortDirection.Asc,
+          },
+          cols: 3,
+          rows: 1,
+          tooltip: "Tooltip",
+        }}
+      />,
       <ListFacet
         config={{
           id: "domain",
           field: "domain",
           title: "Domain",
+          sort: {
+            by: SortBy.Key,	
+            direction: SortDirection.Asc,
+          },
+          cols: 3,
+          rows: 1,
+          tooltip: "Tooltip",
+        }}
+      />,
+      <PieChartFacet
+        config={{
+          id: "focus",
+          field: "focus",
+          title:  "Focus",
+          cols: 3,
+          rows: 1,
+          tooltip: "Tooltip",
+          legend: true,
+        }}
+      />,
+      <ListFacet
+        config={{
+          id: "motivation",
+          field: "motivation",
+          title: "Motivation",
+          sort: {
+            by: SortBy.Key,	
+            direction: SortDirection.Asc,
+          },
+          cols: 3,
+          rows: 1,
+          tooltip: "Tooltip",
+        }}
+      />,
+      <ListFacet
+        config={{
+          id: "test",
+          field: "test",
+          title: "Test",
           sort: {
             by: SortBy.Key,	
             direction: SortDirection.Asc,
@@ -61,9 +117,20 @@ export const elasticConfig: EndpointProps[] = [
       />,
       <PieChartFacet
         config={{
-          id: "motivation",
-          field: "motivation",
-          title:  "Motivation",
+          id: "type",
+          field: "type",
+          title:  "Type",
+          cols: 3,
+          rows: 1,
+          tooltip: "Tooltip",
+          chartType: "bar"
+        }}
+      />,
+      <PieChartFacet
+        config={{
+          id: "source",
+          field: "source",
+          title:  "Source",
           cols: 3,
           rows: 1,
           tooltip: "Tooltip",

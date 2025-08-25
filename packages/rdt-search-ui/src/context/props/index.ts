@@ -99,6 +99,7 @@ export interface EndpointProps extends EndpointBaseProps {
   fixedFacets?: FixedFacetsProps[];
   customColumns?: number;
   dashboardSearchIconToggle?: boolean;
+  resultsPerPage?: number;
 }
 
 /**

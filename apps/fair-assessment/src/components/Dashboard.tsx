@@ -35,8 +35,13 @@ function ActionCard({ title, content, link, icon: Icon }: { title: string; conte
 
 export default function Dashboard() {
   return (
-    <Container sx={{ mt: 6 }}>
+    <Container>
       <Grid container spacing={2} alignItems="stretch">
+        <Grid xs={12}>
+          <Typography variant="h1">
+            Dashboard
+          </Typography>
+        </Grid>
         <Grid xs={12} md={6} lg={3}>
           <ActionCard title="View assessments" content="Overview of previously submitted assessments" icon={AssessmentIcon} link="/assessments" />
         </Grid>

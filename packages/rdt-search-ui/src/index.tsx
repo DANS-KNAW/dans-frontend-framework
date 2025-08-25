@@ -311,6 +311,7 @@ export const FacetedWrapper = ({
                 dashboard: dashRoute,
               }}
               fixedFacets={fixedFacets}
+              resultsPerPage={currentConfig.resultsPerPage}
             >
               {currentConfig?.dashboard.map((node, i) =>
                 React.cloneElement(node, {
