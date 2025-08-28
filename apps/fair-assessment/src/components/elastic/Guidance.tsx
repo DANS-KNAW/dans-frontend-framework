@@ -30,6 +30,8 @@ export const elasticConfig: EndpointProps[] = [
   {
     name: "CAT Catalogue",
     url: import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT,
+    user: import.meta.env.VITE_ELASTICSEARCH_API_USER,
+    pass: import.meta.env.VITE_ELASTICSEARCH_API_PASS,
     fullTextFields: fieldConfig.fullTextFields,
     fullTextHighlight: fieldConfig.fullTextHighlight,
     resultBodyComponent: SingleResult,
