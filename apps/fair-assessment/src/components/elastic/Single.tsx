@@ -203,15 +203,17 @@ function Metadata({name, value, pb = 1, width}: {name: string; value: string | s
 }
 
 function renderChips (obj: Record<string, any>) {
+  console.log(obj)
   return Object.entries(obj)
     .filter(([key]) => !key.includes('guidanceelement') && !key.includes('lodgde'))
     .map(([key, value]) => {
       // Handle arrays
       if (Array.isArray(value)) {
         return value.map((item, index) => (
+          item.name &&
           <Chip 
             key={`${key}-${index}`} 
-            label={item} 
+            label={item.name} 
             size="small" 
             sx={{ mr: 0.5, mb: 0.5 }}
           />
@@ -220,9 +222,10 @@ function renderChips (obj: Record<string, any>) {
       
       // Handle single values
       return (
+        value.name &&
         <Chip 
           key={key} 
-          label={value} 
+          label={value.name} 
           size="small" 
           sx={{ mr: 0.5, mb: 0.5 }}
         />

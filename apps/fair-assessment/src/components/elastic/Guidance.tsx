@@ -42,7 +42,7 @@ export const elasticConfig: EndpointProps[] = [
       <ListFacet
         config={{
           id: "criterion",
-          field: "criterion",
+          field: "criterion.name",
           title: "Criterion",
           sort: {
             by: SortBy.Key,	
@@ -56,7 +56,7 @@ export const elasticConfig: EndpointProps[] = [
       <ListFacet
         config={{
           id: "domain",
-          field: "domain",
+          field: "domain.name",
           title: "Domain",
           sort: {
             by: SortBy.Key,	
@@ -70,7 +70,7 @@ export const elasticConfig: EndpointProps[] = [
       <PieChartFacet
         config={{
           id: "focus",
-          field: "focus",
+          field: "focus.name",
           title:  "Focus",
           cols: 3,
           rows: 1,
@@ -81,7 +81,7 @@ export const elasticConfig: EndpointProps[] = [
       <ListFacet
         config={{
           id: "motivation",
-          field: "motivation",
+          field: "motivation.name",
           title: "Motivation",
           sort: {
             by: SortBy.Key,	
@@ -95,7 +95,7 @@ export const elasticConfig: EndpointProps[] = [
       <ListFacet
         config={{
           id: "test",
-          field: "test",
+          field: "test.name",
           title: "Test",
           sort: {
             by: SortBy.Key,	
@@ -109,7 +109,7 @@ export const elasticConfig: EndpointProps[] = [
       <PieChartFacet
         config={{
           id: "actor",
-          field: "actor",
+          field: "actor.name",
           title:  "Actor",
           cols: 3,
           rows: 1,
@@ -120,7 +120,7 @@ export const elasticConfig: EndpointProps[] = [
       <PieChartFacet
         config={{
           id: "type",
-          field: "type",
+          field: "type.name",
           title:  "Type",
           cols: 3,
           rows: 1,
@@ -131,7 +131,7 @@ export const elasticConfig: EndpointProps[] = [
       <PieChartFacet
         config={{
           id: "source",
-          field: "source",
+          field: "source.name",
           title:  "Source",
           cols: 3,
           rows: 1,
