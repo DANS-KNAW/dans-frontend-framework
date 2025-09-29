@@ -100,6 +100,10 @@ export interface EndpointProps extends EndpointBaseProps {
   customColumns?: number;
   dashboardSearchIconToggle?: boolean;
   resultsPerPage?: number;
+  shareRoutes?: {
+    results?: string;
+    dashboard?: string;
+  };
 }
 
 /**

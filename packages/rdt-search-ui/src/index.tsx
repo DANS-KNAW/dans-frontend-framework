@@ -75,10 +75,10 @@ export function FacetedSearch(props: ExternalSearchProps) {
         ...defaultSearchProps.style,
         ...props.style,
       },
-      shareRoutes: {
-        dashboard: "/",
-        results: "/search",
-      },
+      // shareRoutes: {
+      //   dashboard: "/",
+      //   results: "/search",
+      // },
       fixedFacets: props.fixedFacets,
     };
 

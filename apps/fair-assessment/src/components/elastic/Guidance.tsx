@@ -38,11 +38,15 @@ export const elasticConfig: EndpointProps[] = [
     onClickResultPath: "guidance/identifier",
     customColumns: 12,
     resultsPerPage: 15,
+    shareRoutes: {
+      results: "guidance",
+    },
     dashboard: [
       <ListFacet
         config={{
           id: "criterion",
-          field: "criterion.name",
+          field: "criterion.id",
+          labelField: "criterion.name",
           title: "Criterion",
           sort: {
             by: SortBy.Key,	

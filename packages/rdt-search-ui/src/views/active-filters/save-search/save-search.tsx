@@ -246,3 +246,67 @@ const ShareDialog = ({
     </Dialog>
   );
 };
+
+export const SearchActions = ({
+  activeFilters
+}: {
+  activeFilters: SearchFilters;
+}) => {
+  const { t } = useTranslation("views");
+  const { shareRoutes } = useContext(SearchPropsContext);
+  const { filters, ...rest } = activeFilters;
+  console.log(filters)
+  const formattedFilters = {
+    ...rest,
+    facetFilters: filters,
+  };
+  const searchString = `?search=${LZString.compressToEncodedURIComponent(
+    serializeObject(formattedFilters),
+  )}`;
+  const facetValue = `${window.location.origin}${shareRoutes?.results}${searchString}`;
+
+  return (
+    <DropDown label={t("searchActions")} small>
+      <Box p={2}>
+        <Typography variant="h6">{t("shareSearch")}</Typography>
+        <Stack direction="row" spacing={1} mb={1}>
+          <TextField
+              id="shareUrl"
+              fullWidth
+              size="small"
+              disabled
+              value={facetValue}
+              sx={{ mr: 1 }}
+            />
+            <Button
+              variant="contained"
+              onClick={() => {
+                navigator.clipboard.writeText(facetValue);
+              }}
+            >
+              Copy
+            </Button>
+        </Stack>
+        <Typography variant="h6">{t("getApiCall")}</Typography>
+        <Stack direction="row" spacing={1}>
+          <TextField
+              id="shareUrl"
+              fullWidth
+              size="small"
+              disabled
+              value={facetValue}
+              sx={{ mr: 1 }}
+            />
+            <Button
+              variant="contained"
+              onClick={() => {
+                navigator.clipboard.writeText(facetValue);
+              }}
+            >
+              Copy
+            </Button>
+        </Stack>
+      </Box>
+    </DropDown>
+  )
+}

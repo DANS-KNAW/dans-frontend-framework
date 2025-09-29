@@ -228,19 +228,34 @@ export class ListFacetController extends FacetController<
     if (response.aggregations == null)
       return { bucketsCount: 0, total: 0, values: [] };
 
-    return {
-      bucketsCount: buckets.length,
-      total:
-        response.aggregations[`${this.ID}-count`][`${this.ID}-count`].value,
-      values: buckets.map((b: Bucket) => {
-        const extraLabel = b.original_value?.hits?.hits?.[0]?._source?.[`${this.config.fieldLabel}`];
-        return {
-          key: b.key.toString().trim(),
-          count: b.doc_count,
-          label: extraLabel ?? b.key.toString(),
-        }
-      }),
-    };
+    // Compute total directly from buckets (works for all facets)
+    const total = buckets.reduce((sum, b) => sum + (b.doc_count || 0), 0);
+
+  return {
+    bucketsCount: buckets.length,
+    total,
+    values: buckets.map((b: Bucket) => {
+      return {
+        key: b.key.toString().trim(),
+        count: b.doc_count,
+        label: (b.name && b.name.toString()) ?? b.key.toString(),
+      }
+    }),
+  };
+
+    // return {
+    //   bucketsCount: buckets.length,
+    //   total:
+    //     response.aggregations[`${this.ID}-count`][`${this.ID}-count`].value,
+    //   values: buckets.map((b: Bucket) => {
+    //     const extraLabel = b.original_value?.hits?.hits?.[0]?._source?.[`${this.config.fieldLabel}`];
+    //     return {
+    //       key: b.key.toString().trim(),
+    //       count: b.doc_count,
+    //       label: extraLabel ?? b.key.toString(),
+    //     }
+    //   }),
+    // };
   }
 }
 
