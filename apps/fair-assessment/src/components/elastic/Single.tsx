@@ -203,7 +203,6 @@ function Metadata({name, value, pb = 1, width}: {name: string; value: string | s
 }
 
 function renderChips (obj: Record<string, any>) {
-  console.log(obj)
   return Object.entries(obj)
     .filter(([key]) => !key.includes('guidanceelement') && !key.includes('lodgde'))
     .map(([key, value]) => {
