@@ -7,6 +7,7 @@ export interface Bucket {
   key: string | number;
   doc_count: number;
   [key: string]: any;
+  name?: string;
 }
 
 export function getBuckets(response: any, facetID: string): Bucket[] {
@@ -24,10 +25,6 @@ export function getBuckets(response: any, facetID: string): Bucket[] {
       secondaryId,
     };
   });
-  // if (!response.aggregations?.hasOwnProperty(facetID)) return [];
-
-  // const buckets = getByPath(response, `aggregations.${facetID}.${facetID}.buckets`);
-  // return buckets == null ? [] : buckets;
 }
 
 export function ESResponseWithFacetsParser(

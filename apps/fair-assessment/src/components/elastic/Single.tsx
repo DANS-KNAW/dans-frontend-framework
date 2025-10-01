@@ -209,9 +209,10 @@ function renderChips (obj: Record<string, any>) {
       // Handle arrays
       if (Array.isArray(value)) {
         return value.map((item, index) => (
+          item.name &&
           <Chip 
             key={`${key}-${index}`} 
-            label={item} 
+            label={item.name} 
             size="small" 
             sx={{ mr: 0.5, mb: 0.5 }}
           />
@@ -220,9 +221,10 @@ function renderChips (obj: Record<string, any>) {
       
       // Handle single values
       return (
+        value.name &&
         <Chip 
           key={key} 
-          label={value} 
+          label={value.name} 
           size="small" 
           sx={{ mr: 0.5, mb: 0.5 }}
         />

@@ -22,6 +22,7 @@ export function ActiveFilters({mb}: {mb?: number}) {
   const controllers = React.useContext(FacetControllersContext);
   const { url, searchActions } = React.useContext(SearchPropsContext);
   const state = React.useContext(SearchStateContext);
+  console.log(state);
   const dispatch = React.useContext(SearchStateDispatchContext);
 
   const reset = React.useCallback(() => {

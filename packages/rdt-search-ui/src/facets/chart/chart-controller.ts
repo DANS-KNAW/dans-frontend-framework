@@ -32,7 +32,8 @@ export class ChartController extends FacetController<
   setOptions(): EChartsOption {
     return this.chartType === "pie"
     ? {
-        tooltip: {},
+        tooltip: {
+        },
         series: [
           {
             type: "pie",
@@ -55,9 +56,11 @@ export class ChartController extends FacetController<
         ...this.config.chartOptions,
       }
     : {
-        tooltip: {},
+        tooltip: {
+        },
         xAxis: {
           type: "value",
+          minInterval: 1,
         },
         yAxis: {
           type: "category",
