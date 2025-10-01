@@ -32,10 +32,30 @@ export class ESRequestWithFacets extends ESRequest {
       );
 
       if (facetAggs != null) {
+        // clone to avoid mutating facetAggs directly
+        const updatedFacetAggs = { ...facetAggs };
+        const facetAgg = updatedFacetAggs[facet.ID];
+        if (facetAgg && facet.config.secondaryId) {
+          facetAgg.aggs = {
+            ...facetAgg.aggs, // keep any existing sub-aggs
+            original_value: {
+              top_hits: {
+                _source: { includes: [facet.config.secondaryId] },
+                size: 1,
+              },
+            },
+          };
+        }
+
         this.payload.aggs = {
           ...this.payload.aggs,
-          ...facetAggs,
+          ...updatedFacetAggs,
         };
+
+        // this.payload.aggs = {
+        //   ...this.payload.aggs,
+        //   ...facetAggs,
+        // }
       }
     }
   }

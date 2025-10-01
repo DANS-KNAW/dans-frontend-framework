@@ -21,6 +21,7 @@ import Alert from "@mui/material/Alert";
 import Fade from "@mui/material/Fade";
 import LZString from "lz-string";
 import { SearchPropsContext } from "../../../context/props";
+import { SearchStateContext } from "../../../context/state";
 
 export interface SearchFilters {
   filters: SearchState["facetFilters"];
@@ -246,3 +247,75 @@ const ShareDialog = ({
     </Dialog>
   );
 };
+
+export const SearchActions = ({
+  activeFilters
+}: {
+  activeFilters: SearchFilters;
+}) => {
+  const { t } = useTranslation("views");
+  const { shareRoutes } = useContext(SearchPropsContext);
+  const { filters, ...rest } = activeFilters;
+  const formattedFilters = {
+    ...rest,
+    facetFilters: filters,
+  };
+  const searchString = `?search=${LZString.compressToEncodedURIComponent(
+    serializeObject(formattedFilters),
+  )}`;
+  const facetValue = `${window.location.origin}${shareRoutes?.results}${searchString}`;
+
+  // find appropriate secondaryId's from facetValues
+  const activeFacets = Array.from(filters.keys());
+  const { facetValues } = useContext(SearchStateContext);
+  const selectedIds = activeFacets.map(facet => {
+    const theMap = Array.isArray(facetValues[facet]) ? facetValues[facet] : facetValues[facet].values;
+    return theMap?.map((value: any) => value.secondaryId).filter(Boolean);
+  }).flat()
+  const apiUrl = 'https://api.some.endppoint/?ids=' + selectedIds.join(',');
+
+  return (
+    <DropDown label={t("searchActions")} small>
+      <Box p={2}>
+        <Typography variant="h6">{t("shareSearch")}</Typography>
+        <Stack direction="row" spacing={1} mb={1}>
+          <TextField
+              id="shareUrl"
+              fullWidth
+              size="small"
+              disabled
+              value={facetValue}
+              sx={{ mr: 1 }}
+            />
+            <Button
+              variant="contained"
+              onClick={() => {
+                navigator.clipboard.writeText(facetValue);
+              }}
+            >
+              Copy
+            </Button>
+        </Stack>
+        <Typography variant="h6">{t("getApiCall")}</Typography>
+        <Stack direction="row" spacing={1}>
+          <TextField
+              id="apiUrl"
+              fullWidth
+              size="small"
+              disabled
+              value={apiUrl}
+              sx={{ mr: 1 }}
+            />
+            <Button
+              variant="contained"
+              onClick={() => {
+                navigator.clipboard.writeText(apiUrl);
+              }}
+            >
+              Copy
+            </Button>
+        </Stack>
+      </Box>
+    </DropDown>
+  )
+}

@@ -38,11 +38,16 @@ export const elasticConfig: EndpointProps[] = [
     onClickResultPath: "guidance/identifier",
     customColumns: 12,
     resultsPerPage: 15,
+    shareRoutes: {
+      results: "guidance",
+    },
+    searchActions: true,
     dashboard: [
       <ListFacet
         config={{
           id: "criterion",
-          field: "criterion",
+          field: "criterion.name",
+          secondaryId: "criterion.id",
           title: "Criterion",
           sort: {
             by: SortBy.Key,	
@@ -56,7 +61,8 @@ export const elasticConfig: EndpointProps[] = [
       <ListFacet
         config={{
           id: "domain",
-          field: "domain",
+          field: "domain.name",
+          secondaryId: "domain.id",
           title: "Domain",
           sort: {
             by: SortBy.Key,	
@@ -70,7 +76,8 @@ export const elasticConfig: EndpointProps[] = [
       <PieChartFacet
         config={{
           id: "focus",
-          field: "focus",
+          field: "focus.name",
+          secondaryId: "focus.id",
           title:  "Focus",
           cols: 3,
           rows: 1,
@@ -81,7 +88,8 @@ export const elasticConfig: EndpointProps[] = [
       <ListFacet
         config={{
           id: "motivation",
-          field: "motivation",
+          field: "motivation.name",
+          secondaryId: "motivation.id",
           title: "Motivation",
           sort: {
             by: SortBy.Key,	
@@ -95,7 +103,8 @@ export const elasticConfig: EndpointProps[] = [
       <ListFacet
         config={{
           id: "test",
-          field: "test",
+          field: "test.name",
+          secondaryId: "test.id",
           title: "Test",
           sort: {
             by: SortBy.Key,	
@@ -109,7 +118,8 @@ export const elasticConfig: EndpointProps[] = [
       <PieChartFacet
         config={{
           id: "actor",
-          field: "actor",
+          field: "actor.name",
+          secondaryId: "actor.id",
           title:  "Actor",
           cols: 3,
           rows: 1,
@@ -120,7 +130,8 @@ export const elasticConfig: EndpointProps[] = [
       <PieChartFacet
         config={{
           id: "type",
-          field: "type",
+          field: "type.name",
+          secondaryId: "type.id",
           title:  "Type",
           cols: 3,
           rows: 1,
@@ -131,7 +142,8 @@ export const elasticConfig: EndpointProps[] = [
       <PieChartFacet
         config={{
           id: "source",
-          field: "source",
+          field: "source.name",
+          secondaryId: "source.id",
           title:  "Source",
           cols: 3,
           rows: 1,

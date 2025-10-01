@@ -256,6 +256,7 @@ export class ChartController extends FacetController<
     return buckets.map((b: Bucket) => ({
       key: b.key.toString(),
       count: this.config.groupByLabel ? b.total.value : b.doc_count,
+      ...(b.secondaryId ? { secondaryId: b.secondaryId } : {}),
     }));
   }
 }

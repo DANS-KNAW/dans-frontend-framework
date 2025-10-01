@@ -55,6 +55,8 @@ interface OptionalSearchProps {
     dashboard?: string;
   };
 
+  searchActions?: boolean;
+
   // Fields to search full text. The field names are passed to
   // ElasticSearch so boosters can be applied to the fields.
   // ie: ['title^3', 'description^2', 'body']
@@ -100,6 +102,11 @@ export interface EndpointProps extends EndpointBaseProps {
   customColumns?: number;
   dashboardSearchIconToggle?: boolean;
   resultsPerPage?: number;
+  shareRoutes?: {
+    results?: string;
+    dashboard?: string;
+  };
+  searchActions?: boolean;
 }
 
 /**

@@ -76,10 +76,11 @@ export function FacetedSearch(props: ExternalSearchProps) {
         ...props.style,
       },
       shareRoutes: {
-        dashboard: "/",
-        results: "/search",
+        dashboard: props.shareRoutes?.dashboard || "/",
+        results: props.shareRoutes?.results || "/search",
       },
       fixedFacets: props.fixedFacets,
+      searchActions: props.searchActions !== false,
     };
 
     Object.keys(sp.style).forEach((key) => {
@@ -312,6 +313,7 @@ export const FacetedWrapper = ({
               }}
               fixedFacets={fixedFacets}
               resultsPerPage={currentConfig.resultsPerPage}
+              searchActions={currentConfig.searchActions}
             >
               {currentConfig?.dashboard.map((node, i) =>
                 React.cloneElement(node, {

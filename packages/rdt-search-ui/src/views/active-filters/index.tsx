@@ -8,7 +8,7 @@ import {
   SearchStateDispatchContext,
 } from "../../context/state";
 import { FacetControllersContext } from "../../context/controllers";
-import { SaveSearch } from "./save-search/save-search";
+import { SaveSearch, SearchActions } from "./save-search/save-search";
 
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 
 export function ActiveFilters({mb}: {mb?: number}) {
   const controllers = React.useContext(FacetControllersContext);
-  const { url } = React.useContext(SearchPropsContext);
+  const { url, searchActions } = React.useContext(SearchPropsContext);
   const state = React.useContext(SearchStateContext);
   const dispatch = React.useContext(SearchStateDispatchContext);
 
@@ -37,7 +37,7 @@ export function ActiveFilters({mb}: {mb?: number}) {
   }, []);
 
   const { t } = useTranslation("views");
-
+  
   return (
     <Paper sx={{ p: 2, mb }}>
       <Typography variant="h6">{t("activeFilters")}</Typography>
@@ -77,13 +77,21 @@ export function ActiveFilters({mb}: {mb?: number}) {
               {t("clearSearch")}
             </Button>
           </Box>
-          <SaveSearch
-            url={url}
-            activeFilters={{
-              query: state.query,
-              filters: state.facetFilters,
-            }}
-          />
+          {!searchActions ?
+            <SaveSearch
+              url={url}
+              activeFilters={{
+                query: state.query,
+                filters: state.facetFilters,
+              }}
+            /> :
+            <SearchActions 
+              activeFilters={{
+                query: state.query,
+                filters: state.facetFilters,
+              }} 
+            />
+          }
         </Stack>
       </Stack>
     </Paper>
