@@ -44,8 +44,8 @@ export default function RDAAnnotator() {
   const onDownload = () => {
     const link = document.createElement("a");
     link.href =
-      "https://github.com/DANS-KNAW/rda-annotator/releases/download/0.13.0/rawr_0.13.0.zip"; // Replace with the actual download URL
-    link.download = "rawr_0.13.0.zip"; // Replace with the actual file name
+      "https://github.com/DANS-KNAW/rda-annotator/releases/download/0.105.0/rda-annotator-0.105.0-chrome.zip"; // Replace with the actual download URL
+    link.download = "rda-annotator-0.105.0-chrome.zip"; // Replace with the actual file name
     link.click();
   };
 
