@@ -264,37 +264,40 @@ export const SearchActions = ({
     serializeObject(formattedFilters),
   )}`;
   const facetValue = `${window.location.origin}${shareRoutes?.results}${searchString}`;
+  const [ copied, setCopied ] = useState('');
 
   // find appropriate secondaryId's from facetValues
   const activeFacets = Array.from(filters.keys());
   const { facetValues } = useContext(SearchStateContext);
   const selectedIds = activeFacets.map(facet => {
-    const theMap = Array.isArray(facetValues[facet]) ? facetValues[facet] : facetValues[facet].values;
+    const theMap = Array.isArray(facetValues[facet]) ? facetValues[facet] : facetValues[facet]?.values;
     return theMap?.map((value: any) => value.secondaryId).filter(Boolean);
   }).flat()
   const apiUrl = 'https://api.some.endppoint/?ids=' + selectedIds.join(',');
 
   return (
     <DropDown label={t("searchActions")} small>
-      <Box p={2}>
+      <Box p={2} sx={{ width: 400, maxWidth: '70vw' }}>
         <Typography variant="h6">{t("shareSearch")}</Typography>
         <Stack direction="row" spacing={1} mb={1}>
           <TextField
-              id="shareUrl"
-              fullWidth
-              size="small"
-              disabled
-              value={facetValue}
-              sx={{ mr: 1 }}
-            />
-            <Button
-              variant="contained"
-              onClick={() => {
-                navigator.clipboard.writeText(facetValue);
-              }}
-            >
-              Copy
-            </Button>
+            id="shareUrl"
+            fullWidth
+            size="small"
+            disabled
+            value={facetValue}
+            sx={{ mr: 1 }}
+          />
+          <Button
+            variant="contained"
+            onClick={() => {
+              navigator.clipboard.writeText(facetValue);
+              setCopied('share');
+              setTimeout(() => setCopied(''), 2000);
+            }}
+          >
+            {copied === 'share' ? "Copied" : "Copy"}
+          </Button>
         </Stack>
         <Typography variant="h6">{t("getApiCall")}</Typography>
         <Stack direction="row" spacing={1}>
@@ -310,9 +313,11 @@ export const SearchActions = ({
               variant="contained"
               onClick={() => {
                 navigator.clipboard.writeText(apiUrl);
+                setCopied('api');
+                setTimeout(() => setCopied(''), 2000);
               }}
             >
-              Copy
+              {copied === 'api' ? "Copied" : "Copy"}
             </Button>
         </Stack>
       </Box>
