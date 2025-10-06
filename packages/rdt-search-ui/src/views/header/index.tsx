@@ -18,7 +18,7 @@ interface Props {
   sortOrder: SearchState["sortOrder"];
 }
 export const ResultHeader = function Header(props: Props) {
-  const { url } = React.useContext(SearchPropsContext);
+  const { url, searchActions } = React.useContext(SearchPropsContext);
   const dispatch = React.useContext(SearchStateDispatchContext);
   if (props.searchResult == null) return null;
 
@@ -30,7 +30,7 @@ export const ResultHeader = function Header(props: Props) {
         mb={props.searchResult.total > 0 ? 2 : 8}
       >
         <SortBy sortOrder={props.sortOrder} />
-        <LoadSearch url={url} />
+        {!searchActions && <LoadSearch url={url} />}
       </Stack>
       {props.searchResult.total > 0 && (
         <Stack
