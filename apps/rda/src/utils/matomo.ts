@@ -4,7 +4,7 @@ declare global {
   }
 }
 
-export const initMatomo = (): void => {
+export const initMatomo = () => {
   window._paq = window._paq || [];
   const _paq = window._paq;
 
@@ -12,26 +12,19 @@ export const initMatomo = (): void => {
   _paq.push(["trackPageView"]);
   _paq.push(["enableLinkTracking"]);
 
-  const u = "https://stats.dans.knaw.nl/";
-  _paq.push(["setTrackerUrl", u + "matomo.php"]);
-  _paq.push(["setSiteId", "28"]);
+  const u = import.meta.env.VITE_MATOMO_URL;
+  const p = import.meta.env.VITE_MATOMO_NAME_PHP;
+  const j = import.meta.env.VITE_MATOMO_NAME_JS;
+  const d = import.meta.env.VITE_MATOMO_SITE_ID;
 
-  const d = document;
-  const g = d.createElement("script");
-  const s = d.getElementsByTagName("script")[0];
+  _paq.push(["setTrackerUrl", u + p + ".php"]);
+  _paq.push(["setSiteId", d]);
+
+  const doc = document;
+  const g = doc.createElement("script");
+  const s = doc.getElementsByTagName("script")[0];
 
   g.async = true;
-  g.src = u + "matomo.js";
+  g.src = u + j + ".js";
   s.parentNode!.insertBefore(g, s);
-};
-
-export const trackEvent = (
-  category: string,
-  action: string,
-  name?: string,
-  value?: number
-): void => {
-  if (window._paq) {
-    window._paq.push(["trackEvent", category, action, name, value]);
-  }
 };
