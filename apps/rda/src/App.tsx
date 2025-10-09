@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
@@ -36,6 +36,7 @@ import RDAAnnotator from "./pages/rda-annotator";
 import { lookupLanguageString, useEmbedHandler } from "@dans-framework/utils";
 import { Container, Link, Typography } from "@mui/material";
 import SiteTitleWrapper from "./config/sitetitle-wrapper";
+import { initMatomo } from "./utils/matomo";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -209,6 +210,10 @@ const App = () => {
 };
 
 const RouterApp = () => {
+  useEffect(() => {
+    initMatomo();
+  }, []);
+
   return (
     <BrowserRouter>
       <App />
