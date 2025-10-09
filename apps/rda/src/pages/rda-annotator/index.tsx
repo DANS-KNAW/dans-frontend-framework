@@ -156,16 +156,6 @@ export default function RDAAnnotator() {
             <Grid item xs={12} lg={6} sx={{ order: { lg: 2 } }}>
               <Box sx={{ pt: { lg: 2 }, pl: { lg: 2 } }}>
                 <Box sx={{ maxWidth: { lg: "32rem" } }}>
-                  {/* <Typography
-                    sx={{
-                      fontSize: "1rem",
-                      lineHeight: 1.75,
-                      fontWeight: 600,
-                      color: RDAColor600,
-                    }}
-                  >
-                    Cite Smarter
-                  </Typography> */}
                   <Typography
                     sx={{
                       mt: 1,
