@@ -56,6 +56,9 @@ const App = () => {
               </AnimatePresence>
             </FacetedWrapper>
           );
+      case "create-assessment":
+        return <AuthRoute><Generic {...page} /></AuthRoute>;
+      // Add other templates as needed
       default:
         return <Generic {...page} />;
     }

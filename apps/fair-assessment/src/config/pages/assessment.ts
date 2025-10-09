@@ -9,6 +9,7 @@ const page: Page = {
     en: "Assessments",
     nl: "Beoordelingen",
   },
+  content: "<p style=\"text-align: center;\">Placeholder content for assessments page</p>",
 };
 
 export default page;
