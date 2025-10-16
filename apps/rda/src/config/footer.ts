@@ -47,7 +47,14 @@ export const useFooterData = (): Footer => {
               en: "Privacy Statement",
               nl: "Privacyverklaring",
             },
-            link: "/privacy-statement",
+            link: "",
+          },
+          {
+            name: {
+              en: "Accessibility Statement",
+              nl: "Toegankelijkheidsverklaring",
+            },
+            link: "/accessibility-statement",
           },
         ],
       },

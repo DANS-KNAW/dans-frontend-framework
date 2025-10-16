@@ -37,7 +37,7 @@ import { lookupLanguageString, useEmbedHandler } from "@dans-framework/utils";
 import { Container, Link, Typography } from "@mui/material";
 import SiteTitleWrapper from "./config/sitetitle-wrapper";
 import { initMatomo } from "./utils/matomo";
-import AccessibilityStatement from "./pages/privacy-statement";
+import AccessibilityStatement from "./pages/accessibility-statement";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -121,7 +121,7 @@ const App = () => {
             <RDAAnnotator />
           </SiteTitleWrapper>
         );
-      case "privacy-statement":
+      case "accessibility-statement":
         return (
           <SiteTitleWrapper page={page}>
             <AccessibilityStatement />

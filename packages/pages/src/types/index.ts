@@ -16,7 +16,7 @@ export type Template =
   | "advisor"
   | "mapper"
   | "rda-annotator"
-  | "privacy-statement";
+  | "accessibility-statement";
 
 /**
  * Type for language-specific content that can be either string or JSX
