@@ -94,13 +94,22 @@ const App = () => {
                 </Container>
               </Box>
             )}
-            <FacetedWrapper dashboard dashRoute="/" resultRoute="/search" />
+            <FacetedWrapper
+              showIconViewLabel
+              dashboard
+              dashRoute="/"
+              resultRoute="/search"
+            />
           </SiteTitleWrapper>
         );
       case "search":
         return (
           <SiteTitleWrapper page={page}>
-            <FacetedWrapper dashRoute="/" resultRoute="/search" />
+            <FacetedWrapper
+              showIconViewLabel
+              dashRoute="/"
+              resultRoute="/search"
+            />
           </SiteTitleWrapper>
         );
       case "record":

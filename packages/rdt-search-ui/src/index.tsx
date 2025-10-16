@@ -254,11 +254,13 @@ function camelCaseToKebabCase(str: string) {
 export const FacetedWrapper = ({
   dashboard,
   dashRoute,
+  showIconViewLabel,
   resultRoute,
   children,
 }: {
   dashboard?: boolean;
   dashRoute?: string;
+  showIconViewLabel?: boolean;
   resultRoute?: string;
   children?: ReactNode;
 }) => {
@@ -275,7 +277,11 @@ export const FacetedWrapper = ({
         {dashRoute &&
           resultRoute &&
           currentConfig.dashboardSearchIconToggle && (
-            <IconViewToggle dashRoute={dashRoute} resultRoute={resultRoute} />
+            <IconViewToggle
+              dashRoute={dashRoute}
+              showIconViewLabel={showIconViewLabel}
+              resultRoute={resultRoute}
+            />
           )}
         {config.length > 1 && (
           // show selector if there's more than 1 endpoint
