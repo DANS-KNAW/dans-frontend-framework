@@ -9,6 +9,7 @@ const page: Page = {
     en: "Create assessment",
     nl: "Maak beoordeling",
   },
+  template: "create-assessment",
 };
 
 export default page;
