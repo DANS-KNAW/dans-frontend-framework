@@ -19,6 +19,9 @@ const customTheme = createTheme({
       dark: "#ba000d",
       contrastText: "#000",
     },
+    success: {
+      main: "#22c12a",
+    }
   },
   typography: {
     h1: {
