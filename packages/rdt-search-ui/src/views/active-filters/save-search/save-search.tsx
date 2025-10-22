@@ -273,7 +273,7 @@ export const SearchActions = ({
     const theMap = Array.isArray(facetValues[facet]) ? facetValues[facet] : facetValues[facet]?.values;
     return theMap?.map((value: any) => value.secondaryId).filter(Boolean);
   }).flat()
-  const apiUrl = 'https://api.some.endppoint/?ids=' + selectedIds.join(',');
+  const apiUrl = 'https://guidance.labs.dansdemo.nl/v1/registry/guidance_query?ids=' + selectedIds.join(',');
 
   return (
     <DropDown label={t("searchActions")} small>

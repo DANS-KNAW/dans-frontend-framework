@@ -58,7 +58,7 @@ const App = () => {
             </FacetedWrapper>
           );
       case "create-assessment":
-        return <Assessment />;
+        return <AuthRoute><Assessment /></AuthRoute>;
       default:
         return <Generic {...page} />;
     }
