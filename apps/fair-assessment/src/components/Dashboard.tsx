@@ -62,7 +62,7 @@ export default function Dashboard() {
           <ActionCard title="View assessments" content="Overview of all submitted assessments" icon={AssessmentIcon} link="/assessments" />
         </Grid>
         <Grid xs={12} md={6} lg={3}>
-          <ActionCard title="Perform an assessment" content="Create a new FAIR assessment" icon={CreateIcon} link="/create-assessment" authOnly />
+          <ActionCard title="Perform an assessment" content="Evaluate FAIRness of your data set" icon={CreateIcon} link="/perform-assessment" authOnly />
         </Grid>
         <Grid xs={12} md={6} lg={3}>
           <ActionCard title="Manage your profile" content="Define your role and preferences" link="/user-settings" icon={PersonIcon} authOnly />
