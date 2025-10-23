@@ -17,17 +17,23 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { Button, Stack } from "@mui/material";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ErrorIcon from '@mui/icons-material/Error';
+import CheckCircleIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorIcon from '@mui/icons-material/ErrorOutline';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import CircularProgress from '@mui/material/CircularProgress';
 import Chip from '@mui/material/Chip';
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
+import { styled } from "@mui/material/styles";
 
 function Assessment() {
   const [openPrinciple, setOpenPrinciple] = useState(tempJson.principles[0].id);
   const [openCriterion, setOpenCriterion] = useState<string | null>(tempJson.principles[0].criteria[0].id);
   const [answers, setAnswers] = useState<{ [key: string]: any }>({});
+
+  const mandatoryCriteria = tempJson.principles.flatMap(p => p.criteria).filter(c => c.imperative === 'Mandatory');
+  const mandatoryTotals = calcTotals(mandatoryCriteria, answers);
 
   const goToCriterion = (direction: 'next' | 'previous') => {
     const flatCriteria = tempJson.principles.flatMap(p => p.criteria);
@@ -52,13 +58,11 @@ function Assessment() {
 
   return (
     <Container>
-      <Grid container spacing={3} alignItems="stretch">
+      <Grid container spacing={4} alignItems="stretch">
         <Grid xs={12}>
           <Typography variant="h1">
             Perform assessment
           </Typography>
-        </Grid>
-        <Grid xs={12}>
           <Paper>
             <Status answers={answers} />
           </Paper>
@@ -80,23 +84,14 @@ function Assessment() {
                 const isPrincipleAnswered = principle.criteria.every((criterion: any) => criterion.metric.tests.every((test: any) => answers[test.id] !== undefined));
                 const isPrinciplePartiallyAnswered = principle.criteria.some((criterion: any) => criterion.metric.tests.some((test: any) => answers[test.id] !== undefined)) && !isPrincipleAnswered;
                 const isPrinciplePassed = principle.criteria.every((criterion: any) => criterion.metric.tests.every((test: any) => answers[test.id] === "1"));
+                const status = isPrinciplePassed ? 'success' : isPrincipleAnswered ? 'error' : isPrinciplePartiallyAnswered ? 'warning' : null;
                 return (
                   <Fragment key={principle.id}>
                     <ListItemButton onClick={() => {
                       setOpenPrinciple(principle.id);
                       setOpenCriterion(principle.criteria[0].id);
                     }}>
-                      <ListItemIcon>
-                        {
-                          isPrinciplePassed ? 
-                          <CheckCircleIcon color="success" /> : 
-                          isPrincipleAnswered ?
-                          <ErrorIcon color="error" /> :
-                          isPrinciplePartiallyAnswered ?
-                          <ErrorIcon color="warning" /> :
-                          <HelpOutlineIcon color="disabled" />
-                        }
-                      </ListItemIcon>
+                      <TooltipWithIcon status={status} text={principle.description} type="principle" />
                       <ListItemText primary={principle.name} />
                       {openPrinciple === principle.id ? <ExpandLess /> : <ExpandMore />}
                     </ListItemButton>
@@ -106,6 +101,7 @@ function Assessment() {
                           const tests = criterion.metric.tests;
                           const allAnswered = tests.every((t: any) => answers[t.id] !== undefined);      
                           const allPassed = tests.every((t: any) => answers[t.id] === "1");
+                          const status = allPassed ? 'success' : allAnswered ? 'error' : null;
                           return (
                             <ListItemButton
                               key={criterion.id}
@@ -113,24 +109,18 @@ function Assessment() {
                               onClick={() => setOpenCriterion(criterion.id)}
                               selected={openCriterion === criterion.id}
                             >
-                              <ListItemIcon>
-                                {allPassed ? (
-                                  <CheckCircleIcon color="success" />
-                                ) : 
-                                allAnswered ? (
-                                  <ErrorIcon color="error" />
-                                ) : (
-                                  <HelpOutlineIcon color="disabled" />
-                                )}
-                              </ListItemIcon>
+                              <TooltipWithIcon status={status} text={criterion.description} type="criterion" />
                               <ListItemText primary={criterion.description} />
                               <Chip 
                                 label={criterion.imperative} 
                                 size="small" 
+                                variant="outlined"
                                 color={allPassed ? "success" : criterion.imperative === "Mandatory" ? "error" : "warning"}
                                 sx={{
-                                  fontSize: '0.5rem',
+                                  fontSize: '0.6rem',
                                   ml: 0.5,
+                                  fontWeight: 'bold',
+                                  borderWidth: '2px'
                                 }}
                               />
                             </ListItemButton>
@@ -159,6 +149,9 @@ function Assessment() {
             <Button variant="contained" onClick={() => goToCriterion('next')}>Next</Button>
           </Stack>
         </Grid>
+        <Grid sx={{  }} xs={12}>
+          <Button variant="contained" size="large" disabled={mandatoryTotals.passed + mandatoryTotals.failed !== mandatoryTotals.total} onClick={() => null}>Submit assessment</Button>
+        </Grid>
       </Grid>
     </Container>
   )
@@ -171,30 +164,93 @@ function Criterion({ criterion, answers, setAnswers }: { criterion: any, answers
       <Typography variant="h2">
         {criterion.description}
       </Typography>
-      {criterion.metric.tests.map((test: any) => (
-        <Box key={test.id} sx={{ mt: 2, p: 2, border: '1px solid #ccc', borderRadius: 1 }}>
-          <Stack direction="row" spacing={1} alignItems="flex-end" justifyContent="space-between">
-            <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">{test.text}</FormLabel>
-              <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
-                value={answers[test.id] || ''}
-                onChange={(e) => setAnswers({ ...answers, [test.id]: e.target.value })}
-              >
-                <FormControlLabel value="1" control={<Radio />} label="Yes" />
-                <FormControlLabel value="0" control={<Radio />} label="No" />
-              </RadioGroup>
-            </FormControl>
-            <Button onClick={() => setAnswers((prev: any) => {
-              const { [test.id]: _, ...rest } = prev;
-              return rest;
-            })}>Clear</Button>
-          </Stack>
-        </Box>
-      ))}
+      {criterion.metric.tests.map((test: any) => {
+        const status = answers[test.id] === "1" ? "success" : answers[test.id] === "0" ? "error" : null
+        return (
+          <Box key={test.id} sx={{ mt: 2, p: 2, border: '1px solid #ccc', borderRadius: 1 }}>
+            <Stack direction="row" spacing={1} alignItems="flex-end" justifyContent="space-between">
+              <FormControl>
+                <Stack direction="row" alignItems="center" mb={1}>
+                  <TooltipWithIcon status={status} text={test.description} type="test" />
+                  <FormLabel id="demo-row-radio-buttons-group-label" sx={{ "&.Mui-focused": { color: "inherit" } }}>{test.text}</FormLabel>
+                </Stack>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
+                  value={answers[test.id] || ''}
+                  sx={{ ml: 5}}
+                  onChange={(e) => setAnswers({ ...answers, [test.id]: e.target.value })}
+                >
+                  <FormControlLabel value="1" control={<Radio />} label="Yes" />
+                  <FormControlLabel value="0" control={<Radio />} label="No" />
+                </RadioGroup>
+              </FormControl>
+              <Button onClick={() => setAnswers((prev: any) => {
+                const { [test.id]: _, ...rest } = prev;
+                return rest;
+              })}>Clear</Button>
+            </Stack>
+          </Box>
+        )
+      })}
     </Box>
+  )
+}
+
+const StatusTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    padding: 0,
+    boxShadow: theme.shadows[1],
+  },
+}));
+
+function TooltipWithIcon({ status, text, type }: { status: 'success' | 'error' | 'warning' | null, text: string, type: 'principle' | 'criterion' | 'test' }) {
+  return (
+    <StatusTooltip 
+      title={
+        <TooltipContent 
+          text={text} 
+          color={status}
+          type={type}
+        />
+      }
+    >
+      <ListItemIcon sx={{ minWidth: 40 }}>
+        <GuidanceIcons status={status} />
+      </ListItemIcon>
+    </StatusTooltip>
+  )
+}
+
+function GuidanceIcons({ status }: { status: 'success' | 'error' | 'warning' | null }) {
+  if (status === 'success') {
+    return <CheckCircleIcon color="success" />;
+  }
+  if (status === 'error') {
+    return <ErrorIcon color="error" />;
+  }
+  if (status === 'warning') {
+    return <ErrorIcon color="warning" />;
+  }
+  return <HelpOutlineIcon color="disabled" />;
+}
+
+function TooltipContent ({ text, color, type }: { text: string, color: string | null, type: 'principle' | 'criterion' | 'test' }) {
+  return (
+    <>
+       <Typography color="inherit" variant="body2" sx={{ p: 2 }}>{text}</Typography>
+       {color && (
+         <Box sx={{ px: 2, py: 1, backgroundColor: `${color}.main` }}>
+           <Typography variant="body2" color="white" sx={{ fontSize: "0.75rem" }}>
+              This {type} is marked as {color === "success" ? "passed" : color === "error" ? "failed" : "partially passed"}.
+           </Typography>
+         </Box>
+       )}
+    </>
   )
 }
 
@@ -203,7 +259,7 @@ function Status({ answers }: { answers: any }) {
     <Stack  sx={{ p: 2 }} direction="row" spacing={2} alignItems="center" justifyContent="space-between">
       <Box>
         <Typography variant="body2" gutterBottom>
-          Assessing doi:10.17026/SS/U7J1CT - Interview met Dionne Sillé, Amsterdam, 17 Januari 2025
+          Assessing DEMO doi:XXX - Interview met Dionne Sillé, Amsterdam, 17 Januari 2025
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
           CESSDA-NL | DANS Data Station Social Sciences and Humanities | Data Archiving and Networked Services
@@ -217,16 +273,23 @@ function Status({ answers }: { answers: any }) {
   )
 }
 
-const calcTotals = (criteria: any, answers: any) => {
-  const testIds = new Set(criteria.flatMap((c: any) => c.metric.tests.map((t: any) => t.id)));
+function calcTotals(criteria: any[], answers: Record<string, any>) {
   const counts = { passed: 0, failed: 0, total: criteria.length };
-  
-  Object.entries(answers).forEach(([id, v]) => {
-    if (testIds.has(id)) counts[v === "1" ? "passed" : "failed"]++;
-  });
-  
+
+  for (const c of criteria) {
+    const tests: any[] = c?.metric?.tests ?? [];
+    if (tests.length === 0) continue;
+
+    const testAnswers = tests.map(t => answers[t.id]).filter(v => v !== undefined);
+    
+    if (testAnswers.length !== tests.length) continue;
+
+    const allPassed = testAnswers.every(v => v === "1");
+    counts[allPassed ? "passed" : "failed"]++;
+  }
+
   return counts;
-};
+}
 
 function Progress({ variant, answers }: { variant: 'mandatory' | 'optional', answers: any }) {
   // Calculate progress based on tempJson data and answers. Checks if question is mandatory or optional. Check if answer is 1 (passed) or 0 (failed).
@@ -237,6 +300,9 @@ function Progress({ variant, answers }: { variant: 'mandatory' | 'optional', ans
 
   return (
     <Stack alignItems="center" spacing={1} direction={{ xs: 'column', md: 'row'}}>
+      <Typography variant="body2" sx={{ fontSize: '0.75rem'}}>
+        {variant === 'mandatory' ? 'Mandatory criteria' : 'Optional criteria'}
+      </Typography>
       <Box sx={{ position: 'relative', display: 'inline-flex' }}>
         <CircularProgress
           variant="determinate" 
@@ -287,9 +353,6 @@ function Progress({ variant, answers }: { variant: 'mandatory' | 'optional', ans
           </Typography>
         </Box>
       </Box>
-      <Typography variant="body2">
-        {variant === 'mandatory' ? 'Mandatory criteria' : 'Optional criteria'}
-      </Typography>
     </Stack>
   );
 }
@@ -459,6 +522,21 @@ const tempJson = {
                 "name": "T13",
                 "description": "The metadata SHOULD include access conditions, if applicable, and preferably include these access conditions in the licence. ",
                 "text": "Does the metadata or the licence describe access conditions, if applicable?",
+                "value": null,
+                "result": null,
+                "guidance": {
+                  "id": "",
+                  "type": "API",
+                  "description": "",
+                  "API": ""
+                }
+              },
+              {
+                "type": "binary",
+                "id": "cat_graph:tes.1E7EAXXX",
+                "name": "T14",
+                "description": "This is a dummy test to show multiple tests per criterion." ,
+                "text": "Is this a dummy test to show multiple tests per criterion?",
                 "value": null,
                 "result": null,
                 "guidance": {

@@ -8,9 +8,9 @@ import grey from "@mui/material/colors/grey";
 const customTheme = createTheme({
   palette: {
     primary: {
-      light: "#3fa9f5",
-      main: "#1a0d4f",
-      dark: "#130a37",
+      light: "#4FC3F7",
+      main: "#039BE5",
+      dark: "#01579B",
       contrastText: "#fff",
     },
     secondary: {
@@ -20,38 +20,44 @@ const customTheme = createTheme({
       contrastText: "#000",
     },
     success: {
-      main: "#22c12a",
-    }
+      main: "#4CAF50",
+    },
+    warning: {
+      main: "#FF8F00",
+    },
+    error: {
+      main: "#D32F2F",
+    },
   },
   typography: {
     h1: {
-      fontSize: "2.5rem",
+      fontSize: "2rem",
       fontWeight: 500,
       marginTop: "2rem",
       marginBottom: "1rem",
     },
     h2: {
-      fontSize: "2rem",
+      fontSize: "1.35rem",
       fontWeight: 500,
       marginBottom: "1rem",
     },
     h3: {
-      fontSize: "1.8rem",
+      fontSize: "1.25rem",
       fontWeight: 500,
       marginBottom: "1rem",
     },
     h4: {
-      fontSize: "1.4rem",
+      fontSize: "1.15rem",
       fontWeight: 500,
       marginBottom: "1rem",
     },
     h5: {
-      fontSize: "1.15rem",
+      fontSize: "1rem",
       fontWeight: 500,
       marginBottom: "0.5rem",
     },
     h6: {
-      fontSize: "1rem",
+      fontSize: "0.9rem",
       fontWeight: 500,
       marginBottom: "0.25rem",
     },
