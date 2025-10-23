@@ -363,7 +363,7 @@ function Progress({ variant, totals }: { variant: 'mandatory' | 'optional', tota
         </Box>
       </Box>
       <FormHelperText sx={{ fontSize: '0.7rem', mt: 0.5 }}>
-        {variant === 'mandatory' ? 'Mandatory criteria' : 'Optional criteria'}
+        {totals.total} {variant === 'mandatory' ? 'mandatory criteria' : 'optional criteria'}
       </FormHelperText>
     </Stack>
   );
