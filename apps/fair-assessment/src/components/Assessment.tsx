@@ -30,6 +30,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputLabel from '@mui/material/InputLabel';
+import { Divider } from "@mui/material";
 
 
 function Assessment() {
@@ -60,23 +61,22 @@ function Assessment() {
 
   return (
     <Container>
-      <Grid container spacing={4} alignItems="stretch">
-        <Grid xs={12}>
-          <Typography variant="h1">
-            Perform assessment
-          </Typography>
-          <Paper>
+      <Typography variant="h1">
+        Perform assessment
+      </Typography>
+      <Paper>
+        <Grid container>
+          <Grid xs={12}>
             <Status answers={answers} />
-          </Paper>
-        </Grid>
-        <Grid md={4}>
-          <Paper>
+            <Divider />
+          </Grid>
+          <Grid md={4} pt={3} sx={{ borderRight: { md: '1px solid rgba(0, 0, 0, 0.12)' } }}>
             <List
               sx={{ width: '100%' }}
               component="nav"
               aria-labelledby="nested-list-subheader"
               subheader={
-                <ListSubheader component="div" id="nested-list-subheader">
+                <ListSubheader sx={{ px: 4 }}>
                   {tempJson.assessment_type.name}: Principles & criteria
                 </ListSubheader>
               }
@@ -89,10 +89,13 @@ function Assessment() {
                 const status = isPrinciplePassed ? 'success' : isPrincipleAnswered ? 'error' : isPrinciplePartiallyAnswered ? 'warning' : null;
                 return (
                   <Fragment key={principle.id}>
-                    <ListItemButton onClick={() => {
-                      setOpenPrinciple(principle.id);
-                      setOpenCriterion(principle.criteria[0].id);
-                    }}>
+                    <ListItemButton 
+                      sx={{ px: 4}}
+                      onClick={() => {
+                        setOpenPrinciple(principle.id);
+                        setOpenCriterion(principle.criteria[0].id);
+                      }}
+                    >
                       <TooltipWithIcon status={status} text={principle.description} type="principle" />
                       <ListItemText primary={principle.name} />
                       {openPrinciple === principle.id ? <ExpandLess /> : <ExpandMore />}
@@ -107,7 +110,7 @@ function Assessment() {
                           return (
                             <ListItemButton
                               key={criterion.id}
-                              sx={{ pl: 4 }}
+                              sx={{ pl: 6, pr: 4 }}
                               onClick={() => setOpenCriterion(criterion.id)}
                               selected={openCriterion === criterion.id}
                             >
@@ -134,24 +137,24 @@ function Assessment() {
                 )
               })}
             </List>
-          </Paper>
+          </Grid>
+          <Grid md={8} p={4}>
+            <Criterion
+              criterion={tempJson.principles.find(
+                (p) => p.id === openPrinciple)?.criteria.find(
+                  (criterion) => criterion.id === openCriterion
+                )
+              }
+              answers={answers}
+              setAnswers={setAnswers}
+            />
+            <Stack direction="row" spacing={2} mt={2} justifyContent="flex-end">
+              <Button variant="contained" color="neutral" onClick={() => goToCriterion('previous')}>Previous</Button>
+              <Button variant="contained" onClick={() => goToCriterion('next')}>Next</Button>
+            </Stack>
+          </Grid>          
         </Grid>
-        <Grid md={8}>
-          <Criterion
-            criterion={tempJson.principles.find(
-              (p) => p.id === openPrinciple)?.criteria.find(
-                (criterion) => criterion.id === openCriterion
-              )
-            }
-            answers={answers}
-            setAnswers={setAnswers}
-          />
-          <Stack direction="row" spacing={2} mt={2} justifyContent="flex-end">
-            <Button variant="contained" color="neutral" onClick={() => goToCriterion('previous')}>Previous</Button>
-            <Button variant="contained" onClick={() => goToCriterion('next')}>Next</Button>
-          </Stack>
-        </Grid>
-      </Grid>
+      </Paper>
     </Container>
   )
 }
@@ -166,7 +169,7 @@ function Criterion({ criterion, answers, setAnswers }: { criterion: any, answers
       {criterion.metric.tests.map((test: any) => {
         const status = answers[test.id] === "1" ? "success" : answers[test.id] === "0" ? "error" : null
         return (
-          <Box key={test.id} sx={{ mt: 2, p: 2, border: '1px solid #ccc', borderRadius: 1 }}>
+          <Box key={test.id} sx={{ mt: 2, p: 2, border: '1px solid rgba(0, 0, 0, 0.12)', borderRadius: 1 }}>
             <Stack direction="row" spacing={1} alignItems="flex-end" justifyContent="space-between">
               <FormControl>
                 <Stack direction="row" alignItems="center" mb={1}>
@@ -259,7 +262,7 @@ function Status({ answers }: { answers: any }) {
   const mandatoryTotals = calcTotals(mandatoryCriteria, answers);
   const optionalTotals = calcTotals(optionalCriteria, answers);
   return (
-    <Stack sx={{ px: 2, py: 1.5 }} direction="row" spacing={6} alignItems="center" justifyContent="space-between">
+    <Stack sx={{ px: 4, py: 3 }} direction="row" spacing={6} alignItems="center" justifyContent="space-between">
       <FormControl sx={{ flex: "1"}}>
         <InputLabel id="select-dataset-label">Assess data set</InputLabel>
         <Select
