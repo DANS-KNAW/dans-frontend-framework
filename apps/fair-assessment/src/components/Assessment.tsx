@@ -26,14 +26,16 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
 import { styled } from "@mui/material/styles";
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
+import InputLabel from '@mui/material/InputLabel';
+
 
 function Assessment() {
   const [openPrinciple, setOpenPrinciple] = useState(tempJson.principles[0].id);
   const [openCriterion, setOpenCriterion] = useState<string | null>(tempJson.principles[0].criteria[0].id);
   const [answers, setAnswers] = useState<{ [key: string]: any }>({});
-
-  const mandatoryCriteria = tempJson.principles.flatMap(p => p.criteria).filter(c => c.imperative === 'Mandatory');
-  const mandatoryTotals = calcTotals(mandatoryCriteria, answers);
 
   const goToCriterion = (direction: 'next' | 'previous') => {
     const flatCriteria = tempJson.principles.flatMap(p => p.criteria);
@@ -149,9 +151,6 @@ function Assessment() {
             <Button variant="contained" onClick={() => goToCriterion('next')}>Next</Button>
           </Stack>
         </Grid>
-        <Grid sx={{  }} xs={12}>
-          <Button variant="contained" size="large" disabled={mandatoryTotals.passed + mandatoryTotals.failed !== mandatoryTotals.total} onClick={() => null}>Submit assessment</Button>
-        </Grid>
       </Grid>
     </Container>
   )
@@ -255,24 +254,40 @@ function TooltipContent ({ text, color, type }: { text: string, color: string | 
 }
 
 function Status({ answers }: { answers: any }) {
+  const mandatoryCriteria = tempJson.principles.flatMap(p => p.criteria).filter(c => c.imperative === 'Mandatory');
+  const optionalCriteria = tempJson.principles.flatMap(p => p.criteria).filter(c => c.imperative === 'Optional');
+  const mandatoryTotals = calcTotals(mandatoryCriteria, answers);
+  const optionalTotals = calcTotals(optionalCriteria, answers);
   return (
-    <Stack  sx={{ p: 2 }} direction="row" spacing={2} alignItems="center" justifyContent="space-between">
-      <Box>
-        <Typography variant="body2" gutterBottom>
-          Assessing DEMO doi:XXX - Interview met Dionne Sillé, Amsterdam, 17 Januari 2025
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
-          CESSDA-NL | DANS Data Station Social Sciences and Humanities | Data Archiving and Networked Services
-        </Typography>
-      </Box>
+    <Stack sx={{ px: 2, py: 1.5 }} direction="row" spacing={6} alignItems="center" justifyContent="space-between">
+      <FormControl sx={{ flex: "1"}}>
+        <InputLabel id="select-dataset-label">Assess data set</InputLabel>
+        <Select
+          labelId="select-dataset-label"
+          id="select-dataset"
+          label="Assess data set"
+          value="0"
+          renderValue={() => "DEMO doi:XXX - Interview met Dionne Sillé, Amsterdam, 17 Januari 2025"}
+        >
+          <MenuItem value={0}>
+          <Box>
+            <Typography>DEMO doi:XXX - Interview met Dionne Sillé, Amsterdam, 17 Januari 2025</Typography>
+            <Typography variant="body2" color="neutral.dark">CESSDA-NL | DANS Data Station Social Sciences and Humanities | Data Archiving and Networked Services</Typography>
+          </Box>
+          </MenuItem>
+        </Select>
+        <FormHelperText sx={{ fontSize: "0.7rem", mb: -1 }}>Select one of your data sets from the added objects in your user settings</FormHelperText>
+      </FormControl>
       <Stack direction="row" spacing={2} alignItems="center">
-        <Progress variant="mandatory" answers={answers} />
-        <Progress variant="optional" answers={answers} />
+        <Progress variant="mandatory" totals={mandatoryTotals} />
+        <Progress variant="optional" totals={optionalTotals} />
       </Stack>
+      <Button variant="contained" size="large" disabled={mandatoryTotals.passed + mandatoryTotals.failed !== mandatoryTotals.total} onClick={() => null}>Submit assessment</Button>
     </Stack>
   )
 }
 
+// Calculate progress based on tempJson data and answers. Checks if question is mandatory or optional. Check if answer is 1 (passed) or 0 (failed).
 function calcTotals(criteria: any[], answers: Record<string, any>) {
   const counts = { passed: 0, failed: 0, total: criteria.length };
 
@@ -291,18 +306,9 @@ function calcTotals(criteria: any[], answers: Record<string, any>) {
   return counts;
 }
 
-function Progress({ variant, answers }: { variant: 'mandatory' | 'optional', answers: any }) {
-  // Calculate progress based on tempJson data and answers. Checks if question is mandatory or optional. Check if answer is 1 (passed) or 0 (failed).
-  const criteria = tempJson.principles.flatMap(p => p.criteria)
-    .filter(c => variant === 'mandatory' ? c.imperative === 'Mandatory' : c.imperative === 'Optional');
-
-  const totals = calcTotals(criteria, answers);
-
+function Progress({ variant, totals }: { variant: 'mandatory' | 'optional', totals: any }) {
   return (
-    <Stack alignItems="center" spacing={1} direction={{ xs: 'column', md: 'row'}}>
-      <Typography variant="body2" sx={{ fontSize: '0.75rem'}}>
-        {variant === 'mandatory' ? 'Mandatory criteria' : 'Optional criteria'}
-      </Typography>
+    <Stack alignItems="center" spacing={0} direction={{ xs: 'column', md: 'column'}}>
       <Box sx={{ position: 'relative', display: 'inline-flex' }}>
         <CircularProgress
           variant="determinate" 
@@ -353,6 +359,9 @@ function Progress({ variant, answers }: { variant: 'mandatory' | 'optional', ans
           </Typography>
         </Box>
       </Box>
+      <FormHelperText sx={{ fontSize: '0.7rem', mt: 0.5 }}>
+        {variant === 'mandatory' ? 'Mandatory criteria' : 'Optional criteria'}
+      </FormHelperText>
     </Stack>
   );
 }
