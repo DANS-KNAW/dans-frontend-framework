@@ -290,7 +290,7 @@ function Status({ answers }: { answers: any }) {
   )
 }
 
-// Calculate progress based on tempJson data and answers. Checks if question is mandatory or optional. Check if answer is 1 (passed) or 0 (failed).
+// Calculate progress based on tempJson data and answers. Checks if question is mandatory or optional and if metric tests are all answered and passed
 function calcTotals(criteria: any[], answers: Record<string, any>) {
   const counts = { passed: 0, failed: 0, total: criteria.length };
 
@@ -298,12 +298,14 @@ function calcTotals(criteria: any[], answers: Record<string, any>) {
     const tests: any[] = c?.metric?.tests ?? [];
     if (tests.length === 0) continue;
 
-    const testAnswers = tests.map(t => answers[t.id]).filter(v => v !== undefined);
-    
-    if (testAnswers.length !== tests.length) continue;
-
-    const allPassed = testAnswers.every(v => v === "1");
-    counts[allPassed ? "passed" : "failed"]++;
+    if (c.metric.algorithm === "sum" && c.metric.benchmark.hasOwnProperty("equal_greater_than")) {
+      // simple sum algorithm
+      const testAnswers = tests.map(t => answers[t.id]).filter(v => v !== undefined);
+      if (testAnswers.length !== tests.length) continue;
+      const allPassed = testAnswers.reduce((partialSum, a) => partialSum + parseInt(a), 0) >= parseInt(c.metric.benchmark.equal_greater_than)
+      counts[allPassed ? "passed" : "failed"]++;
+    }
+    // other algorithms...
   }
 
   return counts;
@@ -525,7 +527,7 @@ const tempJson = {
             "result": null,
             "algorithm": "sum",
             "benchmark": {
-              "equal_greater_than": 1
+              "equal_greater_than": 2
             },
             "tests": [
               {
