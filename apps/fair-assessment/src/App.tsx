@@ -27,7 +27,7 @@ import { FacetedWrapper, FacetedSearchProvider } from "@dans-framework/rdt-searc
 import { elasticConfig } from "./components/elastic/Guidance";
 import { DetailedView } from "./components/elastic/Single";
 import { AnimatePresence } from "framer-motion";
-import Assessment from "./components/Assessment";
+import Assessment from "./components/assessment/Assessment";
 
 const queryClient = new QueryClient();
 
