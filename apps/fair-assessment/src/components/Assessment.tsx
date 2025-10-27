@@ -322,6 +322,12 @@ type CriterionEvaluation = {
   passed?: boolean; // undefined means incomplete
 };
 
+type Totals = {
+  passed: number;
+  failed: number;
+  total: number;
+}
+
 function evaluateCriterion(c: Criterion, answers: Record<string, string>): CriterionEvaluation {
   const tests = c.metric.tests;
   const testAnswers = tests.map(t => answers[t.id]);
