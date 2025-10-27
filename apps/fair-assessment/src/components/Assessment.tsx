@@ -11,7 +11,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import { Fragment, useState } from "react";
+import { Fragment, useState, type Dispatch, type SetStateAction } from "react";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -36,7 +36,7 @@ import { Divider } from "@mui/material";
 function Assessment() {
   const [openPrinciple, setOpenPrinciple] = useState(tempJson.principles[0].id);
   const [openCriterion, setOpenCriterion] = useState<string | null>(tempJson.principles[0].criteria[0].id);
-  const [answers, setAnswers] = useState<{ [key: string]: any }>({});
+  const [answers, setAnswers] = useState<Record<string, string>>({});
 
   const goToCriterion = (direction: 'next' | 'previous') => {
     const flatCriteria = tempJson.principles.flatMap(p => p.criteria);
@@ -82,11 +82,18 @@ function Assessment() {
               }
             >
               {tempJson.principles.map((principle) => {
-                // Helper to check if criterion is answered
-                const isPrincipleAnswered = principle.criteria.every((criterion: any) => criterion.metric.tests.every((test: any) => answers[test.id] !== undefined));
-                const isPrinciplePartiallyAnswered = principle.criteria.some((criterion: any) => criterion.metric.tests.some((test: any) => answers[test.id] !== undefined)) && !isPrincipleAnswered;
-                const isPrinciplePassed = principle.criteria.every((criterion: any) => criterion.metric.tests.every((test: any) => answers[test.id] === "1"));
-                const status = isPrinciplePassed ? 'success' : isPrincipleAnswered ? 'error' : isPrinciplePartiallyAnswered ? 'warning' : null;
+                const criteriaEvaluations = principle.criteria.map(c => evaluateCriterion(c, answers));
+
+                const allAnswered = criteriaEvaluations.every(r => r.allAnswered);
+                const partiallyAnswered = criteriaEvaluations.some(r => r.allAnswered) && !allAnswered;
+                const allPassed = criteriaEvaluations.every(r => r.passed === true);
+
+                const status =
+                  allPassed ? "success" :
+                  allAnswered ? "error" :
+                  partiallyAnswered ? "warning" :
+                  null;
+
                 return (
                   <Fragment key={principle.id}>
                     <ListItemButton 
@@ -103,10 +110,11 @@ function Assessment() {
                     <Collapse in={openPrinciple === principle.id} timeout="auto" unmountOnExit>
                       <List component="div" disablePadding>
                         {principle.criteria.map((criterion) => {
-                          const tests = criterion.metric.tests;
-                          const allAnswered = tests.every((t: any) => answers[t.id] !== undefined);      
-                          const allPassed = tests.every((t: any) => answers[t.id] === "1");
-                          const status = allPassed ? 'success' : allAnswered ? 'error' : null;
+                          const result = criteriaEvaluations.find(r => r.id === criterion.id);
+                          const status =
+                            result?.passed ? "success" :
+                            result?.allAnswered ? "error" :
+                            null;
                           return (
                             <ListItemButton
                               key={criterion.id}
@@ -143,7 +151,7 @@ function Assessment() {
               criterion={tempJson.principles.find(
                 (p) => p.id === openPrinciple)?.criteria.find(
                   (criterion) => criterion.id === openCriterion
-                )
+                ) as Criterion
               }
               answers={answers}
               setAnswers={setAnswers}
@@ -159,21 +167,20 @@ function Assessment() {
   )
 }
 
-function Criterion({ criterion, answers, setAnswers }: { criterion: any, answers: any, setAnswers: any }) {
+function Criterion({ criterion, answers, setAnswers }: { criterion: Criterion, answers: Record<string, string>, setAnswers: Dispatch<SetStateAction<Record<string, string>>> }) {
   return (
     criterion &&
     <Box>
       <Typography variant="h2">
         {criterion.description}
       </Typography>
-      {criterion.metric.tests.map((test: any) => {
-        const status = answers[test.id] === "1" ? "success" : answers[test.id] === "0" ? "error" : null
+      {criterion.metric.tests.map((test) => {
         return (
           <Box key={test.id} sx={{ mt: 2, p: 2, border: '1px solid rgba(0, 0, 0, 0.12)', borderRadius: 1 }}>
             <Stack direction="row" spacing={1} alignItems="flex-end" justifyContent="space-between">
               <FormControl>
                 <Stack direction="row" alignItems="center" mb={1}>
-                  <TooltipWithIcon status={status} text={test.description} type="test" />
+                  <TooltipWithIcon status={null} text={test.description} type="test" />
                   <FormLabel id="demo-row-radio-buttons-group-label" sx={{ "&.Mui-focused": { color: "inherit" } }}>{test.text}</FormLabel>
                 </Stack>
                 <RadioGroup
@@ -188,7 +195,7 @@ function Criterion({ criterion, answers, setAnswers }: { criterion: any, answers
                   <FormControlLabel value="0" control={<Radio />} label="No" />
                 </RadioGroup>
               </FormControl>
-              <Button onClick={() => setAnswers((prev: any) => {
+              <Button onClick={() => setAnswers((prev) => {
                 const { [test.id]: _, ...rest } = prev;
                 return rest;
               })}>Clear</Button>
@@ -256,14 +263,14 @@ function TooltipContent ({ text, color, type }: { text: string, color: string | 
   )
 }
 
-function Status({ answers }: { answers: any }) {
-  const mandatoryCriteria = tempJson.principles.flatMap(p => p.criteria).filter(c => c.imperative === 'Mandatory');
-  const optionalCriteria = tempJson.principles.flatMap(p => p.criteria).filter(c => c.imperative === 'Optional');
+function Status({ answers }: { answers: Record<string, string> }) {
+  const mandatoryCriteria: Criterion[] = tempJson.principles.flatMap(p => p.criteria).filter(c => c.imperative === 'Mandatory');
+  const optionalCriteria: Criterion[] = tempJson.principles.flatMap(p => p.criteria).filter(c => c.imperative === 'Optional');
   const mandatoryTotals = calcTotals(mandatoryCriteria, answers);
   const optionalTotals = calcTotals(optionalCriteria, answers);
   return (
-    <Stack sx={{ px: 4, py: 3 }} direction="row" spacing={6} alignItems="center" justifyContent="space-between">
-      <FormControl sx={{ flex: "1"}}>
+    <Stack sx={{ px: 4, py: 3 }} direction={{ xs: "column", md: "row" }} spacing={6} alignItems="center" justifyContent="space-between">
+      <FormControl sx={{ flex: "1", maxWidth: "100%"}}>
         <InputLabel id="select-dataset-label">Assess data set</InputLabel>
         <Select
           labelId="select-dataset-label"
@@ -281,37 +288,70 @@ function Status({ answers }: { answers: any }) {
         </Select>
         <FormHelperText sx={{ fontSize: "0.7rem", mb: -1 }}>Select one of your data sets from the added objects in your user settings</FormHelperText>
       </FormControl>
-      <Stack direction="row" spacing={2} alignItems="center">
-        <Progress variant="mandatory" totals={mandatoryTotals} />
-        <Progress variant="optional" totals={optionalTotals} />
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={4} alignItems="center" justifyContent="space-between">
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Progress variant="mandatory" totals={mandatoryTotals} />
+          <Progress variant="optional" totals={optionalTotals} />
+        </Stack>
+        <Button variant="contained" size="large" disabled={mandatoryTotals.passed + mandatoryTotals.failed !== mandatoryTotals.total} onClick={() => null}>Submit assessment</Button>
       </Stack>
-      <Button variant="contained" size="large" disabled={mandatoryTotals.passed + mandatoryTotals.failed !== mandatoryTotals.total} onClick={() => null}>Submit assessment</Button>
     </Stack>
   )
 }
 
-// Calculate progress based on tempJson data and answers. Checks if question is mandatory or optional and if metric tests are all answered and passed
-function calcTotals(criteria: any[], answers: Record<string, any>) {
+type Criterion = {
+  id: string;
+  description: string;
+  imperative: string;
+  metric: {
+    algorithm: string;
+    benchmark: {
+      equal_greater_than?: number;
+    };
+    tests: {
+      id: string;
+      description: string;
+      text: string;
+    }[];
+  };
+};
+
+type CriterionEvaluation = {
+  id: string;
+  allAnswered: boolean;
+  passed?: boolean; // undefined means incomplete
+};
+
+function evaluateCriterion(c: Criterion, answers: Record<string, string>): CriterionEvaluation {
+  const tests = c.metric.tests;
+  const testAnswers = tests.map(t => answers[t.id]);
+  const allAnswered = testAnswers.every(v => v !== undefined);
+
+  if (c.metric.algorithm === "sum" && typeof c.metric.benchmark.equal_greater_than === "number") {
+    if (!allAnswered) return { id: c.id, allAnswered: false };
+    const total = testAnswers.reduce((sum, v) => sum + parseInt(v || "0", 10), 0);
+    const passed = total >= c.metric.benchmark.equal_greater_than;
+    return { id: c.id, allAnswered: true, passed };
+  }
+
+  // fallback for unknown algorithms
+  return { id: c.id, allAnswered, passed: undefined };
+}
+
+function calcTotals(criteria: Criterion[], answers: Record<string, string>) {
   const counts = { passed: 0, failed: 0, total: criteria.length };
 
   for (const c of criteria) {
-    const tests: any[] = c?.metric?.tests ?? [];
-    if (tests.length === 0) continue;
-
-    if (c.metric.algorithm === "sum" && c.metric.benchmark.hasOwnProperty("equal_greater_than")) {
-      // simple sum algorithm
-      const testAnswers = tests.map(t => answers[t.id]).filter(v => v !== undefined);
-      if (testAnswers.length !== tests.length) continue;
-      const allPassed = testAnswers.reduce((partialSum, a) => partialSum + parseInt(a), 0) >= parseInt(c.metric.benchmark.equal_greater_than)
-      counts[allPassed ? "passed" : "failed"]++;
-    }
-    // other algorithms...
+    const result = evaluateCriterion(c, answers);
+    if (!result.allAnswered) continue;
+    counts[result.passed ? "passed" : "failed"]++;
   }
 
   return counts;
 }
 
-function Progress({ variant, totals }: { variant: 'mandatory' | 'optional', totals: any }) {
+
+function Progress({ variant, totals }: { variant: 'mandatory' | 'optional', totals: Totals }) {
   return (
     <Stack alignItems="center" spacing={0} direction={{ xs: 'column', md: 'column'}}>
       <Box sx={{ position: 'relative', display: 'inline-flex' }}>
