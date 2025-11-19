@@ -88,10 +88,10 @@ const createElementByTemplate = (page: Page) => {
   }
 };
 ```  
-### Facets
+## Facets
 The interface is made up out of one or more facets, like text lists or pie charts. Each facet takes a specific config object.
-#### List facet
-Displays a list of text items a user can filter on.
+### List facet
+Displays a list of text items a user can filter on. Displays count of items corresponding to each facet. User can click on items to set active filters.
 ```tsx
 import { ListFacet } from "@dans-framework/rdt-search-ui";
 
@@ -115,8 +115,8 @@ import { ListFacet } from "@dans-framework/rdt-search-ui";
   }}
 />
 ```
-#### Map facet
-Displays an interactive map for facets with geo data.
+### Map facet
+Displays an interactive map for facets with geo data. Zooming can adjust the active filter.
 ```tsx
 import { MapFacet } from "@dans-framework/rdt-search-ui";
 
@@ -128,26 +128,14 @@ import { MapFacet } from "@dans-framework/rdt-search-ui";
     cols: 6, // amount of columns this facet type takes up
     rows: 1, // amount of rows
     tooltip: "Some tooltip content string" // displays an optional tooltip alongside the title
-    disableSort: true, // 
+    disableSort: true, // removes sorting dropdown
   }}
 />
 ```
-#### Chart facets
-Displays a pie chart, a bar chart, or a date range chart
+### Pie and bar chart facets
+Shows either a pie or a bar chart. User can click on chart segments/bars to set active filters.
 ```tsx
-import { DateChartFacet, PieChartFacet } from "@dans-framework/rdt-search-ui";
-
-<DateChartFacet
-  config={{
-    id: "unique",
-    field: "start_date", // needs to be formatted as date in the Elastic database
-    title:  "Year...",
-    interval: "year", // set interval for the bars and the interactive range slider
-    cols: 9,
-    rows: 1,
-    tooltip: "Some tips",
-  }}
-/>
+import { PieChartFacet } from "@dans-framework/rdt-search-ui";
 
 <PieChartFacet
   config={{
@@ -170,6 +158,23 @@ import { DateChartFacet, PieChartFacet } from "@dans-framework/rdt-search-ui";
         type: "log",
       },
     }, // chartOptions can be any valid Apache Echarts option config, see e.g. [https://echarts.apache.org/handbook/en/concepts/axis]
+  }}
+/>
+```
+### Date chart facet
+Displays an interactive bar chart with a date range slider. Changing the date range adjusts the active filters. User can also click on a specific bar to set just that date as filter. Only works well for year intervals at the moment.
+```tsx
+import { DateChartFacet } from "@dans-framework/rdt-search-ui";
+
+<DateChartFacet
+  config={{
+    id: "unique",
+    field: "start_date", // needs to be formatted as date in the Elastic database
+    title:  "Year...",
+    interval: "year", // set interval for the bars and the interactive range slider
+    cols: 9,
+    rows: 1,
+    tooltip: "Some tips",
   }}
 />
 ```
