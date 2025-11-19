@@ -1,6 +1,8 @@
 # Elastic Search Dashboard and search UI
 
-Package that exports an interface to be used with an Elastic Search endpoint. Has a search, dashboard and detailed results view.
+Package that exports an interface to be used with an Elastic Search endpoint. Has a search, dashboard and detailed/single result view. 
+
+Note that the single result view currently has no standardised component, and should be created and provided manually. It has to make a call to the Elastic Search endpoint to get a single record, and format the JSON it gets back from the server accordingly. For examples, see the current app folders (e.g. RDA, CAT, SuperCatalog etc).
 
 ## Setup and config
 ```tsx
@@ -68,7 +70,7 @@ const elasticConfig = {
 For a basic page generating function, if used with the [@dans-framework/pages](pages.md) package, you could use this example:
 ```tsx
 import { FacetedWrapper } from "@dans-framework/rdt-search-ui";
-import { SingleRecord } from "./YourSingleRecordComp";
+import { SingleRecord } from "./YourSingleRecordComp"; // this is a custom component you need to provide, could be rendered as a child of a FacetedWrapper, or on its own
 import { Generic, type Page } from "@dans-framework/pages"
 
 const createElementByTemplate = (page: Page) => {
@@ -80,7 +82,7 @@ const createElementByTemplate = (page: Page) => {
     case "record":
       return (
         <FacetedWrapper dashRoute="/" resultRoute="/search">
-          <SingleRecord />
+          <SingleRecord /> 
         </FacetedWrapper>
       );
     default:
