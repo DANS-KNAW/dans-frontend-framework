@@ -22,14 +22,14 @@ import { Generic } from '@dans-framework/pages'
     /**
      * template to be used by the page
      * generic: a simple page with html or text content, provided by the content prop
-     * deposit: loads the deposit package
-     * search: displays the search interface of the rdt-search-ui package
-     * record: single search result detail page of the rdt-search-ui package
-     * dashboard: displays the dashboard interface of the rdt-search-ui package
-     * advisor: 
-     * mapper: 
-     * rda-anotator: 
-     * accessibility-statement: 
+     * deposit: for using the deposit package
+     * search: for using the search interface of the rdt-search-ui package
+     * record: for using the result detail page of the rdt-search-ui package
+     * dashboard: for using the dashboard interface of the rdt-search-ui package
+     * advisor: for using the repository advisor package
+     * mapper: for using the file-mapper pacakge
+     * rda-anotator: for using the rda annotator
+     * accessibility-statement: for displaying an accessibility statement
     **/
     template: "generic",
 

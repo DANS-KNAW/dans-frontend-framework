@@ -157,7 +157,7 @@ import { PieChartFacet } from "@dans-framework/rdt-search-ui";
       xAxis: {
         type: "log",
       },
-    }, // chartOptions can be any valid Apache Echarts option config, see e.g. [https://echarts.apache.org/handbook/en/concepts/axis]
+    }, // chartOptions can be any valid Apache Echarts option config, see e.g. https://echarts.apache.org/handbook/en/concepts/axis
   }}
 />
 ```
