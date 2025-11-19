@@ -19,7 +19,18 @@ import { Generic } from '@dans-framework/pages'
     // permalink URL
     slug: "page_slug",
 
-    // template must be either 'generic' or 'deposit'
+    /**
+     * template to be used by the page
+     * generic: a simple page with html or text content, provided by the content prop
+     * deposit: loads the deposit package
+     * search: displays the search interface of the rdt-search-ui package
+     * record: single search result detail page of the rdt-search-ui package
+     * dashboard: displays the dashboard interface of the rdt-search-ui package
+     * advisor: 
+     * mapper: 
+     * rda-anotator: 
+     * accessibility-statement: 
+    **/
     template: "generic",
 
     // Show this page in the menu bar
@@ -52,6 +63,9 @@ import { Generic } from '@dans-framework/pages'
 
     // Open link in a new tab
     newTab: true,
+
+    // Optionally displays an icon instead of text in the menu bar, import e.g. from Material Icons
+    icon: <SomeIcon />
   }
 />
 ```

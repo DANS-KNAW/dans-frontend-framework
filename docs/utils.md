@@ -61,3 +61,19 @@ import { getUser } from "@dans-framework/utils";
 const user = getUser();
 ```
 Gets the current OIDC user object from session storage.
+
+## @dans-framework/utils/html
+
+```tsx
+import { parseOptionsRichText } from "@dans-framework/utils";
+
+const reactElements = parse(htmlContentString, parseOptionsRichText);
+```
+Converts HTML strings to MUI React elements.
+
+## @dans-framework/utils/scroll
+
+```tsx
+import { ScrollToTop } from "@dans-framework/utils";
+```
+Add a `<ScrollToTop />` element inside your App component to ensure pages scroll to top on page change.

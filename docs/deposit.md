@@ -88,12 +88,12 @@ import { Deposit } from "@dans-framework/deposit"
         // etc
       ],
       // enable/disable these columns (default value specified)
-      embargoDate: false,
-      displayRoles: true,
-      displayProcesses: true,
+      embargoDate: false, // user can enter an embargo date for specific files
+      displayRoles: true, // user can select a role for a file
+      displayProcesses: true, // user can select certain file processing options, like making an automated transcript
       // set an optional maximum file upload size in bytes
       maxSize: 10737418240, // e.g. 10 GB
-      disableFileWarning: 2, // set to true to disable the file warning, can also be a number to disable the warning if the number of files is greater than the number
+      disableFileWarning: 2, // will warn the user before doing the actual submit. Set to true to disable the file warning, can also be a number to disable the warning if the number of files is greater than the number
       customFileWarning: {
         en: "Have you uploaded your recording, transcript and subtitles?",
         nl: "Heb je je opname, transcript en ondertiteling geüpload?",

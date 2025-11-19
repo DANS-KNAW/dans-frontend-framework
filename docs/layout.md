@@ -62,6 +62,14 @@ A footer item is formatted as follows:
   }];
   // instead of a link, display some text
   freetext: 'some text' // Can be a string or language object
+  // displays an image next to text or links
+  image: {
+    src: image, // imported from file
+    alt: 'Alt text for image',
+    width: 200, // optionally define image width
+  },
+  // optionally aligns footer column text to "center" or "right"
+  align: "center",
 }
 ```
 
