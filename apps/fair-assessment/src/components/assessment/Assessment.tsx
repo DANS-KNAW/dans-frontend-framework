@@ -25,10 +25,10 @@ import MenuItem from '@mui/material/MenuItem';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputLabel from '@mui/material/InputLabel';
 import { Divider } from "@mui/material";
-import { evaluateCriterion, calcTotals, type Criterion, type Totals } from "./helpers";
+import { evaluateCriterion, calcTotals, type Criterion, type Totals, type Test as TestType } from "./helpers";
 import { TooltipWithIcon } from "../Tooltip";
 import { useQuery } from "@tanstack/react-query";
-import { fetchAssessment } from "./api";
+import { fetchAnswer, fetchAssessment } from "./api";
 
 function Assessment() {
   const { data } = useQuery({ queryKey: ['assessment'], queryFn: () => fetchAssessment() });
@@ -173,7 +173,11 @@ function Assessment() {
   )
 }
 
-function Criterion({ criterion, answers, setAnswers }: { criterion: Criterion, answers: Record<string, string>, setAnswers: Dispatch<SetStateAction<Record<string, string>>> }) {
+function Criterion({ criterion, answers, setAnswers }: { 
+  criterion: Criterion, 
+  answers: Record<string, string>, 
+  setAnswers: Dispatch<SetStateAction<Record<string, string>>> 
+}) {
   return (
     criterion &&
     <Box>
@@ -182,33 +186,73 @@ function Criterion({ criterion, answers, setAnswers }: { criterion: Criterion, a
       </Typography>
       {criterion.metric.tests.map((test) => {
         return (
-          <Box key={test.id} sx={{ mt: 2, p: 2, border: '1px solid rgba(0, 0, 0, 0.12)', borderRadius: 1 }}>
-            <Stack direction="row" spacing={1} alignItems="flex-end" justifyContent="space-between">
-              <FormControl>
-                <Stack direction="row" alignItems="center" mb={1}>
-                  <TooltipWithIcon status={null} text={test.description} type="test" />
-                  <FormLabel id="demo-row-radio-buttons-group-label" sx={{ "&.Mui-focused": { color: "inherit" } }}>{test.text}</FormLabel>
-                </Stack>
-                <RadioGroup
-                  row
-                  aria-labelledby="demo-row-radio-buttons-group-label"
-                  name="row-radio-buttons-group"
-                  value={answers[test.id] || ''}
-                  sx={{ ml: 5}}
-                  onChange={(e) => setAnswers({ ...answers, [test.id]: e.target.value })}
-                >
-                  <FormControlLabel value="1" control={<Radio />} label="Yes" />
-                  <FormControlLabel value="0" control={<Radio />} label="No" />
-                </RadioGroup>
-              </FormControl>
-              <Button onClick={() => setAnswers((prev) => {
-                const { [test.id]: _, ...rest } = prev;
-                return rest;
-              })}>Clear</Button>
-            </Stack>
-          </Box>
+          <Test 
+            key={test.id}
+            test={test}
+            answers={answers} 
+            setAnswers={setAnswers} 
+          />
         )
       })}
+    </Box>
+  )
+}
+
+function Test({ test, answers, setAnswers }: { 
+  answers: Record<string, string>, 
+  setAnswers: Dispatch<SetStateAction<Record<string, string>>>,
+  test: TestType,
+}) {
+  const { data, isLoading } = useQuery({ 
+    queryKey: ['answer', test.id], 
+    queryFn: () => fetchAnswer(test.guidance.API, 'https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/DVQTOG'),
+    enabled: !!test.guidance.API,
+  });
+
+  return (
+    <Box key={test.id} sx={{ mt: 2, p: 2, border: '1px solid rgba(0, 0, 0, 0.12)', borderRadius: 1 }}>
+      <Stack direction="row" spacing={1} alignItems="flex-end" justifyContent="space-between">
+        <FormControl>
+          <Stack direction="row" alignItems="center" mb={1}>
+            <TooltipWithIcon status={null} text={test.description} type="test" />
+            <FormLabel id="demo-row-radio-buttons-group-label" sx={{ "&.Mui-focused": { color: "inherit" } }}>{test.text}</FormLabel>
+          </Stack>
+          <RadioGroup
+            row
+            aria-labelledby="demo-row-radio-buttons-group-label"
+            name="row-radio-buttons-group"
+            value={answers[test.id] || ''}
+            sx={{ ml: 5}}
+            onChange={(e) => setAnswers({ ...answers, [test.id]: e.target.value })}
+          >
+            <FormControlLabel value="1" control={<Radio />} label="Yes" />
+            <FormControlLabel value="0" control={<Radio />} label="No" />
+          </RadioGroup>
+        </FormControl>
+        <Button onClick={() => setAnswers((prev) => {
+          const { [test.id]: _, ...rest } = prev;
+          return rest;
+        })}>Clear</Button>
+      </Stack>
+      {(isLoading || data) && 
+        <Box sx={{ overflowX: 'auto', backgroundColor: 'neutral.light', p: 2, borderRadius: 1, mt: 2 }}>
+          {isLoading ? (
+            <Stack direction="row" spacing={1} alignItems="center">
+              <CircularProgress size={16} />
+              <Typography>Fetching automated test results...</Typography>
+            </Stack>
+          ) : (
+            data ? (
+              <>
+                <Typography variant="subtitle2">Test result:</Typography>
+                <pre><code>{JSON.stringify(data, null, 2)}</code></pre>
+              </>
+            ) : (
+              <Typography color="error">No test result available.</Typography>
+            )
+          )}
+        </Box>
+      }
     </Box>
   )
 }

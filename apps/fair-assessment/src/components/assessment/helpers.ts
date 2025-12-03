@@ -10,6 +10,18 @@ export type Assessment = {
     };
 };
 
+export type Test = {
+  id: string;
+  description: string;
+  text: string;
+  guidance: {
+    id: string;
+    type: string;
+    description: string;
+    API: string;
+  };
+}
+
 export type Criterion = {
   id: string;
   description: string;
@@ -19,11 +31,7 @@ export type Criterion = {
     benchmark: {
       equal_greater_than?: number;
     };
-    tests: {
-      id: string;
-      description: string;
-      text: string;
-    }[];
+    tests: Test[];
   };
 };
 

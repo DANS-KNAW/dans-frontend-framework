@@ -50,10 +50,10 @@
                 "value": null,
                 "result": null,
                 "guidance": {
-                  "id": "",
+                  "id": "fc_data_identifier_in_metadata",
                   "type": "API",
                   "description": "",
-                  "API": ""
+                  "API": "https://tests.ostrails.eu/assess/test/fc_data_identifier_in_metadata"
                 }
               }
             ]
