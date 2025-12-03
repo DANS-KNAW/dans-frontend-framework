@@ -101,16 +101,16 @@ const section: InitialSectionType = {
           value: "rda",
           url: "https://zenodo.org/communities/rda",
         },
-        // {
-        //   label: "Research Data Alliance - Related Documents",
-        //   value: "rda-related",
-        //   url: "https://zenodo.org/communities/rda-related",
-        // },
-        // {
-        //   label: "RDA TIGER",
-        //   value: "rda-tiger",
-        //   url: "https://zenodo.org/communities/rda-tiger",
-        // },
+        {
+          label: "Research Data Alliance - Related Documents",
+          value: "rda-related",
+          url: "https://zenodo.org/communities/rda-related",
+        },
+        {
+          label: "RDA TIGER",
+          value: "rda-tiger",
+          url: "https://zenodo.org/communities/rda-tiger",
+        },
       ],
       value: {
         label: "Research Data Alliance",
