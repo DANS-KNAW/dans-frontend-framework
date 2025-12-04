@@ -6,6 +6,7 @@ import ErrorIcon from '@mui/icons-material/ErrorOutline';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import CircularProgress from "@mui/material/CircularProgress";
 
 const StatusTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -17,7 +18,7 @@ const StatusTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
-export function TooltipWithIcon({ status, text, type }: { status: 'success' | 'error' | 'warning' | null, text: string, type: 'principle' | 'criterion' | 'test' }) {
+export function TooltipWithIcon({ status, text, type }: { status: 'success' | 'error' | 'warning' | 'loading' | null, text: string, type: 'principle' | 'criterion' | 'test' }) {
   return (
     <StatusTooltip 
       title={
@@ -35,7 +36,7 @@ export function TooltipWithIcon({ status, text, type }: { status: 'success' | 'e
   )
 }
 
-function GuidanceIcons({ status }: { status: 'success' | 'error' | 'warning' | null }) {
+function GuidanceIcons({ status }: { status: 'success' | 'error' | 'warning' | 'loading' | null }) {
   if (status === 'success') {
     return <CheckCircleIcon color="success" />;
   }
@@ -44,6 +45,9 @@ function GuidanceIcons({ status }: { status: 'success' | 'error' | 'warning' | n
   }
   if (status === 'warning') {
     return <ErrorIcon color="warning" />;
+  }
+  if (status === 'loading') {
+    return <CircularProgress size={20} />;
   }
   return <HelpOutlineIcon color="disabled" />;
 }

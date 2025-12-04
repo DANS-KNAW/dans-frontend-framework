@@ -1,13 +1,17 @@
 export type Assessment = {
-    principles: {
-        id: string;
-        name: string;
-        description: string;
-        criteria: Criterion[];
-    }[];
-    assessment_type: {
-        name: string;
-    };
+  name: string;
+  id: number;
+  description: string;
+  principles: {
+    id: string;
+    name: string;
+    description: string;
+    criteria: Criterion[];
+  }[];
+  assessment_type: {
+    id: string;
+    name: string;
+  };
 };
 
 export type Test = {
@@ -19,6 +23,9 @@ export type Test = {
     type: string;
     description: string;
     API: string;
+  };
+  automation?: {
+    api: string;
   };
 }
 
@@ -46,6 +53,17 @@ export type Totals = {
   failed: number;
   total: number;
 }
+
+export type Result = {
+  "@graph": {
+    "@id": string;
+    "@type": string;
+    "prov:value": {
+      "@type": string;
+      "@value": string;
+    };
+  }[];
+} 
 
 export function evaluateCriterion(c: Criterion, answers: Record<string, string>): CriterionEvaluation {
   const tests = c.metric.tests;

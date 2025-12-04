@@ -21,6 +21,7 @@ import {
   fetchRepositories, 
   fetchRepositoryDetails, 
   fetchRor, 
+  fetchUserPids,
   type Pid, 
   type Obj, 
   type RorResponse,
@@ -180,7 +181,14 @@ function Objects({ objects, setObjects }: { objects: Pid[], setObjects: Dispatch
   const [ id, setId ] = useState<string>("");
   const { data, isLoading, isError } = useQuery({ queryKey: ['pid', id], queryFn: () => fetchPid(id), enabled: !!id });
   const isSelected = data && objects.some(r => r.identifier === data.identifier) || false;
-  
+  const { data: selectedPids } = useQuery({ queryKey: ['userPids'], queryFn: () => fetchUserPids() });
+
+  useEffect(() => {
+    if (selectedPids) {
+      setObjects(selectedPids);
+    }
+  }, [selectedPids, setObjects]);
+    
   return (
     <Grid container spacing={6}>
       <Grid xs={12} md={6}>

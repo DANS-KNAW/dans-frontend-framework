@@ -32,9 +32,29 @@ export type Pid = {
   institutions: Obj[];
 }
 
+export async function fetchUserPids(): Promise<Pid[] | null> {
+  try {
+    // Simulate an API call to a local mock file
+    const res = await fetch(`/mock-data/selectedPidResponse.json`);
+
+    if (!res.ok) {
+      const text = await res.text();
+      if (text.includes("404")) return null;
+      throw new Error(`Network response was not ok: ${text}`);
+    }
+
+    const result = await res.json();
+
+    return result;
+  } catch (err) {
+    console.error("Error fetching local assessment mock:", err);
+    return null;
+  }
+}
+
 export async function fetchPid(pid: string): Promise<Pid | null> {
   try {
-    const res = await fetch(`${import.meta.env.VITE_PID_FETCH_BASE_URL}/repository-info/${pid}`);
+    const res = await fetch(`${import.meta.env.VITE_PID_FETCH_BASE_URL}/api/v1/repository-info/${pid}`);
     if (!res.ok) {
       const text = await res.text();
       // check if the error message contains a 404 from DataCite
@@ -42,6 +62,7 @@ export async function fetchPid(pid: string): Promise<Pid | null> {
       throw new Error(`Network response was not ok: ${text}`);
     }
     const result = await res.json();
+    console.log(result)
     return {
       ...result,
       repository: {
