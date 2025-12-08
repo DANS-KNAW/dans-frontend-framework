@@ -20,11 +20,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import CircularProgress from '@mui/material/CircularProgress';
-import LinearProgress from '@mui/material/LinearProgress';
 import Chip from '@mui/material/Chip';
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import FormHelperText from '@mui/material/FormHelperText';
 import { evaluateCriterion, calcTotals, type Criterion, type Totals, type Test as TestType, type Assessment as AssessmentType } from "./helpers";
 import { TooltipWithIcon } from "../Tooltip";
 import { useQuery, useQueries } from "@tanstack/react-query";
@@ -146,9 +144,11 @@ function Test({ test, answers, setAnswers, doi }: {
     enabled: !!test.automation?.api,
   });
 
+  const result = data?.["@graph"]?.find((item: any) => item["@type"] === "ftr:TestResult");
+
   useEffect(() => {
     if (data && test.automation?.api) {
-      const value = data["@graph"]?.[2]["prov:value"]["@value"];
+      const value = result?.["prov:value"]?.["@value"];
       if (value === 'pass') {
         setAnswers((prev) => ({ ...prev, [test.id]: '1' }));
       } else if (value === 'fail') {
@@ -197,11 +197,11 @@ function Test({ test, answers, setAnswers, doi }: {
                 <Stack direction="row" spacing={1} alignItems="center">
                   <Typography variant="subtitle2">Automated test result:</Typography>
                   <Chip 
-                    label={data["@graph"]?.[2]["prov:value"]["@value"]} 
+                    label={result?.["prov:value"]["@value"]} 
                     color={
-                      data["@graph"]?.[2]["prov:value"]["@value"] === 'fail' ? 
+                      result?.["prov:value"]["@value"] === 'fail' ? 
                       'error' : 
-                      data["@graph"]?.[2]["prov:value"]["@value"] === 'indeterminate' ? 
+                      result?.["prov:value"]["@value"] === 'indeterminate' ? 
                       'warning' :
                       'success'} 
                     sx={{ color: 'white'}} 
@@ -283,11 +283,16 @@ function Assessment({ selectedAssessment, selectedDataset }: {
     testQueries.forEach((query, index) => {
       if (query.data) {
         const testId = automatedTests[index]?.test.id;
-        const value = query.data["@graph"]?.[2]["prov:value"]["@value"];
-        
-        if (testId && (value === 'pass' || value === 'fail')) {
-          newAnswers[testId] = value === 'pass' ? '1' : '0';
-        }
+        if (query.data["@graph"]?.length > 0) {
+          const result = query.data["@graph"].find((item: any) => item["@type"] === "ftr:TestResult");
+          if (result) {
+            const value = result["prov:value"]?.["@value"] || '';
+            if (testId && (value === 'pass' || value === 'fail')) {
+              newAnswers[testId] = value === 'pass' ? '1' : '0';
+            }
+            return;
+          }
+        } 
       }
     });
     
@@ -542,7 +547,6 @@ function Status({ answers, selectedAssessment }: {
 function Progress({ variant, totals }: { variant: 'mandatory' | 'optional', totals: Totals }) {
   const passedPercentage = (totals.passed / totals.total) * 100;
   const failedPercentage = (totals.failed / totals.total) * 100;
-  const unansweredPercentage = 100 - passedPercentage - failedPercentage;
 
   return (
     <Stack alignItems="center" spacing={2} direction="row" sx={{ width: '100%', flex: 1 }}>
