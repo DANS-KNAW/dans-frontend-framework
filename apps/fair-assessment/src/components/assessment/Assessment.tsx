@@ -32,6 +32,8 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const steps = [{
   label: 'Select dataset',
@@ -240,7 +242,7 @@ function Assessment({ selectedAssessments, selectedDatasets }: {
   }, [selectedDatasets, selectedAssessments]);
 
   return (
-    <Stack spacing={4} sx={{ mt: 4 }}>
+    <Stack spacing={1} sx={{ mt: 4 }}>
       {combinations.map(({ dataset, assessment }) => (
         <AssessmentInstance
           key={`${dataset.identifier}-${assessment.id}`}
@@ -260,6 +262,7 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
   const [openPrinciple, setOpenPrinciple] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [openCriterion, setOpenCriterion] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setAnswers({});
@@ -360,7 +363,15 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
   return (
     <Paper sx={{mt: 4}}>
       <Grid container>
-        <Status answers={answers} selectedAssessment={data} selectedDataset={selectedDataset} />
+        <Status 
+          answers={answers} 
+          selectedAssessment={data} 
+          selectedDataset={selectedDataset} 
+          setIsOpen={setIsOpen} 
+          isOpen={isOpen}
+          isLoading={allData.some(d => d.isLoading)}
+        />
+        {isOpen && [
         <Grid md={4} pt={3} sx={{ borderRight: { md: '1px solid rgba(0, 0, 0, 0.12)' } }}>
           <List
             sx={{ width: '100%' }}
@@ -438,7 +449,7 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
               )
             })}
           </List>
-        </Grid>
+        </Grid>,
         <Grid md={8} p={4}>
           <Criterion
             criterion={data?.principles.find(
@@ -455,6 +466,7 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
             <Button variant="contained" onClick={() => goToCriterion('next')}>Next</Button>
           </Stack>
         </Grid>
+        ]}
       </Grid>
     </Paper>
   )
@@ -566,10 +578,13 @@ function SelectionList<T>({
   );
 }
 
-function Status({ answers, selectedAssessment, selectedDataset }: { 
+function Status({ answers, selectedAssessment, selectedDataset, setIsOpen, isOpen, isLoading }: { 
   answers: Record<string, string>,
   selectedAssessment?: AssessmentType | null,
-  selectedDataset?: Pid | null
+  selectedDataset?: Pid | null,
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  isOpen: boolean,
+  isLoading: boolean
 }) {
   const mandatoryCriteria: Criterion[] = selectedAssessment?.principles.flatMap(p => p.criteria).filter(c => c.imperative === 'Mandatory') || [];
   const optionalCriteria: Criterion[] = selectedAssessment?.principles.flatMap(p => p.criteria).filter(c => c.imperative === 'Optional') || [];
@@ -588,26 +603,33 @@ function Status({ answers, selectedAssessment, selectedDataset }: {
           </Typography>
         </Box>
       </Grid>
-      <Grid md={8}>
+      <Grid md={7}>
         <Box sx={{px: 4, py: 2, justifyContent: 'center', alignItems: 'center' }}>
           <Typography variant="h6">
-            <Typography variant="body2" sx={{ color: 'neutral.dark', fontWeight: 'bold', mr: 0.5 }} component="span">
-              Assessment performance:
+            <Typography variant="body2" sx={{ color: 'neutral.dark', fontWeight: 'bold', mr: 0.75 }} component="span">
+              Assessment
             </Typography>
             {selectedAssessment?.name}
           </Typography>
           <Stack direction="column" spacing={1} alignItems="center" sx={{ height: '100%', width: '100%'}}>
-            <Progress variant="mandatory" totals={mandatoryTotals} />
-            <Progress variant="optional" totals={optionalTotals} />
+            <Progress variant="mandatory" totals={mandatoryTotals} isLoading={isLoading} />
+            <Progress variant="optional" totals={optionalTotals} isLoading={isLoading} />
           </Stack>
         </Box>
       </Grid>
-      <Divider sx={{ width: '100%',}} />
+      <Grid md={1} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <IconButton
+          onClick={() => setIsOpen(prev => !prev)}
+        >
+          <KeyboardArrowDownIcon fontSize="large" sx={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+        </IconButton>
+      </Grid>
+      <Divider sx={{ width: '100%' }} />
     </>
   )
 }
 
-function Progress({ variant, totals }: { variant: 'mandatory' | 'optional', totals: Totals }) {
+function Progress({ variant, totals, isLoading }: { variant: 'mandatory' | 'optional', totals: Totals, isLoading: boolean }) {
   const passedPercentage = (totals.passed / totals.total) * 100;
   const failedPercentage = (totals.failed / totals.total) * 100;
 
@@ -620,7 +642,28 @@ function Progress({ variant, totals }: { variant: 'mandatory' | 'optional', tota
             height: 12, 
             borderRadius: 1,
             overflow: 'hidden',
-            backgroundColor: 'rgba(0, 0, 0, 0.08)'
+            backgroundColor: 'rgba(0, 0, 0, 0.08)',
+            position: 'relative',
+            ...(isLoading && {
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: '-100%',
+                width: '100%',
+                height: '100%',
+                background: 'linear-gradient(90deg, transparent, rgba(25, 118, 210, 0.3), transparent)',
+                animation: 'slide 1s infinite',
+              },
+              '@keyframes slide': {
+                '0%': {
+                  left: '-100%',
+                },
+                '100%': {
+                  left: '100%',
+                },
+              },
+            }),
           }}
         >
           {totals.passed > 0 && (
