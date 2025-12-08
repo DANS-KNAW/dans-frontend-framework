@@ -6,7 +6,6 @@ const section: InitialSectionType = {
     en: "Administrative",
     nl: "Administratief",
   },
-
   fields: [
     {
       type: "text",
