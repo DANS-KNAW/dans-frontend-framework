@@ -46,8 +46,8 @@ const steps = [{
 
 export default function AssessmentSteps() {
   const [activeStep, setActiveStep] = useState(0);
-  const [selectedDataset, setSelectedDataset] = useState<Pid | null>(null);
-  const [selectedAssessment, setSelectedAssessment] = useState<AssessmentType | null>(null);
+  const [selectedDatasets, setSelectedDatasets] = useState<Pid[]>([]);
+  const [selectedAssessments, setSelectedAssessments] = useState<AssessmentType[]>([]);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -74,11 +74,17 @@ export default function AssessmentSteps() {
         </Stepper>
         {
           steps[activeStep]?.component === 'dataset' ?
-          <DatasetSelection selectedDataset={selectedDataset} setSelectedDataset={setSelectedDataset} /> :
+          <DatasetSelection 
+            selectedDatasets={selectedDatasets} 
+            setSelectedDatasets={setSelectedDatasets} 
+          />:
           steps[activeStep]?.component === 'assessment' ?
-          <AssessmentSelection selectedAssessment={selectedAssessment} setSelectedAssessment={setSelectedAssessment} /> :
+          <AssessmentSelection 
+            selectedAssessments={selectedAssessments} 
+            setSelectedAssessments={setSelectedAssessments} 
+          /> :
           steps[activeStep]?.component === 'perform' ?
-          <Assessment selectedAssessment={selectedAssessment} selectedDataset={selectedDataset} /> : 
+          <Assessment selectedAssessments={selectedAssessments} selectedDatasets={selectedDatasets} /> : 
           null
         }
         <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
@@ -94,8 +100,8 @@ export default function AssessmentSteps() {
           <Button 
             onClick={handleNext}
             disabled={
-              (steps[activeStep]?.component === 'dataset' && !selectedDataset) ||
-              (steps[activeStep]?.component === 'assessment' && !selectedAssessment)
+              (steps[activeStep]?.component === 'dataset' && selectedDatasets.length === 0) ||
+              (steps[activeStep]?.component === 'assessment' && selectedAssessments.length === 0)
             }
           >
             {activeStep === steps.length - 1 ? 'Submit assessment' : 'Next'}
@@ -218,7 +224,35 @@ function Test({ test, answers, setAnswers, doi }: {
   )
 }
 
-function Assessment({ selectedAssessment, selectedDataset }: { 
+function Assessment({ selectedAssessments, selectedDatasets }: { 
+  selectedAssessments: AssessmentType[], 
+  selectedDatasets: Pid[] 
+}) {
+  // Create all combinations of datasets and assessments
+  const combinations = useMemo(() => {
+    const combos: { dataset: Pid; assessment: AssessmentType }[] = [];
+    selectedDatasets.forEach(dataset => {
+      selectedAssessments.forEach(assessment => {
+        combos.push({ dataset, assessment });
+      });
+    });
+    return combos;
+  }, [selectedDatasets, selectedAssessments]);
+
+  return (
+    <Stack spacing={4} sx={{ mt: 4 }}>
+      {combinations.map(({ dataset, assessment }) => (
+        <AssessmentInstance
+          key={`${dataset.identifier}-${assessment.id}`}
+          selectedAssessment={assessment}
+          selectedDataset={dataset}
+        />
+      ))}
+    </Stack>
+  );
+}
+
+function AssessmentInstance({ selectedAssessment, selectedDataset }: { 
   selectedAssessment: AssessmentType | null, 
   selectedDataset: Pid | null 
 }) {
@@ -326,6 +360,7 @@ function Assessment({ selectedAssessment, selectedDataset }: {
   return (
     <Paper sx={{mt: 4}}>
       <Grid container>
+        <Status answers={answers} selectedAssessment={data} selectedDataset={selectedDataset} />
         <Grid md={4} pt={3} sx={{ borderRight: { md: '1px solid rgba(0, 0, 0, 0.12)' } }}>
           <List
             sx={{ width: '100%' }}
@@ -333,7 +368,7 @@ function Assessment({ selectedAssessment, selectedDataset }: {
             aria-labelledby="nested-list-subheader"
             subheader={
               <ListSubheader sx={{ px: 4 }}>
-                {data?.assessment_type.name}: Principles & criteria
+                Principles & criteria
               </ListSubheader>
             }
           >
@@ -420,46 +455,45 @@ function Assessment({ selectedAssessment, selectedDataset }: {
             <Button variant="contained" onClick={() => goToCriterion('next')}>Next</Button>
           </Stack>
         </Grid>
-        <Status answers={answers} selectedAssessment={data} />
       </Grid>
     </Paper>
   )
 }
 
-function AssessmentSelection({ selectedAssessment, setSelectedAssessment }: {
-  selectedAssessment: AssessmentType | null,
-  setSelectedAssessment: React.Dispatch<React.SetStateAction<AssessmentType | null>>
+function AssessmentSelection({ selectedAssessments, setSelectedAssessments }: {
+  selectedAssessments: AssessmentType[],
+  setSelectedAssessments: React.Dispatch<React.SetStateAction<AssessmentType[]>>
 }) {
   return (
     <SelectionList
       queryKey="assessment"
       queryFn={async () => (await fetchAssessmentList()) ?? []}
-      selectedItem={selectedAssessment}
-      setSelectedItem={setSelectedAssessment}
-      subheaderText="Select an assessment you want to perform"
+      selectedItems={selectedAssessments}
+      setSelectedItems={setSelectedAssessments}
+      subheaderText="Select assessments you want to perform"
       getItemKey={(item) => item.name}
       getItemPrimary={(item) => item.name}
       getItemSecondary={(item) => item.description}
-      isSelected={(item, selected) => selected?.id === item.id}
+      isSelected={(item, selected) => selected.some(s => s.id === item.id)}
     />
   );
 }
 
-function DatasetSelection({ selectedDataset, setSelectedDataset }: {
-  selectedDataset: Pid | null,
-  setSelectedDataset: React.Dispatch<React.SetStateAction<Pid | null>>
+function DatasetSelection({ selectedDatasets, setSelectedDatasets }: {
+  selectedDatasets: Pid[],
+  setSelectedDatasets: React.Dispatch<React.SetStateAction<Pid[]>>
 }) {
   return (
     <SelectionList
       queryKey="userPids"
       queryFn={async () => (await fetchUserPids()) ?? []}
-      selectedItem={selectedDataset}
-      setSelectedItem={setSelectedDataset}
-      subheaderText="Select one of your datasets to assess"
+      selectedItems={selectedDatasets}
+      setSelectedItems={setSelectedDatasets}
+      subheaderText="Select datasets to assess"
       getItemKey={(item) => item.identifier}
       getItemPrimary={(item) => item.title}
       getItemSecondary={(item) => item.collections.join(', ')}
-      isSelected={(item, selected) => selected?.identifier === item.identifier}
+      isSelected={(item, selected) => selected.some(s => s.identifier === item.identifier)}
     />
   );
 }
@@ -467,8 +501,8 @@ function DatasetSelection({ selectedDataset, setSelectedDataset }: {
 function SelectionList<T>({
   queryKey,
   queryFn,
-  selectedItem,
-  setSelectedItem,
+  selectedItems,
+  setSelectedItems,
   subheaderText,
   getItemKey,
   getItemPrimary,
@@ -477,13 +511,13 @@ function SelectionList<T>({
 }: {
   queryKey: string;
   queryFn: () => Promise<T[]>;
-  selectedItem: T | null;
-  setSelectedItem: React.Dispatch<React.SetStateAction<T | null>>;
+  selectedItems: T[];
+  setSelectedItems: React.Dispatch<React.SetStateAction<T[]>>;
   subheaderText: string;
   getItemKey: (item: T) => string;
   getItemPrimary: (item: T) => string;
   getItemSecondary: (item: T) => string;
-  isSelected: (item: T, selected: T | null) => boolean;
+  isSelected: (item: T, selected: T[]) => boolean;
 }) {
   const { data } = useQuery({ queryKey: [queryKey], queryFn });
 
@@ -500,11 +534,19 @@ function SelectionList<T>({
           const key = getItemKey(item);
           return (
             <ListItem key={key} disablePadding>
-              <ListItemButton role={undefined} onClick={() => setSelectedItem(item)} dense>
+              <ListItemButton 
+                role={undefined} 
+                onClick={() => setSelectedItems(prev => 
+                  isSelected(item, prev)
+                    ? prev.filter(i => getItemKey(i) !== key)
+                    : [...prev, item]
+                )} 
+                dense
+              >
                 <ListItemIcon>
                   <Checkbox
                     edge="start"
-                    checked={isSelected(item, selectedItem)}
+                    checked={isSelected(item, selectedItems)}
                     tabIndex={-1}
                     disableRipple
                     inputProps={{ 'aria-labelledby': key }}
@@ -524,9 +566,10 @@ function SelectionList<T>({
   );
 }
 
-function Status({ answers, selectedAssessment }: { 
+function Status({ answers, selectedAssessment, selectedDataset }: { 
   answers: Record<string, string>,
   selectedAssessment?: AssessmentType | null,
+  selectedDataset?: Pid | null
 }) {
   const mandatoryCriteria: Criterion[] = selectedAssessment?.principles.flatMap(p => p.criteria).filter(c => c.imperative === 'Mandatory') || [];
   const optionalCriteria: Criterion[] = selectedAssessment?.principles.flatMap(p => p.criteria).filter(c => c.imperative === 'Optional') || [];
@@ -535,11 +578,31 @@ function Status({ answers, selectedAssessment }: {
 
   return (
     <>
+      <Grid md={4}>
+        <Box sx={{px: 4, py: 2}}>
+          <Typography variant="body2" sx={{ color: 'neutral.dark', fontWeight: 'bold' }}>
+            Dataset
+          </Typography>
+          <Typography variant="h6">
+            {selectedDataset?.title}
+          </Typography>
+        </Box>
+      </Grid>
+      <Grid md={8}>
+        <Box sx={{px: 4, py: 2, justifyContent: 'center', alignItems: 'center' }}>
+          <Typography variant="h6">
+            <Typography variant="body2" sx={{ color: 'neutral.dark', fontWeight: 'bold', mr: 0.5 }} component="span">
+              Assessment performance:
+            </Typography>
+            {selectedAssessment?.name}
+          </Typography>
+          <Stack direction="column" spacing={1} alignItems="center" sx={{ height: '100%', width: '100%'}}>
+            <Progress variant="mandatory" totals={mandatoryTotals} />
+            <Progress variant="optional" totals={optionalTotals} />
+          </Stack>
+        </Box>
+      </Grid>
       <Divider sx={{ width: '100%',}} />
-      <Stack direction="column" spacing={2} alignItems="center" sx={{ width: '100%', px: 4, py: 2 }}>
-        <Progress variant="mandatory" totals={mandatoryTotals} />
-        <Progress variant="optional" totals={optionalTotals} />
-      </Stack>
     </>
   )
 }
@@ -549,7 +612,7 @@ function Progress({ variant, totals }: { variant: 'mandatory' | 'optional', tota
   const failedPercentage = (totals.failed / totals.total) * 100;
 
   return (
-    <Stack alignItems="center" spacing={2} direction="row" sx={{ width: '100%', flex: 1 }}>
+    <Stack alignItems="center" spacing={2} direction="row" sx={{ width: '100%' }}>
       <Box sx={{ flex: 1 }}>
         <Box 
           sx={{ 
