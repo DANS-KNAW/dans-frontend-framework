@@ -1,5 +1,6 @@
 import type { InitialSectionType } from "@dans-framework/deposit";
 
+// Form section config for publisher.
 const section: InitialSectionType = {
   id: "administrative",
   title: {
