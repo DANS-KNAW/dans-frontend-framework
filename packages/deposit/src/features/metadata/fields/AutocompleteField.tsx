@@ -270,6 +270,13 @@ export const InfoChip = ({
         : undefined
       }
       disabled={option.mandatory || formDisabled}
+      sx={{
+        maxWidth: "100%",
+        height: "auto",
+        "& .MuiChip-label": {
+          whiteSpace: "normal",
+        },
+      }}
     />
   );
 };
