@@ -48,6 +48,18 @@ const section: InitialSectionType = {
       options: "ror",
     },
     {
+      type: "text",
+      name: "version",
+      label: {
+        en: "Version",
+        nl: "Versie",
+      },
+      description: {
+        en: "Version of the resource (e.g., 1.0.0). Semantic versioning is recommended.",
+        nl: "Versie van de resource (bijv. 1.0.0). Semantische versiebeheer wordt aanbevolen.",
+      },
+    },
+    {
       type: "date",
       name: "publicationDate",
       label: {
