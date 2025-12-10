@@ -176,6 +176,7 @@ const App = () => {
                 element={
                   <AuthRoute>
                     <UserSubmissions
+                      depositSlug="publisher"
                       targetCredentials={form.targetCredentials}
                     />
                   </AuthRoute>
