@@ -20,19 +20,19 @@ const section: InitialSectionType = {
         nl: "Titel van het deposit",
       },
     },
-    {
-      type: "text",
-      name: "subtitle",
-      label: {
-        en: "Subtitle",
-        nl: "Ondertitel",
-      },
-      description: {
-        en: "Optional subtitle for the deposit",
-        nl: "Optionele ondertitel bij het deposit",
-      },
-      repeatable: true,
-    },
+    // {
+    //   type: "text",
+    //   name: "subtitle",
+    //   label: {
+    //     en: "Subtitle",
+    //     nl: "Ondertitel",
+    //   },
+    //   description: {
+    //     en: "Optional subtitle for the deposit",
+    //     nl: "Optionele ondertitel bij het deposit",
+    //   },
+    //   repeatable: true,
+    // },
     {
       type: "autocomplete",
       name: "publisher",
@@ -41,11 +41,16 @@ const section: InitialSectionType = {
         nl: "Uitgever",
       },
       required: true,
+      disabled: true,
       description: {
-        en: "Institution - often the rights holder",
-        nl: "Instituut - vaak de rechthebbende",
+        en: "Publisher for Zenodo deposits",
+        nl: "Uitgever voor Zenodo deposits",
       },
       options: "ror",
+      value: {
+        label: "Zenodo",
+        value: "zenodo",
+      },
     },
     {
       type: "text",
@@ -92,8 +97,8 @@ const section: InitialSectionType = {
       type: "autocomplete",
       name: "firstAuthor",
       label: {
-        en: "Author",
-        nl: "Auteur",
+        en: "Author 1",
+        nl: "Auteur 1",
       },
       required: true,
       options: "orcid",
@@ -434,12 +439,12 @@ const section: InitialSectionType = {
       type: "group",
       name: "contributors",
       label: {
-        en: "Contributors",
-        nl: "Bijdragers",
+        en: "Additional authors, contributors and RDA group name",
+        nl: "Aanvullende auteurs, bijdragers en RDA groepsnaam",
       },
       description: {
-        en: "Add one or more contributors.",
-        nl: "Voeg een of meerdere bijdragers toe",
+        en: "Add additional authors, contributors, or RDA working groups. Working groups can be added as contributors with the 'Research Group' type.",
+        nl: "Voeg extra auteurs, bijdragers of RDA werkgroepen toe. Werkgroepen kunnen worden toegevoegd als bijdragers met het type 'Onderzoeksgroep'.",
       },
       repeatable: true,
       fields: [

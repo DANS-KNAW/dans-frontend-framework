@@ -3,8 +3,8 @@ import type { InitialSectionType } from "@dans-framework/deposit";
 const section: InitialSectionType = {
   id: "relations",
   title: {
-    en: "Relations",
-    nl: "Relaties",
+    en: "Related Works",
+    nl: "Gerelateerde Werken",
   },
   fields: [
     {
@@ -27,7 +27,8 @@ const section: InitialSectionType = {
             en: "Relation",
             nl: "Relatie",
           },
-          required: true,
+          required: false,
+          toggleRequired: ["relationIdentifier", "relationResourceType"],
           description: {
             en: "Relations to other PID's, publications, projects",
             nl: "Relatie tot andere PID's, publicaties, projecten",
@@ -266,7 +267,8 @@ const section: InitialSectionType = {
             en: "Identifier",
             nl: "Identificatie",
           },
-          required: true,
+          required: false,
+          toggleRequired: ["relationType", "relationResourceType"],
           validation: "pid",
           description: {
             en: "Identifier of the related work (DOI, URL, etc.)",
@@ -280,7 +282,8 @@ const section: InitialSectionType = {
             en: "Resource Type",
             nl: "Resource Type",
           },
-          required: true,
+          required: false,
+          toggleRequired: ["relationType", "relationIdentifier"],
           description: {
             en: "Type of the related work resource",
             nl: "Type van de gerelateerde werk resource",

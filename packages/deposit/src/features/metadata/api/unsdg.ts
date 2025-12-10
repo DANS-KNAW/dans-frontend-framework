@@ -14,7 +14,7 @@ export const unsdgApi = createApi({
         return response.length > 0
           ? {
               response: response.map((item) => ({
-                label: item.title,
+                label: `SDG ${item.code}: ${item.title}`,
                 value: item.code,
                 idLabel: "UNSDG code",
                 id: item.code,

@@ -3,69 +3,69 @@ import type { InitialSectionType } from "@dans-framework/deposit";
 const section: InitialSectionType = {
   id: "coverage",
   title: {
-    en: "Coverage",
-    nl: "Dekking",
+    en: "Keywords",
+    nl: "Trefwoorden",
   },
   fields: [
-    {
-      type: "autocomplete",
-      name: "keywordsWorkingGroups",
-      label: {
-        en: "Keywords - Working Groups",
-        nl: "Trefwoorden - Werkgroepen",
-      },
-      required: true,
-      description: {
-        en: "List of working groups",
-        nl: "Een lijst van werkgroepen",
-      },
-      options: "rdaworkinggroups",
-      multiselect: true,
-      allowFreeText: true,
-    },
+    // {
+    //   type: "autocomplete",
+    //   name: "keywordsWorkingGroups",
+    //   label: {
+    //     en: "Keywords - Working Groups",
+    //     nl: "Trefwoorden - Werkgroepen",
+    //   },
+    //   required: true,
+    //   description: {
+    //     en: "List of working groups",
+    //     nl: "Een lijst van werkgroepen",
+    //   },
+    //   options: "rdaworkinggroups",
+    //   multiselect: true,
+    //   allowFreeText: true,
+    // },
     {
       type: "autocomplete",
       name: "keywordsDomain",
       label: {
-        en: "Keywords - Domain",
-        nl: "Trefwoorden - Domein",
+        en: "Primary Domains",
+        nl: "Primaire Domeinen",
       },
       required: true,
       description: {
-        en: "List of relevant keywords",
-        nl: "Een lijst van relevante trefwoorden",
+        en: "Select the primary domains relevant to this deposit",
+        nl: "Selecteer de primaire domeinen relevant voor dit deposit",
       },
       options: "domains",
       multiselect: true,
       allowFreeText: false,
     },
-    {
-      type: "autocomplete",
-      name: "keywordsInterestGroups",
-      label: {
-        en: "Keywords - Interest Groups",
-        nl: "Trefwoorden - Interesse Groepen",
-      },
-      required: true,
-      description: {
-        en: "List of Interest Groups",
-        nl: "Een lijst van Interesse Groepen",
-      },
-      options: "interest groups",
-      multiselect: true,
-      allowFreeText: false,
-    },
+    // {
+    //   type: "autocomplete",
+    //   name: "keywordsInterestGroups",
+    //   label: {
+    //     en: "Keywords - Interest Groups",
+    //     nl: "Trefwoorden - Interesse Groepen",
+    //   },
+    //   required: true,
+    //   description: {
+    //     en: "List of Interest Groups",
+    //     nl: "Een lijst van Interesse Groepen",
+    //   },
+    //   options: "interest groups",
+    //   multiselect: true,
+    //   allowFreeText: false,
+    // },
     {
       type: "autocomplete",
       name: "keywordsPathways",
       label: {
-        en: "Keywords - Pathways",
-        nl: "Trefwoorden - Trajecten",
+        en: "Pathways",
+        nl: "Trajecten",
       },
-      required: false,
+      required: true,
       description: {
-        en: "List of relevant keywords",
-        nl: "Een lijst van relevante trefwoorden",
+        en: "Select relevant RDA pathways",
+        nl: "Selecteer relevante RDA trajecten",
       },
       options: "pathways",
       multiselect: true,
@@ -75,13 +75,13 @@ const section: InitialSectionType = {
       type: "autocomplete",
       name: "keywordsGorc",
       label: {
-        en: "Keywords - GORC",
-        nl: "Trefwoorden - GORC",
+        en: "GORC Elements and Features",
+        nl: "GORC Elementen en Features",
       },
-      required: true,
+      required: false,
       description: {
-        en: "Links to Global Open Research Commons Elements and Features",
-        nl: "Links naar Global Open Research Commons Elementen en Features",
+        en: "GORC International Model v1.1 Elements and Features. See: https://zenodo.org/records/14062994",
+        nl: "GORC Internationaal Model v1.1 Elementen en Features. Zie: https://zenodo.org/records/14062994",
       },
       options: "gorc",
       multiselect: true,
@@ -91,7 +91,7 @@ const section: InitialSectionType = {
       type: "autocomplete",
       name: "keywordsSdg",
       label: {
-        en:"UN Sustainable Development Goals",
+        en: "UN Sustainable Development Goals",
         nl: "UN Duurzame Ontwikkelingsdoelen",
       },
       required: true,
@@ -101,7 +101,22 @@ const section: InitialSectionType = {
       },
       multiselect: true,
       options: "un_sustainable_development_goals",
-    }
+    },
+    {
+      // TICKET-016: Added free text field for custom keywords
+      type: "text",
+      name: "otherKeywords",
+      label: {
+        en: "Additional Keywords",
+        nl: "Aanvullende Trefwoorden",
+      },
+      required: false,
+      description: {
+        en: "Add any additional keywords not covered by the vocabularies above",
+        nl: "Voeg extra trefwoorden toe die niet in de bovenstaande vocabulaires staan",
+      },
+      repeatable: true,
+    },
   ],
 };
 
