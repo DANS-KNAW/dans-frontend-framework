@@ -34,6 +34,8 @@ import StepLabel from '@mui/material/StepLabel';
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { MotionGrid, MotionPaper } from "../Animations";
+import { AnimatePresence, LayoutGroup } from "framer-motion";
 
 const steps = [{
   label: 'Select dataset',
@@ -64,51 +66,51 @@ export default function AssessmentSteps() {
       <Typography variant="h1">
         Perform assessment
       </Typography>
-        <Stepper activeStep={activeStep}>
-          {steps.map((step) => {
-            const stepProps: { completed?: boolean } = {};
-            return (
-              <Step key={step.label} {...stepProps}>
-                <StepLabel>{step.label}</StepLabel>
-              </Step>
-            );
-          })}
-        </Stepper>
-        {
-          steps[activeStep]?.component === 'dataset' ?
-          <DatasetSelection 
-            selectedDatasets={selectedDatasets} 
-            setSelectedDatasets={setSelectedDatasets} 
-          />:
-          steps[activeStep]?.component === 'assessment' ?
-          <AssessmentSelection 
-            selectedAssessments={selectedAssessments} 
-            setSelectedAssessments={setSelectedAssessments} 
-          /> :
-          steps[activeStep]?.component === 'perform' ?
-          <Assessment selectedAssessments={selectedAssessments} selectedDatasets={selectedDatasets} /> : 
-          null
-        }
-        <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-          <Button
-            color="inherit"
-            disabled={activeStep === 0}
-            onClick={handleBack}
-            sx={{ mr: 1 }}
-          >
-            Back
-          </Button>
-          <Box sx={{ flex: '1 1 auto' }} />
-          <Button 
-            onClick={handleNext}
-            disabled={
-              (steps[activeStep]?.component === 'dataset' && selectedDatasets.length === 0) ||
-              (steps[activeStep]?.component === 'assessment' && selectedAssessments.length === 0)
-            }
-          >
-            {activeStep === steps.length - 1 ? 'Submit assessment' : 'Next'}
-          </Button>
-        </Box>
+      <Stepper activeStep={activeStep} sx={{ my: 4 }}>
+        {steps.map((step) => {
+          const stepProps: { completed?: boolean } = {};
+          return (
+            <Step key={step.label} {...stepProps}>
+              <StepLabel>{step.label}</StepLabel>
+            </Step>
+          );
+        })}
+      </Stepper>
+      {
+        steps[activeStep]?.component === 'dataset' ?
+        <DatasetSelection 
+          selectedDatasets={selectedDatasets} 
+          setSelectedDatasets={setSelectedDatasets} 
+        />:
+        steps[activeStep]?.component === 'assessment' ?
+        <AssessmentSelection 
+          selectedAssessments={selectedAssessments} 
+          setSelectedAssessments={setSelectedAssessments} 
+        /> :
+        steps[activeStep]?.component === 'perform' ?
+        <Assessment selectedAssessments={selectedAssessments} selectedDatasets={selectedDatasets} /> : 
+        null
+      }
+      <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+        <Button
+          color="inherit"
+          disabled={activeStep === 0}
+          onClick={handleBack}
+          sx={{ mr: 1 }}
+        >
+          Back
+        </Button>
+        <Box sx={{ flex: '1 1 auto' }} />
+        <Button 
+          onClick={handleNext}
+          disabled={
+            (steps[activeStep]?.component === 'dataset' && selectedDatasets.length === 0) ||
+            (steps[activeStep]?.component === 'assessment' && selectedAssessments.length === 0)
+          }
+        >
+          {activeStep === steps.length - 1 ? 'Submit assessment' : 'Next'}
+        </Button>
+      </Box>
     </Container>
   );
 }
@@ -242,7 +244,7 @@ function Assessment({ selectedAssessments, selectedDatasets }: {
   }, [selectedDatasets, selectedAssessments]);
 
   return (
-    <Stack spacing={1} sx={{ mt: 4 }}>
+    <LayoutGroup>
       {combinations.map(({ dataset, assessment }) => (
         <AssessmentInstance
           key={`${dataset.identifier}-${assessment.id}`}
@@ -250,7 +252,7 @@ function Assessment({ selectedAssessments, selectedDatasets }: {
           selectedDataset={dataset}
         />
       ))}
-    </Stack>
+    </LayoutGroup>
   );
 }
 
@@ -361,8 +363,8 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
   };
   
   return (
-    <Paper sx={{mt: 4}}>
-      <Grid container>
+    <MotionPaper sx={{mb: 1}} layout>
+      <MotionGrid container layout="position" sx={{ position: 'relative', zIndex: 100, backgroundColor: 'background.paper' }}>
         <Status 
           answers={answers} 
           selectedAssessment={data} 
@@ -371,104 +373,115 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
           isOpen={isOpen}
           isLoading={allData.some(d => d.isLoading)}
         />
-        {isOpen && [
-        <Grid md={4} pt={3} sx={{ borderRight: { md: '1px solid rgba(0, 0, 0, 0.12)' } }}>
-          <List
-            sx={{ width: '100%' }}
-            component="nav"
-            aria-labelledby="nested-list-subheader"
-            subheader={
-              <ListSubheader sx={{ px: 4 }}>
-                Principles & criteria
-              </ListSubheader>
-            }
+      </MotionGrid>
+      <AnimatePresence>
+        {isOpen && 
+          <MotionGrid 
+            key={`${selectedDataset?.identifier}-${selectedAssessment?.id}-assessment-grid`}
+            container
+            initial={{ opacity: 0, y: -100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -100 }}
+            layout
           >
-            {data?.principles.map((principle) => {
-              const criteriaEvaluations = principle.criteria.map(c => evaluateCriterion(c, answers));
+            <Grid md={4} pt={3} sx={{ borderRight: { md: '1px solid rgba(0, 0, 0, 0.12)' } }}>
+              <List
+                sx={{ width: '100%' }}
+                component="nav"
+                aria-labelledby="nested-list-subheader"
+                subheader={
+                  <ListSubheader sx={{ px: 4 }}>
+                    Principles & criteria
+                  </ListSubheader>
+                }
+              >
+                {data?.principles.map((principle) => {
+                  const criteriaEvaluations = principle.criteria.map(c => evaluateCriterion(c, answers));
 
-              const allAnswered = criteriaEvaluations.every(r => r.allAnswered);
-              const partiallyAnswered = criteriaEvaluations.some(r => r.allAnswered) && !allAnswered;
-              const allPassed = criteriaEvaluations.every(r => r.passed === true);
+                  const allAnswered = criteriaEvaluations.every(r => r.allAnswered);
+                  const partiallyAnswered = criteriaEvaluations.some(r => r.allAnswered) && !allAnswered;
+                  const allPassed = criteriaEvaluations.every(r => r.passed === true);
 
-              const status =
-                allPassed ? "success" :
-                allAnswered ? "error" :
-                partiallyAnswered ? "warning" :
-                allData.find(d => d.principleId === principle.id && d.isLoading) ? "loading" :
-                null;
+                  const status =
+                    allPassed ? "success" :
+                    allAnswered ? "error" :
+                    partiallyAnswered ? "warning" :
+                    allData.find(d => d.principleId === principle.id && d.isLoading) ? "loading" :
+                    null;
 
-              return (
-                <Fragment key={principle.id}>
-                  <ListItemButton 
-                    sx={{ px: 4}}
-                    onClick={() => {
-                      setOpenPrinciple(principle.id);
-                      setOpenCriterion(principle.criteria[0].id);
-                    }}
-                  >
-                    <TooltipWithIcon status={status} text={principle.description} type="principle" />
-                    <ListItemText primary={principle.name} />
-                    {openPrinciple === principle.id ? <ExpandLess /> : <ExpandMore />}
-                  </ListItemButton>
-                  <Collapse in={openPrinciple === principle.id} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                      {principle.criteria.map((criterion) => {
-                        const result = criteriaEvaluations.find(r => r.id === criterion.id);
-                        const status =
-                          result?.passed ? "success" :
-                          result?.allAnswered ? "error" :
-                          allData.find(d => d.criterionId === criterion.id && d.isLoading) ? "loading" :
-                          null;
-                        return (
-                          <ListItemButton
-                            key={criterion.id}
-                            sx={{ pl: 6, pr: 4 }}
-                            onClick={() => setOpenCriterion(criterion.id)}
-                            selected={openCriterion === criterion.id}
-                          >
-                            <TooltipWithIcon status={status} text={criterion.description} type="criterion" />
-                            <ListItemText primary={criterion.description} />
-                            <Chip 
-                              label={criterion.imperative} 
-                              size="small" 
-                              variant="outlined"
-                              color={allPassed ? "success" : criterion.imperative === "Mandatory" ? "error" : "warning"}
-                              sx={{
-                                fontSize: '0.6rem',
-                                ml: 0.5,
-                                fontWeight: 'bold',
-                                borderWidth: '2px'
-                              }}
-                            />
-                          </ListItemButton>
-                        )
-                      })}
-                    </List>
-                  </Collapse>
-                </Fragment>
-              )
-            })}
-          </List>
-        </Grid>,
-        <Grid md={8} p={4}>
-          <Criterion
-            criterion={data?.principles.find(
-              (p) => p.id === openPrinciple)?.criteria.find(
-                (criterion) => criterion.id === openCriterion
-              ) as Criterion
-            }
-            answers={answers}
-            setAnswers={setAnswers}
-            doi={selectedDataset?.identifier || ''}
-          />
-          <Stack direction="row" spacing={2} mt={2} justifyContent="flex-end">
-            <Button variant="contained" color="neutral" onClick={() => goToCriterion('previous')}>Previous</Button>
-            <Button variant="contained" onClick={() => goToCriterion('next')}>Next</Button>
-          </Stack>
-        </Grid>
-        ]}
-      </Grid>
-    </Paper>
+                  return (
+                    <Fragment key={principle.id}>
+                      <ListItemButton 
+                        sx={{ px: 4}}
+                        onClick={() => {
+                          setOpenPrinciple(principle.id);
+                          setOpenCriterion(principle.criteria[0].id);
+                        }}
+                      >
+                        <TooltipWithIcon status={status} text={principle.description} type="principle" />
+                        <ListItemText primary={principle.name} />
+                        {openPrinciple === principle.id ? <ExpandLess /> : <ExpandMore />}
+                      </ListItemButton>
+                      <Collapse in={openPrinciple === principle.id} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                          {principle.criteria.map((criterion) => {
+                            const result = criteriaEvaluations.find(r => r.id === criterion.id);
+                            const status =
+                              result?.passed ? "success" :
+                              result?.allAnswered ? "error" :
+                              allData.find(d => d.criterionId === criterion.id && d.isLoading) ? "loading" :
+                              null;
+                            return (
+                              <ListItemButton
+                                key={criterion.id}
+                                sx={{ pl: 6, pr: 4 }}
+                                onClick={() => setOpenCriterion(criterion.id)}
+                                selected={openCriterion === criterion.id}
+                              >
+                                <TooltipWithIcon status={status} text={criterion.description} type="criterion" />
+                                <ListItemText primary={criterion.description} />
+                                <Chip 
+                                  label={criterion.imperative} 
+                                  size="small" 
+                                  variant="outlined"
+                                  color={allPassed ? "success" : criterion.imperative === "Mandatory" ? "error" : "warning"}
+                                  sx={{
+                                    fontSize: '0.6rem',
+                                    ml: 0.5,
+                                    fontWeight: 'bold',
+                                    borderWidth: '2px'
+                                  }}
+                                />
+                              </ListItemButton>
+                            )
+                          })}
+                        </List>
+                      </Collapse>
+                    </Fragment>
+                  )
+                })}
+              </List>
+            </Grid>
+            <Grid md={8} p={4}>
+              <Criterion
+                criterion={data?.principles.find(
+                  (p) => p.id === openPrinciple)?.criteria.find(
+                    (criterion) => criterion.id === openCriterion
+                  ) as Criterion
+                }
+                answers={answers}
+                setAnswers={setAnswers}
+                doi={selectedDataset?.identifier || ''}
+              />
+              <Stack direction="row" spacing={2} mt={2} justifyContent="flex-end">
+                <Button variant="contained" color="neutral" onClick={() => goToCriterion('previous')}>Previous</Button>
+                <Button variant="contained" onClick={() => goToCriterion('next')}>Next</Button>
+              </Stack>
+            </Grid>
+          </MotionGrid>
+        }
+      </AnimatePresence>
+    </MotionPaper>
   )
 }
 
@@ -666,24 +679,20 @@ function Progress({ variant, totals, isLoading }: { variant: 'mandatory' | 'opti
             }),
           }}
         >
-          {totals.passed > 0 && (
-            <Box 
-              sx={{ 
-                width: `${passedPercentage}%`, 
-                backgroundColor: 'success.main',
-                transition: 'width 0.3s ease'
-              }} 
-            />
-          )}
-          {totals.failed > 0 && (
-            <Box 
-              sx={{ 
-                width: `${failedPercentage}%`, 
-                backgroundColor: 'error.main',
-                transition: 'width 0.3s ease'
-              }} 
-            />
-          )}
+          <Box 
+            sx={{ 
+              width: `${passedPercentage}%`, 
+              backgroundColor: 'success.main',
+              transition: 'width 0.3s ease'
+            }} 
+          />
+          <Box 
+            sx={{ 
+              width: `${failedPercentage}%`, 
+              backgroundColor: 'error.main',
+              transition: 'width 0.3s ease'
+            }} 
+          />
         </Box>
         <Stack direction="row" spacing={2} mt={0.5} justifyContent="flex-start" alignItems="center">
           <Typography variant="caption" sx={{ fontSize: '0.65rem', color: 'text.secondary' }}>

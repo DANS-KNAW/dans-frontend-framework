@@ -32,8 +32,6 @@ export async function fetchAssessment(id: any): Promise<Assessment | null> {
     }
 
     const result = await res.json();
-    console.log(result);
-    console.log(id)
 
     return result.find((a: Assessment) => a.assessment_type.id === id) || null;
 
