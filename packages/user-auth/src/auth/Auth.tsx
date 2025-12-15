@@ -23,9 +23,8 @@ export const AuthWrapper = ({
 }) => {
   // add some default features to the authprovider
   const authProviderConfig = {
-    ...authProvider,
     userStore: new WebStorageStateStore({ store: window.sessionStorage }),
-    monitorSession: true, // this allows cross tab login/logout detection
+    ...authProvider, // and override with the provided config
   };
   return (
     <ReduxProvider store={store}>
