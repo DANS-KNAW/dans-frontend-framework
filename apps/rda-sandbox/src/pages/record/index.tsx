@@ -430,7 +430,7 @@ export function RdaRecord() {
             }}
           >
             <Grid container={isSmUp} spacing={2}>
-              <Grid item size={{ xs: 12, sm: 4 }} sx={{ mb: isSmUp ? 0 : 1 }}>
+              <Grid size={{ xs: 12, sm: 4 }} sx={{ mb: isSmUp ? 0 : 1 }}>
                 <Typography
                   variant="body2"
                   sx={{ color: "#111827", fontWeight: 500 }}
@@ -438,7 +438,7 @@ export function RdaRecord() {
                   {label}
                 </Typography>
               </Grid>
-              <Grid item container direction="row" size={{ xs: 12, sm: 8 }}>
+              <Grid container direction="row" size={{ xs: 12, sm: 8 }}>
                 {value.length > 0 ? (
                   value
                 ) : (

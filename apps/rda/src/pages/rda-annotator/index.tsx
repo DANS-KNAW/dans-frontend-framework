@@ -153,7 +153,7 @@ export default function RDAAnnotator() {
             spacing={{ xs: 8, sm: 10 }}
             sx={{ mx: "auto", maxWidth: { xs: "42rem", lg: "none" } }}
           >
-            <Grid item size={{ xs: 12, lg: 6 }} sx={{ order: { lg: 2 } }}>
+            <Grid size={{ xs: 12, lg: 6 }} sx={{ order: { lg: 2 } }}>
               <Box sx={{ pt: { lg: 2 }, pl: { lg: 2 } }}>
                 <Box sx={{ maxWidth: { lg: "32rem" } }}>
                   <Typography
@@ -348,7 +348,6 @@ export default function RDAAnnotator() {
               </Box>
             </Grid>
             <Grid
-              item
               size={{ xs: 12, lg: 6 }}
               sx={{
                 order: { lg: 1 },
@@ -384,7 +383,7 @@ export default function RDAAnnotator() {
             spacing={{ xs: 8, sm: 10 }}
             sx={{ mx: "auto", maxWidth: { xs: "42rem", lg: "none" } }}
           >
-            <Grid item size={{ xs: 12, lg: 6 }}>
+            <Grid size={{ xs: 12, lg: 6 }}>
               <Box sx={{ pt: { lg: 2 }, pl: { lg: 2 } }}>
                 <Typography
                   sx={{
@@ -530,7 +529,6 @@ export default function RDAAnnotator() {
               </Box>
             </Grid>
             <Grid
-              item
               size={{ xs: 12, lg: 6 }}
               sx={{
                 display: "flex",
