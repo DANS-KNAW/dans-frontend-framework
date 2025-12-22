@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import Container from "@mui/material/Container";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -31,7 +31,7 @@ const Footer = ({ top, bottom }: FooterType) => {
         <Container>
           <Grid container columns={columnsTop} spacing={2}>
             {top.map((item, i) => (
-              <Grid xs={4} sm={2} md={1} key={`footer-${i}`}>
+              <Grid size={{ xs: 4, sm: 2, md: 1 }} key={`footer-${i}`}>
                 <FooterContent {...item} />
               </Grid>
             ))}
@@ -49,7 +49,7 @@ const Footer = ({ top, bottom }: FooterType) => {
         <Container>
           <Grid container columns={columnsBottom}>
             {bottom.map((item, i) => (
-              <Grid xs={2} md={1} key={i}>
+              <Grid size={{ xs: 2, md: 1 }} key={i}>
                 <FooterContent
                   {...item}
                   align={columnsBottom - 1 === i ? "right" : undefined}

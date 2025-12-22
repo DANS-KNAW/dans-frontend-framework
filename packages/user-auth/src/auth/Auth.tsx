@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import type { ReactNode } from "react";
 import { I18nextProvider } from "react-i18next";
@@ -77,7 +77,7 @@ export const SignInCallback = () => {
     return (
       <Container>
         <Grid container>
-          <Grid xs={12} mdOffset={2.5} md={7}>
+          <Grid size={{ xs: 12, md: 7 }} offset={{ md: 2.5 }}>
             <Typography variant="h1">{t("signinError")}</Typography>
             <Typography>{auth.error.message}</Typography>
           </Grid>

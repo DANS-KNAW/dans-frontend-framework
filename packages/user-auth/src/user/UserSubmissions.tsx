@@ -8,7 +8,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import { useTranslation } from "react-i18next";
 import Paper from "@mui/material/Paper";
@@ -127,7 +127,7 @@ export const UserSubmissions = ({
   return (
     <Container>
       <Grid container>
-        <Grid xs={12} mdOffset={1} md={10}>
+        <Grid size={{ xs: 12, md: 10 }} offset={{ md: 1 }}>
           <Typography variant="h1">{t("userSubmissions")}</Typography>
           <SubmissionList
             data={drafts}

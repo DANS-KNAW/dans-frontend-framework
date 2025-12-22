@@ -3,7 +3,7 @@ import { SearchStateDispatchContext, type SearchState } from "../context/state";
 import type { FacetControllers } from "../context/controllers";
 
 import React, { Children, isValidElement } from "react";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
@@ -48,7 +48,7 @@ export const Facets = ({
       {!dashboard ?
         // search layout: sidebar only
         facets.map((f) => (
-          <Grid xs={12} key={f.facet.ID}>
+          <Grid size={{ xs: 12 }} key={f.facet.ID}>
             <f.type
               key={f.facet.ID}
               dispatch={dispatch}
@@ -61,7 +61,7 @@ export const Facets = ({
             />
           </Grid>
         ))
-      : <Grid xs={12}>
+      : <Grid size={{ xs: 12 }}>
           <ImageList
             cols={columns}
             variant="quilted"

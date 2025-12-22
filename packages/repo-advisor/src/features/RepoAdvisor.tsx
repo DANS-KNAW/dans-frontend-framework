@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -74,7 +74,7 @@ const RepoAdvisor = ({
   return (
     <Container>
       <Grid container display="flex" justifyContent="center">
-        <Grid xs={12} md={10} lg={8} mt={4}>
+        <Grid size={{ xs: 12, md: 10, lg: 8 }} mt={4}>
           <Paper sx={{ p: 4 }}>
             <Stepper activeStep={activeStep} sx={{ mb: 2 }}>
               {steps.map((label) => {

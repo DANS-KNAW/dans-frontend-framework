@@ -1,6 +1,6 @@
 import { useEffect, isValidElement } from "react";
 import Container from "@mui/material/Container";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -69,12 +69,8 @@ const Generic = ({ logo, name, content, action }: Page) => {
     <Container>
       <Grid container>
         <Grid
-          mdOffset={logo ? 4 : 2.5}
-          md={logo ? 4 : 7}
-          smOffset={logo ? 3 : 0}
-          sm={logo ? 6 : 12}
-          xs={logo ? 8 : 12}
-          xsOffset={logo ? 2 : 0}
+          offset={{ md: logo ? 4 : 2.5, sm: logo ? 3 : 0, xs: logo ? 2 : 0 }}
+          size={{ md: logo ? 4 : 7, sm: logo ? 6 : 12, xs: logo ? 8 : 12 }}
         >
           <Typography variant="h1">
             {logo ? (
@@ -85,7 +81,7 @@ const Generic = ({ logo, name, content, action }: Page) => {
           </Typography>
         </Grid>
 
-        <Grid xs={12} mdOffset={2.5} md={7}>
+        <Grid size={{ xs: 12, md: 7 }} offset={{ md: 2.5 }}>
           {content && <Box>{renderContent()}</Box>}
           {action && (
             <Box mt={4} display="flex" justifyContent="center">

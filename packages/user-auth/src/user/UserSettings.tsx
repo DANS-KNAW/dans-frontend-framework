@@ -13,7 +13,7 @@ import Container from "@mui/material/Container";
 import Tooltip from "@mui/material/Tooltip";
 import HelpIcon from "@mui/icons-material/Help";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import { useAuth } from "react-oidc-context";
 import {
   useFetchUserProfileQuery,
@@ -62,7 +62,7 @@ export const UserSettings = ({
   return (
     <Container>
       <Grid container>
-        <Grid xs={12} mdOffset={2.5} md={7}>
+        <Grid size={{ xs: 12, md: 7 }} offset={{ md: 2.5 }}>
           <Typography variant="h1">{t("userSettings")}</Typography>
           {target.map(
             (tg) =>

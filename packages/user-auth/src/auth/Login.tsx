@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Container from "@mui/material/Container";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { LoginButton } from "../user/Buttons";
@@ -28,13 +28,13 @@ export const LoginPage = () => {
   return (
     <Container>
       <Grid container>
-        <Grid mdOffset={2.5} md={7} xs={12}>
+        <Grid offset={{ md: 2.5 }} size={{ md: 7, xs: 12 }}>
           <Typography variant="h1" sx={{ textAlign: "center" }}>
             {t("login", { ns: "user" })}
           </Typography>
         </Grid>
 
-        <Grid xs={12} mdOffset={2.5} md={7}>
+        <Grid size={{ xs: 12, md: 7 }} offset={{ md: 2.5 }}>
           <Typography sx={{ textAlign: "center" }}>
             {t("loginMessage", { ns: "auth" })}
           </Typography>

@@ -1,6 +1,6 @@
 import { useEffect /*type Dispatch, type SetStateAction*/ } from "react";
 import Container from "@mui/material/Container";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 // import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
@@ -119,7 +119,7 @@ const FileMapper = ({
   return (
     <Container>
       <Grid container>
-        <Grid xs={12} mt={4}>
+        <Grid size={{ xs: 12 }} mt={4}>
           <Paper sx={{ p: 4 }}>
             <Stepper activeStep={activeStep} sx={{ mb: 2 }}>
               {steps.map((label) => {

@@ -6,7 +6,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import { motion } from "framer-motion";
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
@@ -129,12 +129,8 @@ export function SingleRecord({ onClose }: { onClose: () => void }) {
           <Container>
             <Grid container>
               <Grid
-                sm={10}
-                md={8}
-                lg={7}
-                smOffset={1}
-                mdOffset={2}
-                lgOffset={2.5}
+                size={{ sm: 10, md: 8, lg: 7 }}
+                offset={{ sm: 1, md: 2, lg: 2.5 }}
                 pt={4}
               >
                 {loading ?

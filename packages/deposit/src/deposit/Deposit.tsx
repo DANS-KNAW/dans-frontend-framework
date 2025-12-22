@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Metadata from "../features/metadata/Metadata";
 import Files from "../features/files/Files";
 import Collapse from "@mui/material/Collapse";
@@ -235,7 +235,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <Container>
         <Grid container>
-          <Grid xs={12}>
+          <Grid size={{ xs: 12 }}>
             <Typography variant="h1">{t("deposit")}</Typography>
             {/* Shows user a message about current form state */}
             <ActionMessage

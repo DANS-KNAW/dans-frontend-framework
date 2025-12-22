@@ -195,7 +195,7 @@ export const DateRangeField = ({
   }, [range, isDirty]);
 
   return (
-    <Stack direction="row" alignItems="start">
+    <Stack direction="row" alignItems="start" spacing={2} sx={{ width: "100%", flex: 1 }}>
       <DateTypeWrapper
         field={field}
         groupName={groupName}

@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -133,7 +133,7 @@ const SingleField = memo(({ field, groupName, groupIndex, sx }: SingleFieldProps
   };
 
   return (
-    <Grid xs={12} md={field.fullWidth ? 12 : 6} sx={sx || undefined}>
+    <Grid size={{ xs: 12, md: field.fullWidth ? 12 : 6 }} sx={sx || undefined}>
       {getField()}
     </Grid>
   );
@@ -144,7 +144,7 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
   const fieldValue = useAppSelector(getField(field.name));
 
   return (
-    <Grid xs={12}>
+    <Grid size={{ xs: 12 }}>
       <Card>
         <CardHeader
           title={lookupLanguageString(field.label, i18n.language)}
@@ -157,9 +157,10 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
           sx={{ pb: 0, pl: 2.25, pr: 2.25 }}
         />
         <CardContent data-testid={`group-${field.name}`}>
-        <Stack direction="row" flexWrap="wrap">
+        <Grid container spacing={2}>
           {field.repeatable ? (
             (fieldValue?.value as []).map((_repeatableItem, index) => (
+              <Grid size={{ xs: 12 }} key={index}>
               <Stack
                 key={index}
                 direction="row"
@@ -168,16 +169,10 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
                   width: '100%', 
                   borderTop: index > 0 ? "1px solid" : "none",
                   borderColor: "neutral.main",
-                  mt: index > 0 ? 1 : 0,
-                  pt: index > 0 ? 1 : 0,
+                  pt: index > 0 ? 2 : 0,
                 }}
               >
-                <Stack 
-                  direction="row"
-                  alignItems="center"
-                  flexWrap="wrap"
-                  sx={{ flex: 1 }}
-                >
+                <Grid container spacing={2} sx={{ flexGrow: 1 }}>
                   {(field.fields as InputField[]).map((f) => (
                     <SingleField
                       key={f.name}
@@ -186,7 +181,7 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
                       groupIndex={index}
                     />
                   ))}
-                </Stack>
+                </Grid>
                 {fieldValue?.value.length > 1 && (
                   <DeleteButton
                     size="medium"
@@ -195,6 +190,7 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
                   />
                 )}
               </Stack>
+              </Grid>
             ))
           ) : (
             (field.fields as InputField[]).map((f) => (
@@ -206,7 +202,7 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
               />
             ))
           )}
-          </Stack>
+          </Grid>
         </CardContent>
         {field.repeatable && (
           <CardActions sx={{ pl: 3, pr: 3, justifyContent: "right" }}>

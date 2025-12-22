@@ -1,5 +1,5 @@
 import { useEffect, type SyntheticEvent } from "react";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -76,7 +76,7 @@ const Form = () => {
           <AccordionDetails>
             <Grid container spacing={2}>
               {section.description && (
-                <Grid xs={12} md={9} lg={8} xl={7}>
+                <Grid size={{ xs: 12, md: 9, lg: 8, xl: 7 }}>
                   <Typography
                     variant="body2"
                     mt={-1}
