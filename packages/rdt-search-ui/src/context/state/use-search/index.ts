@@ -180,7 +180,7 @@ async function fetchFacetValuesOnly(
 }
 
 function usePrevious(value: SearchState) {
-  const ref = React.useRef<SearchState>();
+  const ref = React.useRef<SearchState>(null);
 
   React.useEffect(() => {
     ref.current = value;

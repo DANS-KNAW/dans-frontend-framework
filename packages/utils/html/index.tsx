@@ -1,3 +1,4 @@
+import { type ReactElement } from 'react';
 import { domToReact } from 'html-react-parser';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
@@ -71,7 +72,7 @@ const createTableCell = (
 // Main parser configuration
 export const parseOptionsRichText = {
   replace: ({ name, children, attribs }: any) => {
-    const elementMap: Record<string, () => JSX.Element | null> = {
+    const elementMap: Record<string, () => ReactElement | null> = {
       p: () => createTypography(undefined, children, true),
       a: () => createLink(attribs, children),
       table: () => (

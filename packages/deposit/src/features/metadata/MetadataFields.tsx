@@ -156,40 +156,40 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
           subheaderTypographyProps={{ fontSize: 12 }}
           sx={{ pb: 0, pl: 2.25, pr: 2.25 }}
         />
-        <CardContent data-testid={`group-${field.name}`}>
-        <Grid container spacing={2}>
-          {field.repeatable ? (
-            (fieldValue?.value as []).map((_repeatableItem, index) => (
-              <Grid size={{ xs: 12 }} key={index}>
-              <Stack
-                key={index}
-                direction="row"
-                alignItems="center"
-                sx={{
-                  width: '100%', 
-                  borderTop: index > 0 ? "1px solid" : "none",
-                  borderColor: "neutral.main",
-                  pt: index > 0 ? 2 : 0,
-                }}
-              >
-                <Grid container spacing={2} sx={{ flexGrow: 1 }}>
-                  {(field.fields as InputField[]).map((f) => (
-                    <SingleField
-                      key={f.name}
-                      field={f}
-                      groupName={field.name}
-                      groupIndex={index}
+        <CardContent>
+          <Grid container spacing={2}>
+            {field.repeatable ? (
+              (fieldValue?.value as []).map((_repeatableItem, index) => (
+                <Grid size={{ xs: 12 }} key={index}>
+                <Stack
+                  key={index}
+                  direction="row"
+                  alignItems="center"
+                  sx={{
+                    width: '100%', 
+                    borderTop: index > 0 ? "1px solid" : "none",
+                    borderColor: "neutral.main",
+                    pt: index > 0 ? 2 : 0,
+                  }}
+                >
+                  <Grid container spacing={2} sx={{ flexGrow: 1 }}>
+                    {(field.fields as InputField[]).map((f) => (
+                      <SingleField
+                        key={f.name}
+                        field={f}
+                        groupName={field.name}
+                        groupIndex={index}
+                      />
+                    ))}
+                  </Grid>
+                  {fieldValue?.value.length > 1 && (
+                    <DeleteButton
+                      size="medium"
+                      field={field}
+                      fieldIndex={index}
                     />
-                  ))}
-                </Grid>
-                {fieldValue?.value.length > 1 && (
-                  <DeleteButton
-                    size="medium"
-                    field={field}
-                    fieldIndex={index}
-                  />
-                )}
-              </Stack>
+                  )}
+                </Stack>
               </Grid>
             ))
           ) : (

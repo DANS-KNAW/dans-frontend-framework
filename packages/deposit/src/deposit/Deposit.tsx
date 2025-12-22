@@ -264,7 +264,6 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
                       <Paper elevation={15} sx={{ mt: 15 }}>
                         <Alert
                           severity="warning"
-                          data-testid="invalid-api-keys"
                           sx={{ p: 3 }}
                         >
                           <AlertTitle>{t("missingInfoHeader")}</AlertTitle>
@@ -319,7 +318,6 @@ const TabHeader = ({ value, handleChange }: TabHeaderProps) => {
         label={t("heading", { ns: "metadata" })}
         icon={<StatusIcon status={getSectionStatus(sections)} margin="r" />}
         iconPosition="start"
-        data-testid="metadata-tab"
       />
       <Tab
         label={t("heading", { ns: "files" })}
@@ -330,7 +328,6 @@ const TabHeader = ({ value, handleChange }: TabHeaderProps) => {
           />
         }
         iconPosition="start"
-        data-testid="files-tab"
       />
     </Tabs>
   );
@@ -383,7 +380,6 @@ const ActionMessage = ({
     <Collapse in={dataMessage}>
       <Alert
         severity={formAction.action === "resubmit" ? "error" : "info"}
-        data-testid="data-message"
         onClose={formAction.action !== "view" ? () => setDataMessage(false) : undefined}
         sx={{
           position: "relative",

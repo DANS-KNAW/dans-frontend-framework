@@ -49,15 +49,17 @@ export function FacetedSearch(props: ExternalSearchProps) {
   React.useEffect(() => {
     // Only set children once
     if (props.children == null || children != null) return;
-
-    const _children =
-      // Make sure it is an element and not a string, number, ...
+    let _children: React.ReactNode = props.children;
+    // Check if children is a valid React element with props
+    if (
       isValidElement(props.children) &&
-      // If children is a fragment, get the children of the fragment
       props.children.type.toString() === Symbol.for("react.fragment").toString()
-        ? props.children.props.children
-        : props.children;
-
+    ) {
+      const fragmentProps = props.children.props as { children?: React.ReactNode };
+      if (fragmentProps.children !== undefined) {
+        _children = fragmentProps.children;
+      }
+    }
     setChildren(_children);
   }, [props.children, props.url]);
 
@@ -322,7 +324,7 @@ export const FacetedWrapper = ({
                 React.cloneElement(node, {
                   key: i,
                   customColumns: currentConfig.customColumns,
-                })
+                } as any)
               )}
             </FacetedSearch>
           </motion.div>

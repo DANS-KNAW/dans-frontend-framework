@@ -2,7 +2,6 @@ import {
   useEffect,
   useMemo,
   useState,
-  forwardRef,
   type MouseEvent,
 } from "react";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +15,6 @@ import {
   motion,
   AnimatePresence,
   LayoutGroup,
-  type HTMLMotionProps,
 } from "framer-motion";
 import {
   DataGrid,
@@ -25,7 +23,7 @@ import {
   GridColumnMenu,
   GridActionsCellItem,
   GridRow,
-  type GridRowProps,
+  GridLoadingOverlay,
 } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import moment from "moment";
@@ -38,7 +36,6 @@ import {
 import { useAuth } from "react-oidc-context";
 import type { SubmissionResponse, TargetOutput, DepositStatus } from "../types";
 import CircularProgress from "@mui/material/CircularProgress";
-import LinearProgress from "@mui/material/LinearProgress";
 import Link from "@mui/material/Link";
 import EditIcon from "@mui/icons-material/Edit";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -345,7 +342,7 @@ const SubmissionList = ({
         headerName: type === "published" ? t("submittedOn") : t("savedOn"),
         width: 200,
         type: "dateTime",
-        valueGetter: (params) => {
+        valueGetter: (params: any) => {
           if (!params.value) return null;
           return moment.utc(params.value, "YYYY-MM-DD HH:mm:ss").toDate();
         },
@@ -406,11 +403,10 @@ const SubmissionList = ({
 
       <Paper sx={{ height: data.length === 0 ? 160 : "auto", width: "100%" }}>
         <DataGrid
-          experimentalFeatures={{ ariaV7: true }}
           loading={isLoading}
           slots={{
             columnMenu: CustomColumnMenu,
-            loadingOverlay: LinearProgress,
+            loadingOverlay: GridLoadingOverlay,
             noRowsOverlay: () => (
               <Box
                 sx={{
@@ -423,14 +419,7 @@ const SubmissionList = ({
                 {t("noRows")}
               </Box>
             ),
-            row: MotionGridRow,
-          }}
-          slotProps={{
-            row: {
-              animate: { opacity: 1 },
-              initial: { opacity: 0 },
-              exit: { opacity: 0 },
-            },
+            row: GridRow,
           }}
           rows={rows}
           columns={columns}
@@ -461,14 +450,6 @@ const SubmissionList = ({
     </>
   );
 };
-
-// Animation doesn't work great as we'd ideally need an AnimatePresence component inside DataGrid
-// (modify the virtual scroll container). So for now it's just a fade in, no fade out.
-const ForwardRow = forwardRef<
-  HTMLDivElement,
-  GridRowProps & HTMLMotionProps<"div">
->((props, ref) => <GridRow ref={ref} {...props} />);
-const MotionGridRow = motion(ForwardRow);
 
 // A separate component for a target, needs to have it's own state to display popover
 const SingleTargetStatus = ({

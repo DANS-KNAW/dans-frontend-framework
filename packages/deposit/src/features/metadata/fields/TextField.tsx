@@ -231,11 +231,6 @@ const FieldInput = ({ field, fieldValue, onChange, index }: {
           </InputAdornment>
         ),
       }}
-      inputProps={{
-        "data-testid": `${field.name}${
-          index !== undefined ? `-${index}` : ""
-        }`,
-      }}
       sx={{
         mT: field.repeatable ? 2 : 0,
       }}

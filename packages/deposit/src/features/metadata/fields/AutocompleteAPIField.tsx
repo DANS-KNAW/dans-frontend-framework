@@ -562,7 +562,6 @@ const AutocompleteAPIField = ({
             }}
             inputProps={{
               ...params.inputProps,
-              "data-testid": `${field.name}`,
             }}
           />
         )}

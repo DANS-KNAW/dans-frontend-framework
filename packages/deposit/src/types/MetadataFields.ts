@@ -1,8 +1,11 @@
 import type { LanguageStrings } from "@dans-framework/utils";
 import type { AuthProperty } from "@dans-framework/user-auth";
 import type { Feature, Point, Polygon, LineString, Geometry } from "geojson";
-import type { LngLatBoundsLike } from "react-map-gl";
 import { AutoFillProperty } from "@dans-framework/user-auth/src/types";
+
+type LngLatBoundsLike = 
+  | [[number, number], [number, number]]
+  | [number, number, number, number];
 
 // All user input field types
 export type InputField =

@@ -137,7 +137,6 @@ export const DateTimeField = ({
             </InputAdornment>
           ),
         }}
-        inputProps={{ "data-testid": `${field.name}` }}
         slotProps={{
           textField: {
             error:
@@ -340,7 +339,6 @@ const RangeFieldWrapper = ({
           </InputAdornment>
         ),
       }}
-      inputProps={{ "data-testid": `${field.name}` }}
       slotProps={{
         textField: {
           error: (status === "error" && fieldValue?.touched) || error ? true : false,
@@ -397,7 +395,6 @@ const DateTypeWrapper = ({
         }}
         value={fieldValue.format || field.format}
         disabled={formDisabled}
-        inputProps={{ "data-testid": `datetype-${field.name}` }}
       >
         {field.formatOptions.map((option) => (
           <MenuItem key={option} value={option} aria-label={t(option)}>

@@ -346,7 +346,6 @@ const Submit = ({
             )}
             size="large"
             sx={{ mr: 1 }}
-            data-testid="save-form"
           >
             {t("save")}
           </Button>
@@ -361,7 +360,6 @@ const Submit = ({
                 onClick={resetForm}
                 size="large"
                 sx={{ mr: 1 }}
-                data-testid="reset-form"
               >
                 {t("reset")}
               </Button>
@@ -380,7 +378,6 @@ const Submit = ({
               )
             }
             size="large"
-            data-testid="submit-form"
           >
             {fileWarning ?
               t("submitAnyway")

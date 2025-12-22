@@ -61,7 +61,6 @@ const Form = () => {
               },
             }
           }}
-          data-testid={`section-${section.id}`}
           id={`section-${section.id}`}
         >
           <AccordionSummary

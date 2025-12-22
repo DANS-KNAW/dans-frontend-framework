@@ -167,7 +167,6 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
           label={t(type === "process" ? "selectOptions" : "selectOption")}
           inputProps={{
             ...params.inputProps,
-            "data-testid": `actions-${type}-${file.name}`,
           }}
         />
       )}
@@ -289,7 +288,6 @@ const FileTableRow = ({ file }: FileItemProps) => {
                 : setToDelete(!toDelete))
               }
               disabled={rowDisabled}
-              data-testid={`delete-${file.name}`}
               aria-label={t("deleteFile", { file: file.name })}
             >
               <DeleteIcon fontSize="small" color="error" />
@@ -375,7 +373,6 @@ const FileTableRow = ({ file }: FileItemProps) => {
                   }),
                 )
               }
-              data-testid={`private-${file.name}`}
               disabled={file.valid === false || rowDisabled}
               inputProps={{
                 "aria-label": t("privateToggle"),
