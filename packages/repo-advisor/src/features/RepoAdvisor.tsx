@@ -9,7 +9,7 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import { useTranslation } from "react-i18next";
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { useStoreHooks } from "@dans-framework/shared-store";
 import {
   getActiveStep,
   getRor,
@@ -18,6 +18,7 @@ import {
   getDepositType,
   setActiveStep,
   getRepo,
+  type RepoAdvisorState
 } from "./repoAdvisorSlice";
 import { Step1, Step2 } from "./Steps";
 import { useSiteTitle, setSiteTitle } from "@dans-framework/utils/sitetitle";
@@ -36,6 +37,7 @@ const RepoAdvisor = ({
   page: Page;
   depositLocation: string;
 }) => {
+  const { useAppSelector, useAppDispatch } = useStoreHooks<RepoAdvisorState>();
   const dispatch = useAppDispatch();
   const siteTitle = useSiteTitle();
   const ror = useAppSelector(getRor);

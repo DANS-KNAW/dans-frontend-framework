@@ -18,8 +18,8 @@ import ReplayCircleFilledIcon from "@mui/icons-material/ReplayCircleFilled";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Tooltip from "@mui/material/Tooltip";
 import { useTranslation } from "react-i18next";
-import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { getFiles, removeFile, setFileMeta } from "./filesSlice";
+import { useStoreHooks } from "@dans-framework/shared-store";
+import { getFiles, removeFile, setFileMeta, type FilesState } from "./filesSlice";
 import { fileProcessing, fileRoles as defaultFileRoles } from "./filesOptions";
 import type {
   SelectedFile,
@@ -35,9 +35,10 @@ import Chip from "@mui/material/Chip";
 import {
   getSingleFileSubmitStatus,
   setFilesSubmitStatus,
+  SubmitState,
 } from "../submit/submitSlice";
 import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
-import { getFormDisabled, getData } from "../../deposit/depositSlice";
+import { getFormDisabled, getData, type DepositState } from "../../deposit/depositSlice";
 import FileStatusIndicator from "./FileStatusIndicator";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useFetchGroupedListQuery } from "./api/dansFormats";
@@ -48,7 +49,8 @@ import type { DateValidationError } from "@mui/x-date-pickers/models";
 
 const FilesTable = () => {
   const { t } = useTranslation("files");
-  const selectedFiles = useAppSelector<SelectedFile[]>(getFiles);
+  const { useAppSelector } = useStoreHooks<FilesState & DepositState>();
+  const selectedFiles = useAppSelector(getFiles);
   const formConfig = useAppSelector(getData);
 
   const {
@@ -121,6 +123,7 @@ const FilesTable = () => {
 };
 
 const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
+  const { useAppSelector, useAppDispatch } = useStoreHooks<FilesState & DepositState>();
   const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation("files");
   const formDisabled = useAppSelector(getFormDisabled);
@@ -179,6 +182,7 @@ const FileActionOptions = ({ file, type }: FileActionOptionsProps) => {
 };
 
 const EmbargoDate = ({ file }: { file: SelectedFile }) => {
+  const { useAppSelector, useAppDispatch } = useStoreHooks<FilesState & DepositState>();
   const { t } = useTranslation("files");
   const [error, setError] = useState<DateValidationError | null>(null);
   const dispatch = useAppDispatch();
@@ -245,6 +249,7 @@ const ForwardRow = forwardRef<
 const MotionRow = motion(ForwardRow);
 
 const FileTableRow = ({ file }: FileItemProps) => {
+  const { useAppSelector, useAppDispatch } = useStoreHooks<FilesState & SubmitState & DepositState>();
   const dispatch = useAppDispatch();
   const { t } = useTranslation("files");
   const [toDelete, setToDelete] = useState<boolean>(false);
@@ -418,6 +423,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
 };
 
 const UploadProgress = ({ file }: FileItemProps) => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<FilesState & SubmitState>();
   const dispatch = useAppDispatch();
   // We handle progress and manually retrying/restarting of file uploads here
   const fileStatus = useAppSelector(getSingleFileSubmitStatus(file.id));

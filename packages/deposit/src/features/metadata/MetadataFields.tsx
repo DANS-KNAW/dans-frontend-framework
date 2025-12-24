@@ -39,8 +39,8 @@ import { RadioField, CheckField } from "./fields/RadioCheckField";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 import Skeleton from "@mui/material/Skeleton";
-import { useAppSelector } from "../../redux/hooks";
-import { getField } from "./metadataSlice";
+import { useStoreHooks } from "@dans-framework/shared-store";
+import { getField, type MetadataState } from "./metadataSlice";
 import type { TextFieldType, DateFieldType, DateRangeFieldType, RadioFieldType, CheckFieldType, DrawMapFieldType, AutocompleteFieldType, InputField } from "../../types/MetadataFields";
 
 // Lazy load the Draw map components, as it's quite large
@@ -141,6 +141,7 @@ const SingleField = memo(({ field, groupName, groupIndex, sx }: SingleFieldProps
 
 const GroupedField = ({ field }: GroupedFieldProps) => {
   const { i18n } = useTranslation();
+  const { useAppSelector } = useStoreHooks<MetadataState>();
   const fieldValue = useAppSelector(getField(field.name));
 
   return (

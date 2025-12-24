@@ -1,5 +1,4 @@
 import * as tus from "tus-js-client";
-import { store } from "../../redux/store";
 import { setFilesSubmitStatus } from "./submitSlice";
 import { setFileMeta } from "../files/filesSlice";
 import { SelectedFile } from "../../types/Files";
@@ -14,6 +13,7 @@ const manualError = async (
   fileId: string,
   error: any,
   type: string,
+  dispatch: any,
 ) => {
   console.error("Error", error);
   // Since this process is not connected to Redux, we manually
@@ -26,7 +26,7 @@ const manualError = async (
     variant: "customError",
     ticket: ticket,
   });
-  store.dispatch(
+  dispatch(
     setFilesSubmitStatus({
       id: fileId,
       status: "error",
@@ -38,10 +38,11 @@ const manualError = async (
 export const uploadFile = async (
   file: SelectedFile,
   sessionId: string,
+  dispatch: any,
   target?: EndpointTarget,
 ) => {
   // set file status to submitting, to add it to actual upload queue, while we create the blob
-  store.dispatch(
+  dispatch(
     setFilesSubmitStatus({
       id: file.id,
       progress: 0,
@@ -53,7 +54,7 @@ export const uploadFile = async (
   const fetchedFile = await fetch(file.url);
 
   if (!fetchedFile.ok) {
-    store.dispatch(
+    dispatch(
       setFilesSubmitStatus({
         id: file.id,
         status: "error",
@@ -85,7 +86,7 @@ export const uploadFile = async (
     },
     removeFingerprintOnSuccess: true,
     onError: (error) => {
-      manualError(file.name, file.id, error, "onError function in TUS upload");
+      manualError(file.name, file.id, error, "onError function in TUS upload", dispatch);
     },
     onShouldRetry: (error, retryAttempt, _options) => {
       console.error("Error", error);
@@ -114,9 +115,8 @@ export const uploadFile = async (
       return true;
     },
     onProgress: (bytesUploaded, bytesTotal) => {
-      var percentage =
-        parseFloat(((bytesUploaded / bytesTotal) * 100).toFixed(0)) || 0;
-      store.dispatch(
+      var percentage = parseFloat(((bytesUploaded / bytesTotal) * 100).toFixed(0)) || 0;
+      dispatch(
         setFilesSubmitStatus({
           id: file.id,
           progress: percentage,
@@ -133,7 +133,7 @@ export const uploadFile = async (
       // Due to incomplete Python TUS implementation,
       // we do an extra api PATCH call to the server to signal succesful upload.
       // Response might take a while, so lets display a spinner that informs the user
-      store.dispatch(
+      dispatch(
         setFilesSubmitStatus({
           id: file.id,
           status: "finalising",
@@ -157,14 +157,14 @@ export const uploadFile = async (
         // check if patch result is ok
         if (response.status === 200) {
           // set file status to success
-          store.dispatch(
+          dispatch(
             setFileMeta({
               id: file.id,
               type: "submittedFile",
               value: true,
             }),
           );
-          store.dispatch(
+          dispatch(
             setFilesSubmitStatus({
               id: file.id,
               status: "success",
@@ -185,6 +185,7 @@ export const uploadFile = async (
             file.id,
             "PATCH call failed",
             `PATCH call gave an invalid response ${response.status}`,
+            dispatch,
           );
         }
       } catch (error) {
@@ -194,6 +195,7 @@ export const uploadFile = async (
           file.id,
           error,
           "error dispatching PATCH call to inbox/files/{sessionID}/{tusID}",
+          dispatch,
         );
       }
     },

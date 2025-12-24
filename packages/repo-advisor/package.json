@@ -6,6 +6,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@dans-framework/deposit": "workspace:*",
+    "@dans-framework/shared-store": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@mui/material": "^7.3.6",
     "@reduxjs/toolkit": "^2.11.2",

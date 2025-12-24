@@ -5,6 +5,7 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
+    "@dans-framework/shared-store": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",

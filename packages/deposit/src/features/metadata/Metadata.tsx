@@ -7,14 +7,15 @@ import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { SingleField, GroupedField } from "./MetadataFields";
 import { StatusIcon } from "../generic/Icons";
-import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { getSections, getForm } from "./metadataSlice";
-import { getOpenPanel, setOpenPanel } from "../../deposit/depositSlice";
+import { useStoreHooks } from "@dans-framework/shared-store";
+import { getSections, getForm, type MetadataState } from "./metadataSlice";
+import { getOpenPanel, setOpenPanel, type DepositState } from "../../deposit/depositSlice";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 import type { Field } from "../../types/MetadataFields";
 
 const Form = () => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<MetadataState & DepositState>();
   const dispatch = useAppDispatch();
   const formData = useAppSelector(getForm);
   const openPanel = useAppSelector(getOpenPanel);

@@ -184,8 +184,5 @@ export const validateKeyApi = createApi({
 });
 
 export const { useValidateKeyQuery, useValidateAllKeysQuery } = validateKeyApi;
-
 export const { useFetchUserProfileQuery, useSaveUserDataMutation } = userApi;
-
-export const { useFetchUserSubmissionsQuery, useDeleteSubmissionMutation } =
-  userSubmissionsApi;
+export const { useFetchUserSubmissionsQuery, useDeleteSubmissionMutation } = userSubmissionsApi;

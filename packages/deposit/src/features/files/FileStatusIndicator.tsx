@@ -3,7 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { FileItemProps } from "../../types/Files";
-import { useAppDispatch } from "../../redux/hooks";
+import { useStoreHooks } from "@dans-framework/shared-store";
 import { dansUtilityApi, useCheckTypeQuery } from "./api/dansUtility";
 import { LightTooltip } from "../generic/Tooltip";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -21,6 +21,7 @@ const FileStatusIndicator = ({
   file,
   convertFiles,
 }: FileItemProps & { convertFiles: boolean }) => {
+  const { useAppDispatch } = useStoreHooks<any>();
   const dispatch = useAppDispatch();
   const { data, isError } = useCheckTypeQuery<any>(file.type);
   const { t } = useTranslation("files");

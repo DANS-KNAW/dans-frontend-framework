@@ -47,6 +47,9 @@ importers:
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@dans-framework/wrapper':
+        specifier: workspace:*
+        version: link:../../packages/wrapper
       '@fontsource/roboto':
         specifier: ^5.2.9
         version: 5.2.9
@@ -132,6 +135,9 @@ importers:
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@dans-framework/wrapper':
+        specifier: workspace:*
+        version: link:../../packages/wrapper
       '@fontsource/roboto':
         specifier: ^5.2.9
         version: 5.2.9
@@ -214,6 +220,9 @@ importers:
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@dans-framework/wrapper':
+        specifier: workspace:*
+        version: link:../../packages/wrapper
       '@fontsource/roboto':
         specifier: ^5.2.9
         version: 5.2.9
@@ -284,6 +293,9 @@ importers:
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@dans-framework/wrapper':
+        specifier: workspace:*
+        version: link:../../packages/wrapper
       '@fontsource/roboto':
         specifier: ^5.2.9
         version: 5.2.9
@@ -363,6 +375,9 @@ importers:
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@dans-framework/wrapper':
+        specifier: workspace:*
+        version: link:../../packages/wrapper
       '@fontsource/roboto':
         specifier: ^5.2.9
         version: 5.2.9
@@ -448,6 +463,9 @@ importers:
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@dans-framework/wrapper':
+        specifier: workspace:*
+        version: link:../../packages/wrapper
       '@fontsource/roboto':
         specifier: ^5.2.9
         version: 5.2.9
@@ -524,6 +542,9 @@ importers:
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@dans-framework/wrapper':
+        specifier: workspace:*
+        version: link:../../packages/wrapper
       '@fontsource/roboto':
         specifier: ^5.2.9
         version: 5.2.9
@@ -603,6 +624,9 @@ importers:
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@dans-framework/wrapper':
+        specifier: workspace:*
+        version: link:../../packages/wrapper
       '@fontsource/roboto':
         specifier: ^5.2.9
         version: 5.2.9
@@ -679,6 +703,9 @@ importers:
 
   packages/deposit:
     dependencies:
+      '@dans-framework/shared-store':
+        specifier: workspace:*
+        version: link:../shared-store
       '@dans-framework/user-auth':
         specifier: workspace:*
         version: link:../user-auth
@@ -791,9 +818,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.7)
-      '@types/react-map-gl':
-        specifier: ^6.1.7
-        version: 6.1.7
       '@types/react-transition-group':
         specifier: ^4.4.12
         version: 4.4.12(@types/react@19.2.7)
@@ -803,6 +827,9 @@ importers:
       '@dans-framework/deposit':
         specifier: workspace:*
         version: link:../deposit
+      '@dans-framework/shared-store':
+        specifier: workspace:*
+        version: link:../shared-store
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../utils
@@ -1042,6 +1069,9 @@ importers:
       '@dans-framework/deposit':
         specifier: workspace:*
         version: link:../deposit
+      '@dans-framework/shared-store':
+        specifier: workspace:*
+        version: link:../shared-store
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../utils
@@ -1095,6 +1125,22 @@ importers:
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.7)
 
+  packages/shared-store:
+    dependencies:
+      '@reduxjs/toolkit':
+        specifier: ^2.8.2
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.2.7)(react@19.2.3)(redux@5.0.1))(react@19.2.3)
+      react:
+        specifier: ^19.1.0
+        version: 19.2.3
+      react-redux:
+        specifier: ^9.2.0
+        version: 9.2.0(@types/react@19.2.7)(react@19.2.3)(redux@5.0.1)
+    devDependencies:
+      '@types/react':
+        specifier: ^19.1.0
+        version: 19.2.7
+
   packages/support-drawer:
     dependencies:
       '@headlessui/react':
@@ -1141,6 +1187,9 @@ importers:
 
   packages/user-auth:
     dependencies:
+      '@dans-framework/shared-store':
+        specifier: workspace:*
+        version: link:../shared-store
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../utils
@@ -1293,6 +1342,40 @@ importers:
       oidc-client-ts:
         specifier: ^3.4.1
         version: 3.4.1
+
+  packages/wrapper:
+    dependencies:
+      '@dans-framework/deposit':
+        specifier: workspace:*
+        version: link:../deposit
+      '@dans-framework/file-mapper':
+        specifier: workspace:*
+        version: link:../file-mapper
+      '@dans-framework/repo-advisor':
+        specifier: workspace:*
+        version: link:../repo-advisor
+      '@dans-framework/shared-store':
+        specifier: workspace:*
+        version: link:../shared-store
+      '@dans-framework/user-auth':
+        specifier: workspace:*
+        version: link:../user-auth
+      '@dans-framework/utils':
+        specifier: workspace:*
+        version: link:../utils
+      '@reduxjs/toolkit':
+        specifier: ^2.8.2
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.2.7)(react@19.2.3)(redux@5.0.1))(react@19.2.3)
+      react:
+        specifier: ^19.2.3
+        version: 19.2.3
+      react-redux:
+        specifier: ^9.2.0
+        version: 9.2.0(@types/react@19.2.7)(react@19.2.3)(redux@5.0.1)
+    devDependencies:
+      '@types/react':
+        specifier: ^19.2.7
+        version: 19.2.7
 
 packages:
 
@@ -2392,9 +2475,6 @@ packages:
   '@types/lodash@4.17.21':
     resolution: {integrity: sha512-FOvQ0YPD5NOfPgMzJihoT+Za5pdkDJWcbpuj1DjaKZIr/gxodQjY/uWEFlTNqW2ugXHUiL8lRQgw63dzKHZdeQ==}
 
-  '@types/mapbox-gl@3.4.1':
-    resolution: {integrity: sha512-NsGKKtgW93B+UaLPti6B7NwlxYlES5DpV5Gzj9F75rK5ALKsqSk15CiEHbOnTr09RGbr6ZYiCdI+59NNNcAImg==}
-
   '@types/mapbox__mapbox-gl-draw@1.4.9':
     resolution: {integrity: sha512-8OtRdlSFbF/NDKg3CYQZPbI41JUwRPHIOB1f3fc3AG0Wb7CecSuuUG5EG+IsCmTHyzF6cyKpcjR/jcv62U3w6w==}
 
@@ -2433,9 +2513,6 @@ packages:
   '@types/react-helmet@6.1.11':
     resolution: {integrity: sha512-0QcdGLddTERotCXo3VFlUSWO3ztraw8nZ6e3zJSgG7apwV5xt+pJUS8ewPBqT4NYB1optGLprNQzFleIY84u/g==}
 
-  '@types/react-map-gl@6.1.7':
-    resolution: {integrity: sha512-szkfkWd3FbySDkxyn0MDj9yzD8XYk+RIi4od6sGb3lVHNBGcW20G2v2vcq2N5k18UYAdqAoKGSYuHkGV4JOCrA==}
-
   '@types/react-transition-group@4.4.12':
     resolution: {integrity: sha512-8TV6R3h2j7a91c+1DXdJi3Syo69zzIZbz7Lg5tORM5LEJG7X/E6a1V3drRyBRZq7/utz7A+c4OgYLiLcYGHG6w==}
     peerDependencies:
@@ -2458,9 +2535,6 @@ packages:
 
   '@types/use-sync-external-store@0.0.6':
     resolution: {integrity: sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==}
-
-  '@types/viewport-mercator-project@6.1.6':
-    resolution: {integrity: sha512-uWrbqhRXFeiT6CAvRjf0BkQKRkKED+ofrPhglKpUktQML3463dEPiA4iwe7cZQs6m49Zo/g03rL7ChMLiE5Z8w==}
 
   '@types/yargs-parser@21.0.3':
     resolution: {integrity: sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==}
@@ -5139,10 +5213,6 @@ snapshots:
 
   '@types/lodash@4.17.21': {}
 
-  '@types/mapbox-gl@3.4.1':
-    dependencies:
-      '@types/geojson': 7946.0.16
-
   '@types/mapbox__mapbox-gl-draw@1.4.9':
     dependencies:
       '@types/geojson': 7946.0.16
@@ -5178,13 +5248,6 @@ snapshots:
     dependencies:
       '@types/react': 19.2.7
 
-  '@types/react-map-gl@6.1.7':
-    dependencies:
-      '@types/geojson': 7946.0.16
-      '@types/mapbox-gl': 3.4.1
-      '@types/react': 19.2.7
-      '@types/viewport-mercator-project': 6.1.6
-
   '@types/react-transition-group@4.4.12(@types/react@19.2.7)':
     dependencies:
       '@types/react': 19.2.7
@@ -5208,10 +5271,6 @@ snapshots:
       '@types/geojson': 7946.0.16
 
   '@types/use-sync-external-store@0.0.6': {}
-
-  '@types/viewport-mercator-project@6.1.6':
-    dependencies:
-      gl-matrix: 3.4.4
 
   '@types/yargs-parser@21.0.3': {}
 

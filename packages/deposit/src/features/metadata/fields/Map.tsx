@@ -16,9 +16,9 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "react-i18next";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { useStoreHooks } from "@dans-framework/shared-store";
 import { StatusIcon } from "../../generic/Icons";
-import { setField, getField } from "../metadataSlice";
+import { setField, getField, type MetadataState } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
 import type {
   OptionsType,
@@ -28,7 +28,7 @@ import type {
 } from "../../../types/MetadataFields";
 import type { DrawMapFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
-import { getFormDisabled } from "../../../deposit/depositSlice";
+import { getFormDisabled, type DepositState } from "../../../deposit/depositSlice";
 import GLMap, {
   ScaleControl,
   NavigationControl,
@@ -92,6 +92,7 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
  */
 
 const DrawMap = ({ field, groupName, groupIndex }: DrawMapFieldProps) => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<MetadataState & DepositState>();
   const dispatch = useAppDispatch();
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
   const status = getFieldStatus(fieldValue, field);

@@ -23,14 +23,16 @@ import {
   getFileError,
   resetFileError,
   resetFileData,
+  type FileMapperState,
 } from "./fileMapperSlice";
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { StepWrap, maxRows, saves } from "./Steps";
+import { useStoreHooks } from "@dans-framework/shared-store";
 
 const SelectFile = () => {
   const { t } = useTranslation("steps");
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("md"));
+  const { useAppSelector, useAppDispatch } = useStoreHooks<FileMapperState>();
   const dispatch = useAppDispatch();
   const file = useAppSelector(getFile);
   const savedMap = useAppSelector(getSavedMap);

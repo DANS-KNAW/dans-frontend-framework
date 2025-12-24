@@ -16,6 +16,7 @@
     "@dans-framework/theme": "workspace:*",
     "@dans-framework/user-auth": "workspace:*",
     "@dans-framework/utils": "workspace:*",
+    "@dans-framework/wrapper": "workspace:*",
     "@fontsource/roboto": "^5.2.9",
     "@mui/material": "^7.3.6",
     "i18next": "^25.7.3",

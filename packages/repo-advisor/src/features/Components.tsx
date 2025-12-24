@@ -16,8 +16,8 @@ import {
   type QueryReturnType,
 } from "@dans-framework/deposit";
 import { useTranslation } from "react-i18next";
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
-import { getRor, getNarcis, setRor, setNarcis } from "./repoAdvisorSlice";
+import { useStoreHooks } from "@dans-framework/shared-store";
+import { getRor, getNarcis, setRor, setNarcis, type RepoAdvisorState } from "./repoAdvisorSlice";
 import type { AutocompleteProps } from "../types";
 
 type Option = {
@@ -59,6 +59,7 @@ export const SelectField = ({
 // Derived from the API field in the Deposit package
 export const RorField = () => {
   const { t } = useTranslation("steps");
+  const { useAppSelector, useAppDispatch } = useStoreHooks<RepoAdvisorState>();
   const dispatch = useAppDispatch();
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];
@@ -86,6 +87,7 @@ export const RorField = () => {
 
 export const NarcisField = () => {
   const { t, i18n } = useTranslation("steps");
+  const { useAppSelector, useAppDispatch } = useStoreHooks<RepoAdvisorState>();
   const dispatch = useAppDispatch();
   const [inputValue, setInputValue] = useState<string>("");
   const debouncedInputValue = useDebounce(inputValue, 500)[0];

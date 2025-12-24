@@ -7,10 +7,8 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import type { ReactNode } from "react";
 import { I18nextProvider } from "react-i18next";
-import { Provider as ReduxProvider } from "react-redux";
 import i18nProvider from "../languages/i18n";
 import type { AuthProviderConfig } from "../types";
-import { store } from "../redux/store";
 import { LoginPage } from "./Login";
 import { WebStorageStateStore } from "oidc-client-ts";
 
@@ -27,11 +25,9 @@ export const AuthWrapper = ({
     ...authProvider, // and override with the provided config
   };
   return (
-    <ReduxProvider store={store}>
-      <AuthProvider {...authProviderConfig}>
-        <I18nextProvider i18n={i18nProvider}>{children}</I18nextProvider>
-      </AuthProvider>
-    </ReduxProvider>
+    <AuthProvider {...authProviderConfig}>
+      <I18nextProvider i18n={i18nProvider}>{children}</I18nextProvider>
+    </AuthProvider>
   );
 };
 

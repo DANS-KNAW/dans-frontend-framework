@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../../redux/store";
 import type {
   ReduxFileSubmitActions,
   SubmittedFile,
@@ -11,6 +10,8 @@ const initialState: InitialStateType = {
   metadataStatus: "",
   submittedFiles: [],
 };
+
+export type SubmitState = { submit: InitialStateType };
 
 export const submitSlice = createSlice({
   name: "submit",
@@ -57,11 +58,11 @@ export const {
 } = submitSlice.actions;
 
 // Select values from state
-export const getMetadataSubmitStatus = (state: RootState) =>
+export const getMetadataSubmitStatus = (state: SubmitState) =>
   state.submit.metadataStatus;
-export const getFilesSubmitStatus = (state: RootState) =>
+export const getFilesSubmitStatus = (state: SubmitState) =>
   state.submit.submittedFiles;
-export const getSingleFileSubmitStatus = (id: string) => (state: RootState) =>
+export const getSingleFileSubmitStatus = (id: string) => (state: SubmitState) =>
   state.submit.submittedFiles.find((file: SubmittedFile) => file.id === id);
 
 export default submitSlice.reducer;

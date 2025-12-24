@@ -1,0 +1,22 @@
+{
+  "name": "@dans-framework/wrapper",
+  "main": "lib/index.tsx",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "dependencies": {
+    "@dans-framework/shared-store": "workspace:*",
+    "@dans-framework/deposit": "workspace:*",
+    "@dans-framework/user-auth": "workspace:*",
+    "@dans-framework/utils": "workspace:*",
+    "@dans-framework/repo-advisor": "workspace:*",
+    "@dans-framework/file-mapper": "workspace:*",
+    "@reduxjs/toolkit": "^2.8.2",
+    "react": "^19.2.3",
+    "react-redux": "^9.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7"
+  }
+}

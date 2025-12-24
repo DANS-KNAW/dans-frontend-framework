@@ -1,8 +1,7 @@
-import { useEffect /*type Dispatch, type SetStateAction*/ } from "react";
+import { useEffect } from "react";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-// import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Stepper from "@mui/material/Stepper";
@@ -20,19 +19,18 @@ import {
   getMapping,
   getFileError,
   reset,
+  type FileMapperState,
 } from "./fileMapperSlice";
-// import { useSubmitMapMutation } from './fileMapperApi';
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
-// import CircularProgress from '@mui/material/CircularProgress';
+import { useStoreHooks } from "@dans-framework/shared-store";
 import { useSiteTitle, setSiteTitle } from "@dans-framework/utils/sitetitle";
 import { lookupLanguageString } from "@dans-framework/utils/language";
 import type { Page } from "@dans-framework/pages";
 import {
   addFiles,
   initForm,
-  depositStore,
   type FormConfig,
   type FileLocation,
+  type DepositState,
 } from "@dans-framework/deposit";
 import { steps } from "./Steps";
 import { v4 as uuidv4 } from "uuid";
@@ -48,6 +46,7 @@ const FileMapper = ({
   page: Page;
   depositPageSlug?: string;
 }) => {
+  const { useAppSelector, useAppDispatch } = useStoreHooks<FileMapperState & DepositState>();
   const dispatch = useAppDispatch();
   const siteTitle = useSiteTitle();
   const { t, i18n } = useTranslation("steps");
@@ -102,9 +101,9 @@ const FileMapper = ({
       };
 
       // must initialize the form here, otherwise files will get overwritten
-      config.form && depositStore.dispatch(initForm(config.form));
+      config.form && dispatch(initForm(config.form));
       // add files to initialized form
-      depositStore.dispatch(addFiles([serializedFile]));
+      dispatch(addFiles([serializedFile]));
       // navigate to form
       depositPageSlug && navigate(depositPageSlug);
       // reset file mapper

@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../../redux/store";
 import type {
   SetFieldValuePayload,
   SetFieldMultiApiPayload,
@@ -24,6 +23,8 @@ import {
   getValidField,
 } from "./metadataHelpers";
 import { v4 as uuidv4 } from "uuid";
+
+export type MetadataState = { metadata: InitialStateType };
 
 const initialState: InitialStateType = {
   id: '',
@@ -279,9 +280,9 @@ export const {
 } = metadataSlice.actions;
 
 // Select values from state
-export const getSessionId = (state: RootState) => state.metadata.id;
-export const getForm = (state: RootState) => state.metadata.form;
-export const getMetadataStatus = (state: RootState) => {
+export const getSessionId = (state: MetadataState) => state.metadata.id;
+export const getForm = (state: MetadataState) => state.metadata.form;
+export const getMetadataStatus = (state: MetadataState) => {
   const overallStatus = Object.values(state.metadata.sections).some(s => s.status === "error") 
     ? "error" 
     : Object.values(state.metadata.sections).some(s => s.status === "warning") 
@@ -289,16 +290,16 @@ export const getMetadataStatus = (state: RootState) => {
       : "success";
   return overallStatus;
 };
-export const getFieldValues = (state: RootState) => state.metadata.fields;
-export const getField = (name: string, groupName?: string, groupIndex?: number) => (state: RootState) => {
+export const getFieldValues = (state: MetadataState) => state.metadata.fields;
+export const getField = (name: string, groupName?: string, groupIndex?: number) => (state: MetadataState) => {
   if (groupName !== undefined && groupIndex !== undefined) {
     return state.metadata.fields[groupName]?.value[groupIndex][name];
   }
   return state.metadata.fields[name];
 }
-export const getSections = (state: RootState) => state.metadata.sections;
-export const getTouchedStatus = (state: RootState) => state.metadata.touched;
+export const getSections = (state: MetadataState) => state.metadata.sections;
+export const getTouchedStatus = (state: MetadataState) => state.metadata.touched;
 
-export const getAll = (state: RootState) => state.metadata;
+export const getAll = (state: MetadataState) => state.metadata;
 
 export default metadataSlice.reducer;

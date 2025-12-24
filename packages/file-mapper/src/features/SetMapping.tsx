@@ -26,15 +26,17 @@ import {
   setFileError,
   setFileData,
   getFileData,
+  type FileMapperState,
 } from "./fileMapperSlice";
 import { useFetchDarwinTermsQuery } from "./fileMapperApi";
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { useStoreHooks } from "@dans-framework/shared-store";
 import { StepWrap, maxRows } from "./Steps";
 import LaunchIcon from "@mui/icons-material/Launch";
 import InputAdornment from "@mui/material/InputAdornment";
 
 export const SetMapping = () => {
   const { t } = useTranslation("steps");
+  const { useAppSelector, useAppDispatch } = useStoreHooks<FileMapperState>();
   const dispatch = useAppDispatch();
   const file = useAppSelector(getFile);
   const fileData = useAppSelector(getFileData);
@@ -121,6 +123,7 @@ export default SetMapping;
 
 const Row = ({ rowKey, row }: { rowKey: string; row: string }) => {
   const { t } = useTranslation("steps");
+  const { useAppSelector, useAppDispatch } = useStoreHooks<FileMapperState>();
   const [inputValue, setInputValue] = useState("");
   const mapping = useAppSelector(getMapping);
   const dispatch = useAppDispatch();

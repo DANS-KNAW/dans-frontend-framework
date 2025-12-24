@@ -56,8 +56,8 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import { setFormAction } from "./userSlice";
-import { useAppDispatch } from "../redux/hooks";
+import { setFormAction, type UserState } from "./userSlice";
+import { useStoreHooks } from "@dans-framework/shared-store";
 
 const depositStatus: DepositStatus = {
   empty: ["preparing"],
@@ -75,6 +75,7 @@ export const UserSubmissions = ({
 }) => {
   const { t } = useTranslation("user");
   const siteTitle = useSiteTitle();
+  const { useAppDispatch } = useStoreHooks<UserState>();
   const dispatch = useAppDispatch();
 
   // Fetch the users submitted/saved forms, every 10 sec, to update submission status
@@ -171,6 +172,7 @@ const SubmissionList = ({
 }) => {
   const { t, i18n } = useTranslation("user");
   const navigate = useNavigate();
+  const { useAppDispatch } = useStoreHooks<UserState>();
   const dispatch = useAppDispatch();
   const auth = useAuth();
   const [toDelete, setToDelete] = useState<string>("");
@@ -570,6 +572,7 @@ const ViewAction = ({
   status: TargetOutput[];
   legacy?: boolean;
 }) => {
+  const { useAppDispatch } = useStoreHooks<UserState>();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation("user");

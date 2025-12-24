@@ -7,8 +7,8 @@ import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import FormGroup from "@mui/material/FormGroup";
 import Checkbox from "@mui/material/Checkbox";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { setField, getField } from "../metadataSlice";
+import { useStoreHooks } from "@dans-framework/shared-store";
+import { setField, getField, type MetadataState } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
 import { StatusIcon } from "../../generic/Icons";
 import { lookupLanguageString } from "@dans-framework/utils";
@@ -17,10 +17,11 @@ import type {
   CheckFieldProps,
 } from "../../../types/MetadataProps";
 import { useTranslation } from "react-i18next";
-import { getFormDisabled } from "../../../deposit/depositSlice";
+import { getFormDisabled, type DepositState } from "../../../deposit/depositSlice";
 
 // List of radio button options. First value of the options is selected by default, so no need for status checking.
 export const RadioField = ({ field, groupName, groupIndex }: RadioFieldProps) => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<MetadataState & DepositState>();
   const dispatch = useAppDispatch();
   const { i18n } = useTranslation();
   const formDisabled = useAppSelector(getFormDisabled);
@@ -85,6 +86,7 @@ export const RadioField = ({ field, groupName, groupIndex }: RadioFieldProps) =>
 
 // For a list of checkboxes, we keep the selected values in an array.
 export const CheckField = ({ field, groupName, groupIndex }: CheckFieldProps) => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<MetadataState & DepositState>();
   const dispatch = useAppDispatch();
   const { i18n } = useTranslation();
   const formDisabled = useAppSelector(getFormDisabled);

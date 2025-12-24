@@ -17,8 +17,8 @@ import Collapse from "@mui/material/Collapse";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import IconButton from "@mui/material/IconButton";
 import { useTranslation, Trans } from "react-i18next";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { getFiles, addFiles } from "./filesSlice";
+import { useStoreHooks } from "@dans-framework/shared-store";
+import { getFiles, addFiles, type FilesState } from "./filesSlice";
 import type {
   SelectedFile,
   FileLocation,
@@ -28,10 +28,11 @@ import type {
 import { v4 as uuidv4 } from "uuid";
 import { useFetchSimpleListQuery } from "./api/dansFormats";
 import { enqueueSnackbar } from "notistack";
-import { getFormDisabled, getData } from "../../deposit/depositSlice";
-import { getSessionId, setTouched } from "../metadata/metadataSlice";
+import { getFormDisabled, getData, type DepositState } from "../../deposit/depositSlice";
+import { getSessionId, type MetadataState, setTouched } from "../metadata/metadataSlice";
 
 const FilesUpload = () => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<FilesState & DepositState>();
   const dispatch = useAppDispatch();
   const currentFiles = useAppSelector(getFiles);
   const { t } = useTranslation("files");
@@ -236,6 +237,7 @@ const FileAlert = ({
   files: SelectedFile[] | readonly RejectedFiles[];
   description?: string;
 }) => {
+  const { useAppSelector } = useStoreHooks<FilesState & DepositState & MetadataState>();
   const [open, setOpen] = useState(true);
   const sessionId = useAppSelector(getSessionId);
 

@@ -1,15 +1,16 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../redux/store";
 import type { OptionsType, FormConfig } from "@dans-framework/deposit";
 
-const initialState: {
+type RepoAdvisorStateType = {
   activeStep: number;
   ror: OptionsType | null;
   narcis: OptionsType | null;
   depositType: string;
   fileType: string;
   repo: FormConfig | undefined;
-} = {
+};  
+
+const initialState: RepoAdvisorStateType = {
   activeStep: 0,
   ror: null,
   narcis: null,
@@ -17,6 +18,8 @@ const initialState: {
   fileType: "",
   repo: undefined,
 };
+
+export type RepoAdvisorState = { repoAdvisor: RepoAdvisorStateType };
 
 export const repoAdvisorSlice = createSlice({
   name: "repoAdvisor",
@@ -52,12 +55,12 @@ export const {
   setRepo,
 } = repoAdvisorSlice.actions;
 
-export const getActiveStep = (state: RootState) => state.repoAdvisor.activeStep;
-export const getRor = (state: RootState) => state.repoAdvisor.ror;
-export const getNarcis = (state: RootState) => state.repoAdvisor.narcis;
-export const getDepositType = (state: RootState) =>
+export const getActiveStep = (state: RepoAdvisorState) => state.repoAdvisor.activeStep;
+export const getRor = (state: RepoAdvisorState) => state.repoAdvisor.ror;
+export const getNarcis = (state: RepoAdvisorState) => state.repoAdvisor.narcis;
+export const getDepositType = (state: RepoAdvisorState) =>
   state.repoAdvisor.depositType;
-export const getFileType = (state: RootState) => state.repoAdvisor.fileType;
-export const getRepo = (state: RootState) => state.repoAdvisor.repo;
+export const getFileType = (state: RepoAdvisorState) => state.repoAdvisor.fileType;
+export const getRepo = (state: RepoAdvisorState) => state.repoAdvisor.repo;
 
 export default repoAdvisorSlice.reducer;

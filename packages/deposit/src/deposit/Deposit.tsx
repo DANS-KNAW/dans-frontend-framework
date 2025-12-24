@@ -13,7 +13,23 @@ import Collapse from "@mui/material/Collapse";
 import Paper from "@mui/material/Paper";
 import type { TabPanelProps, TabHeaderProps } from "../types/Deposit";
 import type { FormConfig } from "../types/Metadata";
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { useStoreHooks } from "@dans-framework/shared-store";
+import { getSectionStatus } from "../features/metadata/metadataHelpers";
+import {
+  resetFilesSubmitStatus,
+  resetMetadataSubmitStatus,
+  getMetadataSubmitStatus,
+  getFilesSubmitStatus,
+  SubmitState,
+} from "../features/submit/submitSlice";
+import { getFiles, resetFiles, addFiles, FilesState } from "../features/files/filesSlice";
+import { StatusIcon } from "../features/generic/Icons";
+import Submit from "../features/submit/Submit";
+import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import { Link as RouterLink } from "react-router-dom";
 import {
   getSessionId,
   initForm,
@@ -22,23 +38,9 @@ import {
   getForm,
   setExternalFormData,
   updateAllSections,
+  MetadataState,
 } from "../features/metadata/metadataSlice";
-import { getSectionStatus } from "../features/metadata/metadataHelpers";
-import {
-  resetFilesSubmitStatus,
-  resetMetadataSubmitStatus,
-  getMetadataSubmitStatus,
-  getFilesSubmitStatus,
-} from "../features/submit/submitSlice";
-import { getFiles, resetFiles, addFiles } from "../features/files/filesSlice";
-import { StatusIcon } from "../features/generic/Icons";
-import Submit from "../features/submit/Submit";
-import { useTranslation } from "react-i18next";
-import { motion, AnimatePresence } from "framer-motion";
-import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
-import { Link as RouterLink } from "react-router-dom";
-import { setData, setFormDisabled, getOpenTab, setOpenTab, getData } from "./depositSlice";
+import { setData, setFormDisabled, getOpenTab, setOpenTab, getData, type DepositState } from "./depositSlice";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import {
@@ -51,15 +53,17 @@ import { useAuth } from "react-oidc-context";
 import { useFetchSavedMetadataQuery, useFetchExternalMetadataMutation } from "../features/submit/submitApi";
 import {
   useValidateAllKeysQuery,
-  getFormActions,
-  clearFormActions,
+  getFormAction,
+  resetFormActions,
   useFetchUserProfileQuery, 
   useSaveUserDataMutation,
+  type UserState,
 } from "@dans-framework/user-auth";
 import { v4 as uuidv4 } from "uuid";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<DepositState & MetadataState & UserState>();
   const dispatch = useAppDispatch();
   const auth = useAuth();
   const sessionId = useAppSelector(getSessionId);
@@ -67,7 +71,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
   const openTab = useAppSelector(getOpenTab);
   const { t, i18n } = useTranslation("generic");
   const siteTitle = useSiteTitle();
-  const formAction = getFormActions();
+  const formAction = useAppSelector(getFormAction);
   const formTouched = useAppSelector(getTouchedStatus);
   const currentConfig = useAppSelector(getData);
   const [dataMessage, setDataMessage] = useState(false);
@@ -309,6 +313,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
 // Put Tabheader into a separate component, to handle namespace loading and suspense
 const TabHeader = ({ value, handleChange }: TabHeaderProps) => {
   const { t } = useTranslation(["metadata", "files"]);
+  const { useAppSelector } = useStoreHooks<DepositState & MetadataState & FilesState>();
   const selectedFiles = useAppSelector(getFiles);
   const sections = useAppSelector(getSections);
 
@@ -353,8 +358,9 @@ const ActionMessage = ({
   setDataMessage: (arg: boolean) => void;
 }) => {
   const { t } = useTranslation("generic");
+  const { useAppDispatch, useAppSelector } = useStoreHooks<DepositState & MetadataState & SubmitState & UserState>();
   const dispatch = useAppDispatch();
-  const formAction = getFormActions();
+  const formAction = useAppSelector(getFormAction);
   const { data } = useFetchSavedMetadataQuery({ id: formAction.id }, {
     skip: !formAction.id,
   });
@@ -451,7 +457,7 @@ const ActionMessage = ({
               dispatch(resetMetadataSubmitStatus());
               dispatch(setFormDisabled(false));
               setDataMessage(false);
-              clearFormActions();
+              dispatch(resetFormActions());
             }}
             disabled={fileStatus === 'submitting'}
             color="warning"

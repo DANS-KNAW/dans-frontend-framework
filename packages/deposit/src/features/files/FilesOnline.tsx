@@ -6,10 +6,10 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { useTranslation } from "react-i18next";
-import { addFiles } from "./filesSlice";
-import { useAppSelector, useAppDispatch } from "../../redux/hooks";
+import { addFiles, type FilesState } from "./filesSlice";
 import type { FileLocation } from "../../types/Files";
 import { v4 as uuidv4 } from "uuid";
+import { useStoreHooks } from "@dans-framework/shared-store";
 
 const URLExpression =
   /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
@@ -22,6 +22,7 @@ const URLRegex = new RegExp(URLExpression);
 // Not used for now!
 
 const FilesOnline = () => {
+  const { useAppDispatch } = useStoreHooks<FilesState>();
   const dispatch = useAppDispatch();
   const [onlineFile, setOnlineFile] = useState<string>("");
   const [onlineFileError, setOnlineFileError] = useState<boolean>(false);

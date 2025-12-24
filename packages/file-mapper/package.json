@@ -6,6 +6,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@dans-framework/deposit": "workspace:*",
+    "@dans-framework/shared-store": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@e965/xlsx": "^0.20.3",
     "@mui/icons-material": "^7.3.6",

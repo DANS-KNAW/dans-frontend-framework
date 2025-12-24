@@ -3,8 +3,9 @@ import {
   getNotification,
   closeNotification,
   clearNotification,
+  type NotificationSliceState as NotificationState
 } from "./notificationSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useStoreHooks } from "@dans-framework/shared-store";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 
@@ -15,6 +16,7 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(
 );
 
 const Notification = () => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<NotificationState>();
   const notification = useAppSelector(getNotification);
   const dispatch = useAppDispatch();
 

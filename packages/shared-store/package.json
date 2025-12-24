@@ -1,0 +1,17 @@
+{
+  "name": "@dans-framework/shared-store",
+  "main": "lib/index.ts",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.8.2",
+    "react": "^19.1.0",
+    "react-redux": "^9.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0"
+  }
+}
