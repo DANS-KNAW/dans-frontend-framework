@@ -1,0 +1,26 @@
+{
+  "name": "@dans-framework/elastic",
+  "main": "lib/index.tsx",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": {
+    "@dans-framework/utils": "workspace:*",
+    "@elastic/react-search-ui": "^1.24.2",
+    "@elastic/react-search-ui-views": "^1.24.2",
+    "@elastic/search-ui": "^1.24.2",
+    "@elastic/search-ui-elasticsearch-connector": "^1.24.2",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/material": "^7.3.6",
+    "html-react-parser": "^5.2.11",
+    "i18next": "^25.7.3",
+    "i18next-resources-to-backend": "^1.2.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-i18next": "^16.5.0",
+    "react-router-dom": "^7.11.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7"
+  }
+}

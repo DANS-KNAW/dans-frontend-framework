@@ -26,6 +26,7 @@ import languages from "./config/languages";
 import authProvider from "./config/auth";
 import form from "./config/form";
 import { elasticConfig } from "./config/elasticSearch";
+import { config, sortOptions } from "./config/elasticConfig";
 import {
   FacetedWrapper,
   FacetedSearchProvider,
@@ -39,6 +40,7 @@ import SiteTitleWrapper from "./config/sitetitle-wrapper";
 import { initMatomo } from "./utils/matomo";
 import AccessibilityStatement from "./pages/accessibility-statement";
 import { AppWrapper } from "@dans-framework/wrapper";
+import { ElasticWrapper } from "@dans-framework/elastic";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -95,12 +97,7 @@ const App = () => {
                 </Container>
               </Box>
             )}
-            <FacetedWrapper
-              showIconViewLabel
-              dashboard
-              dashRoute="/"
-              resultRoute="/search"
-            />
+            <ElasticWrapper config={config} sortOptions={sortOptions} />
           </SiteTitleWrapper>
         );
       case "search":

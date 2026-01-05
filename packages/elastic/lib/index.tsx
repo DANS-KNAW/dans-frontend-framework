@@ -1,0 +1,1 @@
+export { default as ElasticWrapper } from "../src/index";
