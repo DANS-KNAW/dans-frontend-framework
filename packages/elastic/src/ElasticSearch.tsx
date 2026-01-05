@@ -14,6 +14,8 @@ import {
   Layout,
 } from "@elastic/react-search-ui-views";
 
+import CheckboxFacet from "./facets/Checkbox";
+
 export default function ElasticSearch({ sortOptions }: { sortOptions?: any[] }) {
   const { wasSearched } = useSearch();
   return (
@@ -43,23 +45,45 @@ export default function ElasticSearch({ sortOptions }: { sortOptions?: any[] }) 
               <Facet
                 field="pathways.pathway.keyword"
                 label="Pathways"
+                view={CheckboxFacet}
+                filterType="any"
               />
               <Facet
                 field="individuals.fullName.keyword"
                 label="Individuals"
+                view={CheckboxFacet}
               />
               <Facet
                 field="workflows.WorkflowState.keyword"
                 label="Workflows"
+                view={CheckboxFacet}
               />
               <Facet
                 field="subjects.keyword.keyword"
                 label="Subjects"
+                view={CheckboxFacet}
               />
-              <Facet field="related_institutions.english_name.keyword" label="Related Institutions" filterType="any" />
-              <Facet field="working_groups.title.keyword" label="Working Groups" />
-              <Facet field="interest_groups.title.keyword" label="Interest Groups" />
-              <Facet field="resource_source.keyword" label="Resource Source" />
+              <Facet 
+                field="related_institutions.english_name.keyword" 
+                label="Related Institutions" 
+                filterType="any" 
+                view={CheckboxFacet} 
+              />
+              <Facet 
+                field="working_groups.title.keyword" 
+                label="Working Groups" 
+                view={CheckboxFacet} 
+              />
+              <Facet 
+                field="interest_groups.title.keyword" 
+                label="Interest Groups" 
+                view={CheckboxFacet} 
+              />
+              <Facet 
+                field="resource_source.keyword" 
+                label="Resource Source" 
+                view={CheckboxFacet} 
+              />
             </div>
           }
           bodyContent={
