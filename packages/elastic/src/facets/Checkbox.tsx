@@ -8,18 +8,18 @@ import FacetContainer from "../ui-components/FacetContainer";
 import { type FacetViewProps } from "@elastic/react-search-ui-views";
 import { useState, useEffect } from "react";
 
-const CheckboxFacet: React.FC<FacetViewProps> = ({ 
-  label, 
-  onMoreClick, 
+function CheckboxFacet({
+  label,
+  onMoreClick,
   showMore,
-  onRemove, 
-  onSelect, 
+  onRemove,
+  onSelect,
   options,
   showSearch,
   onSearch,
   ...restProps
-}) => {
-  console.log(restProps)
+}: FacetViewProps) {
+  console.log(restProps);
 
   const [searchTerm, setSearchTerm] = useState("");
 

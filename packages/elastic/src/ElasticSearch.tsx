@@ -93,6 +93,7 @@ function ViewSelector({ type, facets, sortOptions }: { type: string; facets: any
               label={lookupLanguageString(config.label, i18n.language)}
               view={FACET_VIEW_MAP[config.display]}
               isFilterable={true}
+              show={config.display === "list" ? 10 : 100}
               {...(config.filterType && { filterType: config.filterType })}
             />
           ))

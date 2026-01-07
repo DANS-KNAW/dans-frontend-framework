@@ -67,7 +67,7 @@ export const config = {
           en: "Workflow State", 
           nl: "Workflow Status" 
         },
-        display: "list",
+        display: "piechart",
       },
       "subjects.keyword.keyword": { 
         type: "value",
@@ -75,7 +75,7 @@ export const config = {
           en: "Subjects", 
           nl: "Onderwerpen" 
         },
-        display: "list",
+        display: "piechart",
       },
       "related_institutions.english_name.keyword": { 
         type: "value",
