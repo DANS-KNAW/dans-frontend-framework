@@ -26,6 +26,7 @@ import { errorLogger } from "@dans-framework/utils/error";
 import { userApi, userSubmissionsApi, validateKeyApi, userReducer } from "@dans-framework/user-auth";
 import { fileMapperReducer, darwinCoreApi, submitMappingApi } from "@dans-framework/file-mapper";
 import { repoAdvisorReducer, repoAdvisorApi } from "@dans-framework/repo-advisor";
+import { elasticReducer } from "@dans-framework/elastic";
 
 
 export const store = configureStore({
@@ -64,6 +65,8 @@ export const store = configureStore({
     // repo-advisor related reducers
     repoAdvisor: repoAdvisorReducer,
     [repoAdvisorApi.reducerPath]: repoAdvisorApi.reducer,
+    // elastic related reducers
+    elastic: elasticReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()

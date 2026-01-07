@@ -827,6 +827,9 @@ importers:
 
   packages/elastic:
     dependencies:
+      '@dans-framework/shared-store':
+        specifier: workspace:*
+        version: link:../shared-store
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../utils
@@ -1400,6 +1403,9 @@ importers:
       '@dans-framework/deposit':
         specifier: workspace:*
         version: link:../deposit
+      '@dans-framework/elastic':
+        specifier: workspace:*
+        version: link:../elastic
       '@dans-framework/file-mapper':
         specifier: workspace:*
         version: link:../file-mapper

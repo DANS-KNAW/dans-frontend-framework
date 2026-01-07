@@ -9,6 +9,8 @@ const initialState: NotificationState = {
   open: false,
 };
 
+export type NotificationSliceState = { notification: NotificationState };
+
 export const notificationSlice = createSlice({
   name: "notification",
   initialState,

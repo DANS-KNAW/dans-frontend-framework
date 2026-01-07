@@ -6,6 +6,7 @@
   "keywords": [],
   "author": "",
   "dependencies": {
+    "@dans-framework/elastic": "workspace:*",
     "@dans-framework/shared-store": "workspace:*",
     "@dans-framework/deposit": "workspace:*",
     "@dans-framework/user-auth": "workspace:*",

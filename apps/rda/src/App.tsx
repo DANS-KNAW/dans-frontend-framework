@@ -25,12 +25,7 @@ import siteTitle from "./config/siteTitle";
 import languages from "./config/languages";
 import authProvider from "./config/auth";
 import form from "./config/form";
-import { elasticConfig } from "./config/elasticSearch";
 import { config, sortOptions } from "./config/elasticConfig";
-import {
-  FacetedWrapper,
-  FacetedSearchProvider,
-} from "@dans-framework/rdt-search-ui";
 import { Freshdesk } from "@dans-framework/freshdesk";
 import SupportDrawer from "@dans-framework/support-drawer";
 import RDAAnnotator from "./pages/rda-annotator";
@@ -51,6 +46,7 @@ const App = () => {
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
+      case "search":
         return (
           <SiteTitleWrapper page={page}>
             {!isEmbed && (
@@ -97,17 +93,7 @@ const App = () => {
                 </Container>
               </Box>
             )}
-            <ElasticWrapper config={config} sortOptions={sortOptions} />
-          </SiteTitleWrapper>
-        );
-      case "search":
-        return (
-          <SiteTitleWrapper page={page}>
-            <FacetedWrapper
-              showIconViewLabel
-              dashRoute="/"
-              resultRoute="/search"
-            />
+            <ElasticWrapper config={config} sortOptions={sortOptions} dashRoute="/" resultRoute="/search" />
           </SiteTitleWrapper>
         );
       case "record":
@@ -143,56 +129,54 @@ const App = () => {
     <AppWrapper>
       <AuthWrapper authProvider={authProvider}>
         <ThemeWrapper theme={theme} siteTitle={siteTitle}>
-          <FacetedSearchProvider config={elasticConfig}>
-            {/* Need to pass along root i18n functions to the language bar */}
-            {!isEmbed && (
-              <LanguageBar
-                languages={languages}
-                changeLanguage={i18n.changeLanguage}
+          {/* Need to pass along root i18n functions to the language bar */}
+          {!isEmbed && (
+            <LanguageBar
+              languages={languages}
+              changeLanguage={i18n.changeLanguage}
+            />
+          )}
+          <MenuBar pages={pages} logo={logo} embed={isEmbed} />
+          {/* Suspense to make sure languages can load first */}
+          <Suspense
+            fallback={
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Skeleton height={600} width={900} />
+              </Box>
+            }
+          >
+            <Routes>
+              <Route path="signin-callback" element={<SignInCallback />} />
+              <Route
+                path="user-settings"
+                element={
+                  <AuthRoute>
+                    <UserSettings target={form.targetCredentials} />
+                  </AuthRoute>
+                }
               />
-            )}
-            <MenuBar pages={pages} logo={logo} embed={isEmbed} />
-            {/* Suspense to make sure languages can load first */}
-            <Suspense
-              fallback={
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <Skeleton height={600} width={900} />
-                </Box>
-              }
-            >
-              <Routes>
-                <Route path="signin-callback" element={<SignInCallback />} />
-                <Route
-                  path="user-settings"
-                  element={
-                    <AuthRoute>
-                      <UserSettings target={form.targetCredentials} />
-                    </AuthRoute>
-                  }
-                />
-                <Route
-                  path="user-submissions"
-                  element={
-                    <AuthRoute>
-                      <UserSubmissions
-                        depositSlug="publisher"
-                        targetCredentials={form.targetCredentials}
-                      />
-                    </AuthRoute>
-                  }
-                />
-                {(pages as Page[]).map((page) => {
-                  return (
-                    <Route
-                      key={page.id}
-                      path={page.slug}
-                      element={createElementByTemplate(page)}
+              <Route
+                path="user-submissions"
+                element={
+                  <AuthRoute>
+                    <UserSubmissions
+                      depositSlug="publisher"
+                      targetCredentials={form.targetCredentials}
                     />
-                  );
-                })}
-              </Routes>
-            </Suspense>
-          </FacetedSearchProvider>
+                  </AuthRoute>
+                }
+              />
+              {(pages as Page[]).map((page) => {
+                return (
+                  <Route
+                    key={page.id}
+                    path={page.slug}
+                    element={createElementByTemplate(page)}
+                  />
+                );
+              })}
+            </Routes>
+          </Suspense>
           {isEmbed && (
             <Box
               sx={{

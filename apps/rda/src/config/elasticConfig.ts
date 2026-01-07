@@ -36,14 +36,79 @@ export const config = {
       "dc_date",
     ],
     facets: {
-      "pathways.pathway.keyword": { type: "value" },
-      "individuals.fullName.keyword": { type: "value" },
-      "workflows.WorkflowState.keyword": { type: "value" },
-      "subjects.keyword.keyword": { type: "value" },
-      "related_institutions.english_name.keyword": { type: "value" },
-      "working_groups.title.keyword": { type: "value" },
-      "interest_groups.title.keyword": { type: "value" },
-      "resource_source.keyword": { type: "value" },
+      "dc_date": { 
+        type: "value", 
+        label: { 
+          en: "Date", 
+          nl: "Datum" 
+        },
+        display: "list",
+      },
+      "pathways.pathway.keyword": { 
+        type: "value",
+        label: { 
+          en: "Pathways", 
+          nl: "Paden" 
+        },
+        display: "list",
+        filterType: "any",
+      },
+      "individuals.fullName.keyword": { 
+        type: "value",
+        label: { 
+          en: "Name", 
+          nl: "Naam" 
+        },
+        display: "list",
+      },
+      "workflows.WorkflowState.keyword": { 
+        type: "value",
+        label: { 
+          en: "Workflow State", 
+          nl: "Workflow Status" 
+        },
+        display: "list",
+      },
+      "subjects.keyword.keyword": { 
+        type: "value",
+        label: { 
+          en: "Subjects", 
+          nl: "Onderwerpen" 
+        },
+        display: "list",
+      },
+      "related_institutions.english_name.keyword": { 
+        type: "value",
+        label: { 
+          en: "Related Institutions", 
+          nl: "Gerelateerde Instellingen" 
+        },
+        display: "list",
+      },
+      "working_groups.title.keyword": { 
+        type: "value",
+        label: { 
+          en: "Working Groups", 
+          nl: "Werkgroepen" 
+        },
+        display: "list",
+      },
+      "interest_groups.title.keyword": { 
+        type: "value",
+        label: { 
+          en: "Interest Groups", 
+          nl: "Belangengroepen" 
+        },
+        display: "list",
+      },
+      "resource_source.keyword": { 
+        type: "value",
+        label: {
+          en: "Resource Source",
+          nl: "Bron van Middelen"
+        },
+        display: "list",
+      },
     }
   },
   autocompleteQuery: {
@@ -71,6 +136,7 @@ export const config = {
     }
   }
 };
+
 
 export const sortOptions = [
   {
