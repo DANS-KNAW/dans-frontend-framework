@@ -1,29 +1,42 @@
 import { BarChart } from '@mui/x-charts/BarChart';
 import { type FacetViewProps } from "@elastic/react-search-ui-views";
-import FacetContainer from "../ui-components/FacetContainer";
+import { lookupLanguageString } from "@dans-framework/utils";
+import { useTranslation } from "react-i18next";
 
 export default function BarChartFacet({
-  label,
-  onRemove,
-  onSelect,
+  // onRemove,
+  // onSelect,
   options,
-  ...restProps
 }: FacetViewProps) {
+  const { i18n } = useTranslation();
+
+  console.log(options)
+
+  const chartData = options.map((option) => ({
+    id: option.value,
+    value: option.count,
+    label: option.value,
+  }));
+
+  const chartSetting = {
+    yAxis: [
+      {
+        label: lookupLanguageString({ en: "Count", nl: "Aantal" }, i18n.language),
+        width: 60,
+      },
+    ],
+    height: 300,
+    margin: { left: 0 },
+  };
+
   return (
-    <FacetContainer label={label}>
-      <BarChart
-        series={[
-          {
-            data: [
-              { id: 0, value: 10, label: 'series A' },
-              { id: 1, value: 15, label: 'series B' },
-              { id: 2, value: 20, label: 'series C' },
-            ],
-          },
-        ]}
-        width={200}
-        height={200}
-      />
-    </FacetContainer>
+    <BarChart
+      series={[
+        {
+          data: chartData,
+        },
+      ]}
+      height={300}
+    />
   );
 }

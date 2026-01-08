@@ -1,7 +1,6 @@
 import { useSearch } from "@elastic/react-search-ui";
 import {
   ErrorBoundary,
-  Facet,
   SearchBox,
   Results,
   PagingInfo,
@@ -12,20 +11,18 @@ import {
 import Grid from "@mui/material/Grid";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { lookupLanguageString } from "@dans-framework/utils";
-import { useTranslation } from "react-i18next";
-import { FACET_VIEW_MAP } from "./utils/consts";
 import { useRouteMatch } from "./hooks";
 import { useNavigate } from "react-router-dom";
 import { useStoreHooks } from "@dans-framework/shared-store";
 import { type SearchState, setSearchFilters } from "./redux/slices";
 import { useEffect } from "react";
+import FacetContainer from "./ui-components/FacetContainer";
 
 export default function ElasticSearch({ 
   sortOptions, 
   facets, 
-  dashRoute = "/", 
-  resultRoute = "/results"
+  dashRoute, 
+  resultRoute,
 }: { 
   sortOptions?: any[]; 
   facets?: any; 
@@ -34,11 +31,12 @@ export default function ElasticSearch({
 }) {
   const routeMatch = useRouteMatch([dashRoute, resultRoute]);
   const navigate = useNavigate();
-  const currentTab = routeMatch?.pattern?.path;
+  const currentTab = routeMatch?.pattern?.path || null;
   const { useAppDispatch } = useStoreHooks<SearchState>();
   const dispatch = useAppDispatch();
   const { filters } = useSearch();
 
+  const needsTabs = dashRoute !== undefined && resultRoute !== undefined;
   const isDashboard = currentTab === dashRoute;
   const isResults = currentTab === resultRoute;
 
@@ -54,23 +52,25 @@ export default function ElasticSearch({
   };
 
   return (
-    <Grid container spacing={2}>
-      <Grid size={{xs: 12}}>
-        <Tabs value={currentTab} aria-label="Switch between dashboard and results">
-          <Tab 
-            label="Dashboard" 
-            id="dashboard" 
-            value={dashRoute} 
-            onClick={() => handleTabChange(dashRoute)}
-          />
-          <Tab 
-            label="Results"
-            id="results" 
-            value={resultRoute} 
-            onClick={() => handleTabChange(resultRoute)}
-          />
-        </Tabs>
-      </Grid>
+    <Grid container spacing={2} sx={{ mt: 2, ml: 'auto', mr: 'auto', pl: 2, pr: 2 }} maxWidth="xl">
+      {needsTabs && 
+        <Grid size={{xs: 12}}>
+          <Tabs value={currentTab} aria-label="Switch between dashboard and results">
+            <Tab 
+              label="Dashboard" 
+              id="dashboard" 
+              value={dashRoute} 
+              onClick={() => handleTabChange(dashRoute)}
+            />
+            <Tab 
+              label="Results"
+              id="results" 
+              value={resultRoute} 
+              onClick={() => handleTabChange(resultRoute)}
+            />
+          </Tabs>
+        </Grid> 
+      }
       <ErrorBoundary>
         {isDashboard && <ViewSelector type="dashboard" facets={facets} />}
         {isResults && <ViewSelector type="results" facets={facets} sortOptions={sortOptions} />}
@@ -81,21 +81,12 @@ export default function ElasticSearch({
 
 function ViewSelector({ type, facets, sortOptions }: { type: string; facets: any; sortOptions?: any[] }) {
   const { wasSearched } = useSearch();
-  const { i18n } = useTranslation();
 
   return (
     <>
       {type === "dashboard" ? (
           Object.entries(facets).map(([field, config]) => (
-            <Facet
-              key={field}
-              field={field}
-              label={lookupLanguageString(config.label, i18n.language)}
-              view={FACET_VIEW_MAP[config.display]}
-              isFilterable={true}
-              show={config.display === "list" ? 10 : 100}
-              {...(config.filterType && { filterType: config.filterType })}
-            />
+            <FacetContainer key={field} field={field} config={config} />
           ))
       ) : (
         <>

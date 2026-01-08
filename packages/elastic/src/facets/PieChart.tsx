@@ -1,32 +1,46 @@
 import { PieChart } from '@mui/x-charts/PieChart';
 import { type FacetViewProps } from "@elastic/react-search-ui-views";
-import FacetContainer from "../ui-components/FacetContainer";
 import { legendClasses } from '@mui/x-charts/ChartsLegend';
+import { colors } from '../utils/colors';
 
 export default function PieChartFacet({
-  label,
   onRemove,
   onSelect,
   options,
-  ...restProps
 }: FacetViewProps) {
-  console.log(options)
-  const chartData = options.map((option) => ({
+  const hasSelection = options.some(item => item.selected);
+
+  const chartData = options.map((option, i) => ({
     id: option.value,
     value: option.count,
     label: option.value,
+    selected: option.selected,
+    color: option.selected || !hasSelection ? colors[i] : `${colors[i]}40`,
   }));
+
+  const onPieceClick = (piece: number) => {
+    const data = chartData[piece];
+    if (data.selected) {
+      onRemove(data.id);
+      return;
+    }
+    onSelect(data.id);
+  }
+
   return (
-    <FacetContainer label={label}>
-      <PieChart
-        series={[
-          {
-            data: chartData,
+    <PieChart
+      series={[
+        {
+          data: chartData,
+          cornerRadius: 3,
+          innerRadius: 40,
+          highlightScope: {
+            highlight: 'item',
           },
-        ]}
-        // width={300}
-        // height={300}
-        slotProps={{
+        },
+      ]}
+      height={300}
+      slotProps={{
         legend: {
           direction: "horizontal",
           position: { 
@@ -48,7 +62,7 @@ export default function PieChartFacet({
           },
         },
       }}
-      />
-    </FacetContainer>
+      onItemClick={(event, d) => onPieceClick(d.dataIndex)}
+    />
   );
 }

@@ -32,7 +32,7 @@ export default function ElasticWrapper({
         initialState: {
           ...config.initialState,
           filters: savedSearchFilters,
-        }
+        },
        }}
     >
       <ElasticSearch 

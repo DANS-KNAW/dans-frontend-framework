@@ -1,3 +1,5 @@
+import { yearFormatter } from "@dans-framework/elastic";
+
 export const config = {
   alwaysSearchOnInitialLoad: true,
   hasA11yNotifications: true,
@@ -34,16 +36,10 @@ export const config = {
     },
     disjunctiveFacets: [
       "dc_date",
+      "workflows.WorkflowState.keyword",
+      "subjects.keyword.keyword"
     ],
     facets: {
-      "dc_date": { 
-        type: "value", 
-        label: { 
-          en: "Date", 
-          nl: "Datum" 
-        },
-        display: "list",
-      },
       "pathways.pathway.keyword": { 
         type: "value",
         label: { 
@@ -51,7 +47,17 @@ export const config = {
           nl: "Paden" 
         },
         display: "list",
-        filterType: "any",
+      },
+      "dc_date": { 
+        type: "range", 
+        ranges: yearFormatter(2012, "now"), 
+        label: { 
+          en: "Date", 
+          nl: "Datum" 
+        },
+        display: "timerange",
+        width: "large",
+        size: 30,
       },
       "individuals.fullName.keyword": { 
         type: "value",
@@ -68,6 +74,8 @@ export const config = {
           nl: "Workflow Status" 
         },
         display: "piechart",
+        width: "medium",
+        size: 100,
       },
       "subjects.keyword.keyword": { 
         type: "value",
@@ -76,6 +84,8 @@ export const config = {
           nl: "Onderwerpen" 
         },
         display: "piechart",
+        width: "medium",
+        size: 100,
       },
       "related_institutions.english_name.keyword": { 
         type: "value",

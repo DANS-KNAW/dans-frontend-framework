@@ -2,28 +2,41 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import { Facet } from "@elastic/react-search-ui";
+import { lookupLanguageString } from "@dans-framework/utils";
+import { useTranslation } from "react-i18next";
+import { FACET_VIEW_MAP } from "../utils/facetMap";
 
 interface FacetContainerProps {
-  label: string;
-  children: React.ReactNode;
+  field: string;
+  config: any;
 }
 
-const FacetContainer: React.FC<FacetContainerProps> = ({ 
-  label, 
-  children,
-}) => {
+export default function FacetContainer({
+  field,
+  config,
+}: FacetContainerProps) {
+  const { i18n } = useTranslation();
+  const largeWidth = config.width === "large" ? 9 : config.width === "medium" ? 4.5 : 3;
+  const mediumWidth = config.width === "large" ? 8 : config.width === "medium" ? 8 : 4;
   return (
-    <Grid size={{ xs: 6, md: 4, lg: 3 }}>
+    <Grid size={{ xs: 6, md: mediumWidth, lg: largeWidth }}>
       <Paper elevation={1} sx={{ p: 2, mb: 2, height: '100%' }}>
         <Typography variant="h6" gutterBottom>
-          {label}
+          {lookupLanguageString(config.label, i18n.language)}
         </Typography>
         <Box>
-          {children}
+          <Facet
+            key={field}
+            field={field}
+            label={lookupLanguageString(config.label, i18n.language)}
+            view={FACET_VIEW_MAP[config.display]}
+            isFilterable={true}
+            show={config.display === "list" ? 6 : 20}
+            {...(config.filterType && { filterType: config.filterType })}
+          />
         </Box>
       </Paper>
     </Grid>
   );
 };
-
-export default FacetContainer;
