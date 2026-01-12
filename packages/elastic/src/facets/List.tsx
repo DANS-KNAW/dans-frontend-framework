@@ -5,10 +5,15 @@ import Button from "@mui/material/Button";
 import { type FacetViewProps } from "@elastic/react-search-ui-views";
 import { useState, useEffect } from "react";
 import List from '@mui/material/List';
+import Stack from '@mui/material/Stack';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 export default function ListFacet({
   onMoreClick,
@@ -18,6 +23,8 @@ export default function ListFacet({
   options,
   showSearch,
   onSearch,
+  setFilterType,
+  customFilterType,
 }: FacetViewProps) {
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,17 +33,42 @@ export default function ListFacet({
     onSearch(searchTerm);
   }, [searchTerm]);
 
+  console.log(customFilterType);
+
   return (
     <>
-      {showSearch && 
-        <TextField
-          size="small"
-          placeholder={`Filter...`}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          fullWidth
-        />
-      }
+      <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
+        {((showSearch && options.length > 6) || searchTerm) &&
+          <TextField
+            size="small"
+            placeholder={`Filter...`}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            fullWidth
+          />
+        }
+
+        <FormControl sx={{ m: 1, minWidth: 80 }} size="small">
+          <InputLabel id="filter-type-label">Match</InputLabel>
+          <Select
+            labelId="filter-type-label"
+            id="filter-type-select"
+            value={customFilterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            label="Must match"
+          >
+            <MenuItem value="any">Any</MenuItem>
+            <MenuItem value="all">All</MenuItem>
+            <MenuItem value="none">None</MenuItem>
+          </Select>
+        </FormControl>
+      </Stack>
+
+      { options.length === 0 && (
+        <Typography variant="body2" color="textSecondary" sx={{ my: 2, textAlign: 'center' }}>
+          No options found
+        </Typography>
+      ) }
 
       <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
         {options.map((option, index) => {

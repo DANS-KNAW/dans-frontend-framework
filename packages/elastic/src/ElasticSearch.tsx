@@ -9,6 +9,7 @@ import {
   Sorting
 } from "@elastic/react-search-ui";
 import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { useRouteMatch } from "./hooks";
@@ -17,6 +18,11 @@ import { useStoreHooks } from "@dans-framework/shared-store";
 import { type SearchState, setSearchFilters } from "./redux/slices";
 import { useEffect } from "react";
 import FacetContainer from "./ui-components/FacetContainer";
+import ResultsContainer from "./results/Results";
+import SearchBoxView from "./results/SearchBox";
+import Result from "./results/Result";
+import SortBy from "./results/Sorting";
+import { PaginationAction, PaginationInfo, ResultsPerPage as ResultsPerPageView } from "./results/Pagination";
 
 export default function ElasticSearch({ 
   sortOptions, 
@@ -90,29 +96,41 @@ function ViewSelector({ type, facets, sortOptions }: { type: string; facets: any
           ))
       ) : (
         <>
-          <SearchBox
-            autocompleteMinimumCharacters={3}
-            autocompleteResults={{
-              linkTarget: "_blank",
-              sectionTitle: "Results",
-              titleField: "title",
-              urlField: "title",
-              shouldTrackClickThrough: true,
-              clickThroughTags: ["test"]
-            }}
-            autocompleteSuggestions={true}
-            debounceLength={0}
-          />
-          {sortOptions && <Sorting label={"Sort by"} sortOptions={sortOptions} />}
-          <Results
-            titleField="title"
-            shouldTrackClickThrough={true}
-          />         
-          <>
-            {wasSearched && <PagingInfo />}
-            {wasSearched && <ResultsPerPage />}
-          </>
-          <Paging />
+          <Grid size={{ xs: 12, md: 5, lg: 4, xl: 3 }}>
+            <SearchBox
+              // autocompleteMinimumCharacters={3}
+              // autocompleteResults={{
+              //   linkTarget: "_blank",
+              //   sectionTitle: "Results",
+              //   titleField: "title",
+              //   urlField: "title",
+              //   shouldTrackClickThrough: true,
+              //   clickThroughTags: ["test"]
+              // }}
+              searchAsYouType={true}
+              debounceLength={300}
+              view={SearchBoxView}
+            />
+            {Object.entries(facets).map(([field, config]) => (
+              <FacetContainer key={field} field={field} config={config} fullWidth />
+            ))}
+          </Grid>
+          <Grid size={{ md: 7, lg: 8, xl: 9 }}>
+            <Stack direction="row" spacing={2} justifyContent="flex-end" alignItems="center" sx={{ mb: 2 }}>
+              {wasSearched && <PagingInfo view={PaginationInfo} />}
+              {wasSearched && <ResultsPerPage view={ResultsPerPageView} />}
+              {sortOptions && <Sorting sortOptions={sortOptions} view={SortBy} />}
+            </Stack>
+            <Results
+              titleField="title"
+              shouldTrackClickThrough={true}
+              view={ResultsContainer}
+              resultView={Result}
+            />
+            <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
+              <Paging view={PaginationAction} />
+            </Stack>
+          </Grid>    
         </>
       )}
     </>

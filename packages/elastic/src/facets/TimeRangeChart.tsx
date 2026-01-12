@@ -8,8 +8,9 @@ export default function TimeRangeFacet({
   options,
 }: FacetViewProps) {
   const hasSelection = options.some(item => item.selected);
+  console.log(options)
 
-  const onYearClick = (year) => {
+  const onBarClick = (year) => {
     const data = options.find(item => item.value.name === year);
     if (data.selected) {
       onRemove(data.value);
@@ -27,6 +28,9 @@ export default function TimeRangeFacet({
       to: item.value.to,
       selected: item.selected,
     }));
+
+
+  // todo make more dynamic
 
   return (
     <BarChart
@@ -52,7 +56,7 @@ export default function TimeRangeFacet({
       onItemClick={() => null}
       onAxisClick={(_e, data) => {
         if (data?.axisValue) {
-          onYearClick(data.axisValue);
+          onBarClick(data.axisValue);
         }
       }}
       grid={{ horizontal: true }}

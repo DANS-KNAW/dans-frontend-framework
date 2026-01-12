@@ -4,9 +4,43 @@ import ElasticSearch from "./ElasticSearch";
 import { getSearchFilters, type SearchState } from "./redux/slices";
 import { useStoreHooks } from "@dans-framework/shared-store";
 
+// function buildDateHistogramAgg(field, interval) {
+//   return {
+//     date_histogram: {
+//       field,
+//       calendar_interval: interval, // "year", "month", etc.
+//       format: interval === "year" ? "yyyy" : undefined,
+//       min_doc_count: 0
+//     }
+//   };
+// }
+
+// function rewriteTimerangeFacets({ facets }, esRequest) {
+//   const facetAggs = esRequest.aggs.facet_bucket_all.aggs;
+
+//   Object.entries(facets).forEach(([facetKey, facetConfig]) => {
+//     if (facetConfig.display !== "timerange") return;
+
+//     facetAggs[facetKey] = buildDateHistogramAgg(
+//       facetKey,
+//       facetConfig.interval || "year"
+//     );
+//   });
+
+//   return esRequest;
+// }
+
 const connector = new ElasticsearchAPIConnector({
   host: import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT,
   index: import.meta.env.VITE_ELASTICSEARCH_INDEX,
+  // interceptSearchRequest: async ({ requestBody, queryConfig }, next) => {
+  //   console.log("queryConfig:", queryConfig);
+  //   console.log("Search request:", requestBody);
+  //   const rewrittenReq = rewriteTimerangeFacets(queryConfig, requestBody);
+  //   const response = await next(rewrittenReq);
+  //   console.log("Search response:", response);
+  //   return response;
+  // },
 });
 
 export default function ElasticWrapper({
@@ -22,7 +56,6 @@ export default function ElasticWrapper({
 }) {
   const { useAppSelector } = useStoreHooks<SearchState>();
   const savedSearchFilters = useAppSelector(getSearchFilters);
-  console.log(savedSearchFilters)
 
   return (
     <SearchProvider 

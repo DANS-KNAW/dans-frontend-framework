@@ -10,6 +10,7 @@ export const config = {
         weight: 3
       },
       dc_description: {},
+      individuals: {},
     },
     result_fields: {
       pathways: { raw: {} },
@@ -56,6 +57,7 @@ export const config = {
           nl: "Datum" 
         },
         display: "timerange",
+        interval: "year",
         width: "large",
         size: 30,
       },
@@ -66,6 +68,7 @@ export const config = {
           nl: "Naam" 
         },
         display: "list",
+        size: 10000,
       },
       "workflows.WorkflowState.keyword": { 
         type: "value",
@@ -123,23 +126,17 @@ export const config = {
   },
   autocompleteQuery: {
     results: {
-      search_fields: {
-        search_as_you_type: {}
-      },
+      fuzziness: true,
       resultsPerPage: 5,
       result_fields: {
-        title: {
-          snippet: {
-            size: 100,
-            fallback: true
-          }
-        },
+        // Add snippet highlighting within autocomplete suggestions
+        title: { snippet: { size: 100, fallback: true }},
       }
     },
     suggestions: {
       types: {
         documents: {
-          fields: ["dc_description"]
+          fields: ["title", "dc_description"]
         }
       },
       size: 4
