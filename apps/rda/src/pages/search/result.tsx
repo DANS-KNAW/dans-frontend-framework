@@ -38,7 +38,7 @@ function ReadMore({ item }: { item: ResultBodyProps["result"] }) {
     description.substring(180),
   ];
 
-  // There is only one sentence, return it
+  // There is only one sentence, return it.
   if (hiddenText == null || hiddenText.trim().length === 0) {
     return <Typography variant="body1">{visibleText}</Typography>;
   }
