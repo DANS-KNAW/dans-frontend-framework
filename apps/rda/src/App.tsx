@@ -71,7 +71,7 @@ const App = () => {
                     >
                       {lookupLanguageString(
                         { en: "RDA Knowledge Base", nl: "RDA Kennisbank" },
-                        i18n.language
+                        i18n.language,
                       )}
                     </Typography>
                     <Typography
@@ -88,7 +88,7 @@ const App = () => {
                           en: "The Knowledge Base is a suite of applications that helps users find, annotate, and publish RDA-related materials",
                           nl: "De Kennisbank is een suite van applicaties die gebruikers helpt bij het vinden, annoteren en publiceren van RDA-gerelateerde materialen",
                         },
-                        i18n.language
+                        i18n.language,
                       )}
                     </Typography>
                   </Box>
@@ -242,4 +242,3 @@ const RouterApp = () => {
 };
 
 export default RouterApp;
-
