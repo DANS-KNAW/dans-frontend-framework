@@ -7,25 +7,28 @@ export default function BarChartFacet({
   onSelect,
   options,
 }: FacetViewProps) {
-
-  console.log(options)
-
+  
   const hasSelection = options.some(item => item.selected);
-
+  
   const chartData = options.map((item) => ({
-    id: item.value,
-    value: item.count,
-    label: item.value,
+    id: String(item.value),
+    count: item.count,
+    label: String(item.value),
     selected: item.selected,
   }));
 
   const onBarClick = (bar: string | number | Date) => {
-    const data = options.find(item => item.value.name === bar);
-    if (data?.selected) {
-      onRemove(data?.value);
+    const index = options.findIndex(item => String(item.value) === String(bar));
+    
+    if (index === -1) return;
+    
+    const data = options[index];
+    
+    if (data.selected) {
+      onRemove(data.value as any);
       return;
     }
-    onSelect(data?.value);
+    onSelect(data.value as any);
   }
 
   return (
@@ -33,7 +36,7 @@ export default function BarChartFacet({
       dataset={chartData}
       xAxis={[{ 
         scaleType: 'band', 
-        dataKey: '',
+        dataKey: 'label',
         label: ''
       }]}
       series={[{ 

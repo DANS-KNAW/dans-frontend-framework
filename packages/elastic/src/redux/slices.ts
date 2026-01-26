@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { Filter } from '@elastic/search-ui';
 
 interface InitialStateType {
-  searchFilters: any[];
+  searchFilters: Filter[] | undefined;
 }
 
 const initialState: InitialStateType = {
@@ -12,12 +13,12 @@ export const searchSlice = createSlice({
   name: 'search',
   initialState,
   reducers: {
-    setSearchFilters: (state, action: PayloadAction<any[]>) => {
+    setSearchFilters: (state, action: PayloadAction<Filter[] | undefined>) => {
       console.log('Reducer saving filters to state:', action.payload);
       state.searchFilters = action.payload;
     },
     clearSearchFilters: (state) => {
-      state.searchFilters = [];
+      state.searchFilters = undefined;
     },
   },
 });

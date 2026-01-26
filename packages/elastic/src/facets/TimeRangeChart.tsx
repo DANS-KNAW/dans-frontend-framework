@@ -1,37 +1,58 @@
 import { BarChart } from '@mui/x-charts/BarChart';
 import { type FacetViewProps } from "@elastic/react-search-ui-views";
+import type { FilterValueRange } from "@elastic/search-ui";
 import { colors } from '../utils/colors';
+
+// Type guard to check if value is FilterValueRange
+function isFilterValueRange(value: any): value is FilterValueRange {
+  return value && typeof value === 'object' && 'name' in value;
+}
+
+interface ChartFacetProps extends FacetViewProps {
+  height?: number;
+}
 
 export default function TimeRangeFacet({
   onRemove,
   onSelect,
   options,
-}: FacetViewProps) {
+  height,
+}: ChartFacetProps) {
+  console.log('TimeRangeFacet height:', height);
+
   const hasSelection = options.some(item => item.selected);
-  console.log(options)
 
   const onBarClick = (year: string | number | Date) => {
-    const data = options.find(item => item.value.name === year);
+    const data = options.find(item => {
+      if (isFilterValueRange(item.value)) {
+        return item.value.name === year;
+      }
+      return false;
+    });
+    
     if (data?.selected) {
-      onRemove(data.value);
+      onRemove(data.value as any);
       return;
     }
-    onSelect(data.value);
+    if (data) {
+      onSelect(data.value as any);
+    }
   }
 
   const chartData = options
-    .filter(item => item.count > 0)
-    .map(item => ({
-      year: item.value.name,
-      count: item.count,
-      from: item.value.from,
-      to: item.value.to,
-      selected: item.selected,
-    }));
-
+    .filter(item => item.count > 0 && isFilterValueRange(item.value))
+    .map(item => {
+      const value = item.value as FilterValueRange;
+      return {
+        year: value.name,
+        count: item.count,
+        from: value.from,
+        to: value.to,
+        selected: item.selected,
+      };
+    });
 
   // todo make more dynamic
-
   return (
     <BarChart
       dataset={chartData}
@@ -52,7 +73,7 @@ export default function TimeRangeFacet({
           highlight: 'item',
         },
       }]}
-      height={300}
+      height={height || 300}
       onItemClick={() => null}
       onAxisClick={(_e, data) => {
         if (data?.axisValue) {

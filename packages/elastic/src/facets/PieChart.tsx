@@ -11,9 +11,9 @@ export default function PieChartFacet({
   const hasSelection = options.some(item => item.selected);
 
   const chartData = options.map((option, i) => ({
-    id: option.value,
+    id: String(option.value),
     value: option.count,
-    label: option.value,
+    label: String(option.value),
     selected: option.selected,
     color: option.selected || !hasSelection ? colors[i] : `${colors[i]}40`,
   }));
@@ -56,13 +56,13 @@ export default function PieChartFacet({
               width: 15,
             },
             // CSS class
-            ['.MuiChartsLegend-series']: {
+            ['& .MuiChartsLegend-series']: {
               gap: '0.25rem',
             },
           },
         },
       }}
-      onItemClick={(event, d) => onPieceClick(d.dataIndex)}
+      onItemClick={(_event, d) => onPieceClick(d.dataIndex)}
     />
   );
 }

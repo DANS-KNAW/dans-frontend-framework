@@ -15,6 +15,11 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
+interface ListFacetProps extends FacetViewProps {
+  setFilterType: (type: string) => void;
+  customFilterType: string;
+}
+
 export default function ListFacet({
   onMoreClick,
   showMore,
@@ -25,15 +30,12 @@ export default function ListFacet({
   onSearch,
   setFilterType,
   customFilterType,
-}: FacetViewProps) {
-
+}: ListFacetProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     onSearch(searchTerm);
   }, [searchTerm]);
-
-  console.log(customFilterType);
 
   return (
     <>
@@ -59,7 +61,6 @@ export default function ListFacet({
           >
             <MenuItem value="any">Any</MenuItem>
             <MenuItem value="all">All</MenuItem>
-            <MenuItem value="none">None</MenuItem>
           </Select>
         </FormControl>
       </Stack>
@@ -87,8 +88,8 @@ export default function ListFacet({
                 role={undefined} 
                 onClick={() => {
                   option.selected
-                    ? onRemove(option.value)
-                    : onSelect(option.value)
+                    ? onRemove(option.value as any)
+                    : onSelect(option.value as any)
                 }} 
                 dense
               >
@@ -105,7 +106,7 @@ export default function ListFacet({
                 </ListItemIcon>
                 <ListItemText 
                   id={labelId} 
-                  primary={option.value} 
+                  primary={String(option.value)} 
                   sx={{ m: 0 }}
                 />
               </ListItemButton>

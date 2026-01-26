@@ -5,10 +5,13 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import type { SortingViewProps } from "@elastic/react-search-ui-views";
 
-export default function Sorting({ options, onChange, value }: SortingViewProps ) {
+export default function Sorting({ options, onChange, value }: SortingViewProps) {
   const handleChange = (event: SelectChangeEvent) => {
     onChange(event.target.value as string);
   };
+
+  // Normalize the value
+  const normalizedValue = value === "null|||null" || value === "|||" || !value ? "[]" : value;
 
   return (
     <Box sx={{ minWidth: 120, mb: 2 }}>
@@ -17,7 +20,7 @@ export default function Sorting({ options, onChange, value }: SortingViewProps )
         <Select
           labelId="sort-by-label"
           id="sort-by-select"
-          value={value}
+          value={normalizedValue}
           label="Sort by"
           onChange={handleChange}
           size="small"
@@ -31,4 +34,4 @@ export default function Sorting({ options, onChange, value }: SortingViewProps )
       </FormControl>
     </Box>
   );
-};
+}

@@ -10,3 +10,5 @@ export const FACET_VIEW_MAP = {
   timerange: TimeRangeFacet,
   // More to come...
 };
+
+export type FacetDisplayType = keyof typeof FACET_VIEW_MAP;

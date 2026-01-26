@@ -36,6 +36,8 @@ export const config = {
       }
     },
     disjunctiveFacets: [
+      "pathways.pathway.keyword",
+      "individuals.fullName.keyword",
       "dc_date",
       "workflows.WorkflowState.keyword",
       "subjects.keyword.keyword"
