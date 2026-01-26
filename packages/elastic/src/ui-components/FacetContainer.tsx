@@ -11,6 +11,7 @@ import { FACET_VIEW_MAP } from "../utils/facetMap";
 interface FacetContainerProps {
   field: string;
   config: any;
+  fullWidth?: boolean;
 }
 
 export default function FacetContainer({
@@ -35,7 +36,7 @@ export default function FacetContainer({
           <Facet
             key={field}
             field={field}
-            label={lookupLanguageString(config.label, i18n.language)}
+            label={lookupLanguageString(config.label, i18n.language) || ''}
             view={FACET_VIEW_MAP[config.display]}
             isFilterable={config.display === "list"}
             show={config.display === "list" ? 10 : 20}

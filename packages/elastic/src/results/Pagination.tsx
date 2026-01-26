@@ -10,7 +10,7 @@ import type { ResultsPerPageViewProps, PagingInfoViewProps, PagingViewProps } fr
 
 export function ResultsPerPage({ options, onChange, value }: ResultsPerPageViewProps ) {
   const handleChange = (event: SelectChangeEvent) => {
-    onChange(event.target.value as string);
+    onChange(Number(event.target.value));
   };
 
   return (
@@ -20,13 +20,13 @@ export function ResultsPerPage({ options, onChange, value }: ResultsPerPageViewP
         <Select
           labelId="results-per-page-label"
           id="results-per-page-select"
-          value={value}
+          value={String(value)}
           label="Page size"
           onChange={handleChange}
           size="small"
         >
           {options?.map((option) => (
-            <MenuItem key={option} value={option}>
+            <MenuItem key={option} value={String(option)}>
               {option}
             </MenuItem>
           ))}
@@ -46,7 +46,7 @@ export function PaginationInfo({ end, searchTerm, start, totalResults }: PagingI
   );
 };
 
-export function PaginationAction({ current, resultsPerPage, onChange, totalPages }: PagingViewProps ) {
+export function PaginationAction({ current, onChange, totalPages }: PagingViewProps ) {
   const handleChange = (_event: ChangeEvent<unknown>, value: number) => {
     onChange(value);
   };

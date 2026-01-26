@@ -1,7 +1,5 @@
 import { BarChart } from '@mui/x-charts/BarChart';
 import { type FacetViewProps } from "@elastic/react-search-ui-views";
-// import { lookupLanguageString } from "@dans-framework/utils";
-// import { useTranslation } from "react-i18next";
 import { colors } from '../utils/colors';
 
 export default function BarChartFacet({
@@ -9,7 +7,6 @@ export default function BarChartFacet({
   onSelect,
   options,
 }: FacetViewProps) {
-  // const { i18n } = useTranslation();
 
   console.log(options)
 
@@ -22,13 +19,13 @@ export default function BarChartFacet({
     selected: item.selected,
   }));
 
-  const onBarClick = (bar: string) => {
+  const onBarClick = (bar: string | number | Date) => {
     const data = options.find(item => item.value.name === bar);
-    if (data.selected) {
-      onRemove(data.value);
+    if (data?.selected) {
+      onRemove(data?.value);
       return;
     }
-    onSelect(data.value);
+    onSelect(data?.value);
   }
 
   return (

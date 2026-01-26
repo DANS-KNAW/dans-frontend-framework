@@ -10,9 +10,9 @@ export default function TimeRangeFacet({
   const hasSelection = options.some(item => item.selected);
   console.log(options)
 
-  const onBarClick = (year) => {
+  const onBarClick = (year: string | number | Date) => {
     const data = options.find(item => item.value.name === year);
-    if (data.selected) {
+    if (data?.selected) {
       onRemove(data.value);
       return;
     }

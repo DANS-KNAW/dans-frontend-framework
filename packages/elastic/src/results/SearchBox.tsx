@@ -2,14 +2,19 @@ import * as React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
-import type { FormEvent } from "react";
 
 import type { SearchBoxViewProps } from "@elastic/react-search-ui-views";
+import type { AutocompleteResult } from "@elastic/search-ui";
+
+interface ResultOption {
+  type: "Results" | "Suggestions";
+  label: string;
+  value: any;
+}
 
 export default function SearchBox({
   autocompleteResults,
-  autocompletedResults = [],
-  autocompletedSuggestions = [],
+  autocompletedSuggestions,
   onChange,
   onSelectAutocomplete,
   onSubmit,
@@ -27,23 +32,23 @@ export default function SearchBox({
 
   const options = React.useMemo(() => {
     if (!useAutocomplete) return [];
-    const results = autocompletedResults?.map(result => ({
+    const results: ResultOption[] = (Array.isArray(autocompleteResults) ? autocompleteResults.map(result => ({
       type: "Results" ,
-      label: result[autocompleteResults.titleField]?.snippet?.[0] 
-        ?? result[autocompleteResults.titleField]?.raw,
+      label: result[(autocompleteResults as AutocompleteResult)?.titleField]?.snippet?.[0] 
+        ?? result[(autocompleteResults as AutocompleteResult)?.titleField]?.raw,
       value: result,
-    })) ?? [];
-    const suggestions = autocompletedSuggestions?.suggestions?.map(result => ({
-      type: "Suggestions",
-      label: result[autocompleteResults.titleField]?.snippet?.[0]
-        ?? result[autocompleteResults.titleField]?.raw,
-      value: result,
-    })) ?? [];
-    
-    console.log(suggestions);
+    })) : []);
+    // const suggestions: ResultOption[] = autocompletedSuggestions?.suggestions?.map(suggestion => ({
+    //   type: "Suggestions",
+    //   label: suggestion[autocompletedSuggestions?.titleField]?.snippet?.[0]
+    //     ?? suggestion[autocompletedSuggestions?.titleField]?.raw,
+    //   value: suggestion,
+    // })) ?? [];
 
+    const suggestions: [] = [];
+    
     return [...suggestions, ...results];
-  }, [autocompletedResults, autocompletedSuggestions, useAutocomplete]);
+  }, [autocompleteResults, autocompletedSuggestions, useAutocomplete]);
 
   const debouncedOnChange = React.useMemo(() => {
     let timeout: number | undefined;
