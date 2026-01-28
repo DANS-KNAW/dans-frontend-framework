@@ -21,10 +21,8 @@ export default function SearchBox({
   value,
   useAutocomplete,
   inputProps,
-  ...props
 }: SearchBoxViewProps) {
   const [localValue, setLocalValue] = React.useState(value);
-  console.log(props)
 
   React.useEffect(() => {
     setLocalValue(value);

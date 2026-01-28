@@ -23,6 +23,7 @@ import SearchBoxView from "./results/SearchBox";
 import Result from "./results/Result";
 import SortBy from "./results/Sorting";
 import { PaginationAction, PaginationInfo, ResultsPerPage as ResultsPerPageView } from "./results/Pagination";
+import type { ESUIFacet, ESUISortOption } from "./utils/configConverter";
 
 export default function ElasticSearch({ 
   sortOptions, 
@@ -30,10 +31,10 @@ export default function ElasticSearch({
   dashRoute, 
   resultRoute,
 }: { 
-  sortOptions?: any[]; 
-  facets?: any; 
+  sortOptions?: ESUISortOption[]; 
+  facets: Record<string, ESUIFacet>; 
   dashRoute?: string;
-  resultRoute?: string; 
+  resultRoute?: string;
 }) {
   const routeMatch = useRouteMatch([dashRoute, resultRoute]);
   const navigate = useNavigate();
@@ -85,15 +86,25 @@ export default function ElasticSearch({
   );
 };
 
-function ViewSelector({ type, facets, sortOptions }: { type: string; facets: any; sortOptions?: any[] }) {
+function ViewSelector({ 
+  type, 
+  facets, 
+  sortOptions, 
+}: { 
+  type: string; 
+  facets: Record<string, ESUIFacet>; 
+  sortOptions?: ESUISortOption[]; 
+}) {
   const { wasSearched } = useSearch();
 
   return (
     <>
       {type === "dashboard" ? (
-          Object.entries(facets).map(([field, config]) => (
+        Object.entries(facets).map(([field, config]) => { 
+          return config.display !== 'hidden' && (
             <FacetContainer key={field} field={field} config={config} />
-          ))
+          )
+        })
       ) : (
         <>
           <Grid size={{ xs: 12, md: 5, lg: 4, xl: 3 }}>
@@ -111,9 +122,11 @@ function ViewSelector({ type, facets, sortOptions }: { type: string; facets: any
               debounceLength={300}
               view={SearchBoxView}
             />
-            {Object.entries(facets).map(([field, config]) => (
-              <FacetContainer key={field} field={field} config={config} fullWidth />
-            ))}
+            {Object.entries(facets).map(([field, config]) => { 
+              return config.display !== 'hidden' && (
+                <FacetContainer key={field} field={field} config={config} fullWidth />
+              )
+            })}
           </Grid>
           <Grid size={{ md: 7, lg: 8, xl: 9 }}>
             <Stack direction="row" spacing={2} justifyContent="flex-end" alignItems="center" sx={{ mb: 2 }}>
@@ -122,8 +135,6 @@ function ViewSelector({ type, facets, sortOptions }: { type: string; facets: any
               {sortOptions && <Sorting sortOptions={sortOptions} view={SortBy} />}
             </Stack>
             <Results
-              titleField="title"
-              shouldTrackClickThrough={true}
               view={ResultsContainer}
               resultView={Result}
             />

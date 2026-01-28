@@ -65,12 +65,13 @@ export default function FacetContainer({
             label={lookupLanguageString(config.label, i18n.language) || ''}
             view={FACET_VIEW_MAP[config.display as FacetDisplayType] as ComponentType<any>}
             isFilterable={config.display === "list"}
-            show={config.display === "list" ? 10 : 20}
+            show={config.show || 10}
             filterType={currentFilter?.type || config.filterType || "any"}
             {...(config.display === "list"
               ? { 
                   customFilterType: currentFilter?.type || config.filterType || "any", 
-                  setFilterType: handleFilterTypeChange 
+                  setFilterType: handleFilterTypeChange,
+                  defaultShow: config.show,
                 }
               : {})}
           />

@@ -1,8 +1,9 @@
 import ElasticsearchAPIConnector from "@elastic/search-ui-elasticsearch-connector";
 import { SearchProvider } from "@elastic/react-search-ui";
 import ElasticSearch from "./ElasticSearch";
-import { getSearchFilters, type SearchState } from "./redux/slices";
+import { getSearchFilters, type SearchState, setResultViewConfig } from "./redux/slices";
 import { useStoreHooks } from "@dans-framework/shared-store";
+import { convertToESUIConfig, type SimpleConfig } from "./utils/configConverter";
 
 // function buildDateHistogramAgg(field, interval) {
 //   return {
@@ -45,32 +46,47 @@ const connector = new ElasticsearchAPIConnector({
 
 export default function ElasticWrapper({
   config,
-  sortOptions,
   dashRoute,
   resultRoute,
 } : {
-  config: any;
-  sortOptions?: any[];
+  config: SimpleConfig;
   dashRoute?: string;
   resultRoute?: string;
 }) {
-  const { useAppSelector } = useStoreHooks<SearchState>();
+  const { useAppSelector, useAppDispatch } = useStoreHooks<SearchState>();
   const savedSearchFilters = useAppSelector(getSearchFilters);
+  const esUIConfig = convertToESUIConfig(config);
+  const dispatch = useAppDispatch();
+
+  // Store result view config in Redux
+  if (esUIConfig.resultsViewConfig) {
+    dispatch(setResultViewConfig(esUIConfig.resultsViewConfig));
+  }
 
   return (
     <SearchProvider 
       config={{ 
-        ...config,
+        ...esUIConfig.config,
         apiConnector: connector,
         initialState: {
-          ...config.initialState,
+          ...esUIConfig.config.initialState,
           filters: savedSearchFilters,
         },
+        trackUrlState: true,
+        routingOptions: {
+          readUrl: () => {
+            return window.location.search;
+          },
+          writeUrl: (url: string) => {
+            const pathname = window.location.pathname;
+            window.history.replaceState(null, "", `${pathname}?${url}`);
+          }
+        }
        }}
     >
       <ElasticSearch 
-        sortOptions={sortOptions} 
-        facets={config.searchQuery.facets} 
+        sortOptions={esUIConfig.sortOptions} 
+        facets={esUIConfig.config.searchQuery.facets} 
         dashRoute={dashRoute} 
         resultRoute={resultRoute} 
       />

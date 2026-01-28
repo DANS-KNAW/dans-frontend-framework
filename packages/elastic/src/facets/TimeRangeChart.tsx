@@ -8,18 +8,11 @@ function isFilterValueRange(value: any): value is FilterValueRange {
   return value && typeof value === 'object' && 'name' in value;
 }
 
-interface ChartFacetProps extends FacetViewProps {
-  height?: number;
-}
-
 export default function TimeRangeFacet({
   onRemove,
   onSelect,
   options,
-  height,
-}: ChartFacetProps) {
-  console.log('TimeRangeFacet height:', height);
-
+}: FacetViewProps) {
   const hasSelection = options.some(item => item.selected);
 
   const onBarClick = (year: string | number | Date) => {
@@ -73,7 +66,7 @@ export default function TimeRangeFacet({
           highlight: 'item',
         },
       }]}
-      height={height || 300}
+      height={400}
       onItemClick={() => null}
       onAxisClick={(_e, data) => {
         if (data?.axisValue) {

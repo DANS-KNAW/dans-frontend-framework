@@ -25,7 +25,7 @@ import siteTitle from "./config/siteTitle";
 import languages from "./config/languages";
 import authProvider from "./config/auth";
 import form from "./config/form";
-import { config, sortOptions } from "./config/elasticConfig";
+import { esConfig } from "./config/elasticConfig";
 import { Freshdesk } from "@dans-framework/freshdesk";
 import SupportDrawer from "@dans-framework/support-drawer";
 import RDAAnnotator from "./pages/rda-annotator";
@@ -93,7 +93,7 @@ const App = () => {
                 </Container>
               </Box>
             )}
-            <ElasticWrapper config={config} sortOptions={sortOptions} dashRoute="/" resultRoute="/search" />
+            <ElasticWrapper config={esConfig} dashRoute="/" resultRoute="/search" />
           </SiteTitleWrapper>
         );
       case "record":

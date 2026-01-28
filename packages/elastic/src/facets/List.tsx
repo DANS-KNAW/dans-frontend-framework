@@ -18,6 +18,7 @@ import Select from '@mui/material/Select';
 interface ListFacetProps extends FacetViewProps {
   setFilterType: (type: string) => void;
   customFilterType: string;
+  defaultShow: number;
 }
 
 export default function ListFacet({
@@ -30,8 +31,20 @@ export default function ListFacet({
   onSearch,
   setFilterType,
   customFilterType,
+  defaultShow,
 }: ListFacetProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [expandedOptions, setExpandedOptions] = useState(false);
+
+  // sort options to have selected ones on top
+  const sortedOptions = [...options].sort((a, b) => {
+    if (a.selected === b.selected) {
+      return 0;
+    }
+    return a.selected ? -1 : 1;
+  });
+
+  const displayedOptions = expandedOptions ? sortedOptions : sortedOptions.slice(0, defaultShow);
 
   useEffect(() => {
     onSearch(searchTerm);
@@ -72,7 +85,7 @@ export default function ListFacet({
       ) }
 
       <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-        {options.map((option, index) => {
+        {displayedOptions.map((option, index) => {
           const labelId = `checkbox-list-label-${option.value}`;
 
           return (
@@ -114,12 +127,32 @@ export default function ListFacet({
           );
         })}
       </List>
-
-      {showMore && (
-        <Button size="small" onClick={onMoreClick}>
-          Show more
-        </Button>
-      )}
+      <Stack direction="row" justifyContent="space-between">
+        {
+          expandedOptions && (
+            <Button size="small" onClick={() => setExpandedOptions(false)}>
+              Show less
+            </Button>
+          )
+        }
+        {(showMore || displayedOptions.length < options.length) && (
+          <Button 
+            size="small" 
+            onClick={() => { 
+              if (options.length > defaultShow && !expandedOptions) {
+                // Have loaded items but collapsed: just expand
+                setExpandedOptions(true);
+              } else if (showMore) {
+                // Either initial load or already expanded: fetch more
+                onMoreClick();
+                setExpandedOptions(true);
+              }
+            }}
+          >
+            Show more
+          </Button>
+        )}
+      </Stack>
     </>
   );
 };

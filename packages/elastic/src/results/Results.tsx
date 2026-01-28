@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 export default function Results({ children }: { children?: ReactNode }) {
   return (
     <>
-      { children}
+      { children }
     </>
   );
 };
