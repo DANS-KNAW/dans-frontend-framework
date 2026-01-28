@@ -9,6 +9,7 @@ import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 import { FACET_VIEW_MAP, type FacetDisplayType } from "../utils/facetMap";
 import LinearProgress from '@mui/material/LinearProgress';
+import GeoMapFacet from "../facets/Map";
 
 interface FacetContainerProps {
   field: string;
@@ -52,6 +53,8 @@ export default function FacetContainer({
     }
   };
 
+  console.log(config)
+
   return (
     <Grid size={{ xs: fullWidth ? 12 : 6, md: mediumWidth, lg: largeWidth }}>
       <Paper elevation={1} sx={{ p: 2, mb: 2, height: '100%', position: 'relative' }}>
@@ -59,23 +62,34 @@ export default function FacetContainer({
           {lookupLanguageString(config.label, i18n.language)}
         </Typography>
         <Box>
-          <Facet
-            key={field}
-            field={field}
-            label={lookupLanguageString(config.label, i18n.language) || ''}
-            view={FACET_VIEW_MAP[config.display as FacetDisplayType] as ComponentType<any>}
-            isFilterable={config.display === "list"}
-            show={config.show || 10}
-            filterType={currentFilter?.type || config.filterType || "any"}
-            {...(config.display === "list"
-              ? { 
-                  customFilterType: currentFilter?.type || config.filterType || "any", 
-                  setFilterType: handleFilterTypeChange,
-                  defaultShow: config.show,
-                }
-              : {})}
-          />
-          {!hasOptions && !isLoading &&
+          {config.display !== 'geomap' &&
+            <Facet
+              key={field}
+              field={field}
+              label={lookupLanguageString(config.label, i18n.language) || ''}
+              view={FACET_VIEW_MAP[config.display as FacetDisplayType] as ComponentType<any>}
+              isFilterable={config.display === "list"}
+              show={config.show || 10}
+              filterType={currentFilter?.type || config.filterType || "any"}
+              {...(config.display === "list"
+                ? { 
+                    customFilterType: currentFilter?.type || config.filterType || "any", 
+                    setFilterType: handleFilterTypeChange,
+                    defaultShow: config.show,
+                  }
+                : {})}
+              {...(config.display === "barchart"
+                ? { 
+                    orientation: config.orientation,
+                    legend: config.legend,
+                  }
+                : {})}
+            />
+          }
+          { config.display === 'geomap' &&
+            <GeoMapFacet field={field} config={config} />
+          }
+          {!hasOptions && !isLoading && config.display !== 'geomap' &&
             <Typography variant="body2" color="textSecondary" sx={{ my: 2 }}>
               No options found for current selection
             </Typography>

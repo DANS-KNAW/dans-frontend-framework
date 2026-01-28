@@ -2,12 +2,19 @@ import { BarChart } from '@mui/x-charts/BarChart';
 import { type FacetViewProps } from "@elastic/react-search-ui-views";
 import { colors } from '../utils/colors';
 
+interface BarChartFacetProps extends FacetViewProps {
+  orientation?: "horizontal" | "vertical";
+  legend?: boolean;
+}
+
+
 export default function BarChartFacet({
   onRemove,
   onSelect,
   options,
-}: FacetViewProps) {
-  
+  orientation,
+  legend,
+}: BarChartFacetProps) { 
   const hasSelection = options.some(item => item.selected);
   
   const chartData = options.map((item) => ({
@@ -34,14 +41,21 @@ export default function BarChartFacet({
   return (
     <BarChart
       dataset={chartData}
-      xAxis={[{ 
+      {...( orientation !== 'horizontal' ? { xAxis:[{ 
         scaleType: 'band', 
         dataKey: 'label',
         label: ''
-      }]}
+      }]} : {})}
+      {...( orientation === 'horizontal' ? { yAxis:[{ 
+        scaleType: 'band', 
+        dataKey: 'label',
+        label: '',
+        width: 70,
+      }]} : {})}
+      layout={orientation === "horizontal" ? "horizontal" : "vertical"}
       series={[{ 
         dataKey: 'count', 
-        label: '',
+        label: 'Amount of documents',
         color: colors[0],
         colorGetter: (data) => {
           const item = chartData[data.dataIndex];
@@ -51,14 +65,15 @@ export default function BarChartFacet({
           highlight: 'item',
         },
       }]}
-      height={300}
+      height={400}
       onItemClick={() => null}
       onAxisClick={(_e, data) => {
         if (data?.axisValue) {
           onBarClick(data.axisValue);
         }
       }}
-      grid={{ horizontal: true }}
+      grid={{ horizontal: orientation !== "horizontal", vertical: orientation === "horizontal" }}
+      hideLegend={!legend}
     />
   );
 }

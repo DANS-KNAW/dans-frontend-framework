@@ -4,7 +4,7 @@ interface FormattedResult {
   title?: string;
   subTitle?: string;
   description?: string;
-  listItems: Array<{
+  listItems?: Array<{
     label: string;
     value: string;
   }>;
@@ -60,19 +60,19 @@ export function formatESResult(
   const titleValue = getNestedValue(result, config.title);
   formatted.title = formatValue(titleValue?.raw ?? titleValue);
 
-  const subTitleValue = getNestedValue(result, config.subTitle);
+  const subTitleValue = config.subTitle ? getNestedValue(result, config.subTitle) : undefined;
   formatted.subTitle = formatValue(subTitleValue?.raw ?? subTitleValue);
 
   const descriptionValue = getNestedValue(result, config.description);
   formatted.description = formatValue(descriptionValue?.raw ?? descriptionValue);
 
   // Process list items
-  config.list.forEach(({ field, label }) => {
+  config.list?.forEach(({ field, label }) => {
     const value = getNestedValue(result, field);
     const formattedValue = formatValue(value?.raw ?? value);
 
     if (formattedValue) {
-      formatted.listItems.push({
+      formatted.listItems?.push({
         label,
         value: formattedValue
       });

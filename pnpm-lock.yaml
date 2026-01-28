@@ -117,6 +117,9 @@ importers:
       '@dans-framework/deposit':
         specifier: workspace:*
         version: link:../../packages/deposit
+      '@dans-framework/elastic':
+        specifier: workspace:*
+        version: link:../../packages/elastic
       '@dans-framework/layout':
         specifier: workspace:*
         version: link:../../packages/layout
@@ -866,6 +869,12 @@ importers:
       i18next-resources-to-backend:
         specifier: ^1.2.1
         version: 1.2.1
+      maplibre-gl:
+        specifier: ^5.15.0
+        version: 5.15.0
+      ngeohash:
+        specifier: ^0.6.3
+        version: 0.6.3
       react:
         specifier: ^19.2.3
         version: 19.2.3
@@ -875,6 +884,9 @@ importers:
       react-i18next:
         specifier: ^16.5.0
         version: 16.5.0(i18next@25.7.3(typescript@5.9.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
+      react-map-gl:
+        specifier: ^8.1.0
+        version: 8.1.0(mapbox-gl@3.17.0)(maplibre-gl@5.15.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react-router-dom:
         specifier: ^7.11.0
         version: 7.11.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)

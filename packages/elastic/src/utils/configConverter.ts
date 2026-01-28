@@ -1,7 +1,7 @@
 import yearFormatter from "./yearFormatter";
 
 // Types
-type FacetType = "list" | "piechart" | "timerange" | "hidden";
+type FacetType = "list" | "piechart" | "timerange" | "barchart" | "hidden" | "geomap";
 type FacetWidth = "small" | "medium" | "large";
 type SortDirection = "asc" | "desc";
 
@@ -32,6 +32,16 @@ interface ListFacet extends BaseFacet {
   type: "list" | "piechart";
 }
 
+interface GeoFacet extends BaseFacet {
+  type: "geomap";
+}
+
+interface BarChartFacet extends BaseFacet {
+  type: "barchart";
+  orientation?: "horizontal" | "vertical";
+  legend?: boolean;
+}
+
 interface TimeRangeFacet extends BaseFacet {
   type: "timerange";
   interval: "year" | "month" | "day";
@@ -39,7 +49,7 @@ interface TimeRangeFacet extends BaseFacet {
   end: number | string;
 }
 
-type Facet = ListFacet | TimeRangeFacet | HiddenFacet;
+type Facet = ListFacet | TimeRangeFacet | HiddenFacet | BarChartFacet | GeoFacet;
 
 interface SortOption {
   field: string | null;
@@ -49,9 +59,9 @@ interface SortOption {
 
 interface SearchResult {
   title: string;
-  subTitle: string;
+  subTitle?: string;
   description: string;
-  list: { field: string; label: string }[];
+  list?: { field: string; label: string }[];
 }
 
 export interface SimpleConfig {
@@ -120,9 +130,9 @@ interface ESUIConfig {
 
 export interface ResultViewConfig {
   title: string;
-  subTitle: string;
+  subTitle?: string;
   description: string;
-  list: { field: string; label: string }[];
+  list?: { field: string; label: string }[];
 }
 
 interface ConvertedConfig {
@@ -155,10 +165,22 @@ export function convertToESUIConfig(simple: SimpleConfig): ConvertedConfig {
   // Convert facets
   const facets: Record<string, ESUIFacet> = {};
   const disjunctiveFacets: string[] = [];
+  const externallyHandledFacets: Record<string, ESUIFacet> = {};
   
   simple.facets.forEach(facet => {
     if (facet.disjunctive) {
       disjunctiveFacets.push(facet.field);
+    }
+
+    if (facet.type === "geomap") {
+      externallyHandledFacets[facet.field] = {
+        type: "geomap",
+        label: facet.label || {en: '', nl: ''},
+        display: "geomap",
+        show: facet.initialSize,
+        size: facet.maxSize || facet.initialSize,
+      };
+      return; // Skip geomap facets for ESUI config
     }
     
     if (facet.type === "timerange") {
@@ -178,11 +200,14 @@ export function convertToESUIConfig(simple: SimpleConfig): ConvertedConfig {
         display: facet.type,
         size: facet.maxSize || facet.initialSize,
         show: facet.initialSize,
+        ...(facet.type === "barchart"
+        ? { 
+            legend: facet.legend,
+            orientation: facet.orientation,
+          }
+        : {}),
+        ...(facet.width ? { width: facet.width } : {}),
       };
-      
-      if (facet.width) {
-        facetConfig.width = facet.width;
-      }
       
       facets[facet.field] = facetConfig;
     }
@@ -198,6 +223,9 @@ export function convertToESUIConfig(simple: SimpleConfig): ConvertedConfig {
       value: [{ field: opt.field, direction: opt.direction || "asc" }]
     };
   });
+
+        
+  console.log(externallyHandledFacets)
   
   return {
     config: {
@@ -209,6 +237,7 @@ export function convertToESUIConfig(simple: SimpleConfig): ConvertedConfig {
         result_fields: resultFields,
         disjunctiveFacets,
         facets,
+        externallyHandledFacets,
       },
       autocompleteQuery: {
         results: {
@@ -226,7 +255,7 @@ export function convertToESUIConfig(simple: SimpleConfig): ConvertedConfig {
           },
           size: 4
         }
-      }
+      },
     },
     sortOptions,
     resultsViewConfig: simple.searchResult,

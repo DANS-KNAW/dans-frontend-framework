@@ -17,7 +17,7 @@ export default function Result({
   const { useAppSelector } = useStoreHooks();
   const resultViewConfig = useAppSelector(getResultViewConfig);
   const formattedResult = formatESResult(result, resultViewConfig);
-  
+
   const description = 
     formattedResult.description && formattedResult.description.length > 200 
     ? `${formattedResult.description.substring(0, 200)}...` 
@@ -39,7 +39,7 @@ export default function Result({
         gridTemplateColumns: "1fr 4fr",
         mb: 2,
       }}>
-        {formattedResult.listItems.map((item) => {
+        {formattedResult.listItems?.map((item) => {
           const value = Array.isArray(item.value) ? item.value.join(" || ") : item.value.length < 1 ? "-" : item.value;
           return (
             <>

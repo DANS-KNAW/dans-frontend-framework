@@ -26,6 +26,8 @@ import {
 } from "@dans-framework/rdt-search-ui";
 import { useEmbedHandler } from "@dans-framework/utils";
 import { AppWrapper } from "@dans-framework/wrapper";
+import { ElasticWrapper } from "@dans-framework/elastic";
+import { esConfig } from "./config/elasticConfig";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -45,9 +47,9 @@ const App = () => {
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
-        return <FacetedWrapper dashboard dashRoute="/" resultRoute="/search" />;
       case "search":
-        return <FacetedWrapper dashRoute="/" resultRoute="/search" />;
+        return <ElasticWrapper config={esConfig} dashRoute="/" resultRoute="/search" />
+
       case "record":
         return (
           <FacetedWrapper dashRoute="/" resultRoute="/search">
