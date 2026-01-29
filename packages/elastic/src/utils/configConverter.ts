@@ -22,6 +22,7 @@ interface BaseFacet {
   initialSize?: number;
   maxSize?: number;
   width?: FacetWidth;
+  tooltip?: string;
 }
 
 interface HiddenFacet extends BaseFacet {
@@ -178,6 +179,7 @@ const { facets, disjunctiveFacets, externallyHandledFacets } =
         order: index,
         label: defaultLabel(facet.label),
         show: facet.initialSize,
+        tooltip: facet.tooltip,
         ...(facet.width && { width: facet.width }),
       };
 
@@ -200,6 +202,16 @@ const { facets, disjunctiveFacets, externallyHandledFacets } =
             interval: facet.interval,
           };
           break;
+
+        // case "date":
+        //   acc.externallyHandledFacets[facet.field] = {
+        //     ...baseConfig,
+        //     type: "date_histogram",
+        //     display: "date",
+        //     interval: facet.interval,
+        //     size: facet.maxSize || facet.initialSize,
+        //   };
+        //   break;
 
         case "barchart":
           acc.facets[facet.field] = {

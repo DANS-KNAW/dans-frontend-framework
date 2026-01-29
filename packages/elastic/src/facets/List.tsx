@@ -1,5 +1,4 @@
 import Checkbox from "@mui/material/Checkbox";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { type FacetViewProps } from "@elastic/react-search-ui-views";
@@ -10,10 +9,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import FilterFacet from "../ui-components/FilterFacet";
 
 interface ListFacetProps extends FacetViewProps {
   setFilterType: (type: string) => void;
@@ -52,31 +48,14 @@ export default function ListFacet({
 
   return (
     <>
-      <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
-        {((showSearch && options.length > 6) || searchTerm) &&
-          <TextField
-            size="small"
-            placeholder={`Filter...`}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            fullWidth
-          />
-        }
-
-        <FormControl sx={{ m: 1, minWidth: 80 }} size="small">
-          <InputLabel id="filter-type-label">Match</InputLabel>
-          <Select
-            labelId="filter-type-label"
-            id="filter-type-select"
-            value={customFilterType}
-            onChange={(e) => setFilterType(e.target.value)}
-            label="Must match"
-          >
-            <MenuItem value="any">Any</MenuItem>
-            <MenuItem value="all">All</MenuItem>
-          </Select>
-        </FormControl>
-      </Stack>
+      <FilterFacet
+        customFilterType={customFilterType}
+        setFilterType={setFilterType}
+        showSearch={showSearch}
+        options={options}
+        setSearchTerm={setSearchTerm}
+        searchTerm={searchTerm}
+      />
 
       { options.length === 0 && (
         <Typography variant="body2" color="textSecondary" sx={{ my: 2, textAlign: 'center' }}>

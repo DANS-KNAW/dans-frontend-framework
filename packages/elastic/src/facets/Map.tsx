@@ -13,16 +13,16 @@ interface GeoFilter {
 }
 
 export default function GeoMapFacet({ field }: { field: string; }) {
-  const searchContext = useSearch();
+  const { rawResponse, filters: currentFilters, removeFilter, addFilter } = useSearch();
   const mapRef = useRef<MapRef>(null);
   const isProgrammaticMove = useRef(false);
   
   // Get geo aggregation from rawResponse
-  const geoAggregation = searchContext.rawResponse?.aggregations?.facet_bucket_all?.[field];
+  const geoAggregation = rawResponse?.aggregations?.facet_bucket_all?.[field];
   
   // Get existing geo filter
   const geoFilter: GeoFilter | undefined = useMemo(() => {
-    const filters = searchContext.filters || [];
+    const filters = currentFilters || [];
     const geoFilterObj = filters.find(f => f.field === field);
     const value = geoFilterObj?.values?.[0];
 
@@ -37,14 +37,12 @@ export default function GeoMapFacet({ field }: { field: string; }) {
     }
 
     return undefined;
-  }, [searchContext.filters]);
+  }, [currentFilters]);
 
   const geoFilterBounds: [[number, number], [number, number]] = geoFilter ? [
     [geoFilter?.top_left.lon, geoFilter?.bottom_right.lat], // southwest
     [geoFilter?.bottom_right.lon, geoFilter?.top_left.lat]  // northeast
   ] :  [[-180, -25], [180, 60]];
-
-  console.log("Current geo filter:", geoFilter);
 
   const geojson: FeatureCollection<Point> = useMemo(() => {
     if (!geoAggregation?.buckets?.length) {
@@ -79,7 +77,6 @@ export default function GeoMapFacet({ field }: { field: string; }) {
   const onMoveEnd = useCallback((evt: any) => {
     // Ignore programmatic moves
     if (isProgrammaticMove.current) {
-      console.log("Ignoring programmatic move");
       return;
     }
 
@@ -92,15 +89,13 @@ export default function GeoMapFacet({ field }: { field: string; }) {
 
     // Ensure bbox is valid
     if (north < south || east < west) {
-      console.warn("Invalid bounding box, skipping filter");
-      searchContext.removeFilter(field);
+      removeFilter(field);
       return;
     }
 
     // Prevent filtering if zoomed out too far
     if (evt.target.getZoom() < 3) {
-      console.warn("Zoom too low, skipping filter");
-      searchContext.removeFilter(field);
+      removeFilter(field);
       return;
     }
 
@@ -117,14 +112,14 @@ export default function GeoMapFacet({ field }: { field: string; }) {
       Math.abs(geoFilter.bottom_right.lon - east) > 0.01;
 
     if (hasChanged) {
-      searchContext.removeFilter(field);
-      searchContext.addFilter(
+      removeFilter(field);
+      addFilter(
         field,
         newFilter as unknown as FilterValue,
         "all"
       );
     }
-  }, [searchContext, geoFilter]);
+  }, [removeFilter, addFilter, geoFilter]);
 
   return (
     <Box sx={{ width: '100%', height: 400 }}>

@@ -15,6 +15,7 @@ export const esConfig: SimpleConfig = {
       initialSize: 30,
       orientation: "horizontal",
       legend: false,
+      tooltip: "Use this to filter countries or regions that have endorsed or recommended a specific Identifier. These recommendations are usually contained in RDA national strategy documents, and/ or in published national strategies or policies."
     },
     {
       field: "countries.location",
@@ -41,6 +42,14 @@ export const esConfig: SimpleConfig = {
       width: "large",
       initialSize: 200,
     },
+    // {
+    //   field: "start_date",
+    //   type: "date",
+    //   label: { en: "Year of First Use", nl: "Jaar van Eerste Gebruik" },
+    //   interval: "year",
+    //   width: "large",
+    //   initialSize: 200,
+    // },
   ],
   
   sortOptions: [

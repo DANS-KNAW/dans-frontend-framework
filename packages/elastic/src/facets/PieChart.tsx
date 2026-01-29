@@ -2,12 +2,20 @@ import { PieChart } from '@mui/x-charts/PieChart';
 import { type FacetViewProps } from "@elastic/react-search-ui-views";
 import { legendClasses } from '@mui/x-charts/ChartsLegend';
 import { colors } from '../utils/colors';
+import FilterFacet from '../ui-components/FilterFacet';
+
+interface PieChartFacetProps extends FacetViewProps {
+  setFilterType: (type: string) => void;
+  customFilterType: string;
+}
 
 export default function PieChartFacet({
   onRemove,
   onSelect,
   options,
-}: FacetViewProps) {
+  setFilterType,
+  customFilterType,
+}: PieChartFacetProps) {
   const hasSelection = options.some(item => item.selected);
 
   const chartData = options.map((option, i) => ({
@@ -28,41 +36,47 @@ export default function PieChartFacet({
   }
 
   return (
-    <PieChart
-      series={[
-        {
-          data: chartData,
-          cornerRadius: 3,
-          innerRadius: 40,
-          highlightScope: {
-            highlight: 'item',
-          },
-        },
-      ]}
-      height={300}
-      slotProps={{
-        legend: {
-          direction: "horizontal",
-          position: { 
-            vertical: 'bottom',
-            horizontal: 'center',
-          },
-          sx: {
-            mt: 3,
-            gap: '0.5rem',
-            // CSS-in-JS
-            [`.${legendClasses.mark}`]: {
-              height: 15,
-              width: 15,
-            },
-            // CSS class
-            ['& .MuiChartsLegend-series']: {
-              gap: '0.25rem',
+    <>
+      <FilterFacet
+        customFilterType={customFilterType}
+        setFilterType={setFilterType}
+      />
+      <PieChart
+        series={[
+          {
+            data: chartData,
+            cornerRadius: 3,
+            innerRadius: 40,
+            highlightScope: {
+              highlight: 'item',
             },
           },
-        },
-      }}
-      onItemClick={(_event, d) => onPieceClick(d.dataIndex)}
-    />
+        ]}
+        height={300}
+        slotProps={{
+          legend: {
+            direction: "horizontal",
+            position: { 
+              vertical: 'bottom',
+              horizontal: 'center',
+            },
+            sx: {
+              mt: 3,
+              gap: '0.5rem',
+              // CSS-in-JS
+              [`.${legendClasses.mark}`]: {
+                height: 15,
+                width: 15,
+              },
+              // CSS class
+              ['& .MuiChartsLegend-series']: {
+                gap: '0.25rem',
+              },
+            },
+          },
+        }}
+        onItemClick={(_event, d) => onPieceClick(d.dataIndex)}
+      />
+    </>
   );
 }

@@ -61,3 +61,12 @@ export function fixGeoBoundingBoxFilters(
 
   return esRequest;
 }
+
+export function handleGeoFacets(
+  esRequest: any,
+  externallyHandledFacets?: Record<string, ESUIFacet>
+) {
+  let req = addGeomapAggregations(esRequest, externallyHandledFacets);
+  req = fixGeoBoundingBoxFilters(req);
+  return req;
+}

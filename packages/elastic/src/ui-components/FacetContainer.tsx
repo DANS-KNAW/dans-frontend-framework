@@ -10,6 +10,9 @@ import { useTranslation } from "react-i18next";
 import { FACET_VIEW_MAP, type FacetDisplayType } from "../utils/facetMap";
 import LinearProgress from '@mui/material/LinearProgress';
 import GeoMapFacet from "../facets/Map";
+import Tooltip from "@mui/material/Tooltip";
+import Stack from "@mui/material/Stack";
+import HelpIcon from '@mui/icons-material/Help';
 
 interface FacetContainerProps {
   field: string;
@@ -53,12 +56,21 @@ export default function FacetContainer({
     }
   };
 
+  console.log(config)
+
   return (
     <Grid size={{ xs: fullWidth ? 12 : 6, md: mediumWidth, lg: largeWidth }}>
       <Paper elevation={1} sx={{ p: 2, mb: 2, height: '100%', position: 'relative' }}>
-        <Typography variant="h6" gutterBottom>
-          {lookupLanguageString(config.label, i18n.language)}
-        </Typography>
+        <Stack direction="row" spacing={1} alignItems="center" mb={1}>
+          <Typography variant="h6">
+            {lookupLanguageString(config.label, i18n.language)}
+          </Typography>
+          {config.tooltip &&
+            <Tooltip title={config.tooltip} placement="top-start">
+              <HelpIcon fontSize="small" color="neutral" />
+            </Tooltip>
+          }
+        </Stack>
         <Box>
           {config.display !== 'geomap' &&
             <Facet
@@ -68,8 +80,8 @@ export default function FacetContainer({
               isFilterable={config.display === "list"}
               show={config.show || 10}
               filterType={currentFilter?.type || config.filterType || "any"}
-              {...(config.display === "list"
-                ? { 
+              {...(config.display === "list" || config.display === "barchart" || config.display === "piechart"
+                ? {  
                     customFilterType: currentFilter?.type || config.filterType || "any", 
                     setFilterType: handleFilterTypeChange,
                     defaultShow: config.show,

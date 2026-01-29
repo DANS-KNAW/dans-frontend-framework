@@ -1,12 +1,14 @@
 import { BarChart } from '@mui/x-charts/BarChart';
 import { type FacetViewProps } from "@elastic/react-search-ui-views";
 import { colors } from '../utils/colors';
+import FilterFacet from "../ui-components/FilterFacet";
 
 interface BarChartFacetProps extends FacetViewProps {
+  setFilterType: (type: string) => void;
+  customFilterType: string;
   orientation?: "horizontal" | "vertical";
   legend?: boolean;
 }
-
 
 export default function BarChartFacet({
   onRemove,
@@ -14,6 +16,8 @@ export default function BarChartFacet({
   options,
   orientation,
   legend,
+  setFilterType,
+  customFilterType, 
 }: BarChartFacetProps) { 
   const hasSelection = options.some(item => item.selected);
   
@@ -39,41 +43,47 @@ export default function BarChartFacet({
   }
 
   return (
-    <BarChart
-      dataset={chartData}
-      {...( orientation !== 'horizontal' ? { xAxis:[{ 
-        scaleType: 'band', 
-        dataKey: 'label',
-        label: ''
-      }]} : {})}
-      {...( orientation === 'horizontal' ? { yAxis:[{ 
-        scaleType: 'band', 
-        dataKey: 'label',
-        label: '',
-        width: 70,
-      }]} : {})}
-      layout={orientation === "horizontal" ? "horizontal" : "vertical"}
-      series={[{ 
-        dataKey: 'count', 
-        label: 'Amount of documents',
-        color: colors[0],
-        colorGetter: (data) => {
-          const item = chartData[data.dataIndex];
-          return item.selected || !hasSelection ? colors[0] : `${colors[0]}40`
-        },
-        highlightScope: {
-          highlight: 'item',
-        },
-      }]}
-      height={400}
-      onItemClick={() => null}
-      onAxisClick={(_e, data) => {
-        if (data?.axisValue) {
-          onBarClick(data.axisValue);
-        }
-      }}
-      grid={{ horizontal: orientation !== "horizontal", vertical: orientation === "horizontal" }}
-      hideLegend={!legend}
-    />
+    <>
+      <FilterFacet
+        customFilterType={customFilterType}
+        setFilterType={setFilterType}
+      />
+      <BarChart
+        dataset={chartData}
+        {...( orientation !== 'horizontal' ? { xAxis:[{ 
+          scaleType: 'band', 
+          dataKey: 'label',
+          label: ''
+        }]} : {})}
+        {...( orientation === 'horizontal' ? { yAxis:[{ 
+          scaleType: 'band', 
+          dataKey: 'label',
+          label: '',
+          width: 70,
+        }]} : {})}
+        layout={orientation === "horizontal" ? "horizontal" : "vertical"}
+        series={[{ 
+          dataKey: 'count', 
+          label: 'Amount of documents',
+          color: colors[0],
+          colorGetter: (data) => {
+            const item = chartData[data.dataIndex];
+            return item.selected || !hasSelection ? colors[0] : `${colors[0]}40`
+          },
+          highlightScope: {
+            highlight: 'item',
+          },
+        }]}
+        height={400}
+        onItemClick={() => null}
+        onAxisClick={(_e, data) => {
+          if (data?.axisValue) {
+            onBarClick(data.axisValue);
+          }
+        }}
+        grid={{ horizontal: orientation !== "horizontal", vertical: orientation === "horizontal" }}
+        hideLegend={!legend}
+      />
+    </>
   );
 }
