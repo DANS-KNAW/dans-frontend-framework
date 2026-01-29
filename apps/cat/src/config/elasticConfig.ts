@@ -9,18 +9,9 @@ export const esConfig: SimpleConfig = {
   
   facets: [
     {
-      field: "identifier.normalized",
-      type: "list",
-      label: { en: "Identifiers", nl: "Identificaties" },
-      disjunctive: true,
-      initialSize: 10,
-      maxSize: 10000,
-    },
-    {
       field: "countries.name",
       type: "barchart",
       label: { en: "Recommended/endorsed by", nl: "Aanbevolen/goedgekeurd door" },
-      disjunctive: true,
       initialSize: 30,
       orientation: "horizontal",
       legend: false,
@@ -29,15 +20,14 @@ export const esConfig: SimpleConfig = {
       field: "countries.location",
       type: "geomap",
       label: { en: "Recommended/Endorsed By", nl: "Aanbevolen/Goedgekeurd Door" },
-      disjunctive: true,
       initialSize: 10,
       maxSize: 10000,
+      width: "large",
     },
     {
       field: "entity",
       type: "piechart",
       label: { en: "Referenced Entity", nl: "Gerefereerde Entiteit" },
-      disjunctive: true,
       initialSize: 10,
       maxSize: 10000,
     },
@@ -45,7 +35,6 @@ export const esConfig: SimpleConfig = {
       field: "start_date",
       type: "timerange",
       label: { en: "Year of First Use", nl: "Jaar van Eerste Gebruik" },
-      disjunctive: true,
       interval: "year",
       start: 1893,
       end: "now",
@@ -56,7 +45,7 @@ export const esConfig: SimpleConfig = {
   
   sortOptions: [
     { field: null, label: "Relevance" }, // null = default relevance
-    { field: "identifier.keyword", label: "Identifier", direction: "asc" },
+    { field: "identifier.normalized", label: "Identifier", direction: "asc" },
   ],
 
   searchResult: {

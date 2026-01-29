@@ -24,7 +24,7 @@ export const searchSlice = createSlice({
     },
     setResultViewConfig: (state, action: PayloadAction<ResultViewConfig>) => {
       state.resultViewConfig = action.payload;
-    }
+    },
   },
 });
 

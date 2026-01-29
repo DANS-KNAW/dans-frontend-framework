@@ -1,33 +1,62 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useSearch } from "@elastic/react-search-ui";
-import Map, { Source, Layer } from "react-map-gl/maplibre";
+import { type FilterValue } from "@elastic/search-ui";
+import Map, { Source, Layer, MapRef } from "react-map-gl/maplibre";
 import geohash from 'ngeohash';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import Box from "@mui/material/Box";
+import type { FeatureCollection, Feature, Point } from "geojson";
 
-export default function GeoMapFacet() {
+interface GeoFilter {
+  top_left: { lat: number; lon: number };
+  bottom_right: { lat: number; lon: number };
+}
+
+export default function GeoMapFacet({ field }: { field: string; }) {
   const searchContext = useSearch();
+  const mapRef = useRef<MapRef>(null);
+  const isProgrammaticMove = useRef(false);
   
   // Get geo aggregation from rawResponse
-  const geoAggregation = searchContext.rawResponse?.aggregations?.facet_bucket_all?.["countries.location"];
+  const geoAggregation = searchContext.rawResponse?.aggregations?.facet_bucket_all?.[field];
   
-  console.log("Geo aggregation:", geoAggregation);
-  console.log("Buckets:", geoAggregation?.buckets);
+  // Get existing geo filter
+  const geoFilter: GeoFilter | undefined = useMemo(() => {
+    const filters = searchContext.filters || [];
+    const geoFilterObj = filters.find(f => f.field === field);
+    const value = geoFilterObj?.values?.[0];
 
-  const geojson = useMemo(() => {
+    // Type guard: ensure value has top_left & bottom_right
+    if (
+      value &&
+      typeof value === "object" &&
+      "top_left" in value &&
+      "bottom_right" in value
+    ) {
+      return value as GeoFilter;
+    }
+
+    return undefined;
+  }, [searchContext.filters]);
+
+  const geoFilterBounds: [[number, number], [number, number]] = geoFilter ? [
+    [geoFilter?.top_left.lon, geoFilter?.bottom_right.lat], // southwest
+    [geoFilter?.bottom_right.lon, geoFilter?.top_left.lat]  // northeast
+  ] :  [[-180, -25], [180, 60]];
+
+  console.log("Current geo filter:", geoFilter);
+
+  const geojson: FeatureCollection<Point> = useMemo(() => {
     if (!geoAggregation?.buckets?.length) {
-      console.log("No buckets found");
       return {
         type: "FeatureCollection",
         features: []
       };
     }
 
-    console.log("Processing", geoAggregation.buckets.length, "buckets");
-
-    const features = geoAggregation.buckets.map(bucket => {
+    const features: Feature<Point>[] = geoAggregation.buckets.map((bucket: any) => {
       const { latitude, longitude } = geohash.decode(bucket.key);
-      console.log(`Decoded ${bucket.key} to lat:${latitude}, lon:${longitude}, count:${bucket.doc_count}`);
-      
+
       return {
         type: "Feature",
         properties: {
@@ -41,45 +70,69 @@ export default function GeoMapFacet() {
       };
     });
 
-    console.log("Generated features:", features);
-
     return {
       type: "FeatureCollection",
       features
     };
   }, [geoAggregation]);
 
-  console.log("Final GeoJSON:", geojson);
+  const onMoveEnd = useCallback((evt: any) => {
+    // Ignore programmatic moves
+    if (isProgrammaticMove.current) {
+      console.log("Ignoring programmatic move");
+      return;
+    }
 
-  const onMoveEnd = useCallback((evt) => {
     const bounds = evt.target.getBounds();
 
-    searchContext.removeFilter("countries.location");
+    let north = Math.min(bounds.getNorth(), 90);
+    let south = Math.max(bounds.getSouth(), -90);
+    let west = Math.max(bounds.getWest(), -180);
+    let east = Math.min(bounds.getEast(), 180);
 
-    searchContext.addFilter(
-      "countries.location",
-      {
-        top_left: {
-          lat: bounds.getNorth(),
-          lon: bounds.getWest()
-        },
-        bottom_right: {
-          lat: bounds.getSouth(),
-          lon: bounds.getEast()
-        }
-      },
-      "all"
-    );
-  }, [searchContext]);
+    // Ensure bbox is valid
+    if (north < south || east < west) {
+      console.warn("Invalid bounding box, skipping filter");
+      searchContext.removeFilter(field);
+      return;
+    }
+
+    // Prevent filtering if zoomed out too far
+    if (evt.target.getZoom() < 3) {
+      console.warn("Zoom too low, skipping filter");
+      searchContext.removeFilter(field);
+      return;
+    }
+
+    const newFilter = {
+      top_left: { lat: north, lon: west },
+      bottom_right: { lat: south, lon: east }
+    };
+
+    // Only update if filter actually changed (with tolerance for floating point)
+    const hasChanged = !geoFilter || 
+      Math.abs(geoFilter.top_left.lat - north) > 0.01 ||
+      Math.abs(geoFilter.top_left.lon - west) > 0.01 ||
+      Math.abs(geoFilter.bottom_right.lat - south) > 0.01 ||
+      Math.abs(geoFilter.bottom_right.lon - east) > 0.01;
+
+    if (hasChanged) {
+      searchContext.removeFilter(field);
+      searchContext.addFilter(
+        field,
+        newFilter as unknown as FilterValue,
+        "all"
+      );
+    }
+  }, [searchContext, geoFilter]);
 
   return (
-    <div style={{ width: '100%', height: 400 }}>
+    <Box sx={{ width: '100%', height: 400 }}>
       <Map
+        ref={mapRef}
         mapLib={import("maplibre-gl")}
         initialViewState={{
-          latitude: 52.5,
-          longitude: 13.4,
-          zoom: 4
+          bounds: geoFilterBounds,
         }}
         style={{ width: '100%', height: '100%' }}
         mapStyle="https://demotiles.maplibre.org/style.json"
@@ -124,6 +177,6 @@ export default function GeoMapFacet() {
           </Source>
         )}
       </Map>
-    </div>
+    </Box>
   );
 }

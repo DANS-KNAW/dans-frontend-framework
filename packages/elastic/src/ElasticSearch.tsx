@@ -30,13 +30,11 @@ export default function ElasticSearch({
   facets, 
   dashRoute, 
   resultRoute,
-  externallyHandledFacets,
 }: { 
   sortOptions?: ESUISortOption[]; 
-  facets: Record<string, ESUIFacet>; 
+  facets: [string, ESUIFacet][];
   dashRoute?: string;
   resultRoute?: string;
-  externallyHandledFacets?: ESUIFacet[];
 }) {
   const routeMatch = useRouteMatch([dashRoute, resultRoute]);
   const navigate = useNavigate();
@@ -61,7 +59,7 @@ export default function ElasticSearch({
   };
 
   return (
-    <Grid container spacing={2} sx={{ mt: 2, ml: 'auto', mr: 'auto', pl: 2, pr: 2 }} maxWidth="xl">
+    <Grid container spacing={2} sx={{ mt: 2, ml: 'auto', mr: 'auto', pl: 2, pr: 2, pb: 8 }} maxWidth="xl">
       {needsTabs && 
         <Grid size={{xs: 12}}>
           <Tabs value={currentTab} aria-label="Switch between dashboard and results">
@@ -81,8 +79,8 @@ export default function ElasticSearch({
         </Grid> 
       }
       <ErrorBoundary>
-        {isDashboard && <ViewSelector type="dashboard" facets={facets} externallyHandledFacets={externallyHandledFacets} />}
-        {isResults && <ViewSelector type="results" facets={facets} sortOptions={sortOptions} externallyHandledFacets={externallyHandledFacets} />}
+        {isDashboard && <ViewSelector type="dashboard" facets={facets} />}
+        {isResults && <ViewSelector type="results" facets={facets} sortOptions={sortOptions} />}
       </ErrorBoundary>
     </Grid>
   );
@@ -92,24 +90,17 @@ function ViewSelector({
   type, 
   facets, 
   sortOptions,
-  externallyHandledFacets,
 }: { 
   type: string; 
-  facets: Record<string, ESUIFacet>; 
+  facets: [string, ESUIFacet][];
   sortOptions?: ESUISortOption[]; 
-  externallyHandledFacets?: ESUIFacet[];
 }) {
   const { wasSearched } = useSearch();
-
-  const combinedFacets = {
-    ...facets,
-    ...externallyHandledFacets
-  };
 
   return (
     <>
       {type === "dashboard" ? (
-        Object.entries(combinedFacets).map(([field, config]) => { 
+        facets.map(([field, config]) => { 
           return config.display !== 'hidden' && (
             <FacetContainer key={field} field={field} config={config} />
           )
@@ -118,20 +109,11 @@ function ViewSelector({
         <>
           <Grid size={{ xs: 12, md: 5, lg: 4, xl: 3 }}>
             <SearchBox
-              // autocompleteMinimumCharacters={3}
-              // autocompleteResults={{
-              //   linkTarget: "_blank",
-              //   sectionTitle: "Results",
-              //   titleField: "title",
-              //   urlField: "title",
-              //   shouldTrackClickThrough: true,
-              //   clickThroughTags: ["test"]
-              // }}
               searchAsYouType={true}
               debounceLength={300}
               view={SearchBoxView}
             />
-            {Object.entries(combinedFacets).map(([field, config]) => { 
+            {facets.map(([field, config]) => { 
               return config.display !== 'hidden' && (
                 <FacetContainer key={field} field={field} config={config} fullWidth />
               )

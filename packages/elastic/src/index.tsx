@@ -3,7 +3,13 @@ import { SearchProvider } from "@elastic/react-search-ui";
 import ElasticSearch from "./ElasticSearch";
 import { getSearchFilters, type SearchState, setResultViewConfig } from "./redux/slices";
 import { useStoreHooks } from "@dans-framework/shared-store";
-import { convertToESUIConfig, type SimpleConfig } from "./utils/configConverter";
+import { convertToESUIConfig, ESUIFacet, type SimpleConfig } from "./utils/configConverter";
+import { addGeomapAggregations, fixGeoBoundingBoxFilters } from "./utils/geoAggregations";
+import type { QueryConfig } from "@elastic/search-ui";
+
+interface ExtendedQueryConfig extends QueryConfig {
+  externallyHandledFacets?: Record<string, ESUIFacet>;
+}
 
 // function buildDateHistogramAgg(field, interval) {
 //   return {
@@ -31,62 +37,6 @@ import { convertToESUIConfig, type SimpleConfig } from "./utils/configConverter"
 //   return esRequest;
 // }
 
-function addGeomapAggregations(esRequest, externallyHandledFacets) {
-  if (!externallyHandledFacets) return esRequest;
-
-  const facetAggs = esRequest.aggs?.facet_bucket_all?.aggs || esRequest.aggs || {};
-
-  Object.entries(externallyHandledFacets).forEach(([facetKey, facetConfig]) => {
-    if (facetConfig.display !== "geomap") return;
-
-    facetAggs[facetKey] = {
-      geohash_grid: {
-        field: facetKey,
-        precision: 5,
-        size: facetConfig.size || 10000
-      }
-    };
-  });
-
-  if (esRequest.aggs?.facet_bucket_all) {
-    esRequest.aggs.facet_bucket_all.aggs = facetAggs;
-  } else {
-    esRequest.aggs = facetAggs;
-  }
-
-  return esRequest;
-}
-
-function fixGeoBoundingBoxFilters(esRequest) {
-  if (!esRequest.query?.bool?.filter) return esRequest;
-
-  // Find and replace term filters that should be geo_bounding_box
-  esRequest.query.bool.filter = esRequest.query.bool.filter.map(filterItem => {
-    if (filterItem.bool?.filter) {
-      filterItem.bool.filter = filterItem.bool.filter.map(innerFilter => {
-        // Check if this is a term filter with geo-like structure
-        if (innerFilter.term) {
-          const field = Object.keys(innerFilter.term)[0];
-          const value = innerFilter.term[field];
-          
-          // If the value has top_left and bottom_right, it's a geo bounding box
-          if (value?.top_left && value?.bottom_right) {
-            return {
-              geo_bounding_box: {
-                [field]: value
-              }
-            };
-          }
-        }
-        return innerFilter;
-      });
-    }
-    return filterItem;
-  });
-
-  return esRequest;
-}
-
 // const connector = new ElasticsearchAPIConnector({
 //   host: import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT,
 //   index: import.meta.env.VITE_ELASTICSEARCH_INDEX,
@@ -104,18 +54,13 @@ const connector = new ElasticsearchAPIConnector({
   host: import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT,
   index: import.meta.env.VITE_ELASTICSEARCH_INDEX,
   interceptSearchRequest: async ({ requestBody, queryConfig }, next) => {
-    console.log("Original request:", JSON.stringify(requestBody, null, 2));
-    
     // Add geomap aggregations
-    let rewrittenReq = addGeomapAggregations(requestBody, queryConfig.externallyHandledFacets);
+    let rewrittenReq = addGeomapAggregations(requestBody, (queryConfig as ExtendedQueryConfig).externallyHandledFacets);
     
     // Fix geo bounding box filters
-    rewrittenReq = fixGeoBoundingBoxFilters(rewrittenReq);
-    
-    console.log("Rewritten request:", JSON.stringify(rewrittenReq, null, 2));
-    
+    rewrittenReq = fixGeoBoundingBoxFilters(rewrittenReq);   
+
     const response = await next(rewrittenReq);
-    console.log("Search response:", response);
     return response;
   },
 });
@@ -138,8 +83,12 @@ export default function ElasticWrapper({
     dispatch(setResultViewConfig(esUIConfig.resultsViewConfig));
   }
 
-  console.log(esUIConfig)
-
+  // Combine stock and custom facets into a single sorted array
+  const combinedFacetsArray: [string, ESUIFacet][] = [
+    ...Object.entries(esUIConfig.config.searchQuery.facets),
+    ...Object.entries(esUIConfig.config.searchQuery.externallyHandledFacets || {}),
+  ].sort(([, a], [, b]) => a.order - b.order);
+    
   return (
     <SearchProvider 
       config={{ 
@@ -163,10 +112,9 @@ export default function ElasticWrapper({
     >
       <ElasticSearch 
         sortOptions={esUIConfig.sortOptions} 
-        facets={esUIConfig.config.searchQuery.facets} 
+        facets={combinedFacetsArray} 
         dashRoute={dashRoute} 
         resultRoute={resultRoute} 
-        externallyHandledFacets={esUIConfig.config.searchQuery.externallyHandledFacets}
       />
     </SearchProvider>
   )

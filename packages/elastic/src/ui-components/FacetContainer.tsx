@@ -53,8 +53,6 @@ export default function FacetContainer({
     }
   };
 
-  console.log(config)
-
   return (
     <Grid size={{ xs: fullWidth ? 12 : 6, md: mediumWidth, lg: largeWidth }}>
       <Paper elevation={1} sx={{ p: 2, mb: 2, height: '100%', position: 'relative' }}>
@@ -64,7 +62,6 @@ export default function FacetContainer({
         <Box>
           {config.display !== 'geomap' &&
             <Facet
-              key={field}
               field={field}
               label={lookupLanguageString(config.label, i18n.language) || ''}
               view={FACET_VIEW_MAP[config.display as FacetDisplayType] as ComponentType<any>}
@@ -86,8 +83,8 @@ export default function FacetContainer({
                 : {})}
             />
           }
-          { config.display === 'geomap' &&
-            <GeoMapFacet field={field} config={config} />
+          {config.display === 'geomap' &&
+            <GeoMapFacet field={field} />
           }
           {!hasOptions && !isLoading && config.display !== 'geomap' &&
             <Typography variant="body2" color="textSecondary" sx={{ my: 2 }}>

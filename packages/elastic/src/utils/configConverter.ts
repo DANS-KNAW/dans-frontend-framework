@@ -85,7 +85,8 @@ interface ESUIResultField {
 }
 
 export interface ESUIFacet {
-  type: "value" | "range";
+  order: number;
+  type: "value" | "range" | "geo_point";
   label: LocalizedLabel;
   display: FacetType;
   size?: number;
@@ -93,6 +94,8 @@ export interface ESUIFacet {
   ranges?: Array<{ from: number | string; to?: number | string; name: string }>; // Allow string
   interval?: string;
   show?: number;
+  legend?: boolean;
+  orientation?: "horizontal" | "vertical";
 }
 
 export interface ESUISortOption {
@@ -109,6 +112,7 @@ interface ESUIConfig {
     result_fields: Record<string, ESUIResultField>;
     disjunctiveFacets: string[];
     facets: Record<string, ESUIFacet>;
+    externallyHandledFacets?: Record<string, ESUIFacet>;
   };
   autocompleteQuery: {
     results: {
@@ -162,56 +166,66 @@ export function convertToESUIConfig(simple: SimpleConfig): ConvertedConfig {
     }
   });
   
-  // Convert facets
-  const facets: Record<string, ESUIFacet> = {};
-  const disjunctiveFacets: string[] = [];
-  const externallyHandledFacets: Record<string, ESUIFacet> = {};
-  
-  simple.facets.forEach(facet => {
-    if (facet.disjunctive) {
-      disjunctiveFacets.push(facet.field);
-    }
+  const defaultLabel = (label?: { en: string; nl: string }) => label || { en: '', nl: '' };
 
-    if (facet.type === "geomap") {
-      externallyHandledFacets[facet.field] = {
-        type: "geomap",
-        label: facet.label || {en: '', nl: ''},
-        display: "geomap",
+const { facets, disjunctiveFacets, externallyHandledFacets } =
+  simple.facets.reduce(
+    (acc, facet, index) => {
+      // Track disjunctive facets
+      if (facet.disjunctive !== false) acc.disjunctiveFacets.push(facet.field);
+
+      const baseConfig = {
+        order: index,
+        label: defaultLabel(facet.label),
         show: facet.initialSize,
-        size: facet.maxSize || facet.initialSize,
+        ...(facet.width && { width: facet.width }),
       };
-      return; // Skip geomap facets for ESUI config
-    }
-    
-    if (facet.type === "timerange") {
-      facets[facet.field] = {
-        type: "range",
-        ranges: yearFormatter(facet.start, facet.end),
-        label: facet.label || {en: '', nl: ''},
-        display: "timerange",
-        interval: facet.interval,
-        width: facet.width,
-        show: facet.initialSize,
-      };
-    } else {
-      const facetConfig: ESUIFacet = {
-        type: "value",
-        label: facet.label || {en: '', nl: ''},
-        display: facet.type,
-        size: facet.maxSize || facet.initialSize,
-        show: facet.initialSize,
-        ...(facet.type === "barchart"
-        ? { 
+
+      switch (facet.type) {
+        case "geomap":
+          acc.externallyHandledFacets[facet.field] = {
+            ...baseConfig,
+            type: "geo_point",
+            display: "geomap",
+            size: facet.maxSize || facet.initialSize,
+          };
+          break;
+
+        case "timerange":
+          acc.facets[facet.field] = {
+            ...baseConfig,
+            type: "range",
+            display: "timerange",
+            ranges: yearFormatter(facet.start, facet.end),
+            interval: facet.interval,
+          };
+          break;
+
+        case "barchart":
+          acc.facets[facet.field] = {
+            ...baseConfig,
+            type: "value",
+            display: "barchart",
+            size: facet.maxSize || facet.initialSize,
             legend: facet.legend,
             orientation: facet.orientation,
-          }
-        : {}),
-        ...(facet.width ? { width: facet.width } : {}),
-      };
-      
-      facets[facet.field] = facetConfig;
-    }
-  });
+          };
+          break;
+
+        default:
+          acc.facets[facet.field] = {
+            ...baseConfig,
+            type: "value",
+            display: facet.type,
+            size: facet.maxSize || facet.initialSize,
+          };
+          break;
+      }
+
+      return acc;
+    },
+    { facets: {} as Record<string, ESUIFacet>, disjunctiveFacets: [] as string[], externallyHandledFacets: {} as Record<string, ESUIFacet> }
+  );
   
   // Convert sort options
   const sortOptions: ESUISortOption[] = simple.sortOptions.map(opt => {
@@ -223,9 +237,6 @@ export function convertToESUIConfig(simple: SimpleConfig): ConvertedConfig {
       value: [{ field: opt.field, direction: opt.direction || "asc" }]
     };
   });
-
-        
-  console.log(externallyHandledFacets)
   
   return {
     config: {
