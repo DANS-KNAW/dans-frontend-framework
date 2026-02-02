@@ -2,10 +2,11 @@ import { BarChart } from '@mui/x-charts/BarChart';
 import { type FacetViewProps } from "@elastic/react-search-ui-views";
 import { colors } from '../utils/colors';
 import FilterFacet from "../ui-components/FilterFacet";
+import type { FilterType } from "@elastic/search-ui";
 
 interface BarChartFacetProps extends FacetViewProps {
-  setFilterType: (type: string) => void;
-  customFilterType: string;
+  setFilterType: (type: FilterType) => void;
+  customFilterType: FilterType;
   orientation?: "horizontal" | "vertical";
   legend?: boolean;
 }

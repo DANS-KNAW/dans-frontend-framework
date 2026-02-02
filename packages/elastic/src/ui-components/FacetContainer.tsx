@@ -1,4 +1,4 @@
-import { type ComponentType } from "react";
+import { useState, useEffect, type ComponentType } from "react";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -13,6 +13,7 @@ import GeoMapFacet from "../facets/Map";
 import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import HelpIcon from '@mui/icons-material/Help';
+import type { FilterType } from "@elastic/search-ui";
 
 interface FacetContainerProps {
   field: string;
@@ -40,7 +41,9 @@ export default function FacetContainer({
     removeFilter(field);
   }
 
-  const handleFilterTypeChange = (newFilterType: string) => {    
+  const [ localFilterType, setLocalFilterType ] = useState<FilterType>(currentFilter?.type || config.filterType || "any");
+
+  const handleFilterTypeChange = (newFilterType: FilterType) => {    
     if (currentFilter && currentFilter.values.length > 0) {
       // Store the current selected values
       const selectedValues = currentFilter.values;
@@ -49,14 +52,16 @@ export default function FacetContainer({
       removeFilter(field);
       
       // Re-apply with new filter type
-      setFilter(field, selectedValues as any, newFilterType as any);
+      setFilter(field, selectedValues as any, newFilterType);
       // selectedValues.forEach(value => {
       //   setFilter(field, value as any, newFilterType as any);
       // });
     }
   };
 
-  console.log(config)
+  useEffect(() => {
+    handleFilterTypeChange(localFilterType)
+  }, [localFilterType]);
 
   return (
     <Grid size={{ xs: fullWidth ? 12 : 6, md: mediumWidth, lg: largeWidth }}>
@@ -79,11 +84,11 @@ export default function FacetContainer({
               view={FACET_VIEW_MAP[config.display as FacetDisplayType] as ComponentType<any>}
               isFilterable={config.display === "list"}
               show={config.show || 10}
-              filterType={currentFilter?.type || config.filterType || "any"}
+              filterType={localFilterType}
               {...(config.display === "list" || config.display === "barchart" || config.display === "piechart"
                 ? {  
-                    customFilterType: currentFilter?.type || config.filterType || "any", 
-                    setFilterType: handleFilterTypeChange,
+                    customFilterType: localFilterType, 
+                    setFilterType: setLocalFilterType,
                     defaultShow: config.show,
                   }
                 : {})}

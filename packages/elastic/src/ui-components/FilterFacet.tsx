@@ -4,6 +4,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import type { FilterType } from "@elastic/search-ui";
 
 export default function FilterFacet({
   customFilterType,
@@ -13,8 +14,8 @@ export default function FilterFacet({
   setSearchTerm,
   searchTerm,
 }: {
-  customFilterType: string; 
-  setFilterType: (value: string) => void;
+  customFilterType: FilterType;
+  setFilterType: (value: FilterType) => void;
   showSearch?: boolean;
   options?: any[];
   setSearchTerm?: (value: string) => void;

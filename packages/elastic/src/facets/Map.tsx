@@ -12,6 +12,8 @@ interface GeoFilter {
   bottom_right: { lat: number; lon: number };
 }
 
+const INITIAL_BOUNDS: [[number, number], [number, number]] = [[-180, -50], [180, 70]];
+
 export default function GeoMapFacet({ field }: { field: string; }) {
   const { rawResponse, filters: currentFilters, removeFilter, addFilter } = useSearch();
   const mapRef = useRef<MapRef>(null);
@@ -36,13 +38,21 @@ export default function GeoMapFacet({ field }: { field: string; }) {
       return value as GeoFilter;
     }
 
+    if (
+      currentFilters && currentFilters.length === 0 && 
+      mapRef.current?.getZoom() && mapRef.current?.getZoom() > 1
+    ) {
+      // reset mnap to initial bounds when filters are cleared
+      mapRef.current?.fitBounds(INITIAL_BOUNDS, { padding: 20, duration: 1000 });
+    }
+
     return undefined;
   }, [currentFilters]);
 
   const geoFilterBounds: [[number, number], [number, number]] = geoFilter ? [
     [geoFilter?.top_left.lon, geoFilter?.bottom_right.lat], // southwest
     [geoFilter?.bottom_right.lon, geoFilter?.top_left.lat]  // northeast
-  ] :  [[-180, -25], [180, 60]];
+  ] :  INITIAL_BOUNDS;
 
   const geojson: FeatureCollection<Point> = useMemo(() => {
     if (!geoAggregation?.buckets?.length) {
@@ -94,7 +104,7 @@ export default function GeoMapFacet({ field }: { field: string; }) {
     }
 
     // Prevent filtering if zoomed out too far
-    if (evt.target.getZoom() < 3) {
+    if (evt.target.getZoom() < 1) {
       removeFilter(field);
       return;
     }

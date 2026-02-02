@@ -10,10 +10,11 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import FilterFacet from "../ui-components/FilterFacet";
+import type { FilterType } from "@elastic/search-ui";
 
 interface ListFacetProps extends FacetViewProps {
-  setFilterType: (type: string) => void;
-  customFilterType: string;
+  setFilterType: (type: FilterType) => void;
+  customFilterType: FilterType;
   defaultShow: number;
 }
 

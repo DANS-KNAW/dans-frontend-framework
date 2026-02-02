@@ -18,10 +18,10 @@ const connector = new ElasticsearchAPIConnector({
       rewrittenReq = handleGeoFacets(rewrittenReq, (queryConfig as ExtendedQueryConfig).externallyHandledFacets);
     }
 
-    console.log('FINAL REQUEST TO ES:', JSON.stringify(rewrittenReq, null, 2));
+    // console.log('FINAL REQUEST TO ES:', JSON.stringify(rewrittenReq, null, 2));
     
     const response = await next(rewrittenReq);
-    console.log('Response aggregations:', JSON.stringify(response.aggregations, null, 2));
+    // console.log('Response aggregations:', JSON.stringify(response.aggregations, null, 2));
     return response;
   }
 });

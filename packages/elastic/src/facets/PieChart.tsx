@@ -3,10 +3,11 @@ import { type FacetViewProps } from "@elastic/react-search-ui-views";
 import { legendClasses } from '@mui/x-charts/ChartsLegend';
 import { colors } from '../utils/colors';
 import FilterFacet from '../ui-components/FilterFacet';
+import type { FilterType } from "@elastic/search-ui";
 
 interface PieChartFacetProps extends FacetViewProps {
-  setFilterType: (type: string) => void;
-  customFilterType: string;
+  setFilterType: (type: FilterType) => void;
+  customFilterType: FilterType;
 }
 
 export default function PieChartFacet({
