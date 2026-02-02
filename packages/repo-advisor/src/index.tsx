@@ -1,6 +1,4 @@
 import type { Dispatch, SetStateAction } from "react";
-import { I18nextProvider } from "react-i18next";
-import i18nProvider from "./languages/i18n";
 import RepoAdvisor from "./features/RepoAdvisor";
 import type { Page } from "@dans-framework/pages";
 import type { FormConfig } from "@dans-framework/deposit";
@@ -14,13 +12,11 @@ export const AdvisorWrapper = ({
   page: Page;
   depositLocation: string;
 }) => (
-  <I18nextProvider i18n={i18nProvider}>
-    <RepoAdvisor
-      setRepoConfig={setRepoConfig}
-      page={page}
-      depositLocation={depositLocation}
-    />
-  </I18nextProvider>
+  <RepoAdvisor
+    setRepoConfig={setRepoConfig}
+    page={page}
+    depositLocation={depositLocation}
+  />
 );
 
 export default AdvisorWrapper;

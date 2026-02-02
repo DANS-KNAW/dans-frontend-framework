@@ -34,12 +34,6 @@ const App = () => {
         <ThemeWrapper theme={theme} siteTitle={siteTitle}>
           <BrowserRouter>
             <ScrollToTop />
-            {/* Need to pass along root i18n functions to the language bar */}
-            <LanguageBar
-              languages={languages}
-              changeLanguage={i18n.changeLanguage}
-            />
-            <MenuBar pages={pages} />
             {/* Suspense to make sure languages can load first */}
             <Suspense
               fallback={
@@ -48,6 +42,12 @@ const App = () => {
                 </Box>
               }
             >
+            {/* Need to pass along root i18n functions to the language bar */}
+            <LanguageBar
+              languages={languages}
+              changeLanguage={i18n.changeLanguage}
+            />
+            <MenuBar pages={pages} />
               <main role="main">
                 <Routes>
                   <Route path="signin-callback" element={<SignInCallback />} />

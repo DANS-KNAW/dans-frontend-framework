@@ -5,9 +5,9 @@ import { setFormDisabled } from "../../deposit/depositSlice";
 import { type Target, setFormAction } from "@dans-framework/user-auth";
 import moment from "moment";
 import { enqueueSnackbar } from "notistack";
-import i18n from "../../languages/i18n";
 import { formatFormData } from "./submitHelpers";
 import { getUser } from "@dans-framework/utils/user";
+import i18n from "i18next";
 
 export const submitApi = createApi({
   reducerPath: "submitApi",

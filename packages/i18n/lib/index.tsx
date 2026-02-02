@@ -1,0 +1,1 @@
+export { default as createI18n } from "../src/i18n";

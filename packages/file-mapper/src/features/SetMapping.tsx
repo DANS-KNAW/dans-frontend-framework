@@ -35,7 +35,7 @@ import LaunchIcon from "@mui/icons-material/Launch";
 import InputAdornment from "@mui/material/InputAdornment";
 
 export const SetMapping = () => {
-  const { t } = useTranslation("steps");
+  const { t } = useTranslation("fileMapperSteps");
   const { useAppSelector, useAppDispatch } = useStoreHooks<FileMapperState>();
   const dispatch = useAppDispatch();
   const file = useAppSelector(getFile);
@@ -122,7 +122,7 @@ export const SetMapping = () => {
 export default SetMapping;
 
 const Row = ({ rowKey, row }: { rowKey: string; row: string }) => {
-  const { t } = useTranslation("steps");
+  const { t } = useTranslation("fileMapperSteps");
   const { useAppSelector, useAppDispatch } = useStoreHooks<FileMapperState>();
   const [inputValue, setInputValue] = useState("");
   const mapping = useAppSelector(getMapping);
@@ -224,7 +224,7 @@ const Row = ({ rowKey, row }: { rowKey: string; row: string }) => {
 };
 
 const InfoLink = ({ url, margin }: { url: string; margin?: boolean }) => {
-  const { t } = useTranslation("steps");
+  const { t } = useTranslation("fileMapperSteps");
 
   return (
     <Tooltip title={t("moreInfo")}>

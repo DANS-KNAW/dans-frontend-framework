@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { StepWrap } from "./Steps";
 
 export const SaveMapping = () => {
-  const { t } = useTranslation("steps");
+  const { t } = useTranslation("fileMapperSteps");
 
   return (
     <StepWrap title={t("finish")}>

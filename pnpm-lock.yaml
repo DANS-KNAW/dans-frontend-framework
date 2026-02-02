@@ -354,6 +354,9 @@ importers:
       '@dans-framework/deposit':
         specifier: workspace:*
         version: link:../../packages/deposit
+      '@dans-framework/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
       '@dans-framework/layout':
         specifier: workspace:*
         version: link:../../packages/layout
@@ -779,6 +782,9 @@ importers:
 
   packages/deposit:
     dependencies:
+      '@dans-framework/i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@dans-framework/shared-store':
         specifier: workspace:*
         version: link:../shared-store
@@ -979,6 +985,9 @@ importers:
       '@dans-framework/deposit':
         specifier: workspace:*
         version: link:../deposit
+      '@dans-framework/i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@dans-framework/shared-store':
         specifier: workspace:*
         version: link:../shared-store
@@ -1051,8 +1060,33 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7
 
+  packages/i18n:
+    dependencies:
+      i18next:
+        specifier: ^25.7.3
+        version: 25.7.3(typescript@5.9.3)
+      i18next-browser-languagedetector:
+        specifier: ^8.2.0
+        version: 8.2.0
+      i18next-resources-to-backend:
+        specifier: ^1.2.1
+        version: 1.2.1
+      react:
+        specifier: ^19.2.3
+        version: 19.2.3
+      react-i18next:
+        specifier: ^16.5.0
+        version: 16.5.0(i18next@25.7.3(typescript@5.9.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
+    devDependencies:
+      '@types/react':
+        specifier: ^19.2.7
+        version: 19.2.7
+
   packages/layout:
     dependencies:
+      '@dans-framework/i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@dans-framework/pages':
         specifier: workspace:*
         version: link:../pages
@@ -1139,6 +1173,9 @@ importers:
 
   packages/rdt-search-ui:
     dependencies:
+      '@dans-framework/i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@dans-framework/utils':
         specifier: workspace:*
         version: link:../utils
@@ -1221,6 +1258,9 @@ importers:
       '@dans-framework/deposit':
         specifier: workspace:*
         version: link:../deposit
+      '@dans-framework/i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@dans-framework/shared-store':
         specifier: workspace:*
         version: link:../shared-store
@@ -1339,6 +1379,9 @@ importers:
 
   packages/user-auth:
     dependencies:
+      '@dans-framework/i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@dans-framework/shared-store':
         specifier: workspace:*
         version: link:../shared-store

@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import type { SubmissionResponse, AuthKeys } from "../types";
-import i18n from "../languages/i18n";
+import i18n from "i18next";
 import { enqueueSnackbar } from "notistack";
 import { getUser } from "@dans-framework/utils/user";
 

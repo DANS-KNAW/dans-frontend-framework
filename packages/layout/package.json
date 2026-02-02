@@ -5,6 +5,7 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
+    "@dans-framework/i18n": "workspace:*",
     "@dans-framework/pages": "workspace:*",
     "@dans-framework/user-auth": "workspace:*",
     "@dans-framework/utils": "workspace:*",
