@@ -23,7 +23,9 @@
     "dev:digitaltwins": "turbo dev --filter=@dans-framework/digitaltwins",
     "build:digitaltwins": "turbo build --filter=@dans-framework/digitaltwins",
     "dev:supercatalog": "turbo dev --filter=@dans-framework/supercatalog",
-    "build:supercatalog": "turbo build --filter=@dans-framework/supercatalog"
+    "build:supercatalog": "turbo build --filter=@dans-framework/supercatalog",
+    "dev:eden": "turbo dev --filter=@dans-framework/eden",
+    "build:eden": "turbo build --filter=@dans-framework/eden"
   },
   "keywords": [],
   "author": "",

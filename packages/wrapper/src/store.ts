@@ -1,108 +1,113 @@
-import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
-import {
-  metadataReducer,
-  filesReducer,
-  submitReducer,
-  depositReducer,
-  orcidApi,
-  rorApi,
-  geonamesApi,
-  sheetsApi,
-  datastationsApi,
-  languagesApi,
-  submitApi,
-  dansFormatsApi,
-  dansUtilityApi,
-  licenceApi,
-  sshLicenceApi,
-  maptilerApi,
-  rdaApi,
-  wmsApi,
-  biodiversityApi,
-  wikidataApi,
-  unsdgApi,
-} from "@dans-framework/deposit";
+import { configureStore, type ThunkAction, type Action, type Reducer, type Middleware  } from "@reduxjs/toolkit";
 import { errorLogger } from "@dans-framework/utils/error";
-import { userApi, userSubmissionsApi, validateKeyApi, userReducer } from "@dans-framework/user-auth";
-import { fileMapperReducer, darwinCoreApi, submitMappingApi } from "@dans-framework/file-mapper";
-import { repoAdvisorReducer, repoAdvisorApi } from "@dans-framework/repo-advisor";
-import { elasticReducer } from "@dans-framework/elastic";
 
+import type { StoreComponents } from "./DynamicStoreProvider";
 
-export const store = configureStore({
-  reducer: {
-    // deposit related reducers
-    metadata: metadataReducer,
-    files: filesReducer,
-    [orcidApi.reducerPath]: orcidApi.reducer,
-    [rorApi.reducerPath]: rorApi.reducer,
-    [licenceApi.reducerPath]: licenceApi.reducer,
-    [sshLicenceApi.reducerPath]: sshLicenceApi.reducer,
-    [geonamesApi.reducerPath]: geonamesApi.reducer,
-    [sheetsApi.reducerPath]: sheetsApi.reducer,
-    [submitApi.reducerPath]: submitApi.reducer,
-    [datastationsApi.reducerPath]: datastationsApi.reducer,
-    [dansFormatsApi.reducerPath]: dansFormatsApi.reducer,
-    [dansUtilityApi.reducerPath]: dansUtilityApi.reducer,
-    [rdaApi.reducerPath]: rdaApi.reducer,
-    [languagesApi.reducerPath]: languagesApi.reducer,
-    [maptilerApi.reducerPath]: maptilerApi.reducer,
-    [wmsApi.reducerPath]: wmsApi.reducer,
-    [biodiversityApi.reducerPath]: biodiversityApi.reducer,
-    [unsdgApi.reducerPath]: unsdgApi.reducer,
-    [wikidataApi.reducerPath]: wikidataApi.reducer,
-    submit: submitReducer,
-    deposit: depositReducer,
-    // user-auth related reducers
-    [userApi.reducerPath]: userApi.reducer,
-    [validateKeyApi.reducerPath]: validateKeyApi.reducer,
-    [userSubmissionsApi.reducerPath]: userSubmissionsApi.reducer,
-    user: userReducer,
-    // file-mapper related reducers
-    fileMapper: fileMapperReducer,
-    [darwinCoreApi.reducerPath]: darwinCoreApi.reducer,
-    [submitMappingApi.reducerPath]: submitMappingApi.reducer,
-    // repo-advisor related reducers
-    repoAdvisor: repoAdvisorReducer,
-    [repoAdvisorApi.reducerPath]: repoAdvisorApi.reducer,
-    // elastic related reducers
-    elastic: elasticReducer,
+interface FeatureConfig {
+  module: () => Promise<FeatureModule>;
+  exports: {
+    reducer?: { value: string; key: string }[];
+    api?: string[];
+  };
+}
+
+interface FeatureModule {
+  [key: string]: any;
+}
+
+const featureConfig: Record<StoreComponents, FeatureConfig> = {
+  deposit: {
+    module: () => import("@dans-framework/deposit"),
+    exports: {
+      reducer: [
+        { value: "metadataReducer", key: "metadata" }, 
+        { value: "filesReducer", key: "files" }, 
+        { value: "submitReducer", key: "submit" }, 
+        { value: "depositReducer", key: "deposit" }
+      ],
+      api: ["orcidApi", "rorApi", "licenceApi", "sshLicenceApi", "geonamesApi", "sheetsApi", "submitApi", "datastationsApi", "dansFormatsApi", "dansUtilityApi", "rdaApi", "languagesApi", "maptilerApi", "wmsApi", "biodiversityApi", "unsdgApi", "wikidataApi"]
+    },
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
-      // user-auth
-      .concat(userApi.middleware)
-      .concat(userSubmissionsApi.middleware)
-      .concat(validateKeyApi.middleware)
-      // file-mapper
-      .concat(darwinCoreApi.middleware)
-      .concat(submitMappingApi.middleware)
-      // repo-advisor
-      .concat(repoAdvisorApi.middleware)
-      // deposit
-      .concat(orcidApi.middleware)
-      .concat(rorApi.middleware)
-      .concat(licenceApi.middleware)
-      .concat(sshLicenceApi.middleware)
-      .concat(geonamesApi.middleware)
-      .concat(sheetsApi.middleware)
-      .concat(datastationsApi.middleware)
-      .concat(submitApi.middleware)
-      .concat(dansFormatsApi.middleware)
-      .concat(dansUtilityApi.middleware)
-      .concat(rdaApi.middleware)
-      .concat(languagesApi.middleware)
-      .concat(maptilerApi.middleware)
-      .concat(wmsApi.middleware)
-      .concat(biodiversityApi.middleware)
-      .concat(unsdgApi.middleware)
-      .concat(wikidataApi.middleware)
-      // error
-      .concat(errorLogger)
-});
+  user: {
+    module: () => import("@dans-framework/user-auth"),
+    exports: {
+      reducer: [{ value: "userReducer", key: "user" }],
+      api: ["userApi", "validateKeyApi", "userSubmissionsApi"]
+    },
+  },
+  fileMapper: {
+    module: () => import("@dans-framework/file-mapper"),
+    exports: {
+      reducer: [{ value: "fileMapperReducer", key: "fileMapper" }],
+      api: ["darwinCoreApi", "submitMappingApi"]
+    },
+  },
+  repoAdvisor: {
+    module: () => import("@dans-framework/repo-advisor"),
+    exports: {
+      reducer: [{ value: "repoAdvisorReducer", key: "repoAdvisor" }],
+      api: ["repoAdvisorApi"]
+    },
+  },
+  elastic: {
+    module: () => import("@dans-framework/elastic"),
+    exports: {
+      reducer: [{ value: "elasticReducer", key: "elastic" }],
+    }
+  }
+};
 
-export type AppDispatch = typeof store.dispatch;
-export type RootState = ReturnType<typeof store.getState>;
+// Function to create store with only enabled features
+export const createDynamicStore = async (items: StoreComponents[]) => {
+  const reducers: Record<string, Reducer> = {
+    // set default reducers here, always loaded
+  };
+  const middlewares: Middleware[] = [];
+
+  // Load modules dynamically
+  const loadPromises = items.map(async (key) => {
+    const config = featureConfig[key];
+    if (!config) return;
+
+    // Dynamically import the module
+    const module = await config.module();
+
+    // Add the main reducer if specified
+    if (config.exports.reducer) {
+      config.exports.reducer.forEach(reducer => {
+        reducers[reducer.key] = module[reducer.value];
+      });
+    }
+
+    // Add API reducers and collect middleware
+    if (config.exports.api) {
+      config.exports.api.forEach(apiName => {
+        const api = module[apiName];
+        reducers[api.reducerPath] = api.reducer;
+        middlewares.push(api.middleware);
+      });
+    }
+  });
+
+  // Wait for all modules to load
+  await Promise.all(loadPromises);
+
+  // Create store with dynamic configuration
+  const store = configureStore({
+    reducer: reducers,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware()
+      .concat(...middlewares)
+      // add some always-on middlewares here
+      .concat(errorLogger),
+  });
+
+  return store;
+};
+
+export type AppStore = Awaited<ReturnType<typeof createDynamicStore>>;
+export type AppDispatch = AppStore["dispatch"];
+export type RootState = ReturnType<AppStore["getState"]>;
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,
   RootState,

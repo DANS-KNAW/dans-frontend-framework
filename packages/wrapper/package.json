@@ -13,7 +13,8 @@
     "@dans-framework/utils": "workspace:*",
     "@dans-framework/repo-advisor": "workspace:*",
     "@dans-framework/file-mapper": "workspace:*",
-    "@reduxjs/toolkit": "^2.8.2",
+    "@mui/material": "^7.3.6",
+    "@reduxjs/toolkit": "^2.11.2",
     "react": "^19.2.3",
     "react-redux": "^9.2.0"
   },

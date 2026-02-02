@@ -1,5 +1,5 @@
 {
-  "name": "@dans-framework/cat",
+  "name": "@dans-framework/eden",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -10,18 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dans-framework/deposit": "workspace:*",
+    "@dans-framework/elastic": "workspace:*",
     "@dans-framework/layout": "workspace:*",
     "@dans-framework/pages": "workspace:*",
-    "@dans-framework/rdt-search-ui": "workspace:*",
     "@dans-framework/theme": "workspace:*",
-    "@dans-framework/user-auth": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@dans-framework/wrapper": "workspace:*",
     "@fontsource/roboto": "^5.2.9",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
-    "framer-motion": "^12.23.26",
     "html-react-parser": "^5.2.11",
     "i18next": "^25.7.3",
     "i18next-browser-languagedetector": "^8.2.0",

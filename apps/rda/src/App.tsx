@@ -25,7 +25,11 @@ import siteTitle from "./config/siteTitle";
 import languages from "./config/languages";
 import authProvider from "./config/auth";
 import form from "./config/form";
-import { esConfig } from "./config/elasticConfig";
+import { elasticConfig } from "./config/elasticSearch";
+import {
+  FacetedWrapper,
+  FacetedSearchProvider,
+} from "@dans-framework/rdt-search-ui";
 import { Freshdesk } from "@dans-framework/freshdesk";
 import SupportDrawer from "@dans-framework/support-drawer";
 import RDAAnnotator from "./pages/rda-annotator";
@@ -35,7 +39,6 @@ import SiteTitleWrapper from "./config/sitetitle-wrapper";
 import { initMatomo } from "./utils/matomo";
 import AccessibilityStatement from "./pages/accessibility-statement";
 import { AppWrapper } from "@dans-framework/wrapper";
-import { ElasticWrapper } from "@dans-framework/elastic";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -46,7 +49,6 @@ const App = () => {
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
-      case "search":
         return (
           <SiteTitleWrapper page={page}>
             {!isEmbed && (
@@ -69,7 +71,7 @@ const App = () => {
                     >
                       {lookupLanguageString(
                         { en: "RDA Knowledge Base", nl: "RDA Kennisbank" },
-                        i18n.language
+                        i18n.language,
                       )}
                     </Typography>
                     <Typography
@@ -86,14 +88,29 @@ const App = () => {
                           en: "The Knowledge Base is a suite of applications that helps users find, annotate, and publish RDA-related materials",
                           nl: "De Kennisbank is een suite van applicaties die gebruikers helpt bij het vinden, annoteren en publiceren van RDA-gerelateerde materialen",
                         },
-                        i18n.language
+                        i18n.language,
                       )}
                     </Typography>
                   </Box>
                 </Container>
               </Box>
             )}
-            <ElasticWrapper config={esConfig} dashRoute="/" resultRoute="/search" />
+            <FacetedWrapper
+              showIconViewLabel
+              dashboard
+              dashRoute="/"
+              resultRoute="/search"
+            />
+          </SiteTitleWrapper>
+        );
+      case "search":
+        return (
+          <SiteTitleWrapper page={page}>
+            <FacetedWrapper
+              showIconViewLabel
+              dashRoute="/"
+              resultRoute="/search"
+            />
           </SiteTitleWrapper>
         );
       case "record":
@@ -126,57 +143,59 @@ const App = () => {
   };
 
   return (
-    <AppWrapper>
+    <AppWrapper storeComponents={['user', 'deposit']}>
       <AuthWrapper authProvider={authProvider}>
         <ThemeWrapper theme={theme} siteTitle={siteTitle}>
-          {/* Need to pass along root i18n functions to the language bar */}
-          {!isEmbed && (
-            <LanguageBar
-              languages={languages}
-              changeLanguage={i18n.changeLanguage}
-            />
-          )}
-          <MenuBar pages={pages} logo={logo} embed={isEmbed} />
-          {/* Suspense to make sure languages can load first */}
-          <Suspense
-            fallback={
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
-                <Skeleton height={600} width={900} />
-              </Box>
-            }
-          >
-            <Routes>
-              <Route path="signin-callback" element={<SignInCallback />} />
-              <Route
-                path="user-settings"
-                element={
-                  <AuthRoute>
-                    <UserSettings target={form.targetCredentials} />
-                  </AuthRoute>
-                }
+          <FacetedSearchProvider config={elasticConfig}>
+            {/* Need to pass along root i18n functions to the language bar */}
+            {!isEmbed && (
+              <LanguageBar
+                languages={languages}
+                changeLanguage={i18n.changeLanguage}
               />
-              <Route
-                path="user-submissions"
-                element={
-                  <AuthRoute>
-                    <UserSubmissions
-                      depositSlug="publisher"
-                      targetCredentials={form.targetCredentials}
+            )}
+            <MenuBar pages={pages} logo={logo} embed={isEmbed} />
+            {/* Suspense to make sure languages can load first */}
+            <Suspense
+              fallback={
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <Skeleton height={600} width={900} />
+                </Box>
+              }
+            >
+              <Routes>
+                <Route path="signin-callback" element={<SignInCallback />} />
+                <Route
+                  path="user-settings"
+                  element={
+                    <AuthRoute>
+                      <UserSettings target={form.targetCredentials} />
+                    </AuthRoute>
+                  }
+                />
+                <Route
+                  path="user-submissions"
+                  element={
+                    <AuthRoute>
+                      <UserSubmissions
+                        depositSlug="publisher"
+                        targetCredentials={form.targetCredentials}
+                      />
+                    </AuthRoute>
+                  }
+                />
+                {(pages as Page[]).map((page) => {
+                  return (
+                    <Route
+                      key={page.id}
+                      path={page.slug}
+                      element={createElementByTemplate(page)}
                     />
-                  </AuthRoute>
-                }
-              />
-              {(pages as Page[]).map((page) => {
-                return (
-                  <Route
-                    key={page.id}
-                    path={page.slug}
-                    element={createElementByTemplate(page)}
-                  />
-                );
-              })}
-            </Routes>
-          </Suspense>
+                  );
+                })}
+              </Routes>
+            </Suspense>
+          </FacetedSearchProvider>
           {isEmbed && (
             <Box
               sx={{

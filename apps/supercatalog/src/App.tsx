@@ -58,7 +58,7 @@ const App = () => {
   };
 
   return (
-    <AppWrapper>
+    <AppWrapper storeComponents={['user']}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
         <FacetedSearchProvider config={elasticConfig}>
           {/* Need to pass along root i18n functions to the language bar */}

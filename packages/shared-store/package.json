@@ -7,7 +7,7 @@
   "keywords": [],
   "author": "",
   "dependencies": {
-    "@reduxjs/toolkit": "^2.8.2",
+    "@reduxjs/toolkit": "^2.11.2",
     "react": "^19.1.0",
     "react-redux": "^9.2.0"
   },

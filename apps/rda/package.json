@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@dans-framework/deposit": "workspace:*",
-    "@dans-framework/elastic": "workspace:*",
     "@dans-framework/freshdesk": "workspace:*",
     "@dans-framework/layout": "workspace:*",
     "@dans-framework/pages": "workspace:*",

@@ -35,7 +35,7 @@ const App = () => {
   const [repoConfig, setRepoConfig] = useState<FormConfig>();
   const configIsSet = repoConfig?.hasOwnProperty("form") || false;
   return (
-    <AppWrapper>
+    <AppWrapper storeComponents={['user', 'deposit', 'repoAdvisor']}>
       <AuthWrapper authProvider={authProvider}>
         <ThemeWrapper theme={theme} siteTitle={siteTitle}>
           <BrowserRouter>

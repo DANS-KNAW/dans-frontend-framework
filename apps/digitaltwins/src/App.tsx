@@ -34,7 +34,7 @@ const App = () => {
   // const [ mappedForm, setMappedForm ] = useState<FormConfig>();
 
   return (
-    <AppWrapper>
+    <AppWrapper storeComponents={['user', 'deposit', 'fileMapper']}>
       <AuthWrapper authProvider={authProvider}>
         <ThemeWrapper theme={theme} siteTitle={siteTitle}>
           <BrowserRouter>

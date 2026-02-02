@@ -31,7 +31,7 @@ import form from "./config/form";
 const App = () => {
   const { i18n } = useTranslation();
   return (
-    <AppWrapper>
+    <AppWrapper storeComponents={['user', 'deposit']}>
       <AuthWrapper authProvider={authProvider}>
         <ThemeWrapper theme={theme} siteTitle={siteTitle}>
           <BrowserRouter>
