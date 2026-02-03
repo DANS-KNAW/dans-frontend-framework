@@ -11,6 +11,8 @@ export function handleDateFacets(
   Object.entries(externallyHandledFacets).forEach(([facetKey, facetConfig]) => {
     if (facetConfig.display !== "date") return;
 
+    // TODO: Need to change this so facet doesnt change when filtering itself
+
     facetAggs[facetKey] = {
       date_histogram: {
         field: facetKey,
