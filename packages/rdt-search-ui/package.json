@@ -23,7 +23,7 @@
     "ngeohash": "^0.6.3",
     "notistack": "^3.0.2",
     "ol": "^10.7.0",
-    "react": "^19.2.3",
+    "react": "^19.2.4",
     "react-i18next": "^16.5.0",
     "react-router-dom": "^7.11.0",
     "styled-components": "^6.1.19"

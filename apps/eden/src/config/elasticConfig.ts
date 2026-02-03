@@ -50,6 +50,21 @@ export const esConfig: SimpleConfig = {
     //   width: "large",
     //   initialSize: 200,
     // },
+    {
+      field: "scheme",
+      type: "list",
+      label: { en: "Scheme", nl: "Schema" },
+      initialSize: 10,
+      maxSize: 10000,
+      tooltip: "Many Identifiers are based on a Scheme, and the Scheme is sometimes standardised or based on an existing Standard.</p><p>For example, many Identifiers are based on the Digital Object identifier scheme (DOI), which in turn is a special case of the Handle System scheme. Or, both ORCIDs and URN:ISNI are based on the International Standard Name Identifier scheme."
+    },
+    {
+      field: "standard",
+      type: "list",
+      label: { en: "Standard", nl: "Standaard" },
+      initialSize: 10,
+      maxSize: 10000,
+    },
   ],
   
   sortOptions: [

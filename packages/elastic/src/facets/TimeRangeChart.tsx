@@ -48,6 +48,7 @@ export default function TimeRangeFacet({
   // todo make more dynamic
   return (
     <BarChart
+      borderRadius={2}
       dataset={chartData}
       xAxis={[{ 
         scaleType: 'band', 

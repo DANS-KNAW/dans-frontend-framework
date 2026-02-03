@@ -5,6 +5,7 @@ import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import type { FilterType } from "@elastic/search-ui";
+import { useTranslation } from 'react-i18next';
 
 export default function FilterFacet({
   customFilterType,
@@ -21,28 +22,29 @@ export default function FilterFacet({
   setSearchTerm?: (value: string) => void;
   searchTerm?: string;
 }) {
+  const { t } = useTranslation('elastic');
   return (
     <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
       {((showSearch && options && options.length > 6) || searchTerm) &&
         <TextField
           size="small"
-          placeholder={`Filter...`}
+          placeholder={t("filter")}
           value={searchTerm}
           onChange={(e) => setSearchTerm && setSearchTerm(e.target.value)}
           fullWidth
         />
       }
       <FormControl sx={{ m: 1, minWidth: 80 }} size="small">
-        <InputLabel id="filter-type-label">Match</InputLabel>
+        <InputLabel id="filter-type-label">{t("match")}</InputLabel>
         <Select
           labelId="filter-type-label"
           id="filter-type-select"
           value={customFilterType}
           onChange={(e) => setFilterType(e.target.value)}
-          label="Must match"
+          label={t("match")}
         >
-          <MenuItem value="any">Any</MenuItem>
-          <MenuItem value="all">All</MenuItem>
+          <MenuItem value="any">{t("any")}</MenuItem>
+          <MenuItem value="all">{t("all")}</MenuItem>
         </Select>
       </FormControl>
     </Stack>

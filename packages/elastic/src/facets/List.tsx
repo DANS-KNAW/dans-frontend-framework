@@ -11,6 +11,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import FilterFacet from "../ui-components/FilterFacet";
 import type { FilterType } from "@elastic/search-ui";
+import { useTranslation } from "react-i18next";
 
 interface ListFacetProps extends FacetViewProps {
   setFilterType: (type: FilterType) => void;
@@ -30,6 +31,7 @@ export default function ListFacet({
   customFilterType,
   defaultShow,
 }: ListFacetProps) {
+  const { t } = useTranslation('elastic');
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedOptions, setExpandedOptions] = useState(false);
 
@@ -111,7 +113,7 @@ export default function ListFacet({
         {
           expandedOptions && (
             <Button size="small" onClick={() => setExpandedOptions(false)}>
-              Show less
+              {t('showLess')}
             </Button>
           )
         }
@@ -129,7 +131,7 @@ export default function ListFacet({
               }
             }}
           >
-            Show more
+            {t('showMore')}
           </Button>
         )}
       </Stack>

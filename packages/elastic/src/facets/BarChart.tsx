@@ -3,6 +3,7 @@ import { type FacetViewProps } from "@elastic/react-search-ui-views";
 import { colors } from '../utils/colors';
 import FilterFacet from "../ui-components/FilterFacet";
 import type { FilterType } from "@elastic/search-ui";
+import { useTranslation } from "react-i18next";
 
 interface BarChartFacetProps extends FacetViewProps {
   setFilterType: (type: FilterType) => void;
@@ -20,6 +21,7 @@ export default function BarChartFacet({
   setFilterType,
   customFilterType, 
 }: BarChartFacetProps) { 
+  const { t } = useTranslation('elastic');
   const hasSelection = options.some(item => item.selected);
   
   const chartData = options.map((item) => ({
@@ -50,11 +52,12 @@ export default function BarChartFacet({
         setFilterType={setFilterType}
       />
       <BarChart
+        borderRadius={2}
         dataset={chartData}
         {...( orientation !== 'horizontal' ? { xAxis:[{ 
           scaleType: 'band', 
           dataKey: 'label',
-          label: ''
+          label: '',
         }]} : {})}
         {...( orientation === 'horizontal' ? { yAxis:[{ 
           scaleType: 'band', 
@@ -65,7 +68,7 @@ export default function BarChartFacet({
         layout={orientation === "horizontal" ? "horizontal" : "vertical"}
         series={[{ 
           dataKey: 'count', 
-          label: 'Amount of documents',
+          label: t('amountOfDocuments'),
           color: colors[0],
           colorGetter: (data) => {
             const item = chartData[data.dataIndex];

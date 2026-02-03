@@ -24,6 +24,7 @@ import Result from "./results/Result";
 import SortBy from "./results/Sorting";
 import { PaginationAction, PaginationInfo, ResultsPerPage as ResultsPerPageView } from "./results/Pagination";
 import type { ESUIFacet, ESUISortOption } from "./utils/configConverter";
+import { useTranslation } from "react-i18next";
 
 export default function ElasticSearch({ 
   sortOptions, 
@@ -36,6 +37,7 @@ export default function ElasticSearch({
   dashRoute?: string;
   resultRoute?: string;
 }) {
+  const { t } = useTranslation('elastic');
   const routeMatch = useRouteMatch([dashRoute, resultRoute]);
   const navigate = useNavigate();
   const currentTab = routeMatch?.pattern?.path || null;
@@ -62,15 +64,15 @@ export default function ElasticSearch({
     <Grid container spacing={2} sx={{ mt: 2, ml: 'auto', mr: 'auto', pl: 2, pr: 2, pb: 8 }} maxWidth="xl">
       {needsTabs && 
         <Grid size={{xs: 12}}>
-          <Tabs value={currentTab} aria-label="Switch between dashboard and results">
+          <Tabs value={currentTab} aria-label={t("switchBetweenDashboardAndResults")}>
             <Tab 
-              label="Dashboard" 
+              label={t("dashboard")} 
               id="dashboard" 
               value={dashRoute} 
               onClick={() => handleTabChange(dashRoute)}
             />
             <Tab 
-              label="Results"
+              label={t("results")}
               id="results" 
               value={resultRoute} 
               onClick={() => handleTabChange(resultRoute)}

@@ -6,6 +6,7 @@ import type { SearchResult } from "@elastic/search-ui";
 import { useStoreHooks } from "@dans-framework/shared-store";
 import { getResultViewConfig } from "../redux/slices";
 import { formatESResult } from "../utils/esResultFormatter";
+import { useTranslation } from "react-i18next";
 
 export default function Result({
   result,
@@ -14,6 +15,7 @@ export default function Result({
   result: SearchResult;
   onClickLink: () => void;
 }) {
+  const { t } = useTranslation('elastic');
   const { useAppSelector } = useStoreHooks();
   const resultViewConfig = useAppSelector(getResultViewConfig);
   const formattedResult = formatESResult(result, resultViewConfig);
@@ -54,7 +56,7 @@ export default function Result({
         })}
       </Box>
       <Button color="primary" onClick={onClickLink}>
-        View Details
+        {t('viewDetails')}
       </Button>
     </Paper>
   );

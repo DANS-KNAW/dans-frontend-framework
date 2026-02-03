@@ -6,7 +6,6 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { Facet, useSearch } from "@elastic/react-search-ui";
 import { lookupLanguageString } from "@dans-framework/utils";
-import { useTranslation } from "react-i18next";
 import { FACET_VIEW_MAP, type FacetDisplayType } from "../utils/facetMap";
 import LinearProgress from '@mui/material/LinearProgress';
 import GeoMapFacet from "../facets/Map";
@@ -14,6 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import HelpIcon from '@mui/icons-material/Help';
 import type { FilterType } from "@elastic/search-ui";
+import { useTranslation } from "react-i18next";
 
 interface FacetContainerProps {
   field: string;
@@ -27,7 +27,7 @@ export default function FacetContainer({
   fullWidth,
 }: FacetContainerProps) {
   const { filters, setFilter, removeFilter, isLoading, facets } = useSearch();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation('elastic');
   const largeWidth = fullWidth ? 12 : config.width === "large" ? 9 : config.width === "medium" ? 4.5 : 3;
   const mediumWidth = fullWidth ? 12 : config.width === "large" ? 8 : config.width === "medium" ? 8 : 4;
   
@@ -105,14 +105,14 @@ export default function FacetContainer({
           }
           {!hasOptions && !isLoading && config.display !== 'geomap' &&
             <Typography variant="body2" color="textSecondary" sx={{ my: 2 }}>
-              No options found for current selection
+              {t('noOptionsFound')}
             </Typography>
           }
         </Box>
         {currentFilter && currentFilter.values.length > 0 && (
           <Box sx={{ textAlign: 'right' }}>
             <Button onClick={clearFilter}>
-              Clear filter
+              {t('clearFilter')}
             </Button>
           </Box>
         )}

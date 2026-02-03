@@ -2,7 +2,7 @@ import * as React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
-
+import { useTranslation } from "react-i18next";
 import type { SearchBoxViewProps } from "@elastic/react-search-ui-views";
 import type { AutocompleteResult } from "@elastic/search-ui";
 
@@ -22,6 +22,7 @@ export default function SearchBox({
   useAutocomplete,
   inputProps,
 }: SearchBoxViewProps) {
+  const { t } = useTranslation('elastic');
   const [localValue, setLocalValue] = React.useState(value);
 
   React.useEffect(() => {
@@ -36,15 +37,7 @@ export default function SearchBox({
         ?? result[(autocompleteResults as AutocompleteResult)?.titleField]?.raw,
       value: result,
     })) : []);
-    // const suggestions: ResultOption[] = autocompletedSuggestions?.suggestions?.map(suggestion => ({
-    //   type: "Suggestions",
-    //   label: suggestion[autocompletedSuggestions?.titleField]?.snippet?.[0]
-    //     ?? suggestion[autocompletedSuggestions?.titleField]?.raw,
-    //   value: suggestion,
-    // })) ?? [];
-
     const suggestions: [] = [];
-    
     return [...suggestions, ...results];
   }, [autocompleteResults, autocompletedSuggestions, useAutocomplete]);
 
@@ -95,7 +88,7 @@ export default function SearchBox({
             {...params}
             {...inputProps}
             size="small"
-            label="Search terms"
+            label={t('searchTerms')}
           />
         )}
       />
