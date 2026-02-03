@@ -53,7 +53,11 @@ export default function TimeRangeFacet({
       xAxis={[{ 
         scaleType: 'band', 
         dataKey: 'year',
-        label: 'Year'
+        label: 'Year',
+      }]}
+      yAxis={[{
+        tickMinStep: 1,
+        valueFormatter: (value: number) => value.toFixed(0),
       }]}
       series={[{ 
         dataKey: 'count', 

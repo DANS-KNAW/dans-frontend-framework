@@ -58,13 +58,19 @@ export default function BarChartFacet({
           scaleType: 'band', 
           dataKey: 'label',
           label: '',
-        }]} : {})}
+        }]} : { yAxis: [{
+          tickMinStep: 1,
+          valueFormatter: (value: number) => value.toFixed(0),
+        }]})}
         {...( orientation === 'horizontal' ? { yAxis:[{ 
           scaleType: 'band', 
           dataKey: 'label',
           label: '',
           width: 70,
-        }]} : {})}
+        }]} : { xAxis: [{
+          tickMinStep: 1,
+          valueFormatter: (value: number) => value.toFixed(0),
+        }]})}
         layout={orientation === "horizontal" ? "horizontal" : "vertical"}
         series={[{ 
           dataKey: 'count', 
