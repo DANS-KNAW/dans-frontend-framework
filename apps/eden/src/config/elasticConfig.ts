@@ -12,7 +12,7 @@ export const esConfig: SimpleConfig = {
       field: "countries.name",
       type: "barchart",
       label: { en: "Recommended/endorsed by", nl: "Aanbevolen/goedgekeurd door" },
-      initialSize: 30,
+      initialSize: 100,
       orientation: "horizontal",
       legend: false,
       tooltip: "Use this to filter countries or regions that have endorsed or recommended a specific Identifier. These recommendations are usually contained in RDA national strategy documents, and/ or in published national strategies or policies."
@@ -21,8 +21,7 @@ export const esConfig: SimpleConfig = {
       field: "countries.location",
       type: "geomap",
       label: { en: "Recommended/Endorsed By", nl: "Aanbevolen/Goedgekeurd Door" },
-      initialSize: 10,
-      maxSize: 10000,
+      initialSize: 100,
       width: "large",
     },
     {
@@ -30,7 +29,6 @@ export const esConfig: SimpleConfig = {
       type: "piechart",
       label: { en: "Referenced Entity", nl: "Gerefereerde Entiteit" },
       initialSize: 10,
-      maxSize: 10000,
     },
     {
       field: "start_date",
