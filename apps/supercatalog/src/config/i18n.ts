@@ -1,38 +1,15 @@
-import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
-import languages from "../config/languages";
-import LanguageDetector from "i18next-browser-languagedetector";
-import { i18n as i18nLayout } from "@dans-framework/layout";
-import { i18n as i18nAuth } from "@dans-framework/user-auth";
-import { i18n as i18nRDT } from "@dans-framework/rdt-search-ui";
+import { i18n as registerLayoutI18n } from "@dans-framework/layout";
+import { i18n as registerAuthI18n } from "@dans-framework/user-auth";
+import { i18n as registerRDTI18n } from "@dans-framework/rdt-search-ui";
+import { createI18n } from "@dans-framework/i18n";
 
-// this is the main language provider for all subcomponents/libraries
-i18n
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
+const i18n = createI18n(
+  [registerLayoutI18n, registerAuthI18n, registerRDTI18n],
+  ['nl', 'en'],
+  {
     debug: import.meta.env.DEV,
-    supportedLngs: languages,
-    detection: {
-      order: ["cookie", "localStorage"],
-      lookupCookie: "i18next",
-      lookupLocalStorage: "i18nextLng",
-      caches: ["localStorage", "cookie"],
-    },
     fallbackLng: "en",
-    interpolation: {
-      escapeValue: false,
-    },
-    react: {
-      useSuspense: true,
-    },
-  });
-
-// make sure to import languages for the components that need it
-i18n.on("languageChanged", (lng) => {
-  i18nLayout.changeLanguage(lng);
-  i18nAuth.changeLanguage(lng);
-  i18nRDT.changeLanguage(lng);
-});
+  }
+);
 
 export default i18n;

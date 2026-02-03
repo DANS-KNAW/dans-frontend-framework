@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@dans-framework/deposit": "workspace:*",
+    "@dans-framework/i18n": "workspace:*",
     "@dans-framework/layout": "workspace:*",
     "@dans-framework/pages": "workspace:*",
     "@dans-framework/repo-advisor": "workspace:*",
@@ -21,9 +22,6 @@
     "@fontsource/roboto": "^5.2.9",
     "@mui/material": "^7.3.6",
     "framer-motion": "^12.23.26",
-    "i18next": "^25.7.3",
-    "i18next-browser-languagedetector": "^8.2.0",
-    "i18next-resources-to-backend": "^1.2.1",
     "lz-string": "^1.5.0",
     "notistack": "^3.0.2",
     "react": "^19.2.3",

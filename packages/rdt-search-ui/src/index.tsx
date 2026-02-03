@@ -25,8 +25,6 @@ import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import LinearProgress from "@mui/material/LinearProgress";
-import { I18nextProvider } from "react-i18next";
-import i18nProvider from "./languages/i18n";
 import { useTranslation } from "react-i18next";
 import {
   serializeObject,
@@ -274,7 +272,7 @@ export const FacetedWrapper = ({
   // need to modify the endpoint URL to pre-filter for fixed facets
 
   return (
-    <I18nextProvider i18n={i18nProvider}>
+    <>
       <Container sx={{ pt: 4 }}>
         {dashRoute &&
           resultRoute &&
@@ -331,6 +329,6 @@ export const FacetedWrapper = ({
         </AnimatePresence>
       </Container>
       {children}
-    </I18nextProvider>
+    </>
   );
 };
