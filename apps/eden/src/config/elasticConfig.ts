@@ -45,6 +45,7 @@ export const esConfig: SimpleConfig = {
     //   type: "date",
     //   label: { en: "Year of First Use", nl: "Jaar van Eerste Gebruik" },
     //   interval: "year",
+    //   format: 'yyyy',
     //   width: "large",
     //   initialSize: 200,
     // },

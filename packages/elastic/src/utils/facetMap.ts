@@ -8,7 +8,7 @@ export const FACET_VIEW_MAP = {
   barchart: BarChartFacet,
   piechart: PieChartFacet,
   timerange: TimeRangeFacet,
-  // More to come...
+  date: TimeRangeFacet,
 };
 
 export type FacetDisplayType = keyof typeof FACET_VIEW_MAP;

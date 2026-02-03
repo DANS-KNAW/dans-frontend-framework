@@ -1,7 +1,7 @@
 import yearFormatter from "./yearFormatter";
 
 // Types
-type FacetType = "list" | "piechart" | "timerange" | "barchart" | "hidden" | "geomap";
+type FacetType = "list" | "piechart" | "timerange" | "barchart" | "hidden" | "geomap" | "date";
 type FacetWidth = "small" | "medium" | "large";
 type SortDirection = "asc" | "desc";
 
@@ -50,7 +50,13 @@ interface TimeRangeFacet extends BaseFacet {
   end: number | string;
 }
 
-type Facet = ListFacet | TimeRangeFacet | HiddenFacet | BarChartFacet | GeoFacet;
+interface DateHistogramFacet extends BaseFacet {
+  type: "date";
+  interval: "year" | "month" | "day";
+  format?: string;
+}
+
+type Facet = ListFacet | TimeRangeFacet | HiddenFacet | BarChartFacet | GeoFacet | DateHistogramFacet;
 
 interface SortOption {
   field: string | null;
@@ -87,7 +93,7 @@ interface ESUIResultField {
 
 export interface ESUIFacet {
   order: number;
-  type: "value" | "range" | "geo_point";
+  type: "value" | "range" | "geo_point" | "date_histogram";
   label: LocalizedLabel;
   display: FacetType;
   size?: number;
@@ -97,6 +103,7 @@ export interface ESUIFacet {
   show?: number;
   legend?: boolean;
   orientation?: "horizontal" | "vertical";
+  format?: string;
 }
 
 export interface ESUISortOption {
@@ -203,15 +210,16 @@ const { facets, disjunctiveFacets, externallyHandledFacets } =
           };
           break;
 
-        // case "date":
-        //   acc.externallyHandledFacets[facet.field] = {
-        //     ...baseConfig,
-        //     type: "date_histogram",
-        //     display: "date",
-        //     interval: facet.interval,
-        //     size: facet.maxSize || facet.initialSize,
-        //   };
-        //   break;
+        case "date":
+          acc.externallyHandledFacets[facet.field] = {
+            ...baseConfig,
+            type: "date_histogram",
+            display: "date",
+            format: facet.format,
+            interval: facet.interval,
+            size: facet.maxSize || facet.initialSize,
+          };
+          break;
 
         case "barchart":
           acc.facets[facet.field] = {

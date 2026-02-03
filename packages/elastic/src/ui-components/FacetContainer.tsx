@@ -9,6 +9,7 @@ import { lookupLanguageString } from "@dans-framework/utils";
 import { FACET_VIEW_MAP, type FacetDisplayType } from "../utils/facetMap";
 import LinearProgress from '@mui/material/LinearProgress';
 import GeoMapFacet from "../facets/Map";
+// import TimeRangeAltFacet from "../facets/TimeRangeChartAlt";
 import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import HelpIcon from '@mui/icons-material/Help';
@@ -100,6 +101,9 @@ export default function FacetContainer({
                 : {})}
             />
           }
+          {/* {config.display === 'date' &&
+            <TimeRangeAltFacet field={field} />
+          } */}
           {config.display === 'geomap' &&
             <GeoMapFacet field={field} />
           }
