@@ -43,7 +43,12 @@ export function PaginationInfo({ end, searchTerm, start, totalResults }: PagingI
   return (
     <Box sx={{ mb: 2 }}>
       <Typography>
-        {t('resultsInfo', { start, end, totalResults, searchTerm })}
+        {t('resultsInfo', {
+          start,
+          end,
+          totalResults,
+          searchInfo: searchTerm ? ` for "${searchTerm}"` : ''
+        })}
       </Typography>
     </Box>
   );

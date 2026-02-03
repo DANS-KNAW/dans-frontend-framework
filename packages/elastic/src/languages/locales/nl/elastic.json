@@ -3,7 +3,7 @@
     "showMore": "Toon meer",
     "showLess": "Toon minder",
     "pageSize": "Pagina grootte",
-    "resultsInfo": "{{start}} - {{end}} van {{totalResults}} resultaten {{#if searchTerm}}voor \"{{searchTerm}}\"{{/if}}",
+    "resultsInfo": "{{start}} - {{end}} van {{totalResults}} resultaten{{searchInfo}}",
     "viewDetails": "Bekijk details",
     "searchTerms": "Zoektermen",
     "sortBy": "Sorteer op",

@@ -2,7 +2,7 @@ import { type SimpleConfig } from "@dans-framework/elastic";
 
 export const esConfig: SimpleConfig = {
   searchFields: [
-    { field: "identifier", weight: 3 },
+    { field: "identifier.keyword", weight: 3 },
     { field: "description" },
     { field: "individuals" },
   ],
@@ -65,11 +65,15 @@ export const esConfig: SimpleConfig = {
       initialSize: 10,
       maxSize: 10000,
     },
+    {
+      field: "identifier",
+      type: "hidden",
+    },
   ],
   
   sortOptions: [
     { field: null, label: "Relevance" }, // null = default relevance
-    { field: "identifier.normalized", label: "Identifier", direction: "asc" },
+    { field: "identifier", label: "Identifier", direction: "asc" },
   ],
 
   searchResult: {

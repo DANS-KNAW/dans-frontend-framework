@@ -3,7 +3,7 @@
     "showMore": "Show more",
     "showLess": "Show less",
     "pageSize": "Page size",
-    "resultsInfo": "{{start}} - {{end}} of {{totalResults}} results {{#if searchTerm}}for \"{{searchTerm}}\"{{/if}}",
+    "resultsInfo": "{{start}} - {{end}} of {{totalResults}} results{{searchInfo}}",
     "viewDetails": "View Details",
     "searchTerms": "Search terms",
     "sortBy": "Sort by",
