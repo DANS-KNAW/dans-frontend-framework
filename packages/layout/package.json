@@ -5,7 +5,6 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@dans-framework/i18n": "workspace:*",
     "@dans-framework/pages": "workspace:*",
     "@dans-framework/user-auth": "workspace:*",
     "@dans-framework/utils": "workspace:*",
@@ -13,10 +12,7 @@
     "@mui/material": "^7.3.6",
     "country-flag-icons": "^1.6.4",
     "html-react-parser": "^5.2.11",
-    "i18next": "^25.7.3",
-    "i18next-resources-to-backend": "^1.2.1",
     "react": "^19.2.4",
-    "react-dom": "^19.2.3",
     "react-i18next": "^16.5.0",
     "react-oidc-context": "^3.3.0",
     "react-router-dom": "^7.11.0"
