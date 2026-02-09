@@ -1,9 +1,12 @@
 import { BarChart } from '@mui/x-charts/BarChart';
-import { Slider, Box } from '@mui/material';
+import Slider from '@mui/material/Slider';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { type FacetViewProps } from "@elastic/react-search-ui-views";
 import type { FilterValueRange } from "@elastic/search-ui";
 import { colors } from '../utils/colors';
 import { useState, useMemo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // Type guard to check if value is FilterValueRange
 function isFilterValueRange(value: any): value is FilterValueRange {
@@ -11,22 +14,22 @@ function isFilterValueRange(value: any): value is FilterValueRange {
 }
 
 interface TimeRangeFacetProps extends FacetViewProps {
-  showEmptyYears?: boolean;
+  showEmptyBuckets?: boolean;
 }
 
 export default function TimeRangeFacet({
   onRemove,
   onSelect,
   options,
-  showEmptyYears = false,
+  showEmptyBuckets,
 }: TimeRangeFacetProps) {
+  const { t } = useTranslation('elastic');
   const hasSelection = options.some(item => item.selected);
   
-  const chartData = useMemo(() => 
-    options
+  const chartData = useMemo(() => {
+    const filteredData = options
       .filter(item => {
-        // Only filter by count if we're NOT showing empty years
-        const hasData = showEmptyYears || item.count > 0;
+        const hasData = showEmptyBuckets || item.count > 0;
         return hasData && isFilterValueRange(item.value);
       })
       .map(item => {
@@ -39,9 +42,18 @@ export default function TimeRangeFacet({
           selected: item.selected,
         };
       })
-      .sort((a, b) => parseInt(a.year) - parseInt(b.year)),
-    [options, showEmptyYears] // Add showEmptyYears to deps
-  );
+      .sort((a, b) => parseInt(a.year) - parseInt(b.year));
+
+    // Find first and last non-zero indices
+    const firstNonZero = filteredData.findIndex(item => item.count > 0);
+    const lastNonZero = filteredData.findLastIndex(item => item.count > 0);
+
+    // If no data at all, return empty array
+    if (firstNonZero === -1) return [];
+
+    // Slice from first to last non-zero (inclusive)
+    return filteredData.slice(firstNonZero, lastNonZero + 1);
+  }, [options, showEmptyBuckets]);
 
   // Get available years (only those with data)
   const availableYears = useMemo(() => 
@@ -146,32 +158,30 @@ export default function TimeRangeFacet({
 
   // Create marks for slider (show year labels at intervals)
   const marks = useMemo(() => {
-    if (availableYears.length === 0) return [];
-    
-    // Show marks at start, end, and every ~10 years or adjust based on range
-    const interval = Math.max(1, Math.floor(availableYears.length / 5));
-    const marks = [];
-    
-    for (let i = 0; i < availableYears.length; i += interval) {
-      marks.push({
-        value: i,
-        label: availableYears[i].toString()
-      });
-    }
-    
-    // Always add the last year
-    if (marks[marks.length - 1]?.value !== maxYearIndex) {
-      marks.push({
-        value: maxYearIndex,
-        label: availableYears[maxYearIndex].toString()
-      });
-    }
-    
-    return marks;
-  }, [availableYears, maxYearIndex]);
+    const count = availableYears.length;
+    if (count === 0) return [];
+
+    const lastIndex = count - 1;
+    const innerMarks = 3;
+    const totalMarks = innerMarks + 2;
+    const step = lastIndex / (totalMarks - 1);
+
+    return Array.from({ length: totalMarks }, (_, i) => {
+      const index = Math.round(step * i);
+
+      return {
+        value: index,
+        label: availableYears[index].toString(),
+      };
+    });
+  }, [availableYears]);
 
   if (chartData.length === 0) {
-    return null;
+    return (
+      <Typography variant="body2" color="textSecondary" sx={{ my: 2 }}>
+        {t('noOptionsFound')}
+      </Typography>
+    );
   }
 
   return (

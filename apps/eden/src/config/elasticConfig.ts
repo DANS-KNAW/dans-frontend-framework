@@ -18,7 +18,7 @@ export const esConfig: SimpleConfig = {
       tooltip: "Use this to filter countries or regions that have endorsed or recommended a specific Identifier. These recommendations are usually contained in RDA national strategy documents, and/ or in published national strategies or policies."
     },
     {
-      field: "countries.location",
+      field: "countries.location", 
       type: "geomap",
       label: { en: "Recommended/Endorsed By", nl: "Aanbevolen/Goedgekeurd Door" },
       initialSize: 100,
@@ -39,16 +39,8 @@ export const esConfig: SimpleConfig = {
       end: "now",
       width: "large",
       initialSize: 200,
+      showEmptyBuckets: true,
     },
-    // {
-    //   field: "start_date",
-    //   type: "date",
-    //   label: { en: "Year of First Use", nl: "Jaar van Eerste Gebruik" },
-    //   interval: "year",
-    //   format: 'yyyy',
-    //   width: "large",
-    //   initialSize: 200,
-    // },
     {
       field: "scheme",
       type: "list",

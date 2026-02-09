@@ -48,6 +48,7 @@ interface TimeRangeFacet extends BaseFacet {
   interval: "year" | "month" | "day";
   start: number | string;
   end: number | string;
+  showEmptyBuckets?: boolean;
 }
 
 interface DateHistogramFacet extends BaseFacet {
@@ -104,6 +105,7 @@ export interface ESUIFacet {
   legend?: boolean;
   orientation?: "horizontal" | "vertical";
   format?: string;
+  showEmptyBuckets?: boolean;
 }
 
 export interface ESUISortOption {
@@ -207,6 +209,7 @@ const { facets, disjunctiveFacets, externallyHandledFacets } =
             display: "timerange",
             ranges: yearFormatter(facet.start, facet.end),
             interval: facet.interval,
+            showEmptyBuckets: facet.showEmptyBuckets,
           };
           break;
 
