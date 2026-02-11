@@ -71,6 +71,21 @@ export const esConfig: SimpleConfig = {
     title: "identifier",
     subTitle: "start_date",
     description: "description",
+    linkToSlug: "record",
+    linkToId: "id",
   },
 
+};
+
+export const esResultConfig = {
+  ...esConfig.searchResult,
+  list: [
+    { label: "Title", value: "label" },
+    { label: "Description", value: "description" },
+    { label: "Coverage", value: "coverage" },
+  ],
+  chips: [
+    { label: "Entities", value: "entity" },
+  ],
+  externalLink: "external_link_id_here",
 };

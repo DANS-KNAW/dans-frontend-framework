@@ -5,7 +5,7 @@ import type { AppStore } from "./store";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 
-export type StoreComponents = 'deposit' | 'elastic' | 'user' | 'fileMapper' | 'repoAdvisor';
+export type StoreComponents = 'deposit' | 'elastic' | 'user' | 'fileMapper' | 'repoAdvisor' | 'elasticResult';
 
 interface DynamicStoreProviderProps {
   storeComponents: StoreComponents[];
@@ -26,8 +26,11 @@ export const DynamicStoreProvider: FC<DynamicStoreProviderProps> = ({
   const [store, setStore] = useState<AppStore | null>(null);
 
   useEffect(() => {
-    createDynamicStore(storeComponents).then(setStore);
-  }, [storeComponents]);
+    if (!store) {
+      // Create the store with the specified components and set it in state
+      createDynamicStore(storeComponents).then(setStore);
+    }
+  }, []);
 
   if (!store) {
     return <LoadingFallback />

@@ -11,7 +11,7 @@ interface FormattedResult {
 }
 
 function getNestedValue(obj: any, path: string): any {
-  return path.split('.').reduce((current, key) => {
+  return path?.split('.').reduce((current, key) => {
     if (current == null) return undefined;
 
     // unwrap ES { raw: ... }
@@ -57,17 +57,17 @@ export function formatESResult(
   };
 
   // Get title, subtitle, description (these expect .raw)
-  const titleValue = getNestedValue(result, config.title);
+  const titleValue = getNestedValue(result, config?.title);
   formatted.title = formatValue(titleValue?.raw ?? titleValue);
 
-  const subTitleValue = config.subTitle ? getNestedValue(result, config.subTitle) : undefined;
+  const subTitleValue = config?.subTitle ? getNestedValue(result, config.subTitle) : undefined;
   formatted.subTitle = formatValue(subTitleValue?.raw ?? subTitleValue);
 
-  const descriptionValue = getNestedValue(result, config.description);
+  const descriptionValue = config?.description ? getNestedValue(result, config.description) : undefined;
   formatted.description = formatValue(descriptionValue?.raw ?? descriptionValue);
 
   // Process list items
-  config.list?.forEach(({ field, label }) => {
+  config?.list?.forEach(({ field, label }) => {
     const value = getNestedValue(result, field);
     const formattedValue = formatValue(value?.raw ?? value);
 

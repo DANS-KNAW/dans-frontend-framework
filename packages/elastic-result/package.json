@@ -1,0 +1,20 @@
+{
+  "name": "@dans-framework/elastic-result",
+  "main": "lib/index.tsx",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": {
+    "@dans-framework/shared-store": "workspace:*",
+    "@dans-framework/utils": "workspace:*",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/material": "^7.3.6",
+    "@reduxjs/toolkit": "^2.11.2",
+    "react": "^19.2.4",
+    "react-i18next": "^16.5.0",
+    "react-router-dom": "^7.11.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7"
+  }
+}

@@ -13,7 +13,8 @@ import languages from "./config/languages";
 import { useEmbedHandler } from "@dans-framework/utils";
 import { AppWrapper } from "@dans-framework/wrapper";
 import { ElasticWrapper } from "@dans-framework/elastic";
-import { esConfig } from "./config/elasticConfig";
+import { esConfig, esResultConfig } from "./config/elasticConfig";
+import { SingleRecord } from "@dans-framework/elastic-result";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -24,14 +25,15 @@ const App = () => {
       case "dashboard":
       case "search":
         return <ElasticWrapper config={esConfig} dashRoute="/" resultRoute="/search" />
-
+      case "record":
+        return <SingleRecord config={esResultConfig} />;
       default:
         return <Generic {...page} />;
     }
   };
 
   return (
-    <AppWrapper storeComponents={['elastic']}>
+    <AppWrapper storeComponents={['elastic', 'elasticResult']}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
         {/* Need to pass along root i18n functions to the language bar */}
         {!isEmbed && <LanguageBar

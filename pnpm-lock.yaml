@@ -260,6 +260,9 @@ importers:
       '@dans-framework/elastic':
         specifier: workspace:*
         version: link:../../packages/elastic
+      '@dans-framework/elastic-result':
+        specifier: workspace:*
+        version: link:../../packages/elastic-result
       '@dans-framework/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
@@ -899,6 +902,37 @@ importers:
         specifier: ^0.5.0
         version: 0.5.0
 
+  packages/elastic-result:
+    dependencies:
+      '@dans-framework/shared-store':
+        specifier: workspace:*
+        version: link:../shared-store
+      '@dans-framework/utils':
+        specifier: workspace:*
+        version: link:../utils
+      '@mui/icons-material':
+        specifier: ^7.3.6
+        version: 7.3.6(@mui/material@7.3.6(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.4))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.4))(@types/react@19.2.7)(react@19.2.4))(@types/react@19.2.7)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@types/react@19.2.7)(react@19.2.4)
+      '@mui/material':
+        specifier: ^7.3.6
+        version: 7.3.6(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.4))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.4))(@types/react@19.2.7)(react@19.2.4))(@types/react@19.2.7)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@reduxjs/toolkit':
+        specifier: ^2.11.2
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.2.7)(react@19.2.4)(redux@5.0.1))(react@19.2.4)
+      react:
+        specifier: ^19.2.4
+        version: 19.2.4
+      react-i18next:
+        specifier: ^16.5.0
+        version: 16.5.0(i18next@25.7.3(typescript@5.9.3))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
+      react-router-dom:
+        specifier: ^7.11.0
+        version: 7.11.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+    devDependencies:
+      '@types/react':
+        specifier: ^19.2.7
+        version: 19.2.7
+
   packages/file-mapper:
     dependencies:
       '@dans-framework/deposit':
@@ -1389,6 +1423,9 @@ importers:
       '@dans-framework/elastic':
         specifier: workspace:*
         version: link:../elastic
+      '@dans-framework/elastic-result':
+        specifier: workspace:*
+        version: link:../elastic-result
       '@dans-framework/file-mapper':
         specifier: workspace:*
         version: link:../file-mapper

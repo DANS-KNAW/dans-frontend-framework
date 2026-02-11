@@ -54,6 +54,12 @@ const featureConfig: Record<StoreComponents, FeatureConfig> = {
     exports: {
       reducer: [{ value: "elasticReducer", key: "elastic" }],
     }
+  },
+  elasticResult: {
+    module: () => import("@dans-framework/elastic-result"),
+    exports: {
+      api: ["elasticResultApi"],
+    }
   }
 };
 

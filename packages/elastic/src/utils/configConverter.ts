@@ -70,6 +70,8 @@ interface SearchResult {
   subTitle?: string;
   description: string;
   list?: { field: string; label: string }[];
+  linkToSlug?: string;
+  linkToId?: string;
 }
 
 export interface SimpleConfig {
@@ -263,6 +265,9 @@ const { facets, disjunctiveFacets, externallyHandledFacets } =
   
   return {
     config: {
+      initialState: {
+        resultsPerPage: 20,
+      },
       alwaysSearchOnInitialLoad: true,
       hasA11yNotifications: true,
       searchQuery: {

@@ -7,20 +7,17 @@ import { useStoreHooks } from "@dans-framework/shared-store";
 import { getResultViewConfig } from "../redux/slices";
 import { formatESResult } from "../utils/esResultFormatter";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 export default function Result({
   result,
-  onClickLink,
 }: {
   result: SearchResult;
-  onClickLink: () => void;
 }) {
   const { t } = useTranslation('elastic');
   const { useAppSelector } = useStoreHooks();
   const resultViewConfig = useAppSelector(getResultViewConfig);
   const formattedResult = formatESResult(result, resultViewConfig);
-
-  console.log(result)
 
   const description = 
     formattedResult.description && formattedResult.description.length > 200 
@@ -57,7 +54,7 @@ export default function Result({
           )
         })}
       </Box>
-      <Button color="primary" onClick={onClickLink}>
+      <Button color="primary" component={Link} to={`/${resultViewConfig.linkToSlug}/${encodeURIComponent(result[ resultViewConfig.linkToId ].raw)}`}>
         {t('viewDetails')}
       </Button>
     </Paper>
