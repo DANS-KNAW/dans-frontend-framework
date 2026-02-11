@@ -96,7 +96,7 @@ function Tag({  name, value}: { name: string; value: string[] }) {
         {name}
       </Typography>
       {value.map((v, i) => (
-         <Chip key={i} label={v} sx={{ mr: 1, mb: 1}} />
+         v && <Chip key={i} label={v} sx={{ mr: 1, mb: 1}} />
       ))}
     </Box>
   );
