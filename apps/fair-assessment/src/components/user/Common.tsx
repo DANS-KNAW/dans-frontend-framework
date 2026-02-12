@@ -10,7 +10,7 @@ import Avatar from "@mui/material/Avatar";
 import ListItemText from "@mui/material/ListItemText";
 import { MotionListItem, MotionList } from "../Animations";
 import List from "@mui/material/List";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import { AnimatePresence } from "framer-motion";
 import IconButton from "@mui/material/IconButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -207,7 +207,7 @@ export function SelectedItems({
   };
 
   return (
-    <Grid xs={12} md={6}>
+    <Grid size={{ xs: 12, md: 6 }}>
       <Typography variant="h6">
         {header}
       </Typography>

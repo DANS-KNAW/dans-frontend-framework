@@ -91,12 +91,16 @@ export function FacetedSearch(props: ExternalSearchProps) {
       );
     });
 
+    console.log('searchpropsstter', sp)
+
     setSearchProps(sp);
   }, [props, children]);
 
   const controllers = useControllers(children);
 
   if (searchProps == null || controllers.size === 0) return;
+
+  console.log(defaultSearchProps)
 
   return (
     <SearchPropsContext.Provider value={searchProps}>
@@ -270,6 +274,8 @@ export const FacetedWrapper = ({
   const navigate = useNavigate();
   const currentConfig = config.find((e) => e.url === endpoint) as EndpointProps;
 
+  console.log(config)
+
   // need to modify the endpoint URL to pre-filter for fixed facets
 
   return (
@@ -318,7 +324,9 @@ export const FacetedWrapper = ({
                 dashboard: dashRoute,
               }}
               fixedFacets={fixedFacets}
-              resultsPerPage={currentConfig.resultsPerPage}
+              {...(currentConfig.resultsPerPage !== undefined && {
+                resultsPerPage: currentConfig.resultsPerPage,
+              })}
               searchActions={currentConfig.searchActions}
             >
               {currentConfig?.dashboard.map((node, i) =>

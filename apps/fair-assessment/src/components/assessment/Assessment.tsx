@@ -1,4 +1,4 @@
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Typography from "@mui/material/Typography";
@@ -384,7 +384,7 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
             exit={{ opacity: 0, y: -100 }}
             layout
           >
-            <Grid md={4} pt={3} sx={{ borderRight: { md: '1px solid rgba(0, 0, 0, 0.12)' } }}>
+            <Grid size={{ md: 4 }} pt={3} sx={{ borderRight: { md: '1px solid rgba(0, 0, 0, 0.12)' } }}>
               <List
                 sx={{ width: '100%' }}
                 component="nav"
@@ -462,7 +462,7 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
                 })}
               </List>
             </Grid>
-            <Grid md={8} p={4}>
+            <Grid size={{ md: 8 }} p={4}>
               <Criterion
                 criterion={data?.principles.find(
                   (p) => p.id === openPrinciple)?.criteria.find(
@@ -606,7 +606,7 @@ function Status({ answers, selectedAssessment, selectedDataset, setIsOpen, isOpe
 
   return (
     <>
-      <Grid md={4}>
+      <Grid size={{ md: 4 }}>
         <Box sx={{px: 4, py: 2}}>
           <Typography variant="body2" sx={{ color: 'neutral.dark', fontWeight: 'bold' }}>
             Dataset
@@ -616,7 +616,7 @@ function Status({ answers, selectedAssessment, selectedDataset, setIsOpen, isOpe
           </Typography>
         </Box>
       </Grid>
-      <Grid md={7}>
+      <Grid size={{ md: 7 }}>
         <Box sx={{px: 4, py: 2, justifyContent: 'center', alignItems: 'center' }}>
           <Typography variant="h6">
             <Typography variant="body2" sx={{ color: 'neutral.dark', fontWeight: 'bold', mr: 0.75 }} component="span">
@@ -630,7 +630,7 @@ function Status({ answers, selectedAssessment, selectedDataset, setIsOpen, isOpe
           </Stack>
         </Box>
       </Grid>
-      <Grid md={1} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Grid size={{ md: 1 }} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <IconButton
           onClick={() => setIsOpen(prev => !prev)}
         >

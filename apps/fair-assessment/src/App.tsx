@@ -28,6 +28,7 @@ import { elasticConfig } from "./components/elastic/Guidance";
 import { DetailedView } from "./components/elastic/Single";
 import { AnimatePresence } from "framer-motion";
 import Assessment from "./components/assessment/Assessment";
+import { AppWrapper } from "@dans-framework/wrapper";
 
 const queryClient = new QueryClient();
 
@@ -65,45 +66,47 @@ const App = () => {
   }, [isExiting]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <FacetedSearchProvider config={elasticConfig}>
-        <AuthWrapper authProvider={authProvider}>
-          <ThemeWrapper theme={theme} siteTitle={siteTitle}>
-            <MenuBar pages={pages} userSubmissions={false} />
-            {/* Suspense to make sure languages can load first */}
-            <Suspense
-              fallback={
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <Skeleton height={600} width={900} />
-                </Box>
-              }
-            >
-              <Routes>
-                <Route path="signin-callback" element={<SignInCallback />} />
-                <Route
-                  path="user-settings"
-                  element={
-                    <AuthRoute>
-                      <UserSettings />
-                    </AuthRoute>
-                  }
-                />
-                {(pages as Page[]).map((page) => {
-                  return (
-                    <Route
-                      key={page.id}
-                      path={page.slug}
-                      element={createElementByTemplate(page)}
-                    />
-                  );
-                })}
-              </Routes>
-            </Suspense>
-            <Footer {...footer} />
-          </ThemeWrapper>
-        </AuthWrapper>
-      </FacetedSearchProvider>
-    </QueryClientProvider>
+    <AppWrapper storeComponents={['user']}>
+      <QueryClientProvider client={queryClient}>
+        <FacetedSearchProvider config={elasticConfig}>
+          <AuthWrapper authProvider={authProvider}>
+            <ThemeWrapper theme={theme} siteTitle={siteTitle}>
+              <MenuBar pages={pages} userSubmissions={false} />
+              {/* Suspense to make sure languages can load first */}
+              <Suspense
+                fallback={
+                  <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <Skeleton height={600} width={900} />
+                  </Box>
+                }
+              >
+                <Routes>
+                  <Route path="signin-callback" element={<SignInCallback />} />
+                  <Route
+                    path="user-settings"
+                    element={
+                      <AuthRoute>
+                        <UserSettings />
+                      </AuthRoute>
+                    }
+                  />
+                  {(pages as Page[]).map((page) => {
+                    return (
+                      <Route
+                        key={page.id}
+                        path={page.slug}
+                        element={createElementByTemplate(page)}
+                      />
+                    );
+                  })}
+                </Routes>
+              </Suspense>
+              <Footer {...footer} />
+            </ThemeWrapper>
+          </AuthWrapper>
+        </FacetedSearchProvider>
+      </QueryClientProvider>
+    </AppWrapper>
   );
 };
 

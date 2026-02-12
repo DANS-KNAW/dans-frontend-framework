@@ -8,7 +8,7 @@ import { getCurrentEndpoint, type EndpointProps } from "@dans-framework/rdt-sear
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Stack from "@mui/material/Stack";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import { motion } from "framer-motion";
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
@@ -125,12 +125,8 @@ export function DetailedView({ onClose }: { onClose: () => void }) {
           <Container>
             <Grid container>
               <Grid
-                sm={10}
-                md={8}
-                lg={7}
-                smOffset={1}
-                mdOffset={2}
-                lgOffset={2.5}
+                size={{ sm: 10, md: 8, lg: 7 }}
+                offset={{ sm: 1, md: 2, lg: 2.5 }}
                 pt={4}
               >
                 {loading ?

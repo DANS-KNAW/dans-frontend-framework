@@ -10,7 +10,7 @@ import {
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Container from '@mui/material/Container';
 import { useAuth } from "react-oidc-context";
 import Autocomplete from '@mui/material/Autocomplete';
@@ -76,18 +76,18 @@ export default function UserSettings() {
   return (
     <Container>
       <Grid container spacing={2}>
-        <Grid xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Typography variant="h1">
             Manage your profile
           </Typography>
         </Grid>
-        <Grid xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <UserInfo />
         </Grid>
-        <Grid xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <UserRoles value={roles} setValue={setRoles} />
         </Grid>
-        <Grid xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Card>
             <CardContent>
               <Tabs value={tabValue} onChange={handleChange} aria-label="Set user context">
@@ -191,7 +191,7 @@ function Objects({ objects, setObjects }: { objects: Pid[], setObjects: Dispatch
     
   return (
     <Grid container spacing={6}>
-      <Grid xs={12} md={6}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <CardHeader 
           title="Add new PID"
           subtitle="Enter a PID for one of your datasets to look up the corresponding repository and collections."
@@ -250,7 +250,7 @@ function Repositories({ repositories, setRepositories, objects }: { repositories
 
   return (
     <Grid container spacing={6}>
-      <Grid xs={12} md={6}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <CardHeader 
           title="Add repository"
           subtitle={objects && objects.length > 0 ? "Select a repository associated with one of your datasets" : "Please select a dataset first to see associated repositories."}
@@ -360,7 +360,7 @@ function Institutions({ selectedRepositories, institutions, setInstitutions }: {
   return (
     <LayoutGroup>
       <Grid container spacing={6}>
-        <Grid xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <CardHeader 
             title="Add institution"
             subtitle={selectedRepositories && selectedRepositories.length > 0 ? 

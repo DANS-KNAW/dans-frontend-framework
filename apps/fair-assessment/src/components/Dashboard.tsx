@@ -2,7 +2,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import AssessmentIcon from '@mui/icons-material/Assessment';
@@ -50,21 +50,21 @@ export default function Dashboard() {
   return (
     <Container>
       <Grid container spacing={2} alignItems="stretch">
-        <Grid xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Typography variant="h1">
             Dashboard
           </Typography>
         </Grid>
-        <Grid xs={12} md={6} lg={3}>
+        <Grid  size={{ xs: 12, md: 6, lg: 3 }}>
           <ActionCard title="FAIR Guidance" content="Find out what FAIR is all about" icon={MenuBookIcon} link="/guidance" />
         </Grid>
-        <Grid xs={12} md={6} lg={3}>
+        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
           <ActionCard title="View assessments" content="Overview of all submitted assessments" icon={AssessmentIcon} link="/assessments" />
         </Grid>
-        <Grid xs={12} md={6} lg={3}>
+        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
           <ActionCard title="Perform an assessment" content="Evaluate FAIRness of your data set" icon={CreateIcon} link="/perform-assessment" authOnly />
         </Grid>
-        <Grid xs={12} md={6} lg={3}>
+        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
           <ActionCard title="Manage your profile" content="Define your role and preferences" link="/user-settings" icon={PersonIcon} authOnly />
         </Grid>
       </Grid>
