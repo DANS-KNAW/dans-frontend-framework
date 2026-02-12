@@ -7,12 +7,24 @@ export interface Bucket {
   key: string | number;
   doc_count: number;
   [key: string]: any;
+  name?: string;
 }
+
 export function getBuckets(response: any, facetID: string): Bucket[] {
-  if (!response.aggregations?.hasOwnProperty(facetID)) return [];
+  const facetAgg = response.aggregations?.[facetID];
+  if (!facetAgg || !facetAgg[facetID]?.buckets) return [];
 
   const buckets = response.aggregations[facetID][facetID]["buckets"];
-  return buckets == null ? [] : buckets;
+
+  return buckets == null ? [] : buckets.map((bucket: any) => {
+    // grab the top_hits _source
+    const secondaryId = Object.values(facetAgg.original_value?.hits?.hits?.[0]?._source[facetID] || {})[0];
+
+    return {
+      ...bucket,
+      secondaryId,
+    };
+  });
 }
 
 export function ESResponseWithFacetsParser(

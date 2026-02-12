@@ -25,19 +25,79 @@ export class ESRequestWithFacets extends ESRequest {
 
       const facetFilter = this.state.facetFilters.get(facet.ID);
 
-      const facetAggs = facet.createAggregation(
+      // const facetAggs = facet.createAggregation(
+      //   this.payload.post_filter,
+      //   facetFilter?.value,
+      //   facetState,
+      // );
+
+      const facetAggs = this.createFacetAggregation(
+        facet,
         this.payload.post_filter,
         facetFilter?.value,
         facetState,
       );
 
       if (facetAggs != null) {
+        // clone to avoid mutating facetAggs directly
+        const updatedFacetAggs = { ...facetAggs };
+        const facetAgg = updatedFacetAggs[facet.ID];
+        if (facetAgg && facet.config.secondaryId) {
+          facetAgg.aggs = {
+            ...facetAgg.aggs, // keep any existing sub-aggs
+            original_value: {
+              top_hits: {
+                _source: { includes: [facet.config.secondaryId] },
+                size: 1,
+              },
+            },
+          };
+        }
+
         this.payload.aggs = {
           ...this.payload.aggs,
-          ...facetAggs,
+          ...updatedFacetAggs,
         };
+
+        // this.payload.aggs = {
+        //   ...this.payload.aggs,
+        //   ...facetAggs,
+        // }
       }
     }
+  }
+
+
+  private createFacetAggregation(
+    facet: any,
+    postFilter: any,
+    values: any,
+    state: any,
+  ) {
+    // If facet has a labelField, build a terms agg + top_hits sub-agg
+    if (facet.config.field && facet.config.labelField) {
+      return {
+        [facet.ID]: {
+          filter: postFilter ?? { match_all: {} },
+          aggs: {
+            [facet.ID]: {
+              terms: { field: facet.config.field },
+              aggs: {
+                label: {
+                  top_hits: {
+                    _source: [facet.config.labelField],
+                    size: 1,
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+    }
+
+    // Fallback: use original createAggregation if available
+    return facet.createAggregation?.(postFilter, values, state) ?? null;
   }
 
   private setQuery() {

@@ -24,6 +24,8 @@
     "build:digitaltwins": "turbo build --filter=@dans-framework/digitaltwins",
     "dev:supercatalog": "turbo dev --filter=@dans-framework/supercatalog",
     "build:supercatalog": "turbo build --filter=@dans-framework/supercatalog",
+    "dev:fairass": "turbo dev --filter=@dans-framework/fair-assessment",
+    "build:fairass": "turbo build --filter=@dans-framework/fair-assessment"
     "dev:eden": "turbo dev --filter=@dans-framework/eden",
     "build:eden": "turbo build --filter=@dans-framework/eden"
   },

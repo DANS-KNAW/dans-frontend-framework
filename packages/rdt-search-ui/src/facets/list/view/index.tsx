@@ -44,7 +44,7 @@ export function _ListFacet(props: ListFacetProps) {
   return (
     <FacetWrapper {...props} className="list-facet">
       {props.values != null && (viewState.pagination || viewState.query) && (
-        <Options {...props}></Options>
+        <Options {...props} />
       )}
       <ListView {...props} viewState={viewState} />
     </FacetWrapper>

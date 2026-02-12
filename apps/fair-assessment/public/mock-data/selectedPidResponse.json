@@ -1,0 +1,66 @@
+[
+    {
+        "repository": {
+            "name": "DataverseNL",
+            "re3-id": "r3d100011201",
+            "oai": "https://dataverse.nl/oai?verb=Identify"
+        },
+        "institutions": [
+            {
+            "name": "DANS",
+            "url": "https://dans.knaw.nl/en/",
+            "ror": "ROR:008pnp284",
+            "re3-id": "RRID:SCR_000904 RRID:nlx_156902"
+            },
+            {
+            "name": "Dutch Research Council",
+            "url": "https://www.nwo.nl/en",
+            "ror": "ROR:04jsz6e67",
+            "re3-id": "RRID:SCR_000988"
+            },
+            {
+            "name": "Royal Netherlands Academy of Arts and Sciences",
+            "url": "https://www.knaw.nl/en",
+            "ror": "ROR:043c0p156",
+            "re3-id": "RRID:SCR_009853"
+            }
+        ],
+        "title": "Determining the Ion Mobility in Perovskite Solar Cells from Impedance Spectroscopy",
+        "identifier": "https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/TLIUGV",
+        "collections": []
+    },
+    {
+        "repository": {
+            "name": "DANS Data Station Social Sciences and Humanities",
+            "re3-id": "r3d100014195",
+            "oai": "https://ssh.datastations.nl/oai?verb=Identify"
+        },
+        "institutions": [
+            {
+            "name": "Data Archiving and Networked Services",
+            "url": "https://dans.knaw.nl/en/",
+            "ror": "ROR:008pnp284",
+            "re3-id": ""
+            },
+            {
+            "name": "Dutch Research Council",
+            "url": "https://www.nwo.nl/en",
+            "ror": "ROR:04jsz6e67",
+            "re3-id": ""
+            },
+            {
+            "name": "Royal Netherlands Academy of Arts and Sciences",
+            "url": "https://www.knaw.nl/en",
+            "ror": "ROR:043c0p156",
+            "re3-id": ""
+            }
+        ],
+        "title": "Dataset of study: Looking through different lenses at meeting places in disadvantaged Dutch neighbourhoods",
+        "identifier": "https://doi.org/10.17026/SS/CKND4H",
+        "collections": [
+            "CESSDA-EN",
+            "social_sciences",
+            "Social_Sciences2"
+        ]
+    }
+]

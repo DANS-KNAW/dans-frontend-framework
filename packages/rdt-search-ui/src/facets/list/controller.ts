@@ -233,11 +233,16 @@ class ListFacetController extends FacetController<
       total:
         response.aggregations[`${this.ID}-count`][`${this.ID}-count`].value,
       values: buckets.map((b: Bucket) => {
-        const extraLabel = b.original_value?.hits?.hits?.[0]?._source?.[`${this.config.fieldLabel}`];
+        const splitLabel = this.config.fieldLabel?.split('.');
+        const extraLabel = splitLabel?.reduce(
+          (acc, key) => acc?.[key],
+          b.original_value?.hits?.hits?.[0]?._source
+        );
         return {
           key: b.key.toString().trim(),
           count: b.doc_count,
           label: extraLabel ?? b.key.toString(),
+          ...(b.secondaryId ? { secondaryId: b.secondaryId } : {}),
         }
       }),
     };

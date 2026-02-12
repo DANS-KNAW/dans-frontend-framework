@@ -25,5 +25,7 @@
   "dataset": "Dataset",
   "selectDataset": "Selecteer je dataset",
   "selectSources": "Filter op dataset of onderwerp",
-  "searchOnZoom": "Zoek bij zoomen"
+  "searchOnZoom": "Zoek bij zoomen",
+  "searchActions": "Zoekacties",
+  "getApiCall": "Haal API-aanroep op"
 }

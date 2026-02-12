@@ -25,5 +25,7 @@
   "dataset": "Dataset",
   "selectDataset": "Select your dataset",
   "selectSources": "Filter by data set or subject",
-  "searchOnZoom": "Search on zoom"
+  "searchOnZoom": "Search on zoom",
+  "searchActions": "Search actions",
+  "getApiCall": "Get API call"
 }
