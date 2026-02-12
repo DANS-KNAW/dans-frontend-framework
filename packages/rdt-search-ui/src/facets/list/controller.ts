@@ -35,7 +35,7 @@ interface ListAggregationTerms {
   size: number;
 }
 
-export class ListFacetController extends FacetController<
+class ListFacetController extends FacetController<
   ListFacetConfig,
   ListFacetState,
   ListFacetFilter

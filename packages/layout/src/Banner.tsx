@@ -2,7 +2,7 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { useTranslation } from "react-i18next";
-import { Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
 
 interface BannerProps {
   text:

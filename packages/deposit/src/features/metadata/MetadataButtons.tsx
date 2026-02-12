@@ -4,9 +4,9 @@ import IconButton from "@mui/material/IconButton";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { useTranslation } from "react-i18next";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { addField, deleteField } from "./metadataSlice";
-import { getFormDisabled } from "../../deposit/depositSlice";
+import { useStoreHooks } from "@dans-framework/shared-store";
+import { addField, deleteField, type MetadataState } from "./metadataSlice";
+import { getFormDisabled, type DepositState } from "../../deposit/depositSlice";
 import type { BaseButtonProps, AddButtonProps, DeleteButtonProps, AddDeleteControlsProps } from "../../types/MetadataProps";
 
 export const DeleteButton = ({
@@ -17,6 +17,7 @@ export const DeleteButton = ({
   groupName,
   groupIndex,
 }: DeleteButtonProps) => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<MetadataState & DepositState>();
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
@@ -52,6 +53,7 @@ export const AddButton = ({
   groupName,
   groupIndex,
 }: AddButtonProps) => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<MetadataState & DepositState>();
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
@@ -80,6 +82,7 @@ export const AddButton = ({
 };
 
 export const AddButtonText = ({ field }: BaseButtonProps) => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<MetadataState & DepositState>();
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);

@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import i18n from "../../../languages/i18n";
+import i18n from "i18next";
 import type { OptionsType } from "../../../types/MetadataFields";
 
 export const languagesApi = createApi({

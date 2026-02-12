@@ -3,7 +3,7 @@ import type {
   MaptilerCoordinateSystemResponse,
   MaptilerConversionResponse,
 } from "../../../types/Api";
-import i18n from "../../../languages/i18n";
+import i18n from "i18next";
 
 // helper function to convert geojson coordinates to maptiler input
 function geojsonToString(

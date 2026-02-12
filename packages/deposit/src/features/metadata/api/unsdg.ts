@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { UnsdgResponse } from "../../../types/Api";
 
 export const unsdgApi = createApi({
@@ -14,7 +14,7 @@ export const unsdgApi = createApi({
         return response.length > 0
           ? {
               response: response.map((item) => ({
-                label: item.title,
+                label: `SDG ${item.code}: ${item.title}`,
                 value: item.code,
                 idLabel: "UNSDG code",
                 id: item.code,

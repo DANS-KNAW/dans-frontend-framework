@@ -4,12 +4,7 @@ export { UserSubmissions } from "../src/user/UserSubmissions";
 export { UserSettings } from "../src/user/UserSettings";
 export * from "../src/user/Buttons";
 export { default as i18n } from "../src/languages/i18n";
-export {
-  fetchUserProfile,
-  getFormActions,
-  clearFormActions,
-  setFormActions,
-} from "../src/redux/store";
-export { useValidateAllKeysQuery, validateKeyApi, useFetchUserProfileQuery, useSaveUserDataMutation, userApi } from "../src/user/userApi";
-export { default as userReducer, getFormAction } from "../src/user/userSlice";
 export type { Target, AuthProperty, SubmissionResponse, FormActionType } from "../src/types";
+
+export { userApi, userSubmissionsApi, validateKeyApi, useValidateAllKeysQuery, useFetchUserProfileQuery, useSaveUserDataMutation } from "../src/user/userApi";
+export {default as userReducer, resetFormActions, setFormAction, getFormAction, type UserState } from "../src/user/userSlice";

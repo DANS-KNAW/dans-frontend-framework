@@ -138,7 +138,7 @@ export const elasticConfig: EndpointProps[] = [
       <ListFacet
         config={{
           id: "so",
-          field: "source.keyword",
+          field: "resource_source.keyword",
           title: {
             en: "Source",
             nl: "Bron",

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import Container from "@mui/material/Container";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -11,7 +11,8 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import EmailIcon from "@mui/icons-material/Email";
 import parse from "html-react-parser";
-import { Button } from "@mui/material";
+import Button from "@mui/material/Button";
+import { Link as RouterLink } from "react-router-dom";
 
 const Footer = ({ top, bottom }: FooterType) => {
   const columnsTop = top.length;
@@ -30,7 +31,7 @@ const Footer = ({ top, bottom }: FooterType) => {
         <Container>
           <Grid container columns={columnsTop} spacing={2}>
             {top.map((item, i) => (
-              <Grid xs={4} sm={2} md={1} key={`footer-${i}`}>
+              <Grid size={{ xs: 4, sm: 2, md: 1 }} key={`footer-${i}`}>
                 <FooterContent {...item} />
               </Grid>
             ))}
@@ -48,7 +49,7 @@ const Footer = ({ top, bottom }: FooterType) => {
         <Container>
           <Grid container columns={columnsBottom}>
             {bottom.map((item, i) => (
-              <Grid xs={2} md={1} key={i}>
+              <Grid size={{ xs: 2, md: 1 }} key={i}>
                 <FooterContent
                   {...item}
                   align={columnsBottom - 1 === i ? "right" : undefined}
@@ -146,11 +147,13 @@ const FooterContent = ({
             // It's a Link
             return (
               <Link
-                href={item.link}
+                href={item.internal ? undefined : item.link}
+                to={item.internal ? item.link : undefined}
                 underline="none"
-                target="_blank"
+                target={item.internal ? "_self" : "_blank"}
                 key={`link-${j}`}
                 sx={{ display: "flex", alignItems: "center" }}
+                component={item.internal ? RouterLink : "a"}
               >
                 {renderIcon(item.icon)}
                 {lookupLanguageString(item.name, i18n.language)}

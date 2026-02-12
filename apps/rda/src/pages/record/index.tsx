@@ -82,12 +82,19 @@ interface Workflow {
   Desciption: string;
 }
 
+interface Keyword {
+  uuid_keyword: string;
+  keyword: string;
+}
+
 interface RdaRecord {
   title: string;
   dc_description: string;
   source: string;
   fragment: string;
   dc_language: string;
+  dc_date: string;
+  dc_type: string;
   relation_types: string;
 
   pid_lod: string;
@@ -106,6 +113,7 @@ interface RdaRecord {
   pathways?: Pathway[];
   disciplines?: Discipline[];
   workflows?: Workflow[];
+  keywords?: Keyword[];
 }
 
 const OrcidContributor = ({ person }: { person: Individual }) => (
@@ -347,6 +355,23 @@ export function RdaRecord() {
         : [],
     },
     {
+      label: lookupLanguageString(
+        { en: "Keywords", nl: "Trefwoorden" },
+        i18n.language
+      ),
+      value: record.keywords
+        ? record.keywords.map((k) => (
+            <Typography
+              key={k.uuid_keyword}
+              variant="body2"
+              sx={{ color: "#374151" }}
+            >
+              {k.keyword}
+            </Typography>
+          ))
+        : [],
+    },
+    {
       label: "DOI",
       value:
         record.pid_lod_type === "DOI"
@@ -396,6 +421,28 @@ export function RdaRecord() {
           uri2={record.uri2}
           backupUri2={record.backupUri2}
         />,
+      ],
+    },
+    {
+      label: lookupLanguageString(
+        { en: "Resource Type", nl: "Resource Type" },
+        i18n.language
+      ),
+      value: [
+        <Typography variant="body2" sx={{ color: "#374151" }}>
+          {record.dc_type}
+        </Typography>,
+      ],
+    },
+    {
+      label: lookupLanguageString(
+        { en: "Created At", nl: "Aangemaakt op" },
+        i18n.language
+      ),
+      value: [
+        <Typography variant="body2" sx={{ color: "#374151" }}>
+          {record.dc_date}
+        </Typography>,
       ],
     },
   ];
@@ -491,7 +538,7 @@ export function RdaRecord() {
             }}
           >
             <Grid container={isSmUp} spacing={2}>
-              <Grid item xs={12} sm={4} sx={{ mb: isSmUp ? 0 : 1 }}>
+              <Grid size={{ xs: 12, sm: 4 }} sx={{ mb: isSmUp ? 0 : 1 }}>
                 <Typography
                   variant="body2"
                   sx={{ color: "#111827", fontWeight: 500 }}
@@ -499,9 +546,22 @@ export function RdaRecord() {
                   {label}
                 </Typography>
               </Grid>
-              <Grid item container direction="row" xs={12} sm={8}>
+              <Grid container direction="row" size={{ xs: 12, sm: 8 }}>
                 {value.length > 0 ? (
-                  value
+                  value.map((item, index) => (
+                    <React.Fragment key={index}>
+                      {item}
+                      {index < value.length - 1 && (
+                        <Typography
+                          variant="body2"
+                          component="span"
+                          sx={{ color: "#374151", mr: 1 }}
+                        >
+                          ,
+                        </Typography>
+                      )}
+                    </React.Fragment>
+                  ))
                 ) : (
                   <Typography variant="body2" sx={{ color: "#374151" }}>
                     -

@@ -25,6 +25,7 @@ import authProvider from "./config/auth";
 import form from "./config/form";
 import { FileMapper } from "@dans-framework/file-mapper";
 // import type { FormConfig } from "@dans-framework/deposit";
+import { AppWrapper } from "@dans-framework/wrapper";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -33,76 +34,78 @@ const App = () => {
   // const [ mappedForm, setMappedForm ] = useState<FormConfig>();
 
   return (
-    <AuthWrapper authProvider={authProvider}>
-      <ThemeWrapper theme={theme} siteTitle={siteTitle}>
-        <BrowserRouter>
-          {/* Need to pass along root i18n functions to the language bar */}
-          <LanguageBar
-            languages={languages}
-            changeLanguage={i18n.changeLanguage}
-          />
-          <MenuBar pages={pages} />
-          {/* Suspense to make sure languages can load first */}
-          <Suspense
-            fallback={
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
-                <Skeleton height={600} width={900} />
-              </Box>
-            }
-          >
-            <Routes>
-              <Route path="signin-callback" element={<SignInCallback />} />
-              <Route
-                path="user-settings"
-                element={
-                  <AuthRoute>
-                    <UserSettings
-                      target={form.targetCredentials}
-                      depositSlug="deposit"
+    <AppWrapper storeComponents={['user', 'deposit', 'fileMapper']}>
+      <AuthWrapper authProvider={authProvider}>
+        <ThemeWrapper theme={theme} siteTitle={siteTitle}>
+          <BrowserRouter>
+            {/* Need to pass along root i18n functions to the language bar */}
+            <LanguageBar
+              languages={languages}
+              changeLanguage={i18n.changeLanguage}
+            />
+            <MenuBar pages={pages} />
+            {/* Suspense to make sure languages can load first */}
+            <Suspense
+              fallback={
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <Skeleton height={600} width={900} />
+                </Box>
+              }
+            >
+              <Routes>
+                <Route path="signin-callback" element={<SignInCallback />} />
+                <Route
+                  path="user-settings"
+                  element={
+                    <AuthRoute>
+                      <UserSettings
+                        target={form.targetCredentials}
+                        depositSlug="deposit"
+                      />
+                    </AuthRoute>
+                  }
+                />
+                <Route
+                  path="user-submissions"
+                  element={
+                    <AuthRoute>
+                      <UserSubmissions targetCredentials={form.targetCredentials} />
+                    </AuthRoute>
+                  }
+                />
+                {(pages as Page[]).map((page) => {
+                  return (
+                    <Route
+                      key={page.id}
+                      path={page.slug}
+                      element={
+                        page.template === "deposit" ?
+                          <AuthRoute>
+                            <Deposit
+                              config={/*mappedForm || */ form}
+                              page={page}
+                            />
+                          </AuthRoute>
+                        : page.template === "mapper" ?
+                          <AuthRoute>
+                            <FileMapper
+                              config={form}
+                              page={page}
+                              depositPageSlug="/deposit"
+                            />
+                          </AuthRoute>
+                        : <Generic {...page} />
+                      }
                     />
-                  </AuthRoute>
-                }
-              />
-              <Route
-                path="user-submissions"
-                element={
-                  <AuthRoute>
-                    <UserSubmissions targetCredentials={form.targetCredentials} />
-                  </AuthRoute>
-                }
-              />
-              {(pages as Page[]).map((page) => {
-                return (
-                  <Route
-                    key={page.id}
-                    path={page.slug}
-                    element={
-                      page.template === "deposit" ?
-                        <AuthRoute>
-                          <Deposit
-                            config={/*mappedForm || */ form}
-                            page={page}
-                          />
-                        </AuthRoute>
-                      : page.template === "mapper" ?
-                        <AuthRoute>
-                          <FileMapper
-                            config={form}
-                            page={page}
-                            depositPageSlug="/deposit"
-                          />
-                        </AuthRoute>
-                      : <Generic {...page} />
-                    }
-                  />
-                );
-              })}
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-        <Footer {...footer} />
-      </ThemeWrapper>
-    </AuthWrapper>
+                  );
+                })}
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+          <Footer {...footer} />
+        </ThemeWrapper>
+      </AuthWrapper>
+    </AppWrapper>
   );
 };
 

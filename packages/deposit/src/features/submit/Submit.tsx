@@ -8,7 +8,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { useAppSelector, useAppDispatch } from "../../redux/hooks";
+import { useStoreHooks } from "@dans-framework/shared-store";
 import {
   getMetadataStatus,
   initForm,
@@ -16,8 +16,9 @@ import {
   getTouchedStatus,
   getFieldValues,
   getForm,
+  type MetadataState,
 } from "../metadata/metadataSlice";
-import { getFiles, resetFiles } from "../files/filesSlice";
+import { getFiles, resetFiles, type FilesState } from "../files/filesSlice";
 import { useSubmitDataMutation /*useSubmitFilesMutation*/ } from "./submitApi";
 import { uploadFile } from "./submitFile";
 import {
@@ -27,6 +28,7 @@ import {
   getFilesSubmitStatus,
   resetFilesSubmitStatus,
   resetMetadataSubmitStatus,
+  type SubmitState,
 } from "./submitSlice";
 import { useTranslation } from "react-i18next";
 import {
@@ -34,10 +36,11 @@ import {
   setFormDisabled,
   getFormDisabled,
   setOpenTab,
+  type DepositState,
 } from "../../deposit/depositSlice";
 import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
-import { getFormActions, clearFormActions } from "@dans-framework/user-auth";
+import { getFormAction, resetFormActions, type UserState } from "@dans-framework/user-auth";
 import { useDebouncedCallback } from "use-debounce";
 import { lookupLanguageString } from "@dans-framework/utils";
 
@@ -46,12 +49,13 @@ const Submit = ({
 }: {
   hasTargetCredentials: boolean;
 }) => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<MetadataState & FilesState & SubmitState & DepositState & UserState>();
   const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation("submit");
   const metadataStatus = useAppSelector(getMetadataStatus);
   const metadataSubmitStatus = useAppSelector(getMetadataSubmitStatus);
   const selectedFiles = useAppSelector(getFiles);
-  const formAction = getFormActions();
+  const formAction = useAppSelector(getFormAction);
   const isTouched = useAppSelector(getTouchedStatus);
   const [fileWarning, setFileWarning] = useState<boolean>(false);
   const sessionId = useAppSelector(getSessionId);
@@ -121,12 +125,12 @@ const Submit = ({
     setFileWarning(false);
 
     // Clear any form action messages on save/submit, when saving a copy
-    formAction.action === "copy" && clearFormActions();
+    formAction.action === "copy" && dispatch(resetFormActions());
 
     if (actionType === "resubmit" || actionType === "submit") {
       dispatch(setFormDisabled(true));
       // clear actions when not saving and continuing, but actually submitting
-      clearFormActions();
+      dispatch(resetFormActions());
     }
 
     dispatch(setMetadataSubmitStatus("submitting"));
@@ -168,7 +172,7 @@ const Submit = ({
   const autoSave = useDebouncedCallback(() => {
     // on autosave, we send along file metadata, but not the actual files
     // we also clear form actions for copy
-    formAction.action === "copy" && clearFormActions();
+    formAction.action === "copy" && dispatch(resetFormActions());
     if (!formDisabled && isTouched) {
       submitData({
         actionType: formAction.action === "resubmit" ? "saveResubmit" : "save",
@@ -346,7 +350,6 @@ const Submit = ({
             )}
             size="large"
             sx={{ mr: 1 }}
-            data-testid="save-form"
           >
             {t("save")}
           </Button>
@@ -361,7 +364,6 @@ const Submit = ({
                 onClick={resetForm}
                 size="large"
                 sx={{ mr: 1 }}
-                data-testid="reset-form"
               >
                 {t("reset")}
               </Button>
@@ -380,7 +382,6 @@ const Submit = ({
               )
             }
             size="large"
-            data-testid="submit-form"
           >
             {fileWarning ?
               t("submitAnyway")
@@ -398,6 +399,8 @@ const Submit = ({
 const FileUploader = ({customId}: {customId: string}) => {
   // Component that manages file upload queue.
   // Check files that have status queued, and start uploading when a spot becomes available in the queue.
+  const { useAppDispatch, useAppSelector } = useStoreHooks<FilesState & SubmitState & DepositState & MetadataState>();
+  const dispatch = useAppDispatch();
   const maxConcurrentUploads = 3;
   const filesSubmitStatus = useAppSelector(getFilesSubmitStatus);
   const selectedFiles = useAppSelector(getFiles);
@@ -415,12 +418,11 @@ const FileUploader = ({customId}: {customId: string}) => {
         const hasStatus = filesSubmitStatus.find((f) => f.id === file.id);
         return (
           hasStatus?.status === "queued" &&
-          uploadFile(file, customId || sessionId, formConfig.target)
+          uploadFile(file, customId || sessionId, dispatch, formConfig.target)
         );
       });
     }
-  }, [filesSubmitStatus, selectedFiles, sessionId, formConfig]);
-
+  }, [filesSubmitStatus, selectedFiles, sessionId, formConfig, dispatch]);
   return null;
 };
 

@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -39,8 +39,8 @@ import { RadioField, CheckField } from "./fields/RadioCheckField";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 import Skeleton from "@mui/material/Skeleton";
-import { useAppSelector } from "../../redux/hooks";
-import { getField } from "./metadataSlice";
+import { useStoreHooks } from "@dans-framework/shared-store";
+import { getField, type MetadataState } from "./metadataSlice";
 import type { TextFieldType, DateFieldType, DateRangeFieldType, RadioFieldType, CheckFieldType, DrawMapFieldType, AutocompleteFieldType, InputField } from "../../types/MetadataFields";
 
 // Lazy load the Draw map components, as it's quite large
@@ -133,7 +133,7 @@ const SingleField = memo(({ field, groupName, groupIndex, sx }: SingleFieldProps
   };
 
   return (
-    <Grid xs={12} md={field.fullWidth ? 12 : 6} sx={sx || undefined}>
+    <Grid size={{ xs: 12, md: field.fullWidth ? 12 : 6 }} sx={sx || undefined}>
       {getField()}
     </Grid>
   );
@@ -141,10 +141,11 @@ const SingleField = memo(({ field, groupName, groupIndex, sx }: SingleFieldProps
 
 const GroupedField = ({ field }: GroupedFieldProps) => {
   const { i18n } = useTranslation();
+  const { useAppSelector } = useStoreHooks<MetadataState>();
   const fieldValue = useAppSelector(getField(field.name));
 
   return (
-    <Grid xs={12}>
+    <Grid size={{ xs: 12 }}>
       <Card>
         <CardHeader
           title={lookupLanguageString(field.label, i18n.language)}
@@ -156,45 +157,41 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
           subheaderTypographyProps={{ fontSize: 12 }}
           sx={{ pb: 0, pl: 2.25, pr: 2.25 }}
         />
-        <CardContent data-testid={`group-${field.name}`}>
-        <Stack direction="row" flexWrap="wrap">
-          {field.repeatable ? (
-            (fieldValue?.value as []).map((_repeatableItem, index) => (
-              <Stack
-                key={index}
-                direction="row"
-                alignItems="center"
-                sx={{
-                  width: '100%', 
-                  borderTop: index > 0 ? "1px solid" : "none",
-                  borderColor: "neutral.main",
-                  mt: index > 0 ? 1 : 0,
-                  pt: index > 0 ? 1 : 0,
-                }}
-              >
-                <Stack 
+        <CardContent>
+          <Grid container spacing={2}>
+            {field.repeatable ? (
+              (fieldValue?.value as []).map((_repeatableItem, index) => (
+                <Grid size={{ xs: 12 }} key={index}>
+                <Stack
+                  key={index}
                   direction="row"
                   alignItems="center"
-                  flexWrap="wrap"
-                  sx={{ flex: 1 }}
+                  sx={{
+                    width: '100%', 
+                    borderTop: index > 0 ? "1px solid" : "none",
+                    borderColor: "neutral.main",
+                    pt: index > 0 ? 2 : 0,
+                  }}
                 >
-                  {(field.fields as InputField[]).map((f) => (
-                    <SingleField
-                      key={f.name}
-                      field={f}
-                      groupName={field.name}
-                      groupIndex={index}
+                  <Grid container spacing={2} sx={{ flexGrow: 1 }}>
+                    {(field.fields as InputField[]).map((f) => (
+                      <SingleField
+                        key={f.name}
+                        field={f}
+                        groupName={field.name}
+                        groupIndex={index}
+                      />
+                    ))}
+                  </Grid>
+                  {fieldValue?.value.length > 1 && (
+                    <DeleteButton
+                      size="medium"
+                      field={field}
+                      fieldIndex={index}
                     />
-                  ))}
+                  )}
                 </Stack>
-                {fieldValue?.value.length > 1 && (
-                  <DeleteButton
-                    size="medium"
-                    field={field}
-                    fieldIndex={index}
-                  />
-                )}
-              </Stack>
+              </Grid>
             ))
           ) : (
             (field.fields as InputField[]).map((f) => (
@@ -206,7 +203,7 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
               />
             ))
           )}
-          </Stack>
+          </Grid>
         </CardContent>
         {field.repeatable && (
           <CardActions sx={{ pl: 3, pr: 3, justifyContent: "right" }}>

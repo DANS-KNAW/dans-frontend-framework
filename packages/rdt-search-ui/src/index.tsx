@@ -25,8 +25,6 @@ import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import LinearProgress from "@mui/material/LinearProgress";
-import { I18nextProvider } from "react-i18next";
-import i18nProvider from "./languages/i18n";
 import { useTranslation } from "react-i18next";
 import {
   serializeObject,
@@ -49,15 +47,17 @@ export function FacetedSearch(props: ExternalSearchProps) {
   React.useEffect(() => {
     // Only set children once
     if (props.children == null || children != null) return;
-
-    const _children =
-      // Make sure it is an element and not a string, number, ...
+    let _children: React.ReactNode = props.children;
+    // Check if children is a valid React element with props
+    if (
       isValidElement(props.children) &&
-      // If children is a fragment, get the children of the fragment
       props.children.type.toString() === Symbol.for("react.fragment").toString()
-        ? props.children.props.children
-        : props.children;
-
+    ) {
+      const fragmentProps = props.children.props as { children?: React.ReactNode };
+      if (fragmentProps.children !== undefined) {
+        _children = fragmentProps.children;
+      }
+    }
     setChildren(_children);
   }, [props.children, props.url]);
 
@@ -255,11 +255,13 @@ function camelCaseToKebabCase(str: string) {
 export const FacetedWrapper = ({
   dashboard,
   dashRoute,
+  showIconViewLabel,
   resultRoute,
   children,
 }: {
   dashboard?: boolean;
   dashRoute?: string;
+  showIconViewLabel?: boolean;
   resultRoute?: string;
   children?: ReactNode;
 }) => {
@@ -271,12 +273,16 @@ export const FacetedWrapper = ({
   // need to modify the endpoint URL to pre-filter for fixed facets
 
   return (
-    <I18nextProvider i18n={i18nProvider}>
+    <>
       <Container sx={{ pt: 4 }}>
         {dashRoute &&
           resultRoute &&
           currentConfig.dashboardSearchIconToggle && (
-            <IconViewToggle dashRoute={dashRoute} resultRoute={resultRoute} />
+            <IconViewToggle
+              dashRoute={dashRoute}
+              showIconViewLabel={showIconViewLabel}
+              resultRoute={resultRoute}
+            />
           )}
         {config.length > 1 && (
           // show selector if there's more than 1 endpoint
@@ -319,13 +325,13 @@ export const FacetedWrapper = ({
                 React.cloneElement(node, {
                   key: i,
                   customColumns: currentConfig.customColumns,
-                })
+                } as any)
               )}
             </FacetedSearch>
           </motion.div>
         </AnimatePresence>
       </Container>
       {children}
-    </I18nextProvider>
+    </>
   );
 };

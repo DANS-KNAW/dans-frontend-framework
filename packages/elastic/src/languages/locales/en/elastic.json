@@ -1,0 +1,19 @@
+{
+    "amountOfDocuments": "Amount of documents",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "pageSize": "Page size",
+    "resultsInfo": "{{start}} - {{end}} of {{totalResults}} results{{searchInfo}}",
+    "viewDetails": "View Details",
+    "searchTerms": "Search terms",
+    "sortBy": "Sort by",
+    "noOptionsFound": "No options found for current selection",
+    "clearFilter": "Clear filter",
+    "filter": "Filter...",
+    "match": "Match",
+    "any": "Any",
+    "all": "All",
+    "dashboard": "Dashboard",
+    "results": "Results",
+    "switchBetweenDashboardAndResults": "Switch between dashboard and results"
+}

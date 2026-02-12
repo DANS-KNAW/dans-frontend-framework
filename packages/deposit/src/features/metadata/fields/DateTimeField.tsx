@@ -8,16 +8,16 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import { useTranslation } from "react-i18next";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { useStoreHooks } from "@dans-framework/shared-store";
 import { StatusIcon } from "../../generic/Icons";
-import { setField, setDateTypeField, getField } from "../metadataSlice";
+import { setField, setDateTypeField, getField, type MetadataState } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
 import type {
   DateFieldProps,
   DateRangeFieldProps,
 } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
-import { getFormDisabled } from "../../../deposit/depositSlice";
+import { type DepositState, getFormDisabled } from "../../../deposit/depositSlice";
 import type {
   DateValidationError,
   TimeValidationError,
@@ -37,6 +37,7 @@ export const DateTimeField = ({
   groupIndex,
 }: DateFieldProps) => {
   const { t, i18n } = useTranslation("metadata");
+  const { useAppDispatch, useAppSelector } = useStoreHooks<MetadataState & DepositState>();
   const [error, setError] = useState<
     DateValidationError | TimeValidationError | null
   >(null);
@@ -137,7 +138,6 @@ export const DateTimeField = ({
             </InputAdornment>
           ),
         }}
-        inputProps={{ "data-testid": `${field.name}` }}
         slotProps={{
           textField: {
             error:
@@ -158,6 +158,7 @@ export const DateRangeField = ({
   groupName,
   groupIndex,
 }: DateRangeFieldProps) => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<MetadataState & DepositState>();
   const fieldValue = useAppSelector(getField(field.name, groupName, groupIndex));
   const [range, setRange] = useState<(string | null)[]>(fieldValue.value || field.value || [null, null]);
   const [isDirty, setIsDirty] = useState(false); // Track if user interacted
@@ -195,7 +196,7 @@ export const DateRangeField = ({
   }, [range, isDirty]);
 
   return (
-    <Stack direction="row" alignItems="start">
+    <Stack direction="row" alignItems="start" spacing={2} sx={{ width: "100%", flex: 1 }}>
       <DateTypeWrapper
         field={field}
         groupName={groupName}
@@ -246,6 +247,7 @@ const RangeFieldWrapper = ({
   groupIndex?: number;
 }) => {
   const { t, i18n } = useTranslation("metadata");
+  const { useAppSelector } = useStoreHooks<DepositState & MetadataState>();
   const [error, setError] = useState<
     DateValidationError | TimeValidationError | null
   >(null);
@@ -340,7 +342,6 @@ const RangeFieldWrapper = ({
           </InputAdornment>
         ),
       }}
-      inputProps={{ "data-testid": `${field.name}` }}
       slotProps={{
         textField: {
           error: (status === "error" && fieldValue?.touched) || error ? true : false,
@@ -362,6 +363,7 @@ const DateTypeWrapper = ({
   groupIndex?: number;
   setRange?: (v: string[]) => void;
 }) => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<DepositState & MetadataState>();
   const formDisabled = useAppSelector(getFormDisabled);
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
@@ -397,7 +399,6 @@ const DateTypeWrapper = ({
         }}
         value={fieldValue.format || field.format}
         disabled={formDisabled}
-        inputProps={{ "data-testid": `datetype-${field.name}` }}
       >
         {field.formatOptions.map((option) => (
           <MenuItem key={option} value={option} aria-label={t(option)}>

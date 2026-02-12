@@ -18,6 +18,7 @@ export type Template =
   | "rda-annotator"
   | "fair-guidance"
   | "create-assessment";
+  | "accessibility-statement";
 
 /**
  * Type for language-specific content that can be either string or JSX

@@ -5,8 +5,6 @@ import Stack from "@mui/material/Stack";
 import { NL, GB } from "country-flag-icons/react/1x1";
 import { useTranslation } from "react-i18next";
 import styles from "./LanguageBar.module.css";
-import i18nProvider from "./languages/i18n";
-import { I18nextProvider } from "react-i18next";
 import type { Language } from "@dans-framework/utils";
 
 const LanguageBar = ({
@@ -55,10 +53,4 @@ const LanguageBar = ({
   );
 };
 
-const LanguageBarWrapper = ({ ...props }) => (
-  <I18nextProvider i18n={i18nProvider}>
-    <LanguageBar {...props} />
-  </I18nextProvider>
-);
-
-export default LanguageBarWrapper;
+export default LanguageBar;

@@ -22,6 +22,7 @@ interface Link {
   name: string | LanguageStrings;
   link: string;
   icon?: string;
+  internal?: boolean; 
 }
 
 interface Button {

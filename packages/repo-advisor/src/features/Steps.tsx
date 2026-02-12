@@ -11,7 +11,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Checkbox from "@mui/material/Checkbox";
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { useStoreHooks } from "@dans-framework/shared-store";
 import {
   getRor,
   getNarcis,
@@ -21,6 +21,7 @@ import {
   setDepositType,
   getRepo,
   setRepo,
+  type RepoAdvisorState,
 } from "./repoAdvisorSlice";
 import { useFetchDataQuery } from "./repoAdvisorApi";
 import { RorField, NarcisField, SelectField } from "./Components";
@@ -53,6 +54,7 @@ const StepWrap = ({
 
 export const Step1 = () => {
   const { t } = useTranslation("steps");
+  const { useAppSelector, useAppDispatch } = useStoreHooks<RepoAdvisorState>();
   const depositType = useAppSelector(getDepositType);
   const fileType = useAppSelector(getFileType);
   const dispatch = useAppDispatch();
@@ -113,6 +115,7 @@ export const Step1 = () => {
 
 export const Step2 = () => {
   const { t, i18n } = useTranslation("steps");
+  const { useAppSelector, useAppDispatch } = useStoreHooks<RepoAdvisorState>();
   const ror = useAppSelector(getRor);
   const narcis = useAppSelector(getNarcis);
   const depositType = useAppSelector(getDepositType);

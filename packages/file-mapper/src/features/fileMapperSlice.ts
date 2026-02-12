@@ -1,9 +1,8 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../redux/store";
 import type { SerializedFile, Mapping, FileError, SheetData } from "../types";
 import type { FormConfig } from "@dans-framework/deposit";
 
-const initialState: {
+type FileMapperStateType = {
   activeStep: number;
   mapping: Mapping;
   file: SerializedFile | undefined;
@@ -11,7 +10,9 @@ const initialState: {
   form: FormConfig | undefined;
   fileError: string | undefined;
   fileData: SheetData[] | undefined;
-} = {
+};  
+
+const initialState: FileMapperStateType = {
   activeStep: 0,
   mapping: {},
   file: undefined,
@@ -20,6 +21,8 @@ const initialState: {
   fileError: undefined,
   fileData: undefined,
 };
+
+export type FileMapperState = { fileMapper: FileMapperStateType };
 
 export const fileMapperSlice = createSlice({
   name: "fileMapper",
@@ -73,12 +76,12 @@ export const {
   reset,
 } = fileMapperSlice.actions;
 
-export const getActiveStep = (state: RootState) => state.fileMapper.activeStep;
-export const getMapping = (state: RootState) => state.fileMapper.mapping;
-export const getSavedMap = (state: RootState) => state.fileMapper.savedMap;
-export const getFile = (state: RootState) => state.fileMapper.file;
-export const getForm = (state: RootState) => state.fileMapper.form;
-export const getFileData = (state: RootState) => state.fileMapper.fileData;
-export const getFileError = (state: RootState) => state.fileMapper.fileError;
+export const getActiveStep = (state: FileMapperState) => state.fileMapper.activeStep;
+export const getMapping = (state: FileMapperState) => state.fileMapper.mapping;
+export const getSavedMap = (state: FileMapperState) => state.fileMapper.savedMap;
+export const getFile = (state: FileMapperState) => state.fileMapper.file;
+export const getForm = (state: FileMapperState) => state.fileMapper.form;
+export const getFileData = (state: FileMapperState) => state.fileMapper.fileData;
+export const getFileError = (state: FileMapperState) => state.fileMapper.fileError;
 
 export default fileMapperSlice.reducer;

@@ -12,10 +12,10 @@ import { useFetchGeonamesFreeTextQuery } from "../api/geonames";
 import { useFetchSheetsQuery } from "../api/sheets";
 import { useFetchDatastationsTermQuery } from "../api/datastations";
 import { useFetchDansFormatsQuery } from "../../files/api/dansFormats";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { useStoreHooks } from "@dans-framework/shared-store";
 import { getFieldStatus } from "../metadataHelpers";
 import { StatusIcon } from "../../generic/Icons";
-import { setField, setMultiApiField, getField } from "../metadataSlice";
+import { setField, setMultiApiField, getField, type MetadataState } from "../metadataSlice";
 import type {
   AutocompleteFieldProps,
   AutocompleteAPIFieldProps,
@@ -28,7 +28,7 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import AutocompleteField, { InfoLink, InfoChip } from "./AutocompleteField";
-import { getFormDisabled } from "../../../deposit/depositSlice";
+import { DepositState, getFormDisabled } from "../../../deposit/depositSlice";
 import { useFetchLicencesQuery } from "../api/licences";
 import { useFetchSshLicencesQuery } from "../api/sshLicences";
 import { useFetchLanguagesQuery } from "../api/languages";
@@ -428,6 +428,7 @@ export const WikidataField = ({ field, groupName, groupIndex }: AutocompleteFiel
 };
 
 export const MultiApiField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<MetadataState & DepositState>();
   const dispatch = useAppDispatch();
   const { t } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
@@ -489,6 +490,7 @@ const AutocompleteAPIField = ({
   isLoading,
   isFetching,
 }: AutocompleteAPIFieldProps) => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<MetadataState & DepositState>();
   const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
@@ -562,7 +564,6 @@ const AutocompleteAPIField = ({
             }}
             inputProps={{
               ...params.inputProps,
-              "data-testid": `${field.name}`,
             }}
           />
         )}

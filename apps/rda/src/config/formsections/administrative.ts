@@ -1,5 +1,6 @@
 import type { InitialSectionType } from "@dans-framework/deposit";
 
+// Form section config for publisher.
 const section: InitialSectionType = {
   id: "administrative",
   title: {
@@ -39,36 +40,6 @@ const section: InitialSectionType = {
       disabled: true,
     },
     {
-      type: "date",
-      name: "modified",
-      label: {
-        en: "Modified",
-        nl: "Gewijzigd",
-      },
-      required: false,
-      description: {
-        en: "Date of last modification of the deposit",
-        nl: "Datum van laatste wijziging van het deposit",
-      },
-      format: "DD-MM-YYYY",
-      autofill: "dateNow",
-    },
-    {
-      type: "date",
-      name: "available",
-      label: {
-        en: "Available",
-        nl: "Beschikbaar",
-      },
-      required: false,
-      description: {
-        en: "Date of availability of the deposit",
-        nl: "Datum van beschikbaarheid van het deposit",
-      },
-      format: "DD-MM-YYYY",
-      autofill: "dateNow",
-    },
-    {
       type: "autocomplete",
       name: "language",
       label: {
@@ -101,16 +72,16 @@ const section: InitialSectionType = {
           value: "rda",
           url: "https://zenodo.org/communities/rda",
         },
-        // {
-        //   label: "Research Data Alliance - Related Documents",
-        //   value: "rda-related",
-        //   url: "https://zenodo.org/communities/rda-related",
-        // },
-        // {
-        //   label: "RDA TIGER",
-        //   value: "rda-tiger",
-        //   url: "https://zenodo.org/communities/rda-tiger",
-        // },
+        {
+          label: "Research Data Alliance - Related Documents",
+          value: "rda-related",
+          url: "https://zenodo.org/communities/rda-related",
+        },
+        {
+          label: "RDA TIGER",
+          value: "rda-tiger",
+          url: "https://zenodo.org/communities/rda-tiger",
+        },
       ],
       value: {
         label: "Research Data Alliance",
@@ -118,20 +89,20 @@ const section: InitialSectionType = {
         url: "https://zenodo.org/communities/rda",
       },
     },
-    {
-      type: "text",
-      name: "maintenancePlan",
-      label: {
-        en: "Maintenance and Retirement Plan",
-        nl: "Onderhouds- en Bewaarplan",
-      },
-      multiline: true,
-      fullWidth: true,
-      description: {
-        en: "Describe how this deposit will be maintained over time and under what conditions it will be retired.",
-        nl: "Beschrijf hoe dit deposit in de loop van de tijd zal worden onderhouden en onder welke voorwaarden het zal worden beëindigd.",
-      },
-    },
+    // {
+    //   type: "text",
+    //   name: "maintenancePlan",
+    //   label: {
+    //     en: "Maintenance and Retirement Plan",
+    //     nl: "Onderhouds- en Bewaarplan",
+    //   },
+    //   multiline: true,
+    //   fullWidth: true,
+    //   description: {
+    //     en: "Describe how this deposit will be maintained over time and under what conditions it will be retired.",
+    //     nl: "Beschrijf hoe dit deposit in de loop van de tijd zal worden onderhouden en onder welke voorwaarden het zal worden beëindigd.",
+    //   },
+    // },
   ],
 };
 

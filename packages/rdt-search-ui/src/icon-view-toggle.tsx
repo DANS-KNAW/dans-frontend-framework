@@ -1,13 +1,25 @@
-import { Box, Button, SvgIcon, Tooltip } from "@mui/material";
+import { lookupLanguageString } from "@dans-framework/utils";
+import { Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import SvgIcon from "@mui/material/SvgIcon";
+import Tooltip from "@mui/material/Tooltip";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 interface IconViewToggleProps {
   dashRoute: string;
   resultRoute: string;
+  showIconViewLabel?: boolean;
 }
 
-const IconViewToggle = ({ dashRoute, resultRoute }: IconViewToggleProps) => {
+const IconViewToggle = ({
+  dashRoute,
+  resultRoute,
+  showIconViewLabel = false,
+}: IconViewToggleProps) => {
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
 
   return (
     <Box
@@ -19,6 +31,24 @@ const IconViewToggle = ({ dashRoute, resultRoute }: IconViewToggleProps) => {
         marginBottom: "2rem",
       }}
     >
+      {showIconViewLabel && (
+        <Typography
+          component="p"
+          sx={{
+            fontSize: { xs: "1.125rem", sm: "1.25rem" },
+            fontWeight: 400,
+            lineHeight: 2,
+          }}
+        >
+          {lookupLanguageString(
+            {
+              en: "Toggle View",
+              nl: "Zicht Wisselen",
+            },
+            i18n.language
+          )}
+        </Typography>
+      )}
       <Tooltip title="Go to Dashboard View" arrow>
         <Button
           onClick={() => navigate(dashRoute)}

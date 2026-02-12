@@ -2,13 +2,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { setMetadataSubmitStatus } from "./submitSlice";
 import { setFormDisabled } from "../../deposit/depositSlice";
-import { store } from "../../redux/store";
-import { type Target, setFormActions } from "@dans-framework/user-auth";
+import { type Target, setFormAction } from "@dans-framework/user-auth";
 import moment from "moment";
 import { enqueueSnackbar } from "notistack";
-import i18n from "../../languages/i18n";
 import { formatFormData } from "./submitHelpers";
 import { getUser } from "@dans-framework/utils/user";
+import i18n from "i18next";
 
 export const submitApi = createApi({
   reducerPath: "submitApi",
@@ -70,31 +69,45 @@ export const submitApi = createApi({
         };
       },
       invalidatesTags: (_res, _err, arg) => [{ type: "Forms", id: arg.id }],
-      transformResponse: (response, _meta, arg) => {
-        store.dispatch(
-          setMetadataSubmitStatus(
-            arg.actionType === "save" || arg.actionType === "saveResubmit" ? "saved" : "submitted",
-          ),
-        );
-        if (arg.actionType === "save" && !arg.autoSave) {
-          // show notice and enable form again after successful save
-          enqueueSnackbar(
-            i18n.t(arg.files.length === 0 ? "saveSuccess" : "saveFileSuccess", {
-              ns: "submit",
-              dateTime: moment().format("D-M-YYYY @ HH:mm"),
-            }),
-            {
-              variant: "success",
-            },
+      // Use onQueryStarted instead of transformResponse/transformErrorResponse for dispatching
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          
+          // Dispatch success actions
+          dispatch(
+            setMetadataSubmitStatus(
+              arg.actionType === "save" || arg.actionType === "saveResubmit" ? "saved" : "submitted",
+            ),
           );
+          
+          if (arg.actionType === "save" && !arg.autoSave) {
+            // show notice and enable form again after successful save
+            enqueueSnackbar(
+              i18n.t(arg.files.length === 0 ? "saveSuccess" : "saveFileSuccess", {
+                ns: "submit",
+                dateTime: moment().format("D-M-YYYY @ HH:mm"),
+              }),
+              {
+                variant: "success",
+              },
+            );
+          }
+        } catch (err: any) {
+          // Handle error case
+          const error = err.error as FetchBaseQueryError;
+          
+          // flag submit as failed
+          dispatch(setMetadataSubmitStatus("error"));
+          // enable form again, so user can try and resubmit
+          dispatch(setFormDisabled(false));
+          
+          // You can still access the error for additional handling if needed
+          console.error("Submit error:", error);
         }
-        return response;
       },
+      // Keep transformErrorResponse if you need to transform the error for the component
       transformErrorResponse: (response: FetchBaseQueryError) => {
-        // flag submit as failed
-        store.dispatch(setMetadataSubmitStatus("error"));
-        // enable form again, so user can try and resubmit
-        store.dispatch(setFormDisabled(false));
         return {
           error: i18n.t("submit:submitMetadataError", {
             error: response.status === "FETCH_ERROR" 
@@ -167,13 +180,17 @@ export const submitApi = createApi({
           method: "POST",
         });
       },
-      transformResponse: (response: any) => {
-        // set form to resubmit mode
-        setFormActions({
-          action: "resubmit",
-          id: response["dataset-id"],
-        });
-        return;
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          // set form to resubmit mode
+          dispatch(setFormAction({
+            action: "resubmit",
+            id: data["dataset-id"],
+          }));
+        } catch (err) {
+          console.error("Fetch external metadata error:", err);
+        }
       },
     }),
   }),

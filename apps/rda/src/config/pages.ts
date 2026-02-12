@@ -4,7 +4,16 @@ import search from "./pages/search";
 import record from "./pages/record";
 import extension from "./pages/rda-annotator";
 import disclaimer from "./pages/footer/disclaimer";
+import accessibilityStatement from "./pages/accessibility-statement";
 
-const pages = [dashboard, search, publisher, record, extension, disclaimer];
+const pages = [
+  dashboard,
+  search,
+  publisher,
+  record,
+  extension,
+  disclaimer,
+  accessibilityStatement,
+];
 
 export default pages;

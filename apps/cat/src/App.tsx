@@ -6,25 +6,19 @@ import { useTranslation } from "react-i18next";
 import { ThemeWrapper } from "@dans-framework/theme";
 import { LanguageBar, MenuBar } from "@dans-framework/layout";
 import { Generic, Page } from "@dans-framework/pages";
-import {
-  AuthRoute,
-  UserSettings,
-  UserSubmissions,
-  SignInCallback,
-} from "@dans-framework/user-auth";
 import { SingleRecord } from "./pages/record";
 import { AnimatePresence } from "framer-motion";
 import theme from "./config/theme";
 import pages from "./config/pages";
 import siteTitle from "./config/siteTitle";
 import languages from "./config/languages";
-import form from "./config/form";
 import { elasticConfig } from "./config/elasticSearch";
 import {
   FacetedWrapper,
   FacetedSearchProvider,
 } from "@dans-framework/rdt-search-ui";
 import { useEmbedHandler } from "@dans-framework/utils";
+import { AppWrapper } from "@dans-framework/wrapper";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -61,53 +55,38 @@ const App = () => {
   };
 
   return (
-    <ThemeWrapper theme={theme} siteTitle={siteTitle}>
-      <FacetedSearchProvider config={elasticConfig}>
-        {/* Need to pass along root i18n functions to the language bar */}
-        {!isEmbed && <LanguageBar
-          languages={languages}
-          changeLanguage={i18n.changeLanguage}
-        />}
-        <MenuBar pages={pages} userMenu={false} embed={isEmbed} />
-        {/* Suspense to make sure languages can load first */}
-        <Suspense
-          fallback={
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
-              <Skeleton height={600} width={900} />
-            </Box>
-          }
-        >
-          <Routes>
-            <Route path="signin-callback" element={<SignInCallback />} />
-            <Route
-              path="user-settings"
-              element={
-                <AuthRoute>
-                  <UserSettings target={form.targetCredentials} />
-                </AuthRoute>
-              }
-            />
-            <Route
-              path="user-submissions"
-              element={
-                <AuthRoute>
-                  <UserSubmissions targetCredentials={form.targetCredentials} />
-                </AuthRoute>
-              }
-            />
-            {(pages as Page[]).map((page) => {
-              return (
-                <Route
-                  key={page.id}
-                  path={page.slug}
-                  element={createElementByTemplate(page)}
-                />
-              );
-            })}
-          </Routes>
-        </Suspense>
-      </FacetedSearchProvider>
-    </ThemeWrapper>
+    <AppWrapper storeComponents={['user', 'deposit']}>
+      <ThemeWrapper theme={theme} siteTitle={siteTitle}>
+        <FacetedSearchProvider config={elasticConfig}>
+          {/* Need to pass along root i18n functions to the language bar */}
+          {!isEmbed && <LanguageBar
+            languages={languages}
+            changeLanguage={i18n.changeLanguage}
+          />}
+          <MenuBar pages={pages} userMenu={false} embed={isEmbed} />
+          {/* Suspense to make sure languages can load first */}
+          <Suspense
+            fallback={
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Skeleton height={600} width={900} />
+              </Box>
+            }
+          >
+            <Routes>
+              {(pages as Page[]).map((page) => {
+                return (
+                  <Route
+                    key={page.id}
+                    path={page.slug}
+                    element={createElementByTemplate(page)}
+                  />
+                );
+              })}
+            </Routes>
+          </Suspense>
+        </FacetedSearchProvider>
+      </ThemeWrapper>
+    </AppWrapper>
   );
 };
 

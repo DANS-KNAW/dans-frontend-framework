@@ -14,6 +14,8 @@ import {
   UserSubmissions,
   SignInCallback,
 } from "@dans-framework/user-auth";
+import { ScrollToTop } from "@dans-framework/utils/scroll";
+import { AppWrapper } from "@dans-framework/wrapper";
 
 // Load config variables
 import theme from "./config/theme";
@@ -27,67 +29,70 @@ import form from "./config/form";
 const App = () => {
   const { i18n } = useTranslation();
   return (
-    <AuthWrapper authProvider={authProvider}>
-      <ThemeWrapper theme={theme} siteTitle={siteTitle}>
-        <BrowserRouter>
-          {/* Need to pass along root i18n functions to the language bar */}
-          <LanguageBar
-            languages={languages}
-            changeLanguage={i18n.changeLanguage}
-          />
-          <MenuBar pages={pages} />
-          {/* Suspense to make sure languages can load first */}
-          <Suspense
-            fallback={
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
-                <Skeleton height={600} width={900} />
-              </Box>
-            }
-          >
-            <main role="main">
-            <Routes>
-              <Route path="signin-callback" element={<SignInCallback />} />
-              <Route
-                path="user-settings"
-                element={
-                  <AuthRoute>
-                    <UserSettings
-                      target={form.targetCredentials}
-                      depositSlug="deposit"
-                    />
-                  </AuthRoute>
-                }
-              />
-              <Route
-                path="user-submissions"
-                element={
-                  <AuthRoute>
-                    <UserSubmissions targetCredentials={form.targetCredentials} />
-                  </AuthRoute>
-                }
-              />
-              {(pages as Page[]).map((page) => {
-                return (
+    <AppWrapper storeComponents={['user', 'deposit']}>
+      <AuthWrapper authProvider={authProvider}>
+        <ThemeWrapper theme={theme} siteTitle={siteTitle}>
+          <BrowserRouter>
+            <ScrollToTop />
+            {/* Suspense to make sure languages can load first */}
+            <Suspense
+              fallback={
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <Skeleton height={600} width={900} />
+                </Box>
+              }
+            >
+            {/* Need to pass along root i18n functions to the language bar */}
+            <LanguageBar
+              languages={languages}
+              changeLanguage={i18n.changeLanguage}
+            />
+            <MenuBar pages={pages} />
+              <main role="main">
+                <Routes>
+                  <Route path="signin-callback" element={<SignInCallback />} />
                   <Route
-                    key={page.id}
-                    path={page.slug}
+                    path="user-settings"
                     element={
-                      page.template === "deposit" ?
-                        <AuthRoute>
-                          <Deposit config={form} page={page} />
-                        </AuthRoute>
-                      : <Generic {...page} />
+                      <AuthRoute>
+                        <UserSettings
+                          target={form.targetCredentials}
+                          depositSlug="deposit"
+                        />
+                      </AuthRoute>
                     }
                   />
-                );
-              })}
-            </Routes>
-            </main>
-          </Suspense>
-        </BrowserRouter>
-        <Footer {...footer} />
-      </ThemeWrapper>
-    </AuthWrapper>
+                  <Route
+                    path="user-submissions"
+                    element={
+                      <AuthRoute>
+                        <UserSubmissions targetCredentials={form.targetCredentials} />
+                      </AuthRoute>
+                    }
+                  />
+                  {(pages as Page[]).map((page) => {
+                    return (
+                      <Route
+                        key={page.id}
+                        path={page.slug}
+                        element={
+                          page.template === "deposit" ?
+                            <AuthRoute>
+                              <Deposit config={form} page={page} />
+                            </AuthRoute>
+                          : <Generic {...page} />
+                        }
+                      />
+                    );
+                  })}
+                </Routes>
+              </main>
+            </Suspense>
+            <Footer {...footer} />
+          </BrowserRouter>
+        </ThemeWrapper>
+      </AuthWrapper>
+    </AppWrapper>
   );
 };
 

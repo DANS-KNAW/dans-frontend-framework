@@ -11,6 +11,8 @@ const initialState: UserFormAction = {
   },
 };
 
+export type UserState = { user: UserFormAction };
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -26,6 +28,6 @@ export const userSlice = createSlice({
 
 export const { setFormAction, resetFormActions } = userSlice.actions;
 
-export const getFormAction = (state: { user: UserFormAction }) => state.user.formAction;
+export const getFormAction = (state: UserState) => state.user.formAction;
 
 export default userSlice.reducer;

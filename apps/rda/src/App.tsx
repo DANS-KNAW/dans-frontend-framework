@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
@@ -36,6 +36,9 @@ import RDAAnnotator from "./pages/rda-annotator";
 import { lookupLanguageString, useEmbedHandler } from "@dans-framework/utils";
 import { Container, Link, Typography } from "@mui/material";
 import SiteTitleWrapper from "./config/sitetitle-wrapper";
+import { initMatomo } from "./utils/matomo";
+import AccessibilityStatement from "./pages/accessibility-statement";
+import { AppWrapper } from "@dans-framework/wrapper";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -68,7 +71,7 @@ const App = () => {
                     >
                       {lookupLanguageString(
                         { en: "RDA Knowledge Base", nl: "RDA Kennisbank" },
-                        i18n.language
+                        i18n.language,
                       )}
                     </Typography>
                     <Typography
@@ -85,20 +88,29 @@ const App = () => {
                           en: "The Knowledge Base is a suite of applications that helps users find, annotate, and publish RDA-related materials",
                           nl: "De Kennisbank is een suite van applicaties die gebruikers helpt bij het vinden, annoteren en publiceren van RDA-gerelateerde materialen",
                         },
-                        i18n.language
+                        i18n.language,
                       )}
                     </Typography>
                   </Box>
                 </Container>
               </Box>
             )}
-            <FacetedWrapper dashboard dashRoute="/" resultRoute="/search" />
+            <FacetedWrapper
+              showIconViewLabel
+              dashboard
+              dashRoute="/"
+              resultRoute="/search"
+            />
           </SiteTitleWrapper>
         );
       case "search":
         return (
           <SiteTitleWrapper page={page}>
-            <FacetedWrapper dashRoute="/" resultRoute="/search" />
+            <FacetedWrapper
+              showIconViewLabel
+              dashRoute="/"
+              resultRoute="/search"
+            />
           </SiteTitleWrapper>
         );
       case "record":
@@ -119,96 +131,109 @@ const App = () => {
             <RDAAnnotator />
           </SiteTitleWrapper>
         );
+      case "accessibility-statement":
+        return (
+          <SiteTitleWrapper page={page}>
+            <AccessibilityStatement />
+          </SiteTitleWrapper>
+        );
       default:
         return <Generic {...page} />;
     }
   };
 
   return (
-    <AuthWrapper authProvider={authProvider}>
-      <ThemeWrapper theme={theme} siteTitle={siteTitle}>
-        <FacetedSearchProvider config={elasticConfig}>
-          {/* Need to pass along root i18n functions to the language bar */}
-          {!isEmbed && (
-            <LanguageBar
-              languages={languages}
-              changeLanguage={i18n.changeLanguage}
-            />
-          )}
-          <MenuBar pages={pages} logo={logo} embed={isEmbed} />
-          {/* Suspense to make sure languages can load first */}
-          <Suspense
-            fallback={
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
-                <Skeleton height={600} width={900} />
-              </Box>
-            }
-          >
-            <Routes>
-              <Route path="signin-callback" element={<SignInCallback />} />
-              <Route
-                path="user-settings"
-                element={
-                  <AuthRoute>
-                    <UserSettings target={form.targetCredentials} />
-                  </AuthRoute>
-                }
+    <AppWrapper storeComponents={['user', 'deposit']}>
+      <AuthWrapper authProvider={authProvider}>
+        <ThemeWrapper theme={theme} siteTitle={siteTitle}>
+          <FacetedSearchProvider config={elasticConfig}>
+            {/* Need to pass along root i18n functions to the language bar */}
+            {!isEmbed && (
+              <LanguageBar
+                languages={languages}
+                changeLanguage={i18n.changeLanguage}
               />
-              <Route
-                path="user-submissions"
-                element={
-                  <AuthRoute>
-                    <UserSubmissions
-                      targetCredentials={form.targetCredentials}
-                    />
-                  </AuthRoute>
-                }
-              />
-              {(pages as Page[]).map((page) => {
-                return (
-                  <Route
-                    key={page.id}
-                    path={page.slug}
-                    element={createElementByTemplate(page)}
-                  />
-                );
-              })}
-            </Routes>
-          </Suspense>
-        </FacetedSearchProvider>
-        {isEmbed && (
-          <Box
-            sx={{
-              position: "absolute",
-              backgroundColor: "white",
-              bottom: 6,
-              right: 25,
-              borderRadius: 1,
-            }}
-          >
-            <Link
-              href={window.location.href
-                .replace(/(\?|&)embed=true/, "")
-                .replace(/[\?&]$/, "")}
-              variant="body2"
-              sx={{ padding: 1 }}
+            )}
+            <MenuBar pages={pages} logo={logo} embed={isEmbed} />
+            {/* Suspense to make sure languages can load first */}
+            <Suspense
+              fallback={
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <Skeleton height={600} width={900} />
+                </Box>
+              }
             >
-              RDA Knowledge Base
-            </Link>
-          </Box>
-        )}
+              <Routes>
+                <Route path="signin-callback" element={<SignInCallback />} />
+                <Route
+                  path="user-settings"
+                  element={
+                    <AuthRoute>
+                      <UserSettings target={form.targetCredentials} />
+                    </AuthRoute>
+                  }
+                />
+                <Route
+                  path="user-submissions"
+                  element={
+                    <AuthRoute>
+                      <UserSubmissions
+                        depositSlug="publisher"
+                        targetCredentials={form.targetCredentials}
+                      />
+                    </AuthRoute>
+                  }
+                />
+                {(pages as Page[]).map((page) => {
+                  return (
+                    <Route
+                      key={page.id}
+                      path={page.slug}
+                      element={createElementByTemplate(page)}
+                    />
+                  );
+                })}
+              </Routes>
+            </Suspense>
+          </FacetedSearchProvider>
+          {isEmbed && (
+            <Box
+              sx={{
+                position: "absolute",
+                backgroundColor: "white",
+                bottom: 6,
+                right: 25,
+                borderRadius: 1,
+              }}
+            >
+              <Link
+                href={window.location.href
+                  .replace(/(\?|&)embed=true/, "")
+                  .replace(/[\?&]$/, "")}
+                variant="body2"
+                sx={{ padding: 1 }}
+              >
+                RDA Knowledge Base
+              </Link>
+            </Box>
+          )}
 
-        {!isEmbed && <Footer {...footer} />}
-        <Freshdesk widgetId={80000010123} />
-        <SupportDrawer
-          supportMaterialEndpoint={import.meta.env.VITE_SUPPORT_DRAWER_CONFIG}
-        />
-      </ThemeWrapper>
-    </AuthWrapper>
+          {!isEmbed && <Footer {...footer} />}
+          <Freshdesk widgetId={80000010123} />
+          <SupportDrawer
+            supportMaterialEndpoint={import.meta.env.VITE_SUPPORT_DRAWER_CONFIG}
+          />
+        </ThemeWrapper>
+      </AuthWrapper>
+    </AppWrapper>
   );
 };
 
 const RouterApp = () => {
+  useEffect(() => {
+    initMatomo();
+  }, []);
+
   return (
     <BrowserRouter>
       <App />

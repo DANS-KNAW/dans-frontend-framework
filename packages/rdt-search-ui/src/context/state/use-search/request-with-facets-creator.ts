@@ -134,11 +134,19 @@ export class ESRequestWithFacets extends ESRequest {
 
       if (this.props.fullTextHighlight) {
         const { fields, ...rest } = this.props.fullTextHighlight;
+
+        const cleanFields = Object.entries(fields || {}).reduce((acc, [key, value]) => {
+          if (value !== undefined) {
+            acc[key] = value;
+          }
+          return acc;
+        }, {} as Record<string, {}>);
+        
         this.payload.highlight = {
           ...this.payload.highlight,
           fields: {
             ...this.payload.highlight.fields,
-            ...fields,
+            ...cleanFields,
           },
           ...rest,
         };

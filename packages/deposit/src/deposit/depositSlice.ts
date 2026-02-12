@@ -1,16 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../redux/store";
 import type { FormConfig } from "../types/Metadata";
 
 // Save the props/config we need to redux store, for use in subcomponents
 // Also set a global disabled key, for when form is submitting/saving
-const initialState: {
+type InitialStateType = {
   config: FormConfig
   formDisabled: boolean;
   panel?: string;
   tab: number;
   touched: boolean;
-} = {
+}
+
+const initialState: InitialStateType = {
   config: {
     targetCredentials: [],
     formTitle: "",
@@ -46,12 +47,14 @@ export const depositSlice = createSlice({
   },
 });
 
+export type DepositState = { deposit: InitialStateType };
+
 export const { setData, setFormDisabled, setOpenPanel, setOpenTab } = depositSlice.actions;
 
 // Selectors
-export const getData = (state: RootState) => state.deposit.config;
-export const getFormDisabled = (state: RootState) => state.deposit.formDisabled;
-export const getOpenPanel = (state: RootState) => state.deposit.panel;
-export const getOpenTab = (state: RootState) => state.deposit.tab;
+export const getData = (state: DepositState) => state.deposit.config;
+export const getFormDisabled = (state: DepositState) => state.deposit.formDisabled;
+export const getOpenPanel = (state: DepositState) => state.deposit.panel;
+export const getOpenTab = (state: DepositState) => state.deposit.tab;
 
 export default depositSlice.reducer;

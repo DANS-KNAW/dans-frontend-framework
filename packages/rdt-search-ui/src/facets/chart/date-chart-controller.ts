@@ -25,7 +25,7 @@ const format = {
   minute: "yyyy-MM-dd HH:mm",
 };
 
-export class DateChartController extends FacetController<
+class DateChartController extends FacetController<
   DateChartFacetConfig,
   DateChartFacetState,
   DateChartFacetFilter

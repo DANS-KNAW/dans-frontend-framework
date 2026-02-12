@@ -15,14 +15,34 @@ import { getUser } from "@dans-framework/utils/user";
 /**
  * Log a warning and show a toast!
  */
+interface RejectedAction {
+  payload?: {
+    error?: string;
+    data?: string;
+  };
+  error?: {
+    message?: string;
+  };
+  meta?: {
+    arg?: {
+      endpointName?: string;
+    };
+  };
+}
+
 export const errorLogger: Middleware = () => (next) => async (action) => {
-  // RTK Query uses `createAsyncThunk` from redux-toolkit under the hood, so we're able to utilize these matchers!
   if (isRejectedWithValue(action)) {
     console.error("We got a rejected action!");
     console.error(action);
+    
+    const typedAction = action as RejectedAction;
+    
     // Set error message, keep it simple for the user
     const error =
-      action.payload.error || action.payload.data || action.error.message;
+      typedAction.payload?.error || 
+      typedAction.payload?.data || 
+      typedAction.error?.message ||
+      'An error occurred';
 
     // Set conditions for when to post a ticket to freshdesk, if freshdesk is enabled
     let ticket;
@@ -31,13 +51,13 @@ export const errorLogger: Middleware = () => (next) => async (action) => {
       // freshdesk enabled?
       import.meta.env.VITE_FRESHDESK_API_KEY &&
       // only create a ticket when something's gone wrong with the actual submission
-      action.meta.arg.endpointName === "submitData"
+      typedAction.meta?.arg?.endpointName === "submitData"
     ) {
       ticket = await sendTicket(action);
     }
 
     // Ugly check for not showing snackbar on invalid API key, as called in the Deposit package
-    if (action.meta.arg.endpointName !== "validateAllKeys") {
+    if (typedAction.meta?.arg?.endpointName !== "validateAllKeys") {
       enqueueSnackbar(error, { variant: "customError", ticket: ticket });
     }
   }

@@ -9,7 +9,7 @@ import { SearchState } from "./context/state";
 import { Facets } from "./facets";
 import { FacetControllers } from "./context/controllers";
 
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
@@ -45,7 +45,7 @@ export default function FacetedSearch({
   return (
     <Grid container spacing={2}>
       {matches ?
-        <Grid sm={6} md={4}>
+        <Grid size={{ sm: 6, md: 4 }}>
           <FullTextSearch />
           {(searchState.query ||
             searchState.facetFilters.entries().next().value) && (
@@ -126,7 +126,7 @@ export default function FacetedSearch({
           </Box>
         </SwipeableDrawer>
       }
-      <Grid xs={12} sm={6} md={8}>
+      <Grid size={{ xs: 12, sm: 6, md: 8 }}>
         {!matches && <FullTextSearch />}
         {!matches &&
           (searchState.query ||

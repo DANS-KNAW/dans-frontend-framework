@@ -6,8 +6,11 @@ export const lookupLanguageString = (
 ): string | undefined => {
   return (
     obj === undefined ? ""
-    : typeof obj === "string" ? obj
-    : obj[language as Language]
+    : typeof obj === "string" 
+    ? obj
+    : language !== undefined 
+    ? obj[language as Language]
+    : Object.values(obj)[0]
   );
 };
 

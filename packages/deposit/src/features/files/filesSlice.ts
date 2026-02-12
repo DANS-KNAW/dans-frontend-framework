@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../../redux/store";
 import { SelectedFile, ReduxFileActions } from "../../types/Files";
 
 const initialState: SelectedFile[] = [];
+
+export type FilesState = { files: SelectedFile[] };
 
 export const filesSlice = createSlice({
   name: "files",
@@ -34,6 +35,6 @@ export const { addFiles, removeFile, setFileMeta, resetFiles } =
   filesSlice.actions;
 
 // Select values from state
-export const getFiles = (state: RootState) => state.files as SelectedFile[];
+export const getFiles = (state: FilesState) => state.files as SelectedFile[];
 
 export default filesSlice.reducer;

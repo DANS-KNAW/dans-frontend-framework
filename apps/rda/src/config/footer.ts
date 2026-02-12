@@ -3,7 +3,6 @@ import rdaImage from "./images/logo_tiger.png";
 import rdaTiger from "./images/rda-tiger.svg";
 import { useFreshworksWidgetControl } from "@dans-framework/freshdesk";
 
-
 export const useFooterData = (): Footer => {
   const { openWidget } = useFreshworksWidgetControl();
   return {
@@ -49,6 +48,13 @@ export const useFooterData = (): Footer => {
               nl: "Privacyverklaring",
             },
             link: "",
+          },
+          {
+            name: {
+              en: "Accessibility Statement",
+              nl: "Toegankelijkheidsverklaring",
+            },
+            link: "/accessibility-statement",
           },
         ],
       },

@@ -10,7 +10,7 @@ import React from "react";
 import { ListView } from "./list-view";
 import Options from "./options";
 import FacetWrapper from "../../wrapper";
-import { ListFacetController } from "../controller";
+import ListFacetController from "../controller";
 import { isConfig } from "../../common";
 import type { FacetsDataReducerAction } from "../../../context/state/actions";
 import { ListFacetViewState, getViewState } from "./state";

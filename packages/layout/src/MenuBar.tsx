@@ -16,7 +16,8 @@ import { lookupLanguageString } from "@dans-framework/utils";
 import { useTranslation } from "react-i18next";
 import { UserMenu } from "@dans-framework/user-auth";
 import { useAuth } from "react-oidc-context";
-import { Tooltip, Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
@@ -112,7 +113,7 @@ const MenuBar = ({
                 display: { xs: "flex", md: "none" },
               }}
             >
-              {Logo(logo)}
+              {Logo({logo})}
             </Link>
             }
           </Box>
@@ -127,7 +128,7 @@ const MenuBar = ({
               justifyContent: "center",
             }}
           >
-            {Logo(logo)}
+            {Logo({logo})}
           </Link>
           }
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
@@ -213,29 +214,43 @@ const TabBar = ({ pages }: { pages: Page[] }) => {
  * @param logo - The logo to be rendered. It can be a string or a React element.
  * @returns The rendered logo.
  */
-const Logo = (logo: string | ReactElement) => {
+const Logo = ({ logo, alt = "Logo" }: {
+  logo: string | ReactElement;
+  alt?: string;
+}) => {
   if (typeof logo === "string") {
-    // Regular expression to detect image URLs
-    const imagePattern = /\.(jpeg|jpg|gif|png|svg)$/i;
-    if (imagePattern.test(logo)) {
-      return <img src={logo} alt="Logo" />;
-    } else {
-      // Render plain text
+    // Check if it's a data URI (base64 or URL-encoded)
+    const isDataUri = logo.startsWith("data:");
+    
+    // Check if it's a regular image URL
+    const isImageUrl = /\.(jpeg|jpg|gif|png|svg|webp)(\?.*)?$/i.test(logo);
+    
+    if (isDataUri || isImageUrl) {
       return (
-        <Typography
-          variant="h2"
-          style={{
-            fontWeight: "bold",
-            marginBottom: "0",
-          }}
-        >
-          {logo}
-        </Typography>
+        <img 
+          src={logo} 
+          alt={alt}
+          style={{ maxWidth: "100%", height: "auto" }}
+        />
       );
     }
+    
+    // Render as text
+    return (
+      <Typography
+        variant="h2"
+        sx={{
+          fontWeight: "bold",
+          marginBottom: 0,
+        }}
+      >
+        {logo}
+      </Typography>
+    );
   }
-  // Directly render if it's a React element
-  return <>{logo}</>;
+  
+  // Render React element
+  return logo;
 };
 
 export default MenuBar;

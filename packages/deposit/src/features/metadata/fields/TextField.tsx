@@ -7,21 +7,23 @@ import Tooltip from "@mui/material/Tooltip";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useTranslation } from "react-i18next";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { useStoreHooks } from "@dans-framework/shared-store";
 import { StatusIcon } from "../../generic/Icons";
 import { AddDeleteControls } from "../MetadataButtons";
 import {
   setField,
   getField,
   getFieldValues,
+  type MetadataState,
 } from "../metadataSlice";
 import { getFieldStatus } from "../metadataHelpers";
 import type { TextFieldProps } from "../../../types/MetadataProps";
 import { lookupLanguageString } from "@dans-framework/utils";
-import { getFormDisabled } from "../../../deposit/depositSlice";
+import { getFormDisabled, type DepositState } from "../../../deposit/depositSlice";
 import type { BaseField, TextFieldType } from "../../../types/MetadataFields";
 
 const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<MetadataState & DepositState>();
   const dispatch = useAppDispatch();
   const auth = useAuth();
   const { t, i18n } = useTranslation("metadata");
@@ -190,6 +192,7 @@ const SingleTextField = ({ field, groupName, groupIndex }: TextFieldProps) => {
 const FieldInput = ({ field, fieldValue, onChange, index }: {
   field: TextFieldType; fieldValue: BaseField; onChange: (e: any) => void; index?: number;
 }) => {
+  const { useAppSelector } = useStoreHooks<DepositState>();
   const { t, i18n } = useTranslation("metadata");
   const status = getFieldStatus(fieldValue, field);
   const formDisabled = useAppSelector(getFormDisabled);
@@ -230,11 +233,6 @@ const FieldInput = ({ field, fieldValue, onChange, index }: {
             />
           </InputAdornment>
         ),
-      }}
-      inputProps={{
-        "data-testid": `${field.name}${
-          index !== undefined ? `-${index}` : ""
-        }`,
       }}
       sx={{
         mT: field.repeatable ? 2 : 0,

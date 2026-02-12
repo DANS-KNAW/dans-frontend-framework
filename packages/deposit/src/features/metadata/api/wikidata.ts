@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { WikidataResponse } from "../../../types/Api";
-import i18n from "../../../languages/i18n";
+import i18n from "i18next";
 
 /* NB: The Wikidata API does not allow CORS requests, so this API is not usable in the browser!!! */
 

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { RorResponse } from "../../../types/Api";
-import i18n from "../../../languages/i18n";
+import i18n from "i18next";
 
 export const rorApi = createApi({
   reducerPath: "ror",

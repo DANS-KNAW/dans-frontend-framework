@@ -4,7 +4,7 @@ import { SearchState } from "./context/state";
 import { ActiveFilters } from "./views/active-filters";
 import { Facets } from "./facets";
 import { FacetControllers } from "./context/controllers";
-// import Grid from "@mui/material/Unstable_Grid2";
+// import Grid from "@mui/material/Grid";
 
 interface Props {
   children: React.ReactNode;

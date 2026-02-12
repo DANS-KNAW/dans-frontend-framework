@@ -4,10 +4,9 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import { useTranslation } from "react-i18next";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { getFieldStatus } from "../metadataHelpers";
 import { StatusIcon } from "../../generic/Icons";
-import { setField, getField } from "../metadataSlice";
+import { setField, getField, type MetadataState } from "../metadataSlice";
 import type {
   AutocompleteFieldProps,
   InfoLinkProps,
@@ -19,7 +18,8 @@ import Tooltip from "@mui/material/Tooltip";
 import LaunchIcon from "@mui/icons-material/Launch";
 import InputAdornment from "@mui/material/InputAdornment";
 import Chip from "@mui/material/Chip";
-import { getFormDisabled } from "../../../deposit/depositSlice";
+import { type DepositState, getFormDisabled } from "../../../deposit/depositSlice";
+import { useStoreHooks } from "@dans-framework/shared-store";
 
 const AutocompleteField = ({
   field,
@@ -28,6 +28,7 @@ const AutocompleteField = ({
   isLoading,
   onOpen,
 }: AutocompleteFieldProps) => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<MetadataState & DepositState>();
   const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation("metadata");
   const formDisabled = useAppSelector(getFormDisabled);
@@ -61,7 +62,6 @@ const AutocompleteField = ({
       <Autocomplete
         multiple={field.multiselect}
         fullWidth
-        data-testid={field.name}
         options={localizedOptions}
         groupBy={(option) =>
           (option.header &&
@@ -104,7 +104,6 @@ const AutocompleteField = ({
             }}
             inputProps={{
               ...params.inputProps,
-              "data-testid": field.name,
             }}
           />
         )}
@@ -241,6 +240,7 @@ export const InfoChip = ({
   index,
 }: InfoChipProps) => {
   const { i18n } = useTranslation("metadata");
+  const { useAppSelector } = useStoreHooks<DepositState>();
   const formDisabled = useAppSelector(getFormDisabled);
   const tagProps = getTagProps({ index });
   const { key, ...restTagProps } = tagProps;
@@ -270,6 +270,13 @@ export const InfoChip = ({
         : undefined
       }
       disabled={option.mandatory || formDisabled}
+      sx={{
+        maxWidth: "100%",
+        height: "auto",
+        "& .MuiChip-label": {
+          whiteSpace: "normal",
+        },
+      }}
     />
   );
 };

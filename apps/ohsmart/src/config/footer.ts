@@ -91,6 +91,14 @@ const footer = {
           },
           link: "https://dans.knaw.nl/privacy-declaration/",
         },
+        {
+          name: {
+            en: "Accessibility",
+            nl: "Toegankelijkheid",
+          },
+          link: "/accessibility",
+          internal: true,
+        },
       ],
     },
     {
