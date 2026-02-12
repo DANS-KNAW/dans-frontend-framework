@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "name": "EDC FAIR",
+    "version": "",
+    "status": "",
+    "description": "Some description about why the FAIR manual assessment is good for you",
+    "assessment_type": {
+      "id": 1,
+      "name": "EDC FAIR (Manual)"
+    }
+  },
+  {
+    "id": 2,
+    "name": "FAIR Champion",
+    "version": "",
+    "status": "",
+    "description": "Some description about why the FAIR Champion automated assessment is good for you",
+    "assessment_type": {
+      "id": 2,
+      "name": "FAIR Champion (Automated)"
+    }
+  }
+]

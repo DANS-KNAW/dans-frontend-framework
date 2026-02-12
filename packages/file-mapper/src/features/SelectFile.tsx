@@ -29,7 +29,7 @@ import { StepWrap, maxRows, saves } from "./Steps";
 import { useStoreHooks } from "@dans-framework/shared-store";
 
 const SelectFile = () => {
-  const { t } = useTranslation("steps");
+  const { t } = useTranslation("fileMapperSteps");
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("md"));
   const { useAppSelector, useAppDispatch } = useStoreHooks<FileMapperState>();

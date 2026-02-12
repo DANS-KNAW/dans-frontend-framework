@@ -1,0 +1,19 @@
+{
+    "amountOfDocuments": "Aantal documenten",
+    "showMore": "Toon meer",
+    "showLess": "Toon minder",
+    "pageSize": "Pagina grootte",
+    "resultsInfo": "{{start}} - {{end}} van {{totalResults}} resultaten{{searchInfo}}",
+    "viewDetails": "Bekijk details",
+    "searchTerms": "Zoektermen",
+    "sortBy": "Sorteer op",
+    "noOptionsFound": "Geen opties gevonden voor huidige selectie",
+    "clearFilter": "Filter wissen",
+    "filter": "Filter...",
+    "match": "Match",
+    "any": "Enkel",
+    "all": "Alles",
+    "dashboard": "Dashboard",
+    "results": "Resultaten",
+    "switchBetweenDashboardAndResults": "Schakel tussen dashboard en resultaten"
+}

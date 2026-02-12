@@ -6,14 +6,17 @@
   "keywords": [],
   "author": "",
   "dependencies": {
+    "@dans-framework/elastic": "workspace:*",
+    "@dans-framework/elastic-result": "workspace:*",
     "@dans-framework/shared-store": "workspace:*",
     "@dans-framework/deposit": "workspace:*",
     "@dans-framework/user-auth": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@dans-framework/repo-advisor": "workspace:*",
     "@dans-framework/file-mapper": "workspace:*",
-    "@reduxjs/toolkit": "^2.8.2",
-    "react": "^19.2.3",
+    "@mui/material": "^7.3.6",
+    "@reduxjs/toolkit": "^2.11.2",
+    "react": "^19.2.4",
     "react-redux": "^9.2.0"
   },
   "devDependencies": {

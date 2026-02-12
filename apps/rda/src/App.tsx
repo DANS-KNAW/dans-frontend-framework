@@ -143,7 +143,7 @@ const App = () => {
   };
 
   return (
-    <AppWrapper>
+    <AppWrapper storeComponents={['user', 'deposit']}>
       <AuthWrapper authProvider={authProvider}>
         <ThemeWrapper theme={theme} siteTitle={siteTitle}>
           <FacetedSearchProvider config={elasticConfig}>

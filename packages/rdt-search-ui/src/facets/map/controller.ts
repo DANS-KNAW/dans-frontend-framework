@@ -157,6 +157,7 @@ export class MapFacetController extends FacetController<
       return {
         point: [point.latitude, point.longitude],
         count: bucket.doc_count,
+        ...(bucket.secondaryId ? { secondaryId: bucket.secondaryId } : {}),
       };
     });
   }

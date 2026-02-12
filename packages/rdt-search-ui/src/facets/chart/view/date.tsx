@@ -1,5 +1,5 @@
 import { ChartFacet } from "./chart";
-import { DateChartController } from "../date-chart-controller";
+import DateChartController from "../date-chart-controller";
 import type {
   ChartFacetProps,
   DateChartFacetConfig,

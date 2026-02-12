@@ -8,7 +8,7 @@ import type { Bucket } from "../context/state/use-search/response-with-facets-pa
 import { SearchState } from "../context/state";
 import { FacetsDataReducerAction } from "../context/state/actions";
 import { lookupLanguageString } from "@dans-framework/utils";
-import i18n from "../languages/i18n";
+import i18n from "i18next";
 
 export abstract class FacetController<
   FacetConfig extends BaseFacetConfig,

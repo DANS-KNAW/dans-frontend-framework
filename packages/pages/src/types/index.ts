@@ -16,6 +16,8 @@ export type Template =
   | "advisor"
   | "mapper"
   | "rda-annotator"
+  | "fair-guidance"
+  | "create-assessment"
   | "accessibility-statement";
 
 /**

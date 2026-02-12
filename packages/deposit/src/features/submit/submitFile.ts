@@ -4,9 +4,9 @@ import { setFileMeta } from "../files/filesSlice";
 import { SelectedFile } from "../../types/Files";
 import { enqueueSnackbar } from "notistack";
 import { getUser } from "@dans-framework/utils/user";
-import i18n from "../../languages/i18n";
 import { sendTicket } from "@dans-framework/utils/error";
 import type { EndpointTarget } from "../../types/Submit"
+import i18n from "i18next";
 
 const manualError = async (
   fileName: string,

@@ -1,0 +1,6 @@
+{
+  "recordNotFound": "Record niet gevonden",
+  "recordNotFoundDescription": "Sorry, het record dat u zoekt kon niet worden gevonden. Controleer de ID en probeer het opnieuw.",
+  "detailedView": "Details voor: {{title}}",
+  "externalLink": "Bekijk externe bron"
+}

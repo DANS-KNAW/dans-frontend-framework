@@ -6,7 +6,7 @@ import type {
   RdaDomainsResponse,
   GorcResponse,
 } from "../../../types/Api";
-import i18n from "../../../languages/i18n";
+import i18n from "i18next";
 
 /**
  * TODO: This uses a dummy API. API should provide ability to search.

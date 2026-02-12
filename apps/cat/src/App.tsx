@@ -6,19 +6,12 @@ import { useTranslation } from "react-i18next";
 import { ThemeWrapper } from "@dans-framework/theme";
 import { LanguageBar, MenuBar } from "@dans-framework/layout";
 import { Generic, Page } from "@dans-framework/pages";
-import {
-  AuthRoute,
-  UserSettings,
-  UserSubmissions,
-  SignInCallback,
-} from "@dans-framework/user-auth";
 import { SingleRecord } from "./pages/record";
 import { AnimatePresence } from "framer-motion";
 import theme from "./config/theme";
 import pages from "./config/pages";
 import siteTitle from "./config/siteTitle";
 import languages from "./config/languages";
-import form from "./config/form";
 import { elasticConfig } from "./config/elasticSearch";
 import {
   FacetedWrapper,
@@ -62,7 +55,7 @@ const App = () => {
   };
 
   return (
-    <AppWrapper>
+    <AppWrapper storeComponents={['user', 'deposit']}>
       <ThemeWrapper theme={theme} siteTitle={siteTitle}>
         <FacetedSearchProvider config={elasticConfig}>
           {/* Need to pass along root i18n functions to the language bar */}
@@ -80,23 +73,6 @@ const App = () => {
             }
           >
             <Routes>
-              <Route path="signin-callback" element={<SignInCallback />} />
-              <Route
-                path="user-settings"
-                element={
-                  <AuthRoute>
-                    <UserSettings target={form.targetCredentials} />
-                  </AuthRoute>
-                }
-              />
-              <Route
-                path="user-submissions"
-                element={
-                  <AuthRoute>
-                    <UserSubmissions targetCredentials={form.targetCredentials} />
-                  </AuthRoute>
-                }
-              />
               {(pages as Page[]).map((page) => {
                 return (
                   <Route
