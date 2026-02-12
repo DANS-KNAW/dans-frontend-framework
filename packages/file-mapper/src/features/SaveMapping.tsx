@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { StepWrap } from "./Steps";
 
-export const SaveMapping = () => {
+const SaveMapping = () => {
   const { t } = useTranslation("fileMapperSteps");
 
   return (

@@ -3,7 +3,7 @@ import RepoAdvisor from "./features/RepoAdvisor";
 import type { Page } from "@dans-framework/pages";
 import type { FormConfig } from "@dans-framework/deposit";
 
-export const AdvisorWrapper = ({
+const AdvisorWrapper = ({
   setRepoConfig,
   page,
   depositLocation,

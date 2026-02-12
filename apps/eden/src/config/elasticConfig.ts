@@ -80,12 +80,12 @@ export const esConfig: SimpleConfig = {
 export const esResultConfig = {
   ...esConfig.searchResult,
   list: [
-    { label: "Title", value: "label" },
-    { label: "Description", value: "description" },
-    { label: "Coverage", value: "coverage" },
+    { label: {en: "Title", nl: "Titel"}, value: "label" },
+    { label: {en: "Description", nl: "Beschrijving"}, value: "description" },
+    { label: {en: "Coverage", nl: "Dekking"}, value: "coverage" },
   ],
   chips: [
-    { label: "Entities", value: "entity" },
+    { label: {en: "Entities", nl: "Entiteiten"}, value: "entity" },
   ],
-  externalLink: "external_link_id_here",
+  externalLink: "external_link_key_here",
 };

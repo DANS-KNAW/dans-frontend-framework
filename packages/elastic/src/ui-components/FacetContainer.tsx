@@ -1,4 +1,4 @@
-import { useState, useEffect, type ComponentType } from "react";
+import { useState, useEffect, type ComponentType, lazy, Suspense } from "react";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -8,12 +8,14 @@ import { Facet, useSearch } from "@elastic/react-search-ui";
 import { lookupLanguageString } from "@dans-framework/utils";
 import { FACET_VIEW_MAP, type FacetDisplayType } from "../utils/facetMap";
 import LinearProgress from '@mui/material/LinearProgress';
-import GeoMapFacet from "../facets/Map";
 import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import HelpIcon from '@mui/icons-material/Help';
 import type { FilterType } from "@elastic/search-ui";
 import { useTranslation } from "react-i18next";
+
+// Lazy load the GeoMapFacet, as the map component is quite big
+const GeoMapFacet = lazy(() => import("../facets/Map"));
 
 interface FacetContainerProps {
   field: string;
@@ -106,7 +108,9 @@ export default function FacetContainer({
             />
           }
           {config.display === 'geomap' &&
-            <GeoMapFacet field={field} />
+            <Suspense fallback={<LinearProgress />}>
+              <GeoMapFacet field={field} />
+            </Suspense>
           }
           {!hasOptions && !isLoading && config.display !== 'geomap' &&
             <Typography variant="body2" color="textSecondary" sx={{ my: 2 }}>

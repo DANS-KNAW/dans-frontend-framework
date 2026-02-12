@@ -15,7 +15,6 @@
     "@mui/material": "^7.3.6",
     "@mui/x-charts": "^8.23.0",
     "@reduxjs/toolkit": "^2.11.2",
-    "html-react-parser": "^5.2.11",
     "maplibre-gl": "^5.15.0",
     "ngeohash": "^0.6.3",
     "react": "^19.2.4",

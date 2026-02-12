@@ -3,7 +3,7 @@ import FileMapper from "./features/FileMapper";
 import type { Page } from "@dans-framework/pages";
 import type { FormConfig } from "@dans-framework/deposit";
 
-export const MapWrapper = ({
+const MapWrapper = ({
   config,
   /*setMappedForm,*/ page,
   depositPageSlug,

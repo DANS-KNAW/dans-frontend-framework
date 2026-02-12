@@ -34,7 +34,7 @@ import { StepWrap, maxRows } from "./Steps";
 import LaunchIcon from "@mui/icons-material/Launch";
 import InputAdornment from "@mui/material/InputAdornment";
 
-export const SetMapping = () => {
+const SetMapping = () => {
   const { t } = useTranslation("fileMapperSteps");
   const { useAppSelector, useAppDispatch } = useStoreHooks<FileMapperState>();
   const dispatch = useAppDispatch();

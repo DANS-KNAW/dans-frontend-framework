@@ -10,22 +10,21 @@ import { useFetchRecordQuery } from "./elasticApi";
 import { useTranslation } from "react-i18next";
 import Link from "@mui/material/Link"; 
 import Button from "@mui/material/Button"; 
+import { lookupLanguageString, type LanguageStrings } from "@dans-framework/utils";
 
-type Item = { label: string, value: string }
+type Item = { label: string | LanguageStrings, value: string }
 
 type Config = {
   title: string;
-  linkToSlug?: string;
-  linkToId?: string;
-  list: Item[];
-  chips: Item[];
+  list?: Item[];
+  chips?: Item[];
   externalLink?: string;
 }
 
 export default function SingleRecord({ config }: { config: Config }) {
   const { id } = useParams();
   const { data, isLoading } = useFetchRecordQuery(id);
-  const { t } = useTranslation('elasticResult');
+  const { t, i18n } = useTranslation('elasticResult');
 
   return (
     <Container>
@@ -49,16 +48,16 @@ export default function SingleRecord({ config }: { config: Config }) {
           data !== undefined ? 
           <Box>
             <Typography variant="h1" mb={4}>
-              { t("detailedView", { title: data.hasOwnProperty(config.title) ? data[config.title] : '' }) }
+              { t("detailedView", { title: data.hasOwnProperty(config.title) ? lookupLanguageString(data[config.title], i18n.language) : '' }) }
             </Typography>
-            {config.list.map((item) => (
+            {config.list?.map((item) => (
               <Metadata 
                 key={item.value}
                 name={item.label}
                 value={data[item.value]}
               />
             ))}
-            {config.chips.map((item) => (
+            {config.chips?.map((item) => (
               <Tag 
                 key={item.value}
                 name={item.label}
@@ -89,11 +88,12 @@ export default function SingleRecord({ config }: { config: Config }) {
   );
 }
 
-function Tag({  name, value}: { name: string; value: string[] }) {
+function Tag({  name, value}: { name: string | LanguageStrings; value: string[] }) {
+  const { i18n } = useTranslation('elasticResult');
   return (
     <Box mt={4}>
       <Typography variant="h5">
-        {name}
+        {lookupLanguageString(name, i18n.language)}
       </Typography>
       {value.map((v, i) => (
          v && <Chip key={i} label={v} sx={{ mr: 1, mb: 1}} />
@@ -108,15 +108,16 @@ function Metadata({
   pb = 0, 
   width
 }: {
-  name: string; 
+  name: string | LanguageStrings; 
   value: string | string[]; 
   pb?: number; 
   width?: number;
 }) {
+  const { i18n } = useTranslation('elasticResult');
   return (
     <Stack direction={{xs: "column", sm: "row"}} spacing={{xs: 0, sm: 2}} pb={{xs: 1, sm: pb}} mb={1}>
       <Typography variant="body2" color="neutral.dark" pr={1} sx={{ width: `${width || 10}rem`}}>
-        {name}
+        {lookupLanguageString(name, i18n.language)}
       </Typography>
       <Typography variant="body2" sx={{ flex: 1}}>
         {Array.isArray(value) ? value.join(', ') : value || 'N/A'}
