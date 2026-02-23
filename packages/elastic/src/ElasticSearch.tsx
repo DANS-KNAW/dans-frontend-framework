@@ -1,7 +1,6 @@
 import { useSearch } from "@elastic/react-search-ui";
 import {
   ErrorBoundary,
-  SearchBox,
   Results,
   PagingInfo,
   ResultsPerPage,
@@ -19,12 +18,12 @@ import { type SearchState, setSearchFilters } from "./redux/slices";
 import { useEffect } from "react";
 import FacetContainer from "./ui-components/FacetContainer";
 import ResultsContainer from "./results/Results";
-import SearchBoxView from "./results/SearchBox";
 import Result from "./results/Result";
 import SortBy from "./results/Sorting";
 import { PaginationAction, PaginationInfo, ResultsPerPage as ResultsPerPageView } from "./results/Pagination";
 import type { ESUIFacet, ESUISortOption } from "./utils/configConverter";
 import { useTranslation } from "react-i18next";
+import FilterDrawer from "./ui-components/FilterDrawer";
 
 export default function ElasticSearch({ 
   sortOptions, 
@@ -109,18 +108,7 @@ function ViewSelector({
         })
       ) : (
         <>
-          <Grid size={{ xs: 12, md: 5, lg: 4, xl: 3 }}>
-            <SearchBox
-              searchAsYouType={true}
-              debounceLength={300}
-              view={SearchBoxView}
-            />
-            {facets.map(([field, config]) => { 
-              return config.display !== 'hidden' && (
-                <FacetContainer key={field} field={field} config={config} fullWidth />
-              )
-            })}
-          </Grid>
+          <FilterDrawer facets={facets} />
           <Grid size={{ md: 7, lg: 8, xl: 9 }}>
             <Stack direction="row" spacing={2} justifyContent="flex-end" alignItems="center" sx={{ mb: 2 }}>
               {wasSearched && <PagingInfo view={PaginationInfo} />}

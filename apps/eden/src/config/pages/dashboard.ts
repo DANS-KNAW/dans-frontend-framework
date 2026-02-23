@@ -8,8 +8,8 @@ const page: Page = {
   template: "dashboard",
   inMenu: true,
   menuTitle: {
-    en: "Search & explore",
-    nl: "Zoek & verken",
+    en: "Explore",
+    nl: "Verken",
   },
   icon: DashboardIcon,
 };

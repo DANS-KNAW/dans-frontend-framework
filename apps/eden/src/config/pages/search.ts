@@ -5,7 +5,11 @@ const page: Page = {
   name: "Search",
   slug: "/search",
   template: "search",
-  inMenu: false,
+  inMenu: true,
+  menuTitle: {
+    en: "Search",
+    nl: "Zoeken",
+  },
 };
 
 export default page;

@@ -66,7 +66,7 @@ export default function FacetContainer({
   }, [localFilterType]);
 
   return (
-    <Grid size={{ xs: fullWidth ? 12 : 6, md: mediumWidth, lg: largeWidth }}>
+    <Grid size={{ xs: 12, sm: fullWidth ? 12 : 6, md: mediumWidth, lg: largeWidth }}>
       <Paper elevation={1} sx={{ p: 2, mb: 2, height: '100%', position: 'relative' }}>
         <Stack direction="row" spacing={1} alignItems="center" mb={1}>
           <Typography variant="h6">

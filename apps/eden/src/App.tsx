@@ -23,8 +23,9 @@ const App = () => {
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
+        return <ElasticWrapper config={esConfig} dashRoute={page.slug} />
       case "search":
-        return <ElasticWrapper config={esConfig} dashRoute="/" resultRoute="/search" />
+        return <ElasticWrapper config={esConfig} resultRoute={page.slug} />
       case "record":
         return <SingleRecord config={esResultConfig} />;
       default:
@@ -40,7 +41,7 @@ const App = () => {
           languages={languages}
           changeLanguage={i18n.changeLanguage}
         />}
-        <MenuBar pages={pages} userMenu={false} embed={isEmbed} />
+        <MenuBar pages={pages} userMenu={false} embed={isEmbed} logo="/logo-eden.svg" />
         {/* Suspense to make sure languages can load first */}
         <Suspense
           fallback={

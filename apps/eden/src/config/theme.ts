@@ -7,7 +7,7 @@ import { createTheme } from "@mui/material/styles";
 const customTheme = createTheme({
   palette: {
     primary: {
-      main: "#6B7280", // Slate Gray
+      main: "#42a1b1", // Slate Gray
     },
     secondary: {
       main: "#A78B71", // Warm Taupe
@@ -29,6 +29,9 @@ const customTheme = createTheme({
     warning: {
       main: "#efa51e", // Soft Brick Red
     },
+    neutral: {
+      main: "#ebf2f9", // Cool Gray
+    }
   },
   typography: {
     h1: {
