@@ -46,8 +46,6 @@ export default function FilterDrawer({ facets }: { facets: [string, ESUIFacet][]
           ".MuiPaper-root": {
             height: `calc(95% - ${drawerBleeding}px)`,
             overflow: 'visible',
-            boxShadow: 3,
-
           }
         }}
       >
