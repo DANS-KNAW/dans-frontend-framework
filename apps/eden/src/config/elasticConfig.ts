@@ -32,9 +32,11 @@ export const esConfig: SimpleConfig = {
 export const esResultConfig = {
   ...esConfig.searchResult,
   list: [
-    { label: "Title", value: "@id" },
-    { label: "Identifier", value: "dct:identifier" },
-    { label: "Service", value: "dcat:service" },
+    { label: "DCT Identifier", value: "dct:identifier" },
+    { label: "DCT conforms to", value: "dct:conformsTo" },
+    { label: "DCT format", value: "dct:format" },
+    { label: "DCAT Service", value: "dcat:service" },
+    { label: "DCAT endpoint URL", value: "dcat:endpointURL" },
   ],
   chips: [
     { label: "Type", value: "@type" },
