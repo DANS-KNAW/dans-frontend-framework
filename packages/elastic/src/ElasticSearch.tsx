@@ -109,7 +109,7 @@ function ViewSelector({
       ) : (
         <>
           <FilterDrawer facets={facets} />
-          <Grid size={{ md: 7, lg: 8, xl: 9 }}>
+          <Grid size={{ xs: 12, md: 7, lg: 8, xl: 9 }}>
             <Stack direction="row" spacing={2} justifyContent="flex-end" alignItems="center" sx={{ mb: 2 }}>
               {wasSearched && <PagingInfo view={PaginationInfo} />}
               {wasSearched && <ResultsPerPage view={ResultsPerPageView} />}

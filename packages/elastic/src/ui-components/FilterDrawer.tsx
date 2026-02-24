@@ -9,6 +9,7 @@ import FacetContainer from "./FacetContainer";
 import SearchBoxView from "../results/SearchBox";
 import { ESUIFacet } from "../utils/configConverter";
 import { useTranslation } from "react-i18next";
+import { useSearch } from "@elastic/react-search-ui";
 
 const drawerBleeding = 56; // height of the "Show Filters" handle
 
@@ -16,6 +17,7 @@ export default function FilterDrawer({ facets }: { facets: [string, ESUIFacet][]
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md'));
   const { t } = useTranslation('elastic');
   const [open, setOpen] = useState(false);
+  const { filters } = useSearch();
 
   const toggle = (val: boolean) => () => setOpen(val);
 
@@ -68,7 +70,7 @@ export default function FilterDrawer({ facets }: { facets: [string, ESUIFacet][]
             flexDirection: 'column',
             py: 2,
             zIndex: 1,
-            boxShadow: 3,
+            boxShadow: 8,
           }}
           onClick={toggle(!open)}
         >
@@ -81,7 +83,7 @@ export default function FilterDrawer({ facets }: { facets: [string, ESUIFacet][]
             }} 
           />
           <Button>
-            {t("filters")}
+            {t("filters")} {filters && filters.length > 0 && `(${filters.length})`}
           </Button>
         </Box>
 

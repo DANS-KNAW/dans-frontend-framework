@@ -25,7 +25,7 @@ export default function Result({
     : formattedResult.description;
 
   return (
-    <Paper sx={{ p: 2, mb: 2, width: '100%' }}>
+    <Paper sx={{ p: 2, mb: 2, width: '100%', overflow: 'hidden' }}>
       <Typography variant="h6">
         {formattedResult.title}
       </Typography>
