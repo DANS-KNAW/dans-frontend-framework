@@ -60,7 +60,7 @@ export default function ElasticSearch({
   };
 
   return (
-    <Grid container spacing={2} sx={{ mt: 2, ml: 'auto', mr: 'auto', pl: 2, pr: 2, pb: 8 }} maxWidth="xl">
+    <Grid container spacing={2} sx={{ mt: 4, ml: 'auto', mr: 'auto', pl: 2, pr: 2, pb: 8 }} maxWidth="xl">
       {needsTabs && 
         <Grid size={{xs: 12}}>
           <Tabs value={currentTab} aria-label={t("switchBetweenDashboardAndResults")}>

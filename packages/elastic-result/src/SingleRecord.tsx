@@ -47,8 +47,11 @@ export default function SingleRecord({ config }: { config: Config }) {
           :
           data !== undefined ? 
           <Box>
-            <Typography variant="h1" mb={4}>
-              { t("detailedView", { title: data.hasOwnProperty(config.title) ? lookupLanguageString(data[config.title], i18n.language) : '' }) }
+            <Typography variant="h6" mb={0} color="neutral.dark">
+              { t("detailedView") }
+            </Typography>
+            <Typography variant="h1" mb={4} mt={0}>
+              { data.hasOwnProperty(config.title) ? lookupLanguageString(data[config.title], i18n.language) : t("noTitle") }
             </Typography>
             {config.list?.map((item) => (
               <Metadata 
@@ -88,16 +91,17 @@ export default function SingleRecord({ config }: { config: Config }) {
   );
 }
 
-function Tag({  name, value}: { name: string | LanguageStrings; value: string[] }) {
+function Tag({  name, value }: { name: string | LanguageStrings; value: string | string[] }) {
+  console.log(value)
   const { i18n } = useTranslation('elasticResult');
   return (
     <Box mt={4}>
       <Typography variant="h5">
         {lookupLanguageString(name, i18n.language)}
       </Typography>
-      {value.map((v, i) => (
+      {Array.isArray(value) ? value.map((v, i) => (
          v && <Chip key={i} label={v} sx={{ mr: 1, mb: 1}} />
-      ))}
+      )) : value && <Chip label={value} sx={{ mr: 1, mb: 1}} />}
     </Box>
   );
 }

@@ -1,6 +1,7 @@
 {
   "recordNotFound": "Record Not Found",
   "recordNotFoundDescription": "Sorry, the record you are looking for could not be found. Please check the ID and try again.",
-  "detailedView": "Details for: {{title}}",
-  "externalLink": "View external resource"
+  "detailedView": "Record details",
+  "externalLink": "View external resource",
+  "noTitle": "No title available"
 }
