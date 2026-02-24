@@ -64,14 +64,26 @@ export default function PieChartFacet({
             sx: {
               mt: 3,
               gap: '0.5rem',
-              // CSS-in-JS
+              maxWidth: '100%',
+              overflow: 'hidden',
+              ['& .MuiChartsLegend-item']: {
+                maxWidth: '100%',
+              },
               [`.${legendClasses.mark}`]: {
                 height: 15,
                 width: 15,
+                flex: '0 0 15px'
               },
-              // CSS class
               ['& .MuiChartsLegend-series']: {
                 gap: '0.25rem',
+                maxWidth: '100%',
+              },
+              ['& .MuiChartsLegend-label']: {
+                minWidth: 0,
+                flex: '1 1 auto',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
               },
             },
           },

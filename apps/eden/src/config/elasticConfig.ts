@@ -13,6 +13,17 @@ export const esConfig: SimpleConfig = {
       type: "list",
       label: "Type",
     },
+    {
+      field: "dct:conformsTo.keyword",
+      type: "piechart",
+      label: "DCT Conforms To",
+      initialSize: 20,
+    },
+    {
+      field: "dct:format.keyword",
+      type: "piechart",
+      label: "DCT Format",
+    },
   ],
   
   sortOptions: [
