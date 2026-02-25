@@ -24,15 +24,20 @@ export const esConfig: SimpleConfig = {
       type: "piechart",
       label: "DCT Format",
     },
+    {
+      field: "dct:title.keyword",
+      type: "hidden",
+    },
   ],
   
   sortOptions: [
+    { field: "dct:title.keyword", label: "Title" },
     { field: null, label: "Relevance" }, // null = default relevance
-    { field: "@id", label: "Identifier", direction: "asc" },
+    { field: "@id.keyword", label: "Identifier" },
   ],
 
   searchResult: {
-    title: "@id",
+    title: "dct:title",
     subTitle: "@type",
     linkToSlug: "record",
     linkToId: "@id",
@@ -47,6 +52,7 @@ export const esResultConfig = {
     { label: "DCT conforms to", value: "dct:conformsTo" },
     { label: "DCT format", value: "dct:format" },
     { label: "DCAT Service", value: "dcat:service" },
+    { label: "DCAT endpoint URL", value: "dcat:endpointURL" },
     { label: "DCAT endpoint URL", value: "dcat:endpointURL" },
   ],
   chips: [

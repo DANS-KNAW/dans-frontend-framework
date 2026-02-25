@@ -58,7 +58,6 @@ type Facet = ListFacet | TimeRangeFacet | HiddenFacet | BarChartFacet | GeoFacet
 interface SortOption {
   field: string | null;
   label: string;
-  direction?: SortDirection;
 }
 
 interface SearchResult {
@@ -249,14 +248,21 @@ const { facets, disjunctiveFacets, externallyHandledFacets } =
   );
   
   // Convert sort options
-  const sortOptions: ESUISortOption[] = simple.sortOptions.map(opt => {
+  const sortOptions: ESUISortOption[] = simple.sortOptions.flatMap(opt => {
     if (!opt.field) {
-      return { name: opt.label, value: [] };
+      return [{ name: opt.label, value: [] }];
     }
-    return {
-      name: opt.label,
-      value: [{ field: opt.field, direction: opt.direction || "asc" }]
-    };
+    // duplicate fields so we can sort both asc and desc
+    return [
+      {
+        name: `${opt.label}`,
+        value: [{ field: opt.field, direction: "asc" }]
+      },
+      {
+        name: `${opt.label}`,
+        value: [{ field: opt.field, direction: "desc" }]
+      }
+    ] as ESUISortOption[];
   });
   
   return {
