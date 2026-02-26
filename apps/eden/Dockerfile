@@ -2,7 +2,7 @@
 FROM node:20-alpine AS builder
 RUN apk update && apk add git && npm i -g turbo && npm i -g pnpm
 
-# Setting up the work directory
+# Set up the work directory
 WORKDIR /app
 
 COPY . .
