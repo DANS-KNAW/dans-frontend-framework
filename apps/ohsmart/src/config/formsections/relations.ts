@@ -105,6 +105,7 @@ const section: InitialSectionType = {
             en: "Another interview, dataset, publication or project which has some relation with this interview.",
             nl: "Een ander interview, dataset, publicatie of project die een relatie heeft met dit interview.",
           },
+          toggleRequired: ["relation_type", "relation_reference"],
         },
         {
           type: "text",
@@ -120,6 +121,7 @@ const section: InitialSectionType = {
             en: "Enter the URL or resolvable persistent identifier (PID) through which the related item may be found and accessed.",
             nl: "Geef de URL of resolvable persistent identifier (PID) om het gerelateerde item te vinden en er toegang toe te krijgen.",
           },
+          toggleRequired: ["relation_type", "relation_item"],
         },
       ],
     },
