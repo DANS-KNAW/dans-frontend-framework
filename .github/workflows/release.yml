@@ -1,0 +1,170 @@
+name: Monorepo Release Pipeline
+run-name: ${{ github.event.release.tag_name }}
+
+on:
+  release:
+    types: [published]
+
+jobs:
+
+  build:
+    name: Build ${{ github.event.release.tag_name }}
+    runs-on: ubuntu-latest
+
+    outputs:
+      app: ${{ steps.meta.outputs.app }}
+      environment: ${{ steps.meta.outputs.environment }}
+      version: ${{ steps.meta.outputs.version }}
+
+    steps:
+      # -------------------------------
+      # Checkout
+      # -------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # -------------------------------
+      # Parse release tag
+      # -------------------------------
+      - name: Parse release tag
+        id: meta
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          IFS='-' read -r APP ENV VERSION <<< "$TAG"
+
+          if [ -z "$APP" ] || [ -z "$ENV" ] || [ -z "$VERSION" ]; then
+            echo "Invalid tag format: <app>-<env>-vX.X.X"
+            exit 1
+          fi
+
+          if [[ "$ENV" != "demo" && "$ENV" != "prod" ]]; then
+            echo "Environment must be demo or prod"
+            exit 1
+          fi
+
+          if [ ! -d "apps/$APP" ]; then
+            echo "App folder apps/$APP does not exist"
+            exit 1
+          fi
+
+          echo "app=$APP" >> $GITHUB_OUTPUT
+          echo "environment=$ENV" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      # -------------------------------
+      # pnpm store caching
+      # -------------------------------
+      - name: Cache pnpm store
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # -------------------------------
+      # Turbo cache
+      # -------------------------------
+      - name: Cache Turbo
+        uses: actions/cache@v3
+        with:
+          path: .turbo
+          key: turbo-${{ hashFiles('package.json','pnpm-lock.yaml','**/package.json','**/tsconfig.json','vite.config.*') }}
+          restore-keys: |
+            turbo-
+
+      # -------------------------------
+      # Docker layer caching
+      # -------------------------------
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache-${{ steps.meta.outputs.app }}
+          key: docker-${{ steps.meta.outputs.app }}-${{ github.sha }}
+          restore-keys: |
+            docker-${{ steps.meta.outputs.app }}-
+
+      # -------------------------------
+      # Docker login
+      # -------------------------------
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      # -------------------------------
+      # Generate dynamic .env.production
+      # -------------------------------
+      - name: Generate .env.production
+        run: |
+          APP="${{ steps.meta.outputs.app }}"
+          ENV_FILE="apps/$APP/.env.production"
+          rm -f $ENV_FILE
+
+          APP_UPPER=$(echo "$APP" | tr '[:lower:]' '[:upper:]')
+          PREFIX="${APP_UPPER}_"
+
+          printenv | while IFS='=' read -r key value; do
+            if [[ "$key" == ${PREFIX}* ]]; then
+              NEW_KEY="${key#$PREFIX}"
+              echo "$NEW_KEY=$value" >> $ENV_FILE
+            fi
+          done
+
+          JSON_VAR="${APP_UPPER}_ENV_JSON"
+          JSON_CONTENT=$(printenv "$JSON_VAR" || echo "{}")
+          echo "$JSON_CONTENT" | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> $ENV_FILE
+
+      # -------------------------------
+      # Build & push Docker image (ultra-fast)
+      # -------------------------------
+      - name: Build and push Docker image
+        run: |
+          APP="${{ steps.meta.outputs.app }}"
+          ENV="${{ steps.meta.outputs.environment }}"
+          VERSION="${{ steps.meta.outputs.version }}"
+          IMAGE=dansknaw/$APP
+          CACHE_DIR=/tmp/.buildx-cache-$APP
+
+          echo "Building $IMAGE:$VERSION"
+
+          # Build with BuildKit and caching
+          DOCKER_BUILDKIT=1 docker build \
+            --build-arg APP_NAME=$APP \
+            --cache-from=type=local,src=$CACHE_DIR \
+            --cache-to=type=local,dest=$CACHE_DIR-new,mode=max \
+            -f Dockerfile . -t $IMAGE:$VERSION
+
+          rm -rf $CACHE_DIR
+          mv $CACHE_DIR-new $CACHE_DIR
+
+          docker push $IMAGE:$VERSION
+
+          if [[ "$ENV" == "demo" ]]; then
+            docker tag $IMAGE:$VERSION $IMAGE:latest
+            docker push $IMAGE:latest
+          elif [[ "$ENV" == "prod" ]]; then
+            docker tag $IMAGE:$VERSION $IMAGE:stable
+            docker push $IMAGE:stable
+          fi
+
+  deploy:
+    name: Deploy ${{ github.event.release.tag_name }}
+    needs: build
+    runs-on: ${{ needs.build.outputs.environment == 'prod' && 'ohsmart-production' || 'ohsmart-demo' }}
+    environment: ${{ needs.build.outputs.environment }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy updated service
+        run: |
+          APP=${{ needs.build.outputs.app }}
+          echo "Deploying $APP"
+          docker compose pull $APP
+          docker compose up -d $APP
