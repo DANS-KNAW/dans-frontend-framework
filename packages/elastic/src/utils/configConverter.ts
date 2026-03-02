@@ -1,14 +1,10 @@
 import yearFormatter from "./yearFormatter";
+import type { LanguageStrings } from "@dans-framework/utils"
 
 // Types
 type FacetType = "list" | "piechart" | "timerange" | "barchart" | "hidden" | "geomap" | "date";
 type FacetWidth = "small" | "medium" | "large";
 type SortDirection = "asc" | "desc";
-
-interface LocalizedLabel {
-  en: string;
-  nl: string;
-}
 
 interface SearchField {
   field: string;
@@ -17,7 +13,7 @@ interface SearchField {
 
 interface BaseFacet {
   field: string;
-  label?: LocalizedLabel;
+  label?: LanguageStrings | string;
   disjunctive?: boolean;
   initialSize?: number;
   maxSize?: number;
@@ -62,13 +58,12 @@ type Facet = ListFacet | TimeRangeFacet | HiddenFacet | BarChartFacet | GeoFacet
 interface SortOption {
   field: string | null;
   label: string;
-  direction?: SortDirection;
 }
 
 interface SearchResult {
   title: string;
   subTitle?: string;
-  description: string;
+  description?: string;
   list?: { field: string; label: string }[];
   linkToSlug?: string;
   linkToId?: string;
@@ -97,7 +92,7 @@ interface ESUIResultField {
 export interface ESUIFacet {
   order: number;
   type: "value" | "range" | "geo_point" | "date_histogram";
-  label: LocalizedLabel;
+  label: LanguageStrings | string;
   display: FacetType;
   size?: number;
   width?: FacetWidth;
@@ -147,7 +142,7 @@ interface ESUIConfig {
 export interface ResultViewConfig {
   title: string;
   subTitle?: string;
-  description: string;
+  description?: string;
   list?: { field: string; label: string }[];
 }
 
@@ -178,7 +173,7 @@ export function convertToESUIConfig(simple: SimpleConfig): ConvertedConfig {
     }
   });
   
-  const defaultLabel = (label?: { en: string; nl: string }) => label || { en: '', nl: '' };
+  const defaultLabel = (label?: LanguageStrings | string) => label || { en: '', nl: '' };
 
 const { facets, disjunctiveFacets, externallyHandledFacets } =
   simple.facets.reduce(
@@ -253,14 +248,21 @@ const { facets, disjunctiveFacets, externallyHandledFacets } =
   );
   
   // Convert sort options
-  const sortOptions: ESUISortOption[] = simple.sortOptions.map(opt => {
+  const sortOptions: ESUISortOption[] = simple.sortOptions.flatMap(opt => {
     if (!opt.field) {
-      return { name: opt.label, value: [] };
+      return [{ name: opt.label, value: [] }];
     }
-    return {
-      name: opt.label,
-      value: [{ field: opt.field, direction: opt.direction || "asc" }]
-    };
+    // duplicate fields so we can sort both asc and desc
+    return [
+      {
+        name: `${opt.label}`,
+        value: [{ field: opt.field, direction: "asc" }]
+      },
+      {
+        name: `${opt.label}`,
+        value: [{ field: opt.field, direction: "desc" }]
+      }
+    ] as ESUISortOption[];
   });
   
   return {

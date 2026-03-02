@@ -60,7 +60,7 @@ export default function ElasticSearch({
   };
 
   return (
-    <Grid container spacing={2} sx={{ mt: 2, ml: 'auto', mr: 'auto', pl: 2, pr: 2, pb: 8 }} maxWidth="xl">
+    <Grid container spacing={2} sx={{ mt: 4, ml: 'auto', mr: 'auto', pl: 2, pr: 2, pb: 8 }} maxWidth="xl">
       {needsTabs && 
         <Grid size={{xs: 12}}>
           <Tabs value={currentTab} aria-label={t("switchBetweenDashboardAndResults")}>
@@ -109,7 +109,7 @@ function ViewSelector({
       ) : (
         <>
           <FilterDrawer facets={facets} />
-          <Grid size={{ md: 7, lg: 8, xl: 9 }}>
+          <Grid size={{ xs: 12, md: 7, lg: 8, xl: 9 }}>
             <Stack direction="row" spacing={2} justifyContent="flex-end" alignItems="center" sx={{ mb: 2 }}>
               {wasSearched && <PagingInfo view={PaginationInfo} />}
               {wasSearched && <ResultsPerPage view={ResultsPerPageView} />}

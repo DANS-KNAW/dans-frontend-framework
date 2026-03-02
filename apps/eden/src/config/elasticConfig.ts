@@ -2,77 +2,45 @@ import { type SimpleConfig } from "@dans-framework/elastic";
 
 export const esConfig: SimpleConfig = {
   searchFields: [
-    { field: "identifier.keyword", weight: 3 },
-    { field: "description" },
-    { field: "individuals" },
+    { field: "@id", weight: 3 },
+    { field: "@type" },
+    { field: "dcat:service" },
   ],
   
   facets: [
     {
-      field: "countries.name",
-      type: "barchart",
-      label: { en: "Recommended/endorsed by", nl: "Aanbevolen/goedgekeurd door" },
-      initialSize: 100,
-      orientation: "horizontal",
-      legend: false,
-      tooltip: "Use this to filter countries or regions that have endorsed or recommended a specific Identifier. These recommendations are usually contained in RDA national strategy documents, and/ or in published national strategies or policies."
+      field: "@type.keyword",
+      type: "list",
+      label: "Type",
     },
     {
-      field: "countries.location", 
-      type: "geomap",
-      label: { en: "Recommended/Endorsed By", nl: "Aanbevolen/Goedgekeurd Door" },
-      initialSize: 100,
-      width: "large",
-    },
-    {
-      field: "entity",
+      field: "dct:conformsTo.keyword",
       type: "piechart",
-      label: { en: "Referenced Entity", nl: "Gerefereerde Entiteit" },
-      initialSize: 10,
+      label: "DCT Conforms To",
+      initialSize: 20,
     },
     {
-      field: "start_date",
-      type: "timerange",
-      label: { en: "Year of First Use", nl: "Jaar van Eerste Gebruik" },
-      interval: "year",
-      start: 1893,
-      end: "now",
-      width: "large",
-      initialSize: 200,
-      showEmptyBuckets: true,
+      field: "dct:format.keyword",
+      type: "piechart",
+      label: "DCT Format",
     },
     {
-      field: "scheme",
-      type: "list",
-      label: { en: "Scheme", nl: "Schema" },
-      initialSize: 10,
-      maxSize: 10000,
-      tooltip: "Many Identifiers are based on a Scheme, and the Scheme is sometimes standardised or based on an existing Standard.</p><p>For example, many Identifiers are based on the Digital Object identifier scheme (DOI), which in turn is a special case of the Handle System scheme. Or, both ORCIDs and URN:ISNI are based on the International Standard Name Identifier scheme."
-    },
-    {
-      field: "standard",
-      type: "list",
-      label: { en: "Standard", nl: "Standaard" },
-      initialSize: 10,
-      maxSize: 10000,
-    },
-    {
-      field: "identifier",
+      field: "dct:title.keyword",
       type: "hidden",
     },
   ],
   
   sortOptions: [
+    { field: "dct:title.keyword", label: "Title" },
     { field: null, label: "Relevance" }, // null = default relevance
-    { field: "identifier", label: "Identifier", direction: "asc" },
+    { field: "@id.keyword", label: "Identifier" },
   ],
 
   searchResult: {
-    title: "identifier",
-    subTitle: "start_date",
-    description: "description",
+    title: "dct:title",
+    subTitle: "@type",
     linkToSlug: "record",
-    linkToId: "id",
+    linkToId: "@id",
   },
 
 };
@@ -80,12 +48,15 @@ export const esConfig: SimpleConfig = {
 export const esResultConfig = {
   ...esConfig.searchResult,
   list: [
-    { label: {en: "Title", nl: "Titel"}, value: "label" },
-    { label: {en: "Description", nl: "Beschrijving"}, value: "description" },
-    { label: {en: "Coverage", nl: "Dekking"}, value: "coverage" },
+    { label: "DCT Identifier", value: "dct:identifier" },
+    { label: "DCT conforms to", value: "dct:conformsTo" },
+    { label: "DCT format", value: "dct:format" },
+    { label: "DCAT Service", value: "dcat:service" },
+    { label: "DCAT endpoint URL", value: "dcat:endpointURL" },
+    { label: "DCAT endpoint URL", value: "dcat:endpointURL" },
   ],
   chips: [
-    { label: {en: "Entities", nl: "Entiteiten"}, value: "entity" },
+    { label: "Type", value: "@type" },
   ],
-  externalLink: "external_link_key_here",
+  externalLink: "@id",
 };

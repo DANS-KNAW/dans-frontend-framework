@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -47,8 +48,11 @@ export default function SingleRecord({ config }: { config: Config }) {
           :
           data !== undefined ? 
           <Box>
-            <Typography variant="h1" mb={4}>
-              { t("detailedView", { title: data.hasOwnProperty(config.title) ? lookupLanguageString(data[config.title], i18n.language) : '' }) }
+            <Typography variant="h6" mb={0} color="neutral.dark">
+              { t("detailedView") }
+            </Typography>
+            <Typography variant="h1" mb={4} mt={0}>
+              { data.hasOwnProperty(config.title) ? lookupLanguageString(data[config.title], i18n.language) : t("noTitle") }
             </Typography>
             {config.list?.map((item) => (
               <Metadata 
@@ -88,18 +92,45 @@ export default function SingleRecord({ config }: { config: Config }) {
   );
 }
 
-function Tag({  name, value}: { name: string | LanguageStrings; value: string[] }) {
+function Tag({  name, value }: { name: string | LanguageStrings; value: string | string[] }) {
   const { i18n } = useTranslation('elasticResult');
   return (
     <Box mt={4}>
       <Typography variant="h5">
         {lookupLanguageString(name, i18n.language)}
       </Typography>
-      {value.map((v, i) => (
+      {Array.isArray(value) ? value.map((v, i) => (
          v && <Chip key={i} label={v} sx={{ mr: 1, mb: 1}} />
-      ))}
+      )) : value && <Chip label={value} sx={{ mr: 1, mb: 1}} />}
     </Box>
   );
+}
+
+function isValidUrl(val: string) {
+  try {
+    new URL(val);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+function MetadataValue({ value }: { value: string }) {
+  const isUrl = isValidUrl(value);
+  return (
+    isUrl ? (
+      <Link
+        href={value}
+        target="_blank"
+        rel="noopener noreferrer"
+        underline="hover"
+      >
+        {value}
+      </Link>
+    ) : (
+      value || "N/A"
+    )
+  )
 }
 
 function Metadata({
@@ -114,13 +145,26 @@ function Metadata({
   width?: number;
 }) {
   const { i18n } = useTranslation('elasticResult');
+  const renderValue = () => {
+    if (Array.isArray(value)) {
+      return value.map((item, index) => 
+        <Fragment key={index}>
+          <MetadataValue value={item} />
+          {index < value.length - 1 && ', '}
+        </Fragment>
+      );
+    } else {
+      return <MetadataValue value={value} />;
+    }
+  }
+
   return (
     <Stack direction={{xs: "column", sm: "row"}} spacing={{xs: 0, sm: 2}} pb={{xs: 1, sm: pb}} mb={1}>
       <Typography variant="body2" color="neutral.dark" pr={1} sx={{ width: `${width || 10}rem`}}>
         {lookupLanguageString(name, i18n.language)}
       </Typography>
       <Typography variant="body2" sx={{ flex: 1}}>
-        {Array.isArray(value) ? value.join(', ') : value || 'N/A'}
+        {renderValue()}
       </Typography>
     </Stack>
   );
