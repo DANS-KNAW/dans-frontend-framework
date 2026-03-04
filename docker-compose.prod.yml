@@ -1,6 +1,6 @@
 services:
   ohsmart:
-    image: dansknaw/ohsmart:stable
+    image: dansknaw/dans-frontend-framework-ohsmart:stable
     restart: unless-stopped
     container_name: ohsmart-prod
     networks:
@@ -8,7 +8,7 @@ services:
     ports:
       - "8000:80"
   rda:
-    image: dansknaw/rda:stable
+    image: dansknaw/dans-frontend-framework-rda:stable
     restart: unless-stopped
     container_name: rda-prod
     networks:

@@ -1,6 +1,6 @@
 services:
   ohsmart:
-    image: dansknaw/ohsmart:latest
+    image: dansknaw/dans-frontend-framework-ohsmart:latest
     restart: unless-stopped
     container_name: ohsmart-demo
     networks:
@@ -8,7 +8,7 @@ services:
     ports:
       - "8000:80"
   rda:
-    image: dansknaw/rda:latest
+    image: dansknaw/dans-frontend-framework-rda:latest
     restart: unless-stopped
     container_name: rda-demo
     networks:
@@ -16,7 +16,7 @@ services:
     ports:
       - "8002:80"
   swh:
-    image: dansknaw/swh:latest
+    image: dansknaw/dans-frontend-framework-swh:latest
     restart: unless-stopped
     container_name: swh-demo
     networks:
@@ -24,7 +24,7 @@ services:
     ports:
       - "8003:80"
   cat:
-    image: dansknaw/cat:latest
+    image: dansknaw/dans-frontend-framework-cat:latest
     restart: unless-stopped
     container_name: cat-demo
     networks:
@@ -32,7 +32,7 @@ services:
     ports:
       - "8005:80"
   4tu:
-    image: dansknaw/4tu:latest
+    image: dansknaw/dans-frontend-framework-4tu:latest
     restart: unless-stopped
     container_name: 4tu-demo
     networks:
@@ -40,7 +40,7 @@ services:
     ports:
       - "8006:80"
   digitaltwins:
-    image: dansknaw/digitaltwins:latest
+    image: dansknaw/dans-frontend-framework-digitaltwins:latest
     restart: unless-stopped
     container_name: digitaltwins-demo
     networks:
@@ -48,7 +48,7 @@ services:
     ports:
       - "8007:80"
   supercatalog:
-    image: dansknaw/supercatalog:latest
+    image: dansknaw/dans-frontend-framework-supercatalog:latest
     restart: unless-stopped
     container_name: supercatalog-demo
     networks:
@@ -56,7 +56,7 @@ services:
     ports:
       - "8008:80"
   rda-sandbox:
-    image: dansknaw/rda-sandbox:latest
+    image: dansknaw/dans-frontend-framework-rda-sandbox:latest
     restart: unless-stopped
     container_name: rda-sandbox-demo
     networks:
@@ -64,7 +64,7 @@ services:
     ports:
       - "8009:80"
   fair-assessment:
-    image: dansknaw/fair-assessment:latest
+    image: dansknaw/dans-frontend-framework-fair-assessment:latest
     restart: unless-stopped
     container_name: fair-assessment-demo
     networks:
@@ -72,7 +72,7 @@ services:
     ports:
       - "8010:80"
   eden:
-    image: dansknaw/eden:latest
+    image: dansknaw/dans-frontend-framework-eden:latest
     restart: unless-stopped
     container_name: eden-demo
     networks:
