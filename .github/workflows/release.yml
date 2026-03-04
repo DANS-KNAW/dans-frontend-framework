@@ -93,13 +93,13 @@ jobs:
           restore-keys: turbo-${{ runner.os }}-
 
       - name: Lint
-        run: pnpm turbo lint --filter=${{ needs.validate.outputs.app }}
+        run: pnpm turbo lint --filter=@dans-framework/${{ needs.validate.outputs.app }}
 
       - name: Type-check
-        run: pnpm turbo typecheck --filter=${{ needs.validate.outputs.app }}
+        run: pnpm turbo typecheck --filter=@dans-framework/${{ needs.validate.outputs.app }}
 
       - name: Test
-        run: pnpm turbo test --filter=${{ needs.validate.outputs.app }}
+        run: pnpm turbo test --filter=@dans-framework/${{ needs.validate.outputs.app }}
 
   # ============================================================
   # JOB 3: Build & push Docker image
@@ -170,7 +170,6 @@ jobs:
     runs-on: ${{ needs.validate.outputs.environment == 'prod' && 'ohsmart-production' || 'ohsmart-demo' }}
     environment:
       name: ${{ needs.validate.outputs.environment }}
-      url: ${{ needs.validate.outputs.environment == 'prod' && 'https://app.example.com' || 'https://demo.example.com' }}
 
     steps:
       - name: Checkout repository
