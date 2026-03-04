@@ -116,7 +116,8 @@ jobs:
       - name: Generate .env.production
         env:
           APP: ${{ needs.validate.outputs.app }}
-          APP_ENV_JSON: ${{ secrets[format('{0}_ENV_JSON', needs.validate.outputs.app_upper)] }}
+          APP_ENV_JSON: ${{ vars[format('{0}_ENV_JSON', needs.validate.outputs.app_upper)] }}
+          APP_SECRET_JSON: ${{ secrets[format('{0}_SECRET_JSON', needs.validate.outputs.app_upper)] }}
         run: |
           ENV_FILE="apps/$APP/.env.production"
           : > "$ENV_FILE"
@@ -124,7 +125,13 @@ jobs:
           if [ -n "$APP_ENV_JSON" ]; then
             echo "$APP_ENV_JSON" | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> "$ENV_FILE"
           else
-            echo "::warning::No APP_ENV_JSON secret found for $APP — .env.production will be empty"
+            echo "::warning::No ENV_JSON var found for $APP"
+          fi
+
+          if [ -n "$APP_SECRET_JSON" ]; then
+            echo "$APP_SECRET_JSON" | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> "$ENV_FILE"
+          else
+            echo "::warning::No SECRET_JSON secret found for $APP"
           fi
 
       - name: Set up Docker Buildx
