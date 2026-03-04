@@ -35,7 +35,7 @@ jobs:
           TAG="${{ github.event.release.tag_name }}"
 
           # Strict regex: only allow alphanumeric app names + semver
-          if ! [[ "$TAG" =~ ^([a-z0-9-]+)-(demo|prod)-(v[0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+          if ! [[ "$TAG" =~ ^([a-z0-9-]+)-(demo|prod)-(v[0-9]+\.[0-9]+\.[0-9]+[a-z0-9-]*)$ ]]; then
             echo "::error::Invalid tag format. Expected: <app>-(demo|prod)-vX.Y.Z  Got: $TAG"
             exit 1
           fi
