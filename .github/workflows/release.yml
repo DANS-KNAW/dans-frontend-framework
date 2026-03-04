@@ -1,5 +1,5 @@
 name: Monorepo Release Pipeline
-run-name: "${{ github.event.release.tag_name }} → ${{ github.actor }}"
+run-name: "${{ github.event.release.tag_name }}"
 
 on:
   release:
@@ -75,8 +75,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: Setup Node
         uses: actions/setup-node@v4
