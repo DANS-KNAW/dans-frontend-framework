@@ -5,10 +5,10 @@ on:
   release:
     types: [published]
 
-# Cancel any in-progress run for the same tag (e.g. accidental re-publish)
+# Never cancel a deploy mid-flight; queue instead
 concurrency:
   group: release-${{ github.event.release.tag_name }}
-  cancel-in-progress: false  # never cancel a deploy mid-flight; queue instead
+  cancel-in-progress: false
 
 jobs:
 
@@ -49,17 +49,17 @@ jobs:
             exit 1
           fi
 
-          echo "app=$APP"           >> "$GITHUB_OUTPUT"
-          echo "environment=$ENV"   >> "$GITHUB_OUTPUT"
-          echo "version=$VERSION"   >> "$GITHUB_OUTPUT"
+          echo "app=$APP"            >> "$GITHUB_OUTPUT"
+          echo "environment=$ENV"    >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION"    >> "$GITHUB_OUTPUT"
           echo "image=dansknaw/$APP" >> "$GITHUB_OUTPUT"
 
           echo "### Release metadata" >> "$GITHUB_STEP_SUMMARY"
           echo "| Field | Value |"    >> "$GITHUB_STEP_SUMMARY"
           echo "| --- | --- |"        >> "$GITHUB_STEP_SUMMARY"
-          echo "| App | \`$APP\` |"         >> "$GITHUB_STEP_SUMMARY"
-          echo "| Environment | \`$ENV\` |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Version | \`$VERSION\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| App | \`$APP\` |"          >> "$GITHUB_STEP_SUMMARY"
+          echo "| Environment | \`$ENV\` |"  >> "$GITHUB_STEP_SUMMARY"
+          echo "| Version | \`$VERSION\` |"  >> "$GITHUB_STEP_SUMMARY"
 
   # ============================================================
   # JOB 2: Lint, type-check, test
@@ -76,12 +76,12 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9  # pin pnpm version explicitly
+          version: 9
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
+          node-version: '20'
           cache: pnpm
 
       - name: Install dependencies
@@ -115,17 +115,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Explicitly pull secrets into the environment under a known prefix,
-      # rather than leaking printenv to a shell. See env: block on each step
-      # or use a generate-env action with an explicit allowlist.
       - name: Generate .env.production
         env:
           APP: ${{ needs.validate.outputs.app }}
-          # Pass the JSON blob as a single secret — no prefix-scanning required
           APP_ENV_JSON: ${{ secrets[format('{0}_ENV_JSON', needs.validate.outputs.app)] }}
         run: |
           ENV_FILE="apps/$APP/.env.production"
-          : > "$ENV_FILE"  # truncate safely
+          : > "$ENV_FILE"
 
           if [ -n "$APP_ENV_JSON" ]; then
             echo "$APP_ENV_JSON" | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> "$ENV_FILE"
@@ -140,7 +136,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }} 
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Resolve Docker tags
         id: tags
@@ -150,8 +146,8 @@ jobs:
           ENV: ${{ needs.validate.outputs.environment }}
         run: |
           TAGS="$IMAGE:$VERSION"
-          if [[ "$ENV" == "demo" ]];  then TAGS="$TAGS,$IMAGE:latest"; fi
-          if [[ "$ENV" == "prod" ]];  then TAGS="$TAGS,$IMAGE:stable"; fi
+          if [[ "$ENV" == "demo" ]]; then TAGS="$TAGS,$IMAGE:latest"; fi
+          if [[ "$ENV" == "prod" ]]; then TAGS="$TAGS,$IMAGE:stable"; fi
           echo "tags=$TAGS" >> "$GITHUB_OUTPUT"
 
       - name: Build and push
@@ -162,14 +158,13 @@ jobs:
           push: true
           tags: ${{ steps.tags.outputs.tags }}
           build-args: APP_NAME=${{ needs.validate.outputs.app }}
-          # Proper BuildKit inline cache — no manual cache-dir shuffling needed
           cache-from: type=registry,ref=${{ needs.validate.outputs.image }}:buildcache
           cache-to:   type=registry,ref=${{ needs.validate.outputs.image }}:buildcache,mode=max
-          provenance: true   # attach SBOM / provenance attestation
+          provenance: true
           sbom: true
 
   # ============================================================
-  # JOB 4: Deploy
+  # JOB 4: Deploy. TODO: this needs work...
   # ============================================================
   deploy:
     name: Deploy → ${{ needs.validate.outputs.environment }}
@@ -194,9 +189,8 @@ jobs:
           APP: ${{ needs.validate.outputs.app }}
         run: |
           docker compose up -d --no-deps "$APP"
-          # Give the container a moment then verify it is still running
           sleep 5
-          STATUS=$(docker compose ps --format json "$APP" | jq -r '.[0].State // .State')
+          STATUS=$(docker inspect --format='{{.State.Status}}' $(docker compose ps -q "$APP"))
           if [[ "$STATUS" != "running" ]]; then
             echo "::error::Container is not running after deploy (state: $STATUS)"
             exit 1
@@ -209,13 +203,12 @@ jobs:
           PREV_IMAGE: ${{ needs.validate.outputs.image }}:stable
         run: |
           echo "::warning::Deploy failed — rolling back to $PREV_IMAGE"
-          docker compose pull "$APP" --quiet
           IMAGE_OVERRIDE="$PREV_IMAGE" docker compose up -d --no-deps "$APP"
 
       - name: Summary
         if: success()
         run: |
-          echo "### Deployed successfully" >> "$GITHUB_STEP_SUMMARY"
-          echo "- **App:** ${{ needs.validate.outputs.app }}"     >> "$GITHUB_STEP_SUMMARY"
-          echo "- **Version:** ${{ needs.validate.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "- **Environment:** ${{ needs.validate.outputs.environment }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Deployed successfully"                                        >> "$GITHUB_STEP_SUMMARY"
+          echo "- **App:** ${{ needs.validate.outputs.app }}"                    >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Version:** ${{ needs.validate.outputs.version }}"            >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Environment:** ${{ needs.validate.outputs.environment }}"    >> "$GITHUB_STEP_SUMMARY"
