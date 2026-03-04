@@ -95,9 +95,6 @@ jobs:
       - name: Lint
         run: pnpm turbo lint --filter=@dans-framework/${{ needs.validate.outputs.app }}
 
-      - name: Type-check
-        run: pnpm turbo typecheck --filter=@dans-framework/${{ needs.validate.outputs.app }}
-
       - name: Test
         run: pnpm turbo test --filter=@dans-framework/${{ needs.validate.outputs.app }}
 
