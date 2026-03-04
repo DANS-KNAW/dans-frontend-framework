@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  ohsmart:
+    image: dansknaw/ohsmart:stable
+    restart: unless-stopped
+    container_name: ohsmart-prod
+    networks:
+      - traefik
+    ports:
+      - "8000:80"
+  rda:
+    image: dansknaw/rda:stable
+    restart: unless-stopped
+    container_name: rda-prod
+    networks:
+      - traefik
+    ports:
+      - "8002:80"
+
+networks:
+  traefik:
+    external: true

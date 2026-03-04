@@ -159,7 +159,7 @@ jobs:
           sbom: true
 
   # ============================================================
-  # JOB 4: Deploy. TODO: this needs work...
+  # JOB 4: Deploy
   # ============================================================
   deploy:
     name: Deploy → ${{ needs.validate.outputs.environment }}
@@ -175,16 +175,18 @@ jobs:
       - name: Pull updated image
         env:
           APP: ${{ needs.validate.outputs.app }}
-        run: docker compose pull "$APP"
+          ENV: ${{ needs.validate.outputs.environment }}
+        run: docker compose -f docker-compose.$ENV.yml pull "$APP"
 
       - name: Deploy service
         id: deploy
         env:
           APP: ${{ needs.validate.outputs.app }}
+          ENV: ${{ needs.validate.outputs.environment }}
         run: |
-          docker compose up -d --no-deps "$APP"
+          docker compose -f docker-compose.$ENV.yml up -d --no-deps "$APP"
           sleep 5
-          STATUS=$(docker inspect --format='{{.State.Status}}' $(docker compose ps -q "$APP"))
+          STATUS=$(docker inspect --format='{{.State.Status}}' $(docker compose -f docker-compose.$ENV.yml ps -q "$APP"))
           if [[ "$STATUS" != "running" ]]; then
             echo "::error::Container is not running after deploy (state: $STATUS)"
             exit 1
@@ -194,10 +196,11 @@ jobs:
         if: failure() && steps.deploy.conclusion == 'failure'
         env:
           APP: ${{ needs.validate.outputs.app }}
-          PREV_IMAGE: ${{ needs.validate.outputs.image }}:stable
+          ENV: ${{ needs.validate.outputs.environment }}
+          PREV_IMAGE: ${{ needs.validate.outputs.image }}:${{ needs.validate.outputs.environment == 'prod' && 'stable' || 'latest' }}
         run: |
           echo "::warning::Deploy failed — rolling back to $PREV_IMAGE"
-          IMAGE_OVERRIDE="$PREV_IMAGE" docker compose up -d --no-deps "$APP"
+          IMAGE_OVERRIDE="$PREV_IMAGE" docker compose -f docker-compose.$ENV.yml up -d --no-deps "$APP"
 
       - name: Summary
         if: success()
