@@ -258,7 +258,7 @@ const Deposit = ({ config, page }: { config: FormConfig; page: Page }) => {
                       right: 0,
                       bottom: 0,
                       zIndex: 10,
-                      background: "rgba(245,245,245,0.8)",
+                      background: "rgba(255,255,255,0.8)",
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "flex-start",
