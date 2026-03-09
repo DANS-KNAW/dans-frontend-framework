@@ -55,14 +55,6 @@ services:
       - traefik
     ports:
       - "8008:80"
-  rda-sandbox:
-    image: dansknaw/dans-frontend-framework-rda-sandbox:latest
-    restart: unless-stopped
-    container_name: rda-sandbox-demo
-    networks:
-      - traefik
-    ports:
-      - "8009:80"
   fair-assessment:
     image: dansknaw/dans-frontend-framework-fair-assessment:latest
     restart: unless-stopped
