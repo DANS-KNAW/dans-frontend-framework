@@ -80,6 +80,7 @@ export const UserSettings = ({
             <Button
               variant="contained"
               disabled={apiKeyError !== undefined || skipValidate}
+              size="large"
             >
               {t("goToDeposit")}
             </Button>

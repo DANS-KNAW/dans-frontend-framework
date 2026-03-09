@@ -53,7 +53,7 @@ export const StatusIcon = ({
   return (
     <LightTooltip
       title={
-        <>
+        <Box sx={{ overflow: "hidden", borderRadius: 2 }}>
           {title && (
             <Box
               sx={{
@@ -92,7 +92,7 @@ export const StatusIcon = ({
           >
             {t(status as string)}
           </Typography>
-        </>
+        </Box>
       }
     >
       {status === "error" ?

@@ -11,13 +11,13 @@ const customTheme = createTheme({
       light: "#0095c9",
       main: "#007ea9",
       dark: "#006F94",
-      contrastText: "#fff",
+      contrastText: "#ffffff",
     },
     secondary: {
       light: "#ff7961",
       main: "#f44336",
       dark: "#ba000d",
-      contrastText: "#000",
+      contrastText: "#000000",
     },
     footerBottom: {
       main: grey[400],

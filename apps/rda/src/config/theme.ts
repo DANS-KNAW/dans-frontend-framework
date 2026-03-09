@@ -10,13 +10,13 @@ const customTheme = createTheme({
       light: "#bed3ba",
       main: "#4F8E31",
       dark: "#4F8E31;",
-      contrastText: "#fff",
+      contrastText: "#ffffff",
     },
     secondary: {
       light: "#ff7961",
       main: "#f44336",
       dark: "#ba000d",
-      contrastText: "#000",
+      contrastText: "#000000",
     },
   },
   typography: {
@@ -57,7 +57,7 @@ const customTheme = createTheme({
       styleOverrides: {
         colorPrimary: {
           backgroundColor: "#bed3ba",
-          color: "#222",
+          color: "#222222",
         },
       },
     },
@@ -65,7 +65,7 @@ const customTheme = createTheme({
       styleOverrides: {
         colorDefault: {
           backgroundColor: "#6A1D0D",
-          color: "#fff",
+          color: "#ffffff",
         },
       },
     },
