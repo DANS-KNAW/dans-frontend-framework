@@ -110,14 +110,8 @@ jobs:
     environment: ${{ needs.validate.outputs.environment }}
 
     steps:
-      - name: Checkout compose files
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            docker-compose.demo.yml
-            docker-compose.prod.yml
-            rules-infra.toml
-          sparse-checkout-cone-mode: false
 
       - name: Generate .env.production
         env:
