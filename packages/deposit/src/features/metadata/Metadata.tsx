@@ -63,6 +63,7 @@ const Form = () => {
             }
           }}
           id={`section-${section.id}`}
+          sx={{ border: "1px solid rgba(0,0,0,0.1)" }}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
