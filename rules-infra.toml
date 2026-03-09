@@ -1,0 +1,25 @@
+  [http.routers]
+   # Define a connection between requests and services
+     [http.routers.ohsmart]
+        rule = "Host(`ohsmart.dansdemo.nl`)"
+        entrypoints = ["websecure"]
+        service = "ohsmart"
+     [http.routers.ohsmart.tls]
+        certResolver = "myresolver"
+
+     [http.routers.eden]
+        rule = "Host(`eden.labs.dansdemo.nl`)"
+        entrypoints = ["websecure"]
+        service = "ohsmart-eden"
+     [http.routers.eden.tls]
+        certResolver = "myresolver"
+
+ [http.services]
+        # Define how to reach an existing service on our infrastructure
+        [http.services.ohsmart.loadBalancer]
+           [[http.services.ohsmart.loadBalancer.servers]]
+             url = "ohsmart"
+
+        [http.services.ohsmart-eden.loadBalancer]
+           [[http.services.ohsmart-eden.loadBalancer.servers]]
+             url = "ohsmart-eden"
