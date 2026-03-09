@@ -421,8 +421,8 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
                       <ListItemButton 
                         sx={{ px: 4}}
                         onClick={() => {
-                          setOpenPrinciple(principle.id);
-                          setOpenCriterion(principle.criteria[0].id);
+                          setSelectedPrincipleId(principle.id);
+                          setSelectedCriterionId(principle.criteria[0].id);
                         }}
                       >
                         <TooltipWithIcon status={status} text={principle.description} type="principle" />
@@ -442,7 +442,7 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
                               <ListItemButton
                                 key={criterion.id}
                                 sx={{ pl: 6, pr: 4 }}
-                                onClick={() => setOpenCriterion(criterion.id)}
+                                onClick={() => setSelectedCriterionId(criterion.id)}
                                 selected={openCriterion === criterion.id}
                               >
                                 <TooltipWithIcon status={status} text={criterion.description} type="criterion" />
