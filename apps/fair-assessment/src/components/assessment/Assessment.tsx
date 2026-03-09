@@ -192,8 +192,9 @@ function Test({ test, answers, setAnswers, doi }: {
           </FormControl>
           <Button onClick={() => setAnswers((prev) => {
             const { [test.id]: _, ...rest } = prev;
-            return rest;
-          })}>Clear</Button>
+              console.log(_)
+              return rest;
+            })}>Clear</Button>
         </Stack> :
         ((isLoading || data) &&
           <Box sx={{ overflowX: 'auto', backgroundColor: '#f0f0f0', p: 2, borderRadius: 1, mt: 2 }}>
@@ -261,21 +262,25 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
   selectedDataset: Pid | null 
 }) {
   const { data } = useQuery({ queryKey: ['assessment', selectedAssessment?.id], queryFn: () => fetchAssessment(selectedAssessment?.id) });
-  const [openPrinciple, setOpenPrinciple] = useState<string | null>(null);
+  const [selectedPrincipleId, setSelectedPrincipleId] = useState<string | null>(null);
+  const [selectedCriterionId, setSelectedCriterionId] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [openCriterion, setOpenCriterion] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  useEffect(() => {
-    setAnswers({});
-  }, [selectedAssessment]);
+  const openPrinciple = selectedPrincipleId ?? data?.principles[0]?.id ?? null;
+  const openCriterion = selectedCriterionId ?? data?.principles[0]?.criteria[0]?.id ?? null;
 
-  useEffect(() => {
-    if (data) {
-      setOpenPrinciple(data.principles[0].id);
-      setOpenCriterion(data.principles[0].criteria[0].id);
-    }
-  }, [data]);
+
+  // useEffect(() => {
+  //   setAnswers({});
+  // }, [selectedAssessment]);
+
+  // useEffect(() => {
+  //   if (data) {
+  //     setOpenPrinciple(data.principles[0].id);
+  //     setOpenCriterion(data.principles[0].criteria[0].id);
+  //   }
+  // }, [data]);
 
   // Create a flat array of tests with automation to maintain order
   const automatedTests = useMemo(() => 
@@ -315,30 +320,32 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
     .map(q => q.data ? '1' : '0')
     .join('');
 
+  console.log(queriesDataKey)
+
   // Update answers based on fetched data
-  useEffect(() => {
-    const newAnswers: Record<string, string> = {};
+  // useEffect(() => {
+  //   const newAnswers: Record<string, string> = {};
     
-    testQueries.forEach((query, index) => {
-      if (query.data) {
-        const testId = automatedTests[index]?.test.id;
-        if (query.data["@graph"]?.length > 0) {
-          const result = query.data["@graph"].find((item: any) => item["@type"] === "ftr:TestResult");
-          if (result) {
-            const value = result["prov:value"]?.["@value"] || '';
-            if (testId && (value === 'pass' || value === 'fail')) {
-              newAnswers[testId] = value === 'pass' ? '1' : '0';
-            }
-            return;
-          }
-        } 
-      }
-    });
+  //   testQueries.forEach((query, index) => {
+  //     if (query.data) {
+  //       const testId = automatedTests[index]?.test.id;
+  //       if (query.data["@graph"]?.length > 0) {
+  //         const result = query.data["@graph"].find((item: any) => item["@type"] === "ftr:TestResult");
+  //         if (result) {
+  //           const value = result["prov:value"]?.["@value"] || '';
+  //           if (testId && (value === 'pass' || value === 'fail')) {
+  //             newAnswers[testId] = value === 'pass' ? '1' : '0';
+  //           }
+  //           return;
+  //         }
+  //       } 
+  //     }
+  //   });
     
-    if (Object.keys(newAnswers).length > 0) {
-      setAnswers((prev) => ({ ...prev, ...newAnswers }));
-    }
-  }, [queriesDataKey, selectedDataset?.identifier]); 
+  //   if (Object.keys(newAnswers).length > 0) {
+  //     setAnswers((prev) => ({ ...prev, ...newAnswers }));
+  //   }
+  // }, [queriesDataKey, selectedDataset?.identifier]); 
 
   const goToCriterion = (direction: 'next' | 'previous') => {
     const flatCriteria = data?.principles.flatMap(p => p.criteria);
@@ -350,14 +357,14 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
       const newIndex = (currentIndex + offset + flatCriteria.length) % flatCriteria.length;
       const newCriterion = flatCriteria[newIndex];
 
-      setOpenCriterion(newCriterion.id);
+      setSelectedCriterionId(newCriterion.id);
 
       const newPrinciple = data?.principles.find(p =>
         p.criteria.some(c => c.id === newCriterion.id)
       );
 
       if (newPrinciple) {
-        setOpenPrinciple(newPrinciple.id);
+        setSelectedPrincipleId(newPrinciple.id);
       }
     }
   };

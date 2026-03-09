@@ -1,4 +1,4 @@
-import { Suspense, useState, useCallback } from "react";
+import { Suspense, useState } from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
@@ -44,7 +44,7 @@ const App = () => {
     }, 300); 
   };
 
-  const createElementByTemplate = useCallback((page: Page) => {
+  const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
         return <Dashboard />;
@@ -63,7 +63,7 @@ const App = () => {
       default:
         return <Generic {...page} />;
     }
-  }, [isExiting]);
+  };
 
   return (
     <AppWrapper storeComponents={['user']}>
