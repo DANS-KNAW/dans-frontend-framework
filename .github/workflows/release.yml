@@ -126,6 +126,7 @@ jobs:
           APP_SECRETS_JSON: ${{ secrets[format('{0}_SECRETS_JSON', needs.validate.outputs.app_upper)] }}
         run: |
           ENV_FILE="apps/$APP/.env.production"
+          mkdir -p "apps/$APP"
           : > "$ENV_FILE"
 
           if [ -n "$APP_ENV_JSON" ]; then
