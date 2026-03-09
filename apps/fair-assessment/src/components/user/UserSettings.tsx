@@ -68,10 +68,13 @@ export default function UserSettings() {
   }, [roles]);
 
   useEffect(() => {
-  if (tabValue >= activeTabs.length) {
-    setTabValue(0);
-  }
-}, [activeTabs.length, tabValue]);
+    const foo = () => {
+      if (tabValue >= activeTabs.length) {
+        setTabValue(0);
+      }
+    };
+    foo();
+  }, [activeTabs.length, tabValue]);
 
   return (
     <Container>
@@ -402,11 +405,13 @@ function Institutions({ selectedRepositories, institutions, setInstitutions }: {
             )}
             onChange={(_event, newValue) => {
               if (newValue && !institutions.some(i => i.id === newValue.id.replace("https://ror.org/", "ROR:"))) {
-                !institutions.some(inst => inst.id === newValue.id) && setInstitutions([...institutions, {
-                  name: newValue.names.filter(name => name.types.indexOf("ror_display") !== -1)[0].value,
-                  url: newValue.id,
-                  id: newValue.id.replace("https://ror.org/", "ROR:"),
-                }]);
+                if (!institutions.some(inst => inst.id === newValue.id)) {
+                   setInstitutions([...institutions, {
+                      name: newValue.names.filter(name => name.types.indexOf("ror_display") !== -1)[0].value,
+                      url: newValue.id,
+                      id: newValue.id.replace("https://ror.org/", "ROR:"),
+                    }]);
+                }
                 setCustomRor(undefined);
               }
             }}

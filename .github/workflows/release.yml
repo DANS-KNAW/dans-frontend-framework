@@ -1,0 +1,222 @@
+name: Monorepo Release Pipeline
+run-name: "${{ github.event.release.tag_name }}"
+
+on:
+  release:
+    types: [published]
+
+# Never cancel a deploy mid-flight; queue instead
+concurrency:
+  group: release-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+
+  # ============================================================
+  # JOB 1: Parse & validate the release tag
+  # ============================================================
+  validate:
+    name: Validate tag
+    runs-on: ubuntu-latest
+
+    outputs:
+      app:         ${{ steps.meta.outputs.app }}
+      app_upper:   ${{ steps.meta.outputs.app_upper }}
+      environment: ${{ steps.meta.outputs.environment }}
+      version:     ${{ steps.meta.outputs.version }}
+      image:       ${{ steps.meta.outputs.image }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Parse and validate release tag
+        id: meta
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+
+          # Strict regex: only allow alphanumeric app names + semver
+          if ! [[ "$TAG" =~ ^([a-z0-9-]+)-(demo|prod)-(v[0-9]+\.[0-9]+\.[0-9]+[a-z0-9-]*)$ ]]; then
+            echo "::error::Invalid tag format. Expected: <app>-(demo|prod)-vX.Y.Z  Got: $TAG"
+            exit 1
+          fi
+
+          APP="${BASH_REMATCH[1]}"
+          ENV="${BASH_REMATCH[2]}"
+          VERSION="${BASH_REMATCH[3]}"
+
+          if [ ! -d "apps/$APP" ]; then
+            echo "::error::App directory apps/$APP does not exist"
+            exit 1
+          fi
+
+          echo "app=$APP"            >> "$GITHUB_OUTPUT"
+          echo "environment=$ENV"    >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION"    >> "$GITHUB_OUTPUT"
+          echo "image=dansknaw/dans-frontend-framework-$APP" >> "$GITHUB_OUTPUT"
+          echo "app_upper=$(echo $APP | tr '[:lower:]' '[:upper:]')" >> "$GITHUB_OUTPUT"
+
+          echo "### Release metadata" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Field | Value |"    >> "$GITHUB_STEP_SUMMARY"
+          echo "| --- | --- |"        >> "$GITHUB_STEP_SUMMARY"
+          echo "| App | \`$APP\` |"          >> "$GITHUB_STEP_SUMMARY"
+          echo "| Environment | \`$ENV\` |"  >> "$GITHUB_STEP_SUMMARY"
+          echo "| Version | \`$VERSION\` |"  >> "$GITHUB_STEP_SUMMARY"
+
+  # ============================================================
+  # JOB 2: Lint, type-check, test
+  # ============================================================
+  ci:
+    name: CI — ${{ needs.validate.outputs.app }}
+    needs: validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ hashFiles('**/package.json', '**/tsconfig.json', 'pnpm-lock.yaml') }}
+          restore-keys: turbo-${{ runner.os }}-
+
+      - name: Lint
+        run: pnpm turbo lint --filter=@dans-framework/${{ needs.validate.outputs.app }}
+
+      - name: Test
+        run: pnpm turbo test --filter=@dans-framework/${{ needs.validate.outputs.app }}
+
+  # ============================================================
+  # JOB 3: Build & push Docker image
+  # ============================================================
+  build:
+    name: Build & push image
+    needs: [validate, ci]
+    runs-on: ubuntu-latest
+    environment: ${{ needs.validate.outputs.environment }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate .env.production
+        env:
+          APP: ${{ needs.validate.outputs.app }}
+          APP_ENV_JSON: ${{ vars[format('{0}_ENV_JSON', needs.validate.outputs.app_upper)] }}
+          APP_SECRETS_JSON: ${{ secrets[format('{0}_SECRETS_JSON', needs.validate.outputs.app_upper)] }}
+        run: |
+          ENV_FILE="apps/$APP/.env.production"
+          mkdir -p "apps/$APP"
+          : > "$ENV_FILE"
+
+          if [ -n "$APP_ENV_JSON" ]; then
+            echo "$APP_ENV_JSON" | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> "$ENV_FILE"
+          else
+            echo "::warning::No ENV_JSON var found for $APP"
+          fi
+
+          if [ -n "$APP_SECRETS_JSON" ]; then
+            echo "$APP_SECRETS_JSON" | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> "$ENV_FILE"
+          else
+            echo "::warning::No SECRETS_JSON secret found for $APP"
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Resolve Docker tags
+        id: tags
+        env:
+          IMAGE: ${{ needs.validate.outputs.image }}
+          VERSION: ${{ needs.validate.outputs.version }}
+          ENV: ${{ needs.validate.outputs.environment }}
+        run: |
+          TAGS="$IMAGE:$VERSION"
+          if [[ "$ENV" == "demo" ]]; then TAGS="$TAGS,$IMAGE:latest"; fi
+          if [[ "$ENV" == "prod" ]]; then TAGS="$TAGS,$IMAGE:stable"; fi
+          echo "tags=$TAGS" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          build-args: APP_NAME=${{ needs.validate.outputs.app }}
+          cache-from: type=registry,ref=${{ needs.validate.outputs.image }}:buildcache
+          cache-to:   type=registry,ref=${{ needs.validate.outputs.image }}:buildcache,mode=max
+          provenance: true
+          sbom: true
+
+  # ============================================================
+  # JOB 4: Deploy
+  # ============================================================
+  deploy:
+    name: Deploy → ${{ needs.validate.outputs.environment }}
+    needs: [validate, build]
+    runs-on: ${{ needs.validate.outputs.environment == 'prod' && 'ohsmart-production' || 'ohsmart-demo' }}
+    environment:
+      name: ${{ needs.validate.outputs.environment }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Pull updated image
+        env:
+          APP: ${{ needs.validate.outputs.app }}
+          ENV: ${{ needs.validate.outputs.environment }}
+        run: docker compose -f docker-compose.$ENV.yml pull "$APP"
+
+      - name: Deploy service
+        id: deploy
+        env:
+          APP: ${{ needs.validate.outputs.app }}
+          ENV: ${{ needs.validate.outputs.environment }}
+        run: |
+          docker compose -f docker-compose.$ENV.yml up -d --no-deps "$APP"
+          sleep 5
+          STATUS=$(docker inspect --format='{{.State.Status}}' $(docker compose -f docker-compose.$ENV.yml ps -q "$APP"))
+          if [[ "$STATUS" != "running" ]]; then
+            echo "::error::Container is not running after deploy (state: $STATUS)"
+            exit 1
+          fi
+
+      - name: Rollback on failure
+        if: failure() && steps.deploy.conclusion == 'failure'
+        env:
+          APP: ${{ needs.validate.outputs.app }}
+          ENV: ${{ needs.validate.outputs.environment }}
+          PREV_IMAGE: ${{ needs.validate.outputs.image }}:${{ needs.validate.outputs.environment == 'prod' && 'stable' || 'latest' }}
+        run: |
+          echo "::warning::Deploy failed — rolling back to $PREV_IMAGE"
+          IMAGE_OVERRIDE="$PREV_IMAGE" docker compose -f docker-compose.$ENV.yml up -d --no-deps "$APP"
+
+      - name: Summary
+        if: success()
+        run: |
+          echo "### Deployed successfully"                                        >> "$GITHUB_STEP_SUMMARY"
+          echo "- **App:** ${{ needs.validate.outputs.app }}"                    >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Version:** ${{ needs.validate.outputs.version }}"            >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Environment:** ${{ needs.validate.outputs.environment }}"    >> "$GITHUB_STEP_SUMMARY"

@@ -2,6 +2,7 @@
   "name": "@dans-framework/eslint-config",
   "version": "0.0.0",
   "main": "index.js",
+  "type": "module",
   "license": "MIT",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.50.0",

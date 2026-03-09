@@ -1,0 +1,21 @@
+services:
+  ohsmart:
+    image: dansknaw/dans-frontend-framework-ohsmart:stable
+    restart: unless-stopped
+    container_name: ohsmart-prod
+    networks:
+      - traefik
+    ports:
+      - "8000:80"
+  rda:
+    image: dansknaw/dans-frontend-framework-rda:stable
+    restart: unless-stopped
+    container_name: rda-prod
+    networks:
+      - traefik
+    ports:
+      - "8002:80"
+
+networks:
+  traefik:
+    external: true

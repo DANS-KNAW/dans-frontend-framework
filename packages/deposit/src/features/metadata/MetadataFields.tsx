@@ -146,7 +146,7 @@ const GroupedField = ({ field }: GroupedFieldProps) => {
 
   return (
     <Grid size={{ xs: 12 }}>
-      <Card>
+      <Card sx={{ border: "1px solid rgba(0,0,0,0.1)" }}>
         <CardHeader
           title={lookupLanguageString(field.label, i18n.language)}
           subheader={
