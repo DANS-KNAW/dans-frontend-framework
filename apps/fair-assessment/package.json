@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dans-framework/elastic": "workspace:*",
+    "@dans-framework/elastic-result": "workspace:*",
     "@dans-framework/i18n": "workspace:*",
     "@dans-framework/layout": "workspace:*",
     "@dans-framework/pages": "workspace:*",

@@ -67,14 +67,7 @@ export default function UserSettings() {
     );
   }, [roles]);
 
-  useEffect(() => {
-    const foo = () => {
-      if (tabValue >= activeTabs.length) {
-        setTabValue(0);
-      }
-    };
-    foo();
-  }, [activeTabs.length, tabValue]);
+  const safeTabValue = tabValue >= activeTabs.length ? 0 : tabValue;
 
   return (
     <Container>
@@ -93,13 +86,13 @@ export default function UserSettings() {
         <Grid size={{ xs: 12 }}>
           <Card>
             <CardContent>
-              <Tabs value={tabValue} onChange={handleChange} aria-label="Set user context">
+              <Tabs value={safeTabValue} onChange={handleChange} aria-label="Set user context">
                 {activeTabs.map((tab, index) => (
                   <Tab key={index} label={tab.label} />
                 ))}
               </Tabs>
               {activeTabs.map((tab, index) =>
-                <TabPanel value={tabValue} index={index} key={index}>
+                <TabPanel value={safeTabValue} index={index} key={index}>
                   {tab.id === 'objects' && <Objects objects={objects} setObjects={setObjects} />}
                   {tab.id === 'repositories' && <Repositories objects={objects} repositories={repositories} setRepositories={setRepositories} />}
                   {tab.id === 'institutions' && <Institutions selectedRepositories={repositories} institutions={institutions} setInstitutions={setInstitutions} />}
@@ -358,8 +351,6 @@ function Institutions({ selectedRepositories, institutions, setInstitutions }: {
       .filter((i): i is { id: string; name: string } => i !== null)
   );
 
-  console.log(rorList)
-
   return (
     <LayoutGroup>
       <Grid container spacing={6}>
@@ -406,11 +397,11 @@ function Institutions({ selectedRepositories, institutions, setInstitutions }: {
             onChange={(_event, newValue) => {
               if (newValue && !institutions.some(i => i.id === newValue.id.replace("https://ror.org/", "ROR:"))) {
                 if (!institutions.some(inst => inst.id === newValue.id)) {
-                   setInstitutions([...institutions, {
-                      name: newValue.names.filter(name => name.types.indexOf("ror_display") !== -1)[0].value,
-                      url: newValue.id,
-                      id: newValue.id.replace("https://ror.org/", "ROR:"),
-                    }]);
+                  setInstitutions([...institutions, {
+                    name: newValue.names.filter(name => name.types.indexOf("ror_display") !== -1)[0].value,
+                    url: newValue.id,
+                    id: newValue.id.replace("https://ror.org/", "ROR:"),
+                  }]);
                 }
                 setCustomRor(undefined);
               }

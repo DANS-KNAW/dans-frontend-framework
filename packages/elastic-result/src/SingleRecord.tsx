@@ -17,15 +17,22 @@ type Item = { label: string | LanguageStrings, value: string }
 
 type Config = {
   title: string;
+  subTitle?: string;
   list?: Item[];
   chips?: Item[];
   externalLink?: string;
 }
 
+const getNestedValue = (obj: Record<string, any>, path: string): any =>
+  path.split('.').reduce((acc, key) => acc?.[key], obj);
+
 export default function SingleRecord({ config }: { config: Config }) {
   const { id } = useParams();
   const { data, isLoading } = useFetchRecordQuery(id);
   const { t, i18n } = useTranslation('elasticResult');
+
+  console.log("Record data:", data);
+  console.log(config)
 
   return (
     <Container>
@@ -54,18 +61,23 @@ export default function SingleRecord({ config }: { config: Config }) {
             <Typography variant="h1" mb={4} mt={0}>
               { data.hasOwnProperty(config.title) ? lookupLanguageString(data[config.title], i18n.language) : t("noTitle") }
             </Typography>
+            {config.subTitle && data[config.subTitle] && 
+              <Typography variant="body1" mb={4}>
+                { data[config.subTitle] }
+              </Typography>
+            }
             {config.list?.map((item) => (
               <Metadata 
                 key={item.value}
                 name={item.label}
-                value={data[item.value]}
+                value={getNestedValue(data, item.value)}
               />
             ))}
             {config.chips?.map((item) => (
               <Tag 
                 key={item.value}
                 name={item.label}
-                value={data[item.value]}
+                value={getNestedValue(data, item.value)}
               />
             ))}
             {config.externalLink &&

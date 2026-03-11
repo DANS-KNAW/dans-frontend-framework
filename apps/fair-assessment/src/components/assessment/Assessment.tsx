@@ -156,17 +156,6 @@ function Test({ test, answers, setAnswers, doi }: {
 
   const result = data?.["@graph"]?.find((item: any) => item["@type"] === "ftr:TestResult");
 
-  useEffect(() => {
-    if (data && test.automation?.api) {
-      const value = result?.["prov:value"]?.["@value"];
-      if (value === 'pass') {
-        setAnswers((prev) => ({ ...prev, [test.id]: '1' }));
-      } else if (value === 'fail') {
-        setAnswers((prev) => ({ ...prev, [test.id]: '0' }));
-      }
-    }
-  }, [data, setAnswers, test.id, test.automation?.api]);
-
   return (
     <Box key={test.id} sx={{ mt: 2, p: 2, border: '1px solid rgba(0, 0, 0, 0.12)', borderRadius: 1 }}>
       <Stack direction="row" alignItems="center" mb={1}>
@@ -191,10 +180,9 @@ function Test({ test, answers, setAnswers, doi }: {
             </RadioGroup>
           </FormControl>
           <Button onClick={() => setAnswers((prev) => {
-            const { [test.id]: _, ...rest } = prev;
-              console.log(_)
-              return rest;
-            })}>Clear</Button>
+            const { [test.id]: _unused, ...rest } = prev;
+            return rest;
+          })}>Clear</Button>
         </Stack> :
         ((isLoading || data) &&
           <Box sx={{ overflowX: 'auto', backgroundColor: '#f0f0f0', p: 2, borderRadius: 1, mt: 2 }}>
@@ -262,25 +250,18 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
   selectedDataset: Pid | null 
 }) {
   const { data } = useQuery({ queryKey: ['assessment', selectedAssessment?.id], queryFn: () => fetchAssessment(selectedAssessment?.id) });
-  const [selectedPrincipleId, setSelectedPrincipleId] = useState<string | null>(null);
-  const [selectedCriterionId, setSelectedCriterionId] = useState<string | null>(null);
+  const [openPrinciple, setOpenPrinciple] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [openCriterion, setOpenCriterion] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const openPrinciple = selectedPrincipleId ?? data?.principles[0]?.id ?? null;
-  const openCriterion = selectedCriterionId ?? data?.principles[0]?.criteria[0]?.id ?? null;
-
-
-  // useEffect(() => {
-  //   setAnswers({});
-  // }, [selectedAssessment]);
-
-  // useEffect(() => {
-  //   if (data) {
-  //     setOpenPrinciple(data.principles[0].id);
-  //     setOpenCriterion(data.principles[0].criteria[0].id);
-  //   }
-  // }, [data]);
+  useEffect(() => {
+    if (data) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setOpenPrinciple(data.principles[0].id);
+      setOpenCriterion(data.principles[0].criteria[0].id);
+    }
+  }, [data]);
 
   // Create a flat array of tests with automation to maintain order
   const automatedTests = useMemo(() => 
@@ -314,57 +295,40 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
     })),
     [testQueries, automatedTests]
   );
-  
-  // Create a stable key based on which queries have data
-  const queriesDataKey = testQueries
-    .map(q => q.data ? '1' : '0')
-    .join('');
 
-  console.log(queriesDataKey)
+  const automatedAnswers = useMemo(() => {
+    const result: Record<string, string> = {};
+    testQueries.forEach((query, index) => {
+      const testId = automatedTests[index]?.test.id;
+      const graphResult = query.data?.["@graph"]?.find((item: any) => item["@type"] === "ftr:TestResult");
+      const value = graphResult?.["prov:value"]?.["@value"];
+      if (testId && (value === 'pass' || value === 'fail')) {
+        result[testId] = value === 'pass' ? '1' : '0';
+      }
+    });
+    return result;
+  }, [testQueries, automatedTests]);
 
-  // Update answers based on fetched data
-  // useEffect(() => {
-  //   const newAnswers: Record<string, string> = {};
-    
-  //   testQueries.forEach((query, index) => {
-  //     if (query.data) {
-  //       const testId = automatedTests[index]?.test.id;
-  //       if (query.data["@graph"]?.length > 0) {
-  //         const result = query.data["@graph"].find((item: any) => item["@type"] === "ftr:TestResult");
-  //         if (result) {
-  //           const value = result["prov:value"]?.["@value"] || '';
-  //           if (testId && (value === 'pass' || value === 'fail')) {
-  //             newAnswers[testId] = value === 'pass' ? '1' : '0';
-  //           }
-  //           return;
-  //         }
-  //       } 
-  //     }
-  //   });
-    
-  //   if (Object.keys(newAnswers).length > 0) {
-  //     setAnswers((prev) => ({ ...prev, ...newAnswers }));
-  //   }
-  // }, [queriesDataKey, selectedDataset?.identifier]); 
+  const mergedAnswers = { ...automatedAnswers, ...answers };
 
   const goToCriterion = (direction: 'next' | 'previous') => {
     const flatCriteria = data?.principles.flatMap(p => p.criteria);
     const currentIndex = flatCriteria?.findIndex(c => c.id === openCriterion);
 
-    if (currentIndex === -1 || !currentIndex || !flatCriteria) return; // no current criterion found
+    if (currentIndex === -1 || currentIndex === undefined || !flatCriteria) return; // no current criterion found
     else {
       const offset = direction === 'next' ? 1 : -1;
       const newIndex = (currentIndex + offset + flatCriteria.length) % flatCriteria.length;
       const newCriterion = flatCriteria[newIndex];
 
-      setSelectedCriterionId(newCriterion.id);
+      setOpenCriterion(newCriterion.id);
 
       const newPrinciple = data?.principles.find(p =>
         p.criteria.some(c => c.id === newCriterion.id)
       );
 
       if (newPrinciple) {
-        setSelectedPrincipleId(newPrinciple.id);
+        setOpenPrinciple(newPrinciple.id);
       }
     }
   };
@@ -373,7 +337,7 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
     <MotionPaper sx={{mb: 1}} layout>
       <MotionGrid container layout="position" sx={{ position: 'relative', zIndex: 100, backgroundColor: 'background.paper' }}>
         <Status 
-          answers={answers} 
+          answers={mergedAnswers} 
           selectedAssessment={data} 
           selectedDataset={selectedDataset} 
           setIsOpen={setIsOpen} 
@@ -403,7 +367,7 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
                 }
               >
                 {data?.principles.map((principle) => {
-                  const criteriaEvaluations = principle.criteria.map(c => evaluateCriterion(c, answers));
+                  const criteriaEvaluations = principle.criteria.map(c => evaluateCriterion(c, mergedAnswers));
 
                   const allAnswered = criteriaEvaluations.every(r => r.allAnswered);
                   const partiallyAnswered = criteriaEvaluations.some(r => r.allAnswered) && !allAnswered;
@@ -421,8 +385,8 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
                       <ListItemButton 
                         sx={{ px: 4}}
                         onClick={() => {
-                          setSelectedPrincipleId(principle.id);
-                          setSelectedCriterionId(principle.criteria[0].id);
+                          setOpenPrinciple(principle.id);
+                          setOpenCriterion(principle.criteria[0].id);
                         }}
                       >
                         <TooltipWithIcon status={status} text={principle.description} type="principle" />
@@ -442,7 +406,7 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
                               <ListItemButton
                                 key={criterion.id}
                                 sx={{ pl: 6, pr: 4 }}
-                                onClick={() => setSelectedCriterionId(criterion.id)}
+                                onClick={() => setOpenCriterion(criterion.id)}
                                 selected={openCriterion === criterion.id}
                               >
                                 <TooltipWithIcon status={status} text={criterion.description} type="criterion" />
@@ -476,7 +440,7 @@ function AssessmentInstance({ selectedAssessment, selectedDataset }: {
                     (criterion) => criterion.id === openCriterion
                   ) as Criterion
                 }
-                answers={answers}
+                answers={mergedAnswers}
                 setAnswers={setAnswers}
                 doi={selectedDataset?.identifier || ''}
               />

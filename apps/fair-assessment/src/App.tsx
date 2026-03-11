@@ -1,5 +1,5 @@
-import { Suspense, useState } from "react";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { Suspense } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import { ThemeWrapper } from "@dans-framework/theme";
@@ -22,42 +22,24 @@ import Dashboard from "./components/Dashboard";
 import UserSettings from "./components/user/UserSettings";
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ElasticWrapper } from "@dans-framework/elastic";
+import { SingleRecord } from "@dans-framework/elastic-result";
+import { esConfig, esResultConfig } from "./config/elasticConfig";
 
-import { FacetedWrapper, FacetedSearchProvider } from "@dans-framework/rdt-search-ui";
-import { elasticConfig } from "./components/elastic/Guidance";
-import { DetailedView } from "./components/elastic/Single";
-import { AnimatePresence } from "framer-motion";
 import Assessment from "./components/assessment/Assessment";
 import { AppWrapper } from "@dans-framework/wrapper";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const navigate = useNavigate();
-  const [isExiting, setIsExiting] = useState(false); // Track exit state
-
-  const handleExit = () => {
-    setIsExiting(true);
-    setTimeout(() => {
-      setIsExiting(false);
-      navigate("/guidance"); // Redirect after animation completes
-    }, 300); 
-  };
-
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
       case "dashboard":
         return <Dashboard />;
       case "fair-guidance":
-        return <FacetedWrapper resultRoute="/guidance" />;
+        return <ElasticWrapper config={esConfig} resultRoute={page.slug} />
       case "record":
-          return (
-            <FacetedWrapper resultRoute="/guidance">
-              <AnimatePresence>
-                {!isExiting && <DetailedView onClose={handleExit} />}
-              </AnimatePresence>
-            </FacetedWrapper>
-          );
+        return <SingleRecord config={esResultConfig} />;
       case "create-assessment":
         return <AuthRoute><Assessment /></AuthRoute>;
       default:
@@ -66,9 +48,8 @@ const App = () => {
   };
 
   return (
-    <AppWrapper storeComponents={['user']}>
+    <AppWrapper storeComponents={['user', 'elastic', 'elasticResult']}>
       <QueryClientProvider client={queryClient}>
-        <FacetedSearchProvider config={elasticConfig}>
           <AuthWrapper authProvider={authProvider}>
             <ThemeWrapper theme={theme} siteTitle={siteTitle}>
               <MenuBar pages={pages} userSubmissions={false} />
@@ -104,7 +85,6 @@ const App = () => {
               <Footer {...footer} />
             </ThemeWrapper>
           </AuthWrapper>
-        </FacetedSearchProvider>
       </QueryClientProvider>
     </AppWrapper>
   );

@@ -45,6 +45,14 @@ export default function BarChartFacet({
     onSelect(data.value as any);
   }
 
+  const xAxisConfig = orientation === 'horizontal'
+    ? [{ tickMinStep: 1, valueFormatter: (value: number) => value.toFixed(0) }]
+    : [{ scaleType: 'band' as const, dataKey: 'label', label: '' }];
+
+  const yAxisConfig = orientation === 'horizontal'
+    ? [{ scaleType: 'band' as const, dataKey: 'label', label: '', width: 70 }]
+    : [{ tickMinStep: 1, valueFormatter: (value: number) => value.toFixed(0) }];
+
   return (
     <>
       <FilterFacet
@@ -54,23 +62,8 @@ export default function BarChartFacet({
       <BarChart
         borderRadius={2}
         dataset={chartData}
-        {...( orientation !== 'horizontal' ? { xAxis:[{ 
-          scaleType: 'band', 
-          dataKey: 'label',
-          label: '',
-        }]} : { yAxis: [{
-          tickMinStep: 1,
-          valueFormatter: (value: number) => value.toFixed(0),
-        }]})}
-        {...( orientation === 'horizontal' ? { yAxis:[{ 
-          scaleType: 'band', 
-          dataKey: 'label',
-          label: '',
-          width: 70,
-        }]} : { xAxis: [{
-          tickMinStep: 1,
-          valueFormatter: (value: number) => value.toFixed(0),
-        }]})}
+        xAxis={xAxisConfig}
+        yAxis={yAxisConfig}
         layout={orientation === "horizontal" ? "horizontal" : "vertical"}
         series={[{ 
           dataKey: 'count', 

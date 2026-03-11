@@ -26,8 +26,8 @@ export default function Sorting({ options, onChange, value }: SortingViewProps) 
 
   // Select first value on load for default sorting
   useEffect(() => {
-    const parsedValue = [JSON.parse(options[0].value)[0]];
-    onChange(JSON.stringify(parsedValue));
+    const parsedValue = JSON.parse(options[0].value)[0] ? [JSON.parse(options[0].value)[0]] : null;
+    parsedValue && onChange(JSON.stringify(parsedValue));
   }, []);
 
   const handleChange = (event: SelectChangeEvent) => {
