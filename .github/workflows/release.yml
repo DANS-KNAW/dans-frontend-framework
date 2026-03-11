@@ -54,7 +54,7 @@ jobs:
           echo "environment=$ENV"    >> "$GITHUB_OUTPUT"
           echo "version=$VERSION"    >> "$GITHUB_OUTPUT"
           echo "image=dansknaw/dans-frontend-framework-$APP" >> "$GITHUB_OUTPUT"
-          echo "app_upper=$(echo $APP | tr '[:lower:]' '[:upper:]')" >> "$GITHUB_OUTPUT"
+          echo "app_upper=$(echo $APP | tr '[:lower:]-' '[:upper:]_')" >> "$GITHUB_OUTPUT"
 
           echo "### Release metadata" >> "$GITHUB_STEP_SUMMARY"
           echo "| Field | Value |"    >> "$GITHUB_STEP_SUMMARY"
