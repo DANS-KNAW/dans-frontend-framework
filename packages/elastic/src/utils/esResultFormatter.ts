@@ -6,10 +6,20 @@ interface FormattedResult {
   description?: string;
 }
 
-function getRaw(result: any, key: string): string | string[] | undefined {
-  const value = result[key]?.raw;
+function getRaw(result: any, configKey: string): string | string[] | undefined {
+  const [resultKey, ...rest] = configKey.split(".");
+  const raw = result[resultKey]?.raw;
+  if (raw == null || raw === "") return undefined;
+
+  const dig = (obj: any) => rest.reduce((cur, k) => cur?.[k], obj);
+
+  if (Array.isArray(raw)) {
+    const values = raw.map(dig).filter(Boolean).map(String);
+    return values.length ? values : undefined;
+  }
+
+  const value = rest.length ? dig(raw) : raw;
   if (value == null || value === "") return undefined;
-  if (Array.isArray(value)) return value.filter(Boolean).map(String);
   return String(value);
 }
 

@@ -59,7 +59,7 @@ export const esConfig: SimpleConfig = {
 
   searchResult: {
     title: "labelguidanceelement",
-    tags: ["domain.name", "focus.name"],
+    tags: ["motivation.name", "actor.name"],
     description: "descguidanceelement",
     linkToSlug: "guidance/record",
     linkToId: "lodgde",

@@ -17,7 +17,9 @@ export default function Result({
   const { useAppSelector } = useStoreHooks();
   const resultViewConfig = useAppSelector(getResultViewConfig);
   const formattedResult = formatESResult(result, resultViewConfig);
-
+  
+  console.log(result)
+  
   const description = 
     formattedResult.description && formattedResult.description.length > 200 
     ? `${formattedResult.description.substring(0, 200)}...` 
