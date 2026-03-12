@@ -2,7 +2,7 @@
     "amountOfDocuments": "Aantal documenten",
     "showMore": "Toon meer",
     "showLess": "Toon minder",
-    "pageSize": "Pagina grootte",
+    "pageSize": "Paginagrootte",
     "resultsInfo": "{{start}} - {{end}} van {{totalResults}} resultaten{{searchInfo}}",
     "viewDetails": "Bekijk details",
     "searchTerms": "Zoektermen",
@@ -16,5 +16,6 @@
     "all": "Alles",
     "dashboard": "Dashboard",
     "results": "Resultaten",
+    "noResults": "Geen resultaten gevonden",
     "switchBetweenDashboardAndResults": "Schakel tussen dashboard en resultaten"
 }

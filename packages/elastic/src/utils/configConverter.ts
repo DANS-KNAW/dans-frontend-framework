@@ -62,9 +62,8 @@ interface SortOption {
 
 interface SearchResult {
   title: string;
-  subTitle?: string;
+  tags?: string[];
   description?: string;
-  list?: { field: string; label: string }[];
   linkToSlug?: string;
   linkToId?: string;
 }
@@ -141,9 +140,8 @@ interface ESUIConfig {
 
 export interface ResultViewConfig {
   title: string;
-  subTitle?: string;
+  tags?: string[];
   description?: string;
-  list?: { field: string; label: string }[];
 }
 
 interface ConvertedConfig {

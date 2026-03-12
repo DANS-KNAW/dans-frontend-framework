@@ -24,7 +24,7 @@ export default function FilterDrawer({ facets }: { facets: [string, ESUIFacet][]
   if (!isMobile) {
     // Render original sidebar on desktop
     return (
-      <Grid size={{ xs: 12, md: 5, lg: 4, xl: 3 }}>
+      <Grid size={{ xs: 12, md: 5 }}>
         <SearchBox searchAsYouType={true} debounceLength={300} view={SearchBoxView} />
         {facets.map(([field, config]) =>
           config.display !== "hidden" && (

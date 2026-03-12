@@ -16,5 +16,6 @@
     "all": "All",
     "dashboard": "Dashboard",
     "results": "Results",
+    "noResults": "No results found",
     "switchBetweenDashboardAndResults": "Switch between dashboard and results"
 }

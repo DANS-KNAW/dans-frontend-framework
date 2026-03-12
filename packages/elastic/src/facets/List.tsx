@@ -66,7 +66,7 @@ export default function ListFacet({
         </Typography>
       ) }
 
-      <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+      <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
         {displayedOptions.map((option, index) => {
           const labelId = `checkbox-list-label-${option.value}`;
 

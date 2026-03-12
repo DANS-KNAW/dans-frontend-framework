@@ -1,20 +1,19 @@
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Link from "@mui/material/Link";
 import type { SearchResult } from "@elastic/search-ui";
 import { useStoreHooks } from "@dans-framework/shared-store";
 import { getResultViewConfig } from "../redux/slices";
 import { formatESResult } from "../utils/esResultFormatter";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+import Chip from "@mui/material/Chip";
 
 export default function Result({
   result,
 }: {
   result: SearchResult;
 }) {
-  const { t } = useTranslation('elastic');
   const { useAppSelector } = useStoreHooks();
   const resultViewConfig = useAppSelector(getResultViewConfig);
   const formattedResult = formatESResult(result, resultViewConfig);
@@ -25,44 +24,32 @@ export default function Result({
     : formattedResult.description;
 
   return (
-    <Paper sx={{ p: 2, mb: 2, width: '100%', overflow: 'hidden' }}>
-      <Typography variant="h6">
+    <Box sx={{ mb: 2, pb: 2, width: '100%', overflow: 'hidden', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+      <Link 
+        variant="h4" 
+        component={RouterLink} 
+        sx={{ 
+          textDecoration: 'none',
+          "&:hover": { textDecoration: 'underline' },
+          display: 'block',
+          mb: 1,
+        }}
+        to={`/${resultViewConfig.linkToSlug}/${encodeURIComponent(result[ resultViewConfig.linkToId ].raw)}`}
+      >
         {formattedResult.title}
-      </Typography>
-      {formattedResult.subTitle && (
-        <Typography variant="body2" color="text.secondary" gutterBottom>
-          {formattedResult.subTitle}
-        </Typography>
-      )}
+      </Link>
+      {formattedResult.tags && 
+        <Stack direction="row" spacing={1} mb={1}>
+          {formattedResult.tags.map(tag =>
+            <Chip key={tag} label={tag} size="small" />
+          )}
+        </Stack>
+      }
       {description && (
-        <Typography sx={{ mb: 2 }}>
+        <Typography>
           {description}
         </Typography>
       )}
-      {formattedResult.listItems && (
-        <Box sx={{
-          display: "grid",
-          gridTemplateColumns: "1fr 4fr",
-          mb: 2,
-        }}>
-          {formattedResult.listItems?.map((item) => {
-            const value = Array.isArray(item.value) ? item.value.join(" || ") : item.value.length < 1 ? "-" : item.value;
-            return (
-              <>
-                <Typography variant="body2" color="neutral.dark" pr={1} gutterBottom>
-                  {item.label}
-                </Typography>
-                <Typography variant="body2">
-                  {value}
-                </Typography>
-              </>
-            )
-          })}
-        </Box> 
-      )}
-      <Button color="primary" component={Link} to={`/${resultViewConfig.linkToSlug}/${encodeURIComponent(result[ resultViewConfig.linkToId ].raw)}`}>
-        {t('viewDetails')}
-      </Button>
-    </Paper>
+    </Box>
   );
 };

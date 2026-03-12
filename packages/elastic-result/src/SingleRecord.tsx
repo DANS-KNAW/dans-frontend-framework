@@ -31,9 +31,6 @@ export default function SingleRecord({ config }: { config: Config }) {
   const { data, isLoading } = useFetchRecordQuery(id);
   const { t, i18n } = useTranslation('elasticResult');
 
-  console.log("Record data:", data);
-  console.log(config)
-
   return (
     <Container>
       <Grid container>

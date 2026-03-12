@@ -38,7 +38,7 @@ export const esConfig: SimpleConfig = {
 
   searchResult: {
     title: "dct:title",
-    subTitle: "@type",
+    tags: ["@type"],
     linkToSlug: "record",
     linkToId: "@id",
   },
