@@ -270,7 +270,9 @@ export const SearchActions = ({
   const activeFacets = Array.from(filters.keys());
   const { facetValues } = useContext(SearchStateContext);
   const selectedIds = activeFacets.map(facet => {
-    const theMap = Array.isArray(facetValues[facet]) ? facetValues[facet] : facetValues[facet]?.values;
+    const fv = facetValues[facet];
+    if (fv instanceof Map) return [];
+    const theMap = Array.isArray(fv) ? fv : fv?.values;
     return theMap?.map((value: any) => value.secondaryId).filter(Boolean);
   }).flat()
   const apiUrl = 'https://guidance.labs.dansdemo.nl/v1/registry/guidance_query?ids=' + selectedIds.join(',');
