@@ -8,6 +8,7 @@ import {
   List,
   ListItem,
   Stack,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -104,6 +105,9 @@ interface RdaRecord {
   uri2: string;
   backupUri2: string;
 
+  submitter?: string;
+  submitter_name?: string;
+
   rights?: Right[];
   individuals?: Individual[];
   interest_groups?: InterestGroup[];
@@ -157,6 +161,76 @@ const PlainContributor = ({ person }: { person: Individual }) => (
     {person.fullName}
   </Typography>
 );
+
+const AnnotationContributor = ({
+  submitter,
+  submitterName,
+}: {
+  submitter: string;
+  submitterName?: string;
+}) => {
+  const orcidUrl = `https://orcid.org/${submitter}`;
+
+  if (submitterName) {
+    return (
+      <Tooltip title={submitter} arrow>
+        <Link
+          href={orcidUrl}
+          target="_blank"
+          rel="noopener"
+          underline="hover"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            mr: 1.5,
+            fontSize: "0.875rem",
+            color: "#374151",
+          }}
+        >
+          <Typography
+            variant="body2"
+            component="span"
+            sx={{ color: "inherit" }}
+          >
+            {submitterName}
+          </Typography>
+          <Box
+            component="img"
+            src={orcid}
+            alt="ORCID"
+            sx={{ width: 16, height: 16, ml: 0.5 }}
+          />
+        </Link>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <Link
+      href={orcidUrl}
+      target="_blank"
+      rel="noopener"
+      underline="hover"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        mr: 1.5,
+        fontSize: "0.875rem",
+        color: "#374151",
+      }}
+    >
+      <Typography variant="body2" component="span" sx={{ color: "inherit" }}>
+        {submitter}
+      </Typography>
+      <Box
+        component="img"
+        src={orcid}
+        alt="ORCID"
+        sx={{ width: 16, height: 16, ml: 0.5 }}
+      />
+    </Link>
+  );
+};
 
 const AccessUrls = ({
   uri,
@@ -252,17 +326,26 @@ export function RdaRecord() {
         { en: "Contributors", nl: "Bijdragers" },
         i18n.language
       ),
-      value: record.individuals
-        ? record.individuals.map((i) => (
-            <React.Fragment key={i.identifier + i.fullName}>
-              {i.identifier && i.identifier_type === "ORCID" ? (
-                <OrcidContributor person={i} />
-              ) : (
-                <PlainContributor person={i} />
-              )}
-            </React.Fragment>
-          ))
-        : [],
+      value:
+        record.individuals && record.individuals.length > 0
+          ? record.individuals.map((i) => (
+              <React.Fragment key={i.identifier + i.fullName}>
+                {i.identifier && i.identifier_type === "ORCID" ? (
+                  <OrcidContributor person={i} />
+                ) : (
+                  <PlainContributor person={i} />
+                )}
+              </React.Fragment>
+            ))
+          : record.submitter
+            ? [
+                <AnnotationContributor
+                  key={record.submitter}
+                  submitter={record.submitter}
+                  submitterName={record.submitter_name}
+                />,
+              ]
+            : [],
     },
     {
       label: lookupLanguageString(
@@ -535,9 +618,10 @@ export function RdaRecord() {
               px: 0,
               py: 3,
               borderTop: "1px solid #d1d5db",
+              display: "block",
             }}
           >
-            <Grid container={isSmUp} spacing={2}>
+            <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 4 }} sx={{ mb: isSmUp ? 0 : 1 }}>
                 <Typography
                   variant="body2"
@@ -622,9 +706,14 @@ function Metadata({
 }
 
 export function MetadataList({ record }: { record: RdaRecord | Result }) {
+  const rec = record as RdaRecord;
   const individuals = record.individuals
     ? record.individuals.map((i: any) => i.fullName)
-    : [];
+    : rec.submitter_name
+      ? [rec.submitter_name]
+      : rec.submitter
+        ? [rec.submitter]
+        : [];
   const workflows = record.workflows
     ? record.workflows.map((w: any) => w.WorkflowState)
     : [];
