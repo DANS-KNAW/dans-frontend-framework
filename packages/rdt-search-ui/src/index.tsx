@@ -134,8 +134,8 @@ function AppLoader({ children, controllers, searchProps }: AppLoaderProps) {
   );
   const [state, dispatch] = React.useReducer(
     searchStateReducer(controllers),
-    // set storageState if available
-    { ...intialSearchState, ...storageState }
+    // set storageState if available, use props sortOrder as default
+    { ...intialSearchState, sortOrder: searchProps.sortOrder, ...storageState }
   );
 
   useSearch({
@@ -326,6 +326,9 @@ export const FacetedWrapper = ({
               fixedFacets={fixedFacets}
               {...(currentConfig.resultsPerPage !== undefined && {
                 resultsPerPage: currentConfig.resultsPerPage,
+              })}
+              {...(currentConfig.sortOrder !== undefined && {
+                sortOrder: currentConfig.sortOrder,
               })}
               searchActions={currentConfig.searchActions}
             >
