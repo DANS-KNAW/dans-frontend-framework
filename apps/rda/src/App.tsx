@@ -31,13 +31,14 @@ import {
   FacetedSearchProvider,
 } from "@dans-framework/rdt-search-ui";
 import { Freshdesk } from "@dans-framework/freshdesk";
-import SupportDrawer from "@dans-framework/support-drawer";
+import SupportDrawer, { SupportDrawerProvider } from "@dans-framework/support-drawer";
 import RDAAnnotator from "./pages/rda-annotator";
 import { lookupLanguageString, useEmbedHandler } from "@dans-framework/utils";
 import { Container, Link, Typography } from "@mui/material";
 import SiteTitleWrapper from "./config/sitetitle-wrapper";
 import { initMatomo } from "./utils/matomo";
 import AccessibilityStatement from "./pages/accessibility-statement";
+import SupportDrawerLink from "./components/SupportDrawerLink";
 import { AppWrapper } from "@dans-framework/wrapper";
 
 const RDAColor600 = "oklch(0.498 0.121 137.23)";
@@ -159,24 +160,18 @@ const App = () => {
                       i18n.language,
                     )}
                   </Typography>
-                  <Typography
-                    sx={{
-                      mt: 3,
-                      fontSize: "1rem",
-                      lineHeight: 2,
-                      color: "#4b5563",
-                      maxWidth: "48rem",
-                      textWrap: "pretty",
+                  <SupportDrawerLink
+                    text={{
+                      en: "Please refer to the ",
+                      nl: "Raadpleeg de ",
                     }}
-                  >
-                    {lookupLanguageString(
-                      {
-                        en: "Please refer to the Publisher Guidelines document in the Support Materials Drawer (clicking 'Support' in the bottom right).",
-                        nl: "Raadpleeg het document Publisher Guidelines in de Support Materials-lade (klik op 'Support' rechtsonder).",
-                      },
-                      i18n.language,
-                    )}
-                  </Typography>
+                    linkText={{
+                      en: "Publisher Guidelines",
+                      nl: "Publisher Guidelines",
+                    }}
+                    topic="Publisher Guidelines"
+                    suffix="."
+                  />
                 </Box>
               </Container>
               <Deposit config={form} page={page} />
@@ -201,6 +196,7 @@ const App = () => {
   };
 
   return (
+    <SupportDrawerProvider>
     <AppWrapper storeComponents={['user', 'deposit']}>
       <AuthWrapper authProvider={authProvider}>
         <ThemeWrapper theme={theme} siteTitle={siteTitle}>
@@ -284,6 +280,7 @@ const App = () => {
         </ThemeWrapper>
       </AuthWrapper>
     </AppWrapper>
+    </SupportDrawerProvider>
   );
 };
 

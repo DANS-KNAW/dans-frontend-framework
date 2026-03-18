@@ -1,16 +1,25 @@
 "use client";
 
 import "../dist/style.css";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Drawer from "./drawer";
 import SupportMaterials from "./support-materials";
+import { SupportDrawerContext } from "./useSupportDrawerControl";
+
+export { SupportDrawerProvider, useSupportDrawerControl } from "./useSupportDrawerControl";
 
 export default function SupportDrawer({
   supportMaterialEndpoint,
 }: {
   supportMaterialEndpoint: string;
 }) {
-  const [open, setOpen] = useState(false);
+  const ctx = useContext(SupportDrawerContext);
+  const [localOpen, setLocalOpen] = useState(false);
+
+  // Use context state if wrapped in SupportDrawerProvider, otherwise local state
+  const open = ctx ? ctx.open : localOpen;
+  const setOpen = ctx ? ctx.setOpen : setLocalOpen;
+
   return (
     <>
       <button
@@ -34,7 +43,7 @@ export default function SupportDrawer({
         </svg>
         <span className="tw:text-sm tw:font-medium tw:ml-1">Support</span>
       </button>
-      
+
       <Drawer open={open} setOpen={setOpen}>
         <SupportMaterials supportMaterialEndpoint={supportMaterialEndpoint} />
       </Drawer>

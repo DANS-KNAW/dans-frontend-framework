@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Dialog,
   DialogBackdrop,
@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import { Material } from "./support-materials";
+import { SupportDrawerContext } from "./useSupportDrawerControl";
 
 interface DocumentModelProps {
   material: Material;
@@ -15,6 +16,17 @@ interface DocumentModelProps {
 
 export default function DocumentModel({ material }: DocumentModelProps) {
   const [open, setOpen] = useState(false);
+  const ctx = useContext(SupportDrawerContext);
+
+  useEffect(() => {
+    if (
+      ctx?.targetTopic &&
+      material.topic.toLowerCase().includes(ctx.targetTopic.toLowerCase())
+    ) {
+      setOpen(true);
+      ctx.setTargetTopic(null);
+    }
+  }, [ctx?.targetTopic, material.topic]);
 
   return (
     <div>

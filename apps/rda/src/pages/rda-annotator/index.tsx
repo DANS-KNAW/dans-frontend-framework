@@ -15,6 +15,7 @@ import chromium from "/chromium.webp?url";
 import firefox from "/firefox.webp?url";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import SupportDrawerLink from "../../components/SupportDrawerLink";
 
 const RDAColor600 = "oklch(0.498 0.121 137.23)";
 const RDAColor500 = "oklch(0.584 0.142 137.07)";
@@ -124,24 +125,18 @@ export default function RDAAnnotator() {
               i18n.language
             )}
           </Typography>
-          <Typography
-            sx={{
-              mt: 3,
-              fontSize: "1rem",
-              lineHeight: 2,
-              color: "#4b5563",
-              maxWidth: "48rem",
-              textWrap: "pretty",
+          <SupportDrawerLink
+            text={{
+              en: "Please refer to the ",
+              nl: "Raadpleeg de ",
             }}
-          >
-            {lookupLanguageString(
-              {
-                en: "Please refer to the Annotator Guidelines document in the Support Materials Drawer (clicking 'Support' in the bottom right).",
-                nl: "Zie het document Annotator-richtlijnen in het Support Materials-lade (klik op 'Support' rechtsonder).",
-              },
-              i18n.language
-            )}
-          </Typography>
+            linkText={{
+              en: "Annotator Guidelines",
+              nl: "Annotator-richtlijnen",
+            }}
+            topic="Annotator Support Documentation"
+            suffix="."
+          />
         </Box>
       </Container>
 
