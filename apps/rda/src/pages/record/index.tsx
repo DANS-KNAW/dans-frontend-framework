@@ -622,7 +622,7 @@ export function RdaRecord() {
                   {label}
                 </Typography>
               </Grid>
-              <Grid container direction="row" size={{ xs: 12, sm: 8 }}>
+              <Grid size={{ xs: 12, sm: 8 }} sx={{ display: "flex", flexWrap: "wrap", alignItems: "center" }}>
                 {value.length > 0 ? (
                   value.map((item, index) => (
                     <React.Fragment key={index}>
@@ -631,7 +631,7 @@ export function RdaRecord() {
                         <Typography
                           variant="body2"
                           component="span"
-                          sx={{ color: "#374151", mr: 1 }}
+                          sx={{ color: "#374151", mr: 0.75 }}
                         >
                           ,
                         </Typography>
