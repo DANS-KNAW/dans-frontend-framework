@@ -40,6 +40,8 @@ import { initMatomo } from "./utils/matomo";
 import AccessibilityStatement from "./pages/accessibility-statement";
 import { AppWrapper } from "@dans-framework/wrapper";
 
+const RDAColor600 = "oklch(0.498 0.121 137.23)";
+
 const App = () => {
   const { i18n } = useTranslation();
   const { isEmbed } = useEmbedHandler();
@@ -122,7 +124,63 @@ const App = () => {
       case "deposit":
         return (
           <AuthRoute>
-            <Deposit config={form} page={page} />
+            <SiteTitleWrapper page={page}>
+              <Container maxWidth="lg" sx={{ py: { xs: 8, sm: 12 }, px: 3 }}>
+                <Typography
+                  variant="h1"
+                  sx={{
+                    fontSize: { xs: "3rem", sm: "4.5rem" },
+                    fontWeight: 600,
+                    letterSpacing: "-0.025em",
+                    textDecoration: "underline",
+                    textDecorationColor: RDAColor600,
+                    color: "#111827",
+                    textWrap: "balance",
+                  }}
+                >
+                  RDA Publisher
+                </Typography>
+                <Box sx={{ mt: 3 }}>
+                  <Typography
+                    sx={{
+                      mt: 3,
+                      fontSize: "1rem",
+                      lineHeight: 2,
+                      color: "#4b5563",
+                      maxWidth: "48rem",
+                      textWrap: "pretty",
+                    }}
+                  >
+                    {lookupLanguageString(
+                      {
+                        en: "The Publisher prepares materials for automated deposit to Zenodo (or to other long-term repositories) together with extended RDA-related metadata. It also links resources to the RDA Graph database, which can be navigated using the search and discovery tools under the Discovery tab on this page.",
+                        nl: "De Publisher bereidt materialen voor op geautomatiseerde opslag in Zenodo (of in andere langetermijnrepository's), samen met uitgebreide RDA-gerelateerde metadata. Het koppelt ook bronnen aan de RDA Graph-database, die kan worden genavigeerd met behulp van de zoek- en ontdekkingstools onder het tabblad Discovery op deze pagina.",
+                      },
+                      i18n.language,
+                    )}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      mt: 3,
+                      fontSize: "1rem",
+                      lineHeight: 2,
+                      color: "#4b5563",
+                      maxWidth: "48rem",
+                      textWrap: "pretty",
+                    }}
+                  >
+                    {lookupLanguageString(
+                      {
+                        en: "Please refer to the Publisher Guidelines document in the Support Materials Drawer (clicking 'Support' in the bottom right).",
+                        nl: "Raadpleeg het document Publisher Guidelines in de Support Materials-lade (klik op 'Support' rechtsonder).",
+                      },
+                      i18n.language,
+                    )}
+                  </Typography>
+                </Box>
+              </Container>
+              <Deposit config={form} page={page} />
+            </SiteTitleWrapper>
           </AuthRoute>
         );
       case "rda-annotator":
