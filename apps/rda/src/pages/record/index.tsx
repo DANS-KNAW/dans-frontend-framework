@@ -232,6 +232,27 @@ const AnnotationContributor = ({
   );
 };
 
+const pidLodLabels: Record<string, string> = {
+  HYP: "Hypothesis",
+  ARXIV: "arXiv",
+  URN: "URN",
+};
+
+const getPidLabel = (type: string, url: string) => {
+  if (pidLodLabels[type]) return pidLodLabels[type];
+  if (type === "DOI" || type === "URL") {
+    try {
+      const host = new URL(url).host;
+      if (host.includes("zenodo.org")) return "Zenodo";
+      if (host.includes("doi.org")) return "DOI";
+      return host;
+    } catch {
+      return type || "Identifier";
+    }
+  }
+  return type || "Identifier";
+};
+
 const AccessUrls = ({
   uri,
   uri2,
@@ -252,53 +273,25 @@ const AccessUrls = ({
     }
   };
 
-  // @TODO: This should be moved to the backend as CORS blocks the request.
-  // useEffect(() => {
-  //   const pairs = [
-  //     [uri, backupUri],
-  //     [uri2, backupUri2],
-  //   ];
-
-  //   Promise.all(
-  //     pairs.map(async ([primary, backup]) => {
-  //       try {
-  //         const res = await fetch(primary, { method: "HEAD" });
-  //         if (res.ok) return primary;
-  //       } catch {}
-  //       return backup;
-  //     })
-  //   ).then((resolvedUrls) => {
-  //     setUris(resolvedUrls);
-  //   });
-  // }, [uri, backupUri, uri2, backupUri2]);
+  const urls = [uri, uri2].filter(
+    (u, i, arr) => u && arr.indexOf(u) === i,
+  );
 
   return (
     <Stack direction="row" spacing={1} flexWrap="wrap">
-      {uri && (
+      {urls.map((url) => (
         <Button
+          key={url}
           variant="outlined"
           size="small"
           component="a"
-          href={uri}
+          href={url}
           target="_blank"
           rel="noopener"
         >
-          {labelFor(uri)}
+          {labelFor(url)}
         </Button>
-      )}
-
-      {uri2 && (
-        <Button
-          variant="outlined"
-          size="small"
-          component="a"
-          href={uri2}
-          target="_blank"
-          rel="noopener"
-        >
-          {labelFor(uri2)}
-        </Button>
-      )}
+      ))}
     </Stack>
   );
 };
@@ -455,41 +448,40 @@ export function RdaRecord() {
         : [],
     },
     {
-      label: "DOI",
-      value:
-        record.pid_lod_type === "DOI"
-          ? [
-              <Link
-                href={record.pid_lod}
-                target="_blank"
-                rel="noopener noreferrer"
-                underline="hover"
-                variant="body2"
-                sx={{ color: "#374151", display: "flex", alignItems: "top" }}
+      label: getPidLabel(record.pid_lod_type, record.pid_lod),
+      value: record.pid_lod
+        ? [
+            <Link
+              href={record.pid_lod}
+              target="_blank"
+              rel="noopener noreferrer"
+              underline="hover"
+              variant="body2"
+              sx={{ color: "#374151", display: "flex", alignItems: "top" }}
+            >
+              {record.pid_lod}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                style={{
+                  width: 16,
+                  height: 16,
+                  marginLeft: "0.25rem",
+                  color: "#4F8E31",
+                }}
               >
-                {record.pid_lod}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  style={{
-                    width: 16,
-                    height: 16,
-                    marginLeft: "0.25rem",
-                    color: "#4F8E31",
-                  }}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-                  />
-                </svg>
-              </Link>,
-            ]
-          : [],
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                />
+              </svg>
+            </Link>,
+          ]
+        : [],
     },
     {
       label: lookupLanguageString(
