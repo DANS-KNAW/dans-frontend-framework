@@ -4,8 +4,6 @@ const authProvider = {
   scope: import.meta.env.VITE_OIDC_SCOPE as string,
   redirect_uri: `${window.location.origin}/signin-callback`,
   loadUserInfo: true,
-  automaticSilentRenew: false,  // Disable automatic silent renewal
-  monitorSession: false,         // Disable session monitoring (uses iframe)
 };
 
 export default authProvider;
