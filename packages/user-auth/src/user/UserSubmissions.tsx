@@ -345,8 +345,8 @@ const SubmissionList = ({
         width: 200,
         type: "dateTime",
         valueGetter: (params: any) => {
-          if (!params.value) return null;
-          return moment.utc(params.value, "YYYY-MM-DD HH:mm:ss").toDate();
+          if (!params) return null;
+          return moment.utc(params, "YYYY-MM-DD HH:mm:ss").toDate();
         },
         renderCell: (params) =>
           moment(params.value).local().format("D-M-Y - HH:mm"),
