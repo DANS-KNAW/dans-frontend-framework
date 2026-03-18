@@ -2,6 +2,7 @@ import {
   DateChartFacet,
   PieChartFacet,
   ListFacet,
+  SortDirection,
   type RDTSearchUIProps,
   type EndpointProps,
 } from "@dans-framework/rdt-search-ui";
@@ -31,6 +32,7 @@ export const elasticConfig: EndpointProps[] = [
     resultBodyComponent: Rda2Result,
     onClickResultPath: "record",
     dashboardSearchIconToggle: true,
+    sortOrder: new Map([["dc_date", SortDirection.Desc]]),
     dashboard: [
       <ListFacet
         config={{

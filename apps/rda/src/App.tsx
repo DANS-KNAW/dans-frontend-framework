@@ -169,7 +169,7 @@ const App = () => {
                   path="user-settings"
                   element={
                     <AuthRoute>
-                      <UserSettings target={form.targetCredentials} />
+                      <UserSettings target={form.targetCredentials} depositSlug="publisher" />
                     </AuthRoute>
                   }
                 />

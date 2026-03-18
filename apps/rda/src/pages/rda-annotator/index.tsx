@@ -12,6 +12,7 @@ import {
 import { styled } from "@mui/material/styles";
 import annotatorLogo from "/annotator.jpeg?url";
 import chromium from "/chromium.webp?url";
+import firefox from "/firefox.webp?url";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -21,6 +22,7 @@ const RDAColor500 = "oklch(0.584 0.142 137.07)";
 interface AnnotatorMetadata {
   version: string;
   chrome_zip_url: string;
+  firefox_zip_url: string | null;
   release_date: string;
   found_at: string;
   is_prerelease: boolean;
@@ -83,11 +85,8 @@ export default function RDAAnnotator() {
     })();
   }, [download]);
 
-  const onDownload = () => {
-    const link = document.createElement("a");
-    link.href = download?.chrome_zip_url || "";
-    link.download = download?.name || "";
-    link.click();
+  const onDownload = (url?: string) => {
+    if (url) window.open(url, "_blank");
   };
   return (
     <Box>
@@ -582,8 +581,11 @@ export default function RDAAnnotator() {
                       i18n.language
                     )}
                   </Typography>
-                  <Box sx={{ mt: 5 }}>
-                    <StyledButton onClick={onDownload} fullWidth>
+                  <Box sx={{ mt: 5, display: "flex", flexDirection: "column", gap: 2 }}>
+                    <StyledButton
+                      onClick={() => onDownload(download?.chrome_zip_url)}
+                      fullWidth
+                    >
                       <Box
                         component="img"
                         src={chromium}
@@ -601,6 +603,29 @@ export default function RDAAnnotator() {
                         {download && download.version}
                       </Typography>
                     </StyledButton>
+                    {download?.firefox_zip_url && (
+                      <StyledButton
+                        onClick={() => onDownload(download.firefox_zip_url!)}
+                        fullWidth
+                      >
+                        <Box
+                          component="img"
+                          src={firefox}
+                          alt="Firefox"
+                          sx={{ width: "3rem", height: "3rem" }}
+                        />
+                        <Typography>
+                          {lookupLanguageString(
+                            {
+                              en: "Download for Firefox",
+                              nl: "Download voor Firefox",
+                            },
+                            i18n.language
+                          )}{" "}
+                          {download.version}
+                        </Typography>
+                      </StyledButton>
+                    )}
                   </Box>
                 </Box>
               </Box>
