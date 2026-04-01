@@ -1,4 +1,4 @@
-# Elastic Search Dashboard and search UI
+# Elastic Search Dashboard and search UI - DEPRECATED - please use the Elastic package
 
 Package that exports an interface to be used with an Elastic Search endpoint. Has a search, dashboard and detailed/single result view. 
 
