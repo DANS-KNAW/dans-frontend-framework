@@ -43,9 +43,23 @@ export interface Payload {
 }
 
 export class ESRequest {
-  private postFilters = new Map<string, any>();
+  protected postFilters = new Map<string, any>();
 
   payload: Payload = {};
+
+  // Independent-facet pattern: when building a facet's aggregation filter,
+  // apply every other facet's post-filter but not this one's own. Lets each
+  // facet show the full distribution of *other* filters' effects.
+  protected getPostFilterExcluding(facetId: string): any | undefined {
+    const filters: any[] = [];
+    for (const [id, filter] of this.postFilters.entries()) {
+      if (id === facetId) continue;
+      filters.push(filter);
+    }
+    if (filters.length === 0) return undefined;
+    if (filters.length === 1) return filters[0];
+    return { bool: { must: filters } };
+  }
 
   constructor(
     protected state: SearchState,

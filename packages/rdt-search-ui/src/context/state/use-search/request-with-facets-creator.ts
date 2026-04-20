@@ -25,15 +25,14 @@ export class ESRequestWithFacets extends ESRequest {
 
       const facetFilter = this.state.facetFilters.get(facet.ID);
 
-      // const facetAggs = facet.createAggregation(
-      //   this.payload.post_filter,
-      //   facetFilter?.value,
-      //   facetState,
-      // );
+      // Independent-facet pattern: exclude this facet's own post-filter from
+      // its aggregation's filter. Otherwise the facet's distribution is
+      // collapsed to only the currently-selected values.
+      const otherFiltersOnly = this.getPostFilterExcluding(facet.ID);
 
       const facetAggs = this.createFacetAggregation(
         facet,
-        this.payload.post_filter,
+        otherFiltersOnly,
         facetFilter?.value,
         facetState,
       );
