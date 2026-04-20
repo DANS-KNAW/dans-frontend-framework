@@ -4,7 +4,11 @@ import type { FixedFacetsProps } from "../../props";
 
 const cache = new Map();
 
-// Builds the query for fixed facets
+// Builds the query for fixed facets.
+// Fixed facets are hard constraints (bool.filter: no scoring, AND semantics).
+// The free-text query is a scoring clause (bool.must). Previously these were
+// combined with bool.should + minimum_should_match:1, which let any text match
+// satisfy the clause and silently bypassed fixed-facet restrictions entirely.
 function addFixedFacetsToQuery(query: Payload, fixedFacets?: FixedFacetsProps[]) {
   const filters = fixedFacets?.map(({ type, location, value }) => {
     if (type === "keyword" || type === "client") {
@@ -25,18 +29,18 @@ function addFixedFacetsToQuery(query: Payload, fixedFacets?: FixedFacetsProps[])
     return null; // Ignore unsupported types
   });
 
-  // Filter out nulls, add keyword query if present
-  const validFilters = [...(filters?.filter((filter) => filter !== null) || []), ...(query.query ? [query.query] : [])];
+  const fixedFilters = filters?.filter((filter) => filter !== null) ?? [];
+  const textQuery = query.query;
 
-  // Add the OR filter (should clause) to the existing query
+  if (fixedFilters.length === 0 && !textQuery) return query;
+
+  const bool: { filter?: any[]; must?: any[] } = {};
+  if (fixedFilters.length > 0) bool.filter = fixedFilters;
+  if (textQuery) bool.must = [textQuery];
+
   return {
     ...query,
-    query: {
-      bool: {
-        should: validFilters,
-        minimum_should_match: 1, // Ensure at least one filter matches
-      },
-    },
+    query: { bool },
   };
 }
 
