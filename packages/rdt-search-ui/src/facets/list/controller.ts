@@ -153,8 +153,10 @@ class ListFacetController extends FacetController<
       term: { [this.config.field]: key },
     }));
     if (allFacetFilters.length === 1) return allFacetFilters[0];
+    // Multi-value selection within one facet is a union: match any of the
+    // chosen values (should + minimum_should_match:1), not all of them (must).
     else if (allFacetFilters.length > 1)
-      return { bool: { must: allFacetFilters } };
+      return { bool: { should: allFacetFilters, minimum_should_match: 1 } };
 
     return;
   }
