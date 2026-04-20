@@ -10,19 +10,30 @@ export interface Bucket {
   name?: string;
 }
 
-export function getBuckets(response: any, facetID: string): Bucket[] {
+// The top_hits sub-aggregation lives inside each bucket (see
+// request-with-facets-creator.ts), not at the outer filter-agg level, so
+// `original_value` must be read per-bucket. Previously it read from the
+// outer facetAgg (always undefined) and indexed _source by `facetID` rather
+// than by the configured `secondaryId` field, so every bucket got
+// `secondaryId: undefined`.
+export function getBuckets(
+  response: any,
+  facetID: string,
+  secondaryIdField?: string,
+): Bucket[] {
   const facetAgg = response.aggregations?.[facetID];
   if (!facetAgg || !facetAgg[facetID]?.buckets) return [];
 
-  const buckets = response.aggregations[facetID][facetID]["buckets"];
+  const buckets = facetAgg[facetID].buckets;
 
   return buckets == null ? [] : buckets.map((bucket: any) => {
-    // grab the top_hits _source
-    const secondaryId = Object.values(facetAgg.original_value?.hits?.hits?.[0]?._source[facetID] || {})[0];
+    const source = bucket.original_value?.hits?.hits?.[0]?._source;
+    const secondaryId =
+      secondaryIdField && source ? source[secondaryIdField] : undefined;
 
     return {
       ...bucket,
-      secondaryId,
+      ...(secondaryId !== undefined && { secondaryId }),
     };
   });
 }
@@ -34,7 +45,7 @@ export function ESResponseWithFacetsParser(
   const facetValues: Record<string, any> = {};
 
   for (const facet of controllers.values()) {
-    let buckets = getBuckets(response, facet.ID);
+    let buckets = getBuckets(response, facet.ID, facet.config.secondaryId);
     facetValues[facet.ID] = facet.responseParser(buckets, response);
   }
 
