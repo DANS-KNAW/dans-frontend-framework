@@ -38,7 +38,7 @@ export default function Result({
         }}
         to={`/${resultViewConfig.linkToSlug}/${encodeURIComponent(result[ resultViewConfig.linkToId ].raw)}`}
       >
-        {formattedResult.title}
+        {formattedResult.title || "Untitled record"}
       </Link>
       {formattedResult.tags && 
         <Stack direction="row" spacing={1} mb={1}>
