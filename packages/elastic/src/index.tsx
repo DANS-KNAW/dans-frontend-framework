@@ -54,10 +54,21 @@ export default function ElasticWrapper({
     };
   }, []);
 
-  const combinedFacetsArray: [string, ESUIFacet][] = [
-    ...Object.entries(esUIConfig.config.searchQuery.facets),
-    ...Object.entries(esUIConfig.config.searchQuery.externallyHandledFacets || {}),
-  ].sort(([, a], [, b]) => a.order - b.order);
+  // Nested facets appear in both `facets` (for normal rendering) and
+  // `externallyHandledFacets` (as a registry consumed by the connector).
+  // Dedupe on key so they render once — preferring the entry from `facets`.
+  const facetsMap = new Map<string, ESUIFacet>();
+  for (const [k, v] of Object.entries(esUIConfig.config.searchQuery.facets)) {
+    facetsMap.set(k, v);
+  }
+  for (const [k, v] of Object.entries(
+    esUIConfig.config.searchQuery.externallyHandledFacets || {},
+  )) {
+    if (!facetsMap.has(k)) facetsMap.set(k, v);
+  }
+  const combinedFacetsArray: [string, ESUIFacet][] = Array.from(
+    facetsMap.entries(),
+  ).sort(([, a], [, b]) => a.order - b.order);
     
   return (
     <SearchProvider config={searchProviderConfig}>

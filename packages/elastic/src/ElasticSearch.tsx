@@ -53,6 +53,20 @@ export default function ElasticSearch({
     dispatch(setSearchFilters(filters));
   }, [filters, dispatch]);
 
+  // Category-scoped facets: the current _category.keyword filter (if any)
+  // is passed to each facet's showWhen predicate. Facets without a predicate
+  // always render. The set of aggregations sent to ES is unchanged — we only
+  // hide panels the user shouldn't see for the active category.
+  const categoryFilter = filters?.find(
+    (f: any) => f.field === "_category.keyword",
+  );
+  const rawCategory = categoryFilter?.values?.[0];
+  const activeCategory =
+    typeof rawCategory === "string" ? rawCategory : undefined;
+  const visibleFacets = facets.filter(([, config]) =>
+    config.showWhen ? config.showWhen(activeCategory) : true,
+  );
+
   const handleTabChange = (newPath: string) => {
     // Navigate to new path with current or saved query string
     const queryString = window.location.search;
@@ -80,8 +94,8 @@ export default function ElasticSearch({
         </Grid> 
       }
       <ErrorBoundary>
-        {isDashboard && <ViewSelector type="dashboard" facets={facets} />}
-        {isResults && <ViewSelector type="results" facets={facets} sortOptions={sortOptions} />}
+        {isDashboard && <ViewSelector type="dashboard" facets={visibleFacets} />}
+        {isResults && <ViewSelector type="results" facets={visibleFacets} sortOptions={sortOptions} />}
       </ErrorBoundary>
     </Grid>
   );

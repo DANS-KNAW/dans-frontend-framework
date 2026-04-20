@@ -19,6 +19,15 @@ interface BaseFacet {
   maxSize?: number;
   width?: FacetWidth;
   tooltip?: string;
+  // Optional predicate for category-scoped visibility. Called with the
+  // currently-selected _category value (or undefined if none). When absent,
+  // the facet is always visible.
+  showWhen?: (activeCategory?: string) => boolean;
+  // When set, the facet targets a field inside a nested-mapped object.
+  // Triggers nested-agg wrapping at query time. `field` must be the fully
+  // qualified dotted path, e.g. "dct:publisher.foaf:name.keyword", and
+  // `nestedPath` is the outer object path, e.g. "dct:publisher".
+  nestedPath?: string;
 }
 
 interface HiddenFacet extends BaseFacet {
@@ -90,7 +99,7 @@ interface ESUIResultField {
 
 export interface ESUIFacet {
   order: number;
-  type: "value" | "range" | "geo_point" | "date_histogram";
+  type: "value" | "range" | "geo_point" | "date_histogram" | "nested";
   label: LanguageStrings | string;
   display: FacetType;
   size?: number;
@@ -102,6 +111,12 @@ export interface ESUIFacet {
   orientation?: "horizontal" | "vertical";
   format?: string;
   showEmptyBuckets?: boolean;
+  // Predicate forwarded from SimpleConfig; consumed by ElasticSearch.tsx
+  // to hide facet panels based on the active _category filter.
+  showWhen?: (activeCategory?: string) => boolean;
+  // Non-empty when the facet targets a field inside a nested object.
+  // nestedAggregations.ts consumes this to wrap aggs + filters.
+  nestedPath?: string;
 }
 
 export interface ESUISortOption {
@@ -185,6 +200,8 @@ const { facets, disjunctiveFacets, externallyHandledFacets } =
         show: facet.initialSize,
         tooltip: facet.tooltip,
         ...(facet.width && { width: facet.width }),
+        ...(facet.showWhen && { showWhen: facet.showWhen }),
+        ...(facet.nestedPath && { nestedPath: facet.nestedPath }),
       };
 
       switch (facet.type) {
@@ -237,6 +254,19 @@ const { facets, disjunctiveFacets, externallyHandledFacets } =
             display: facet.type,
             size: facet.maxSize || facet.initialSize,
           };
+          // Nested-mapped fields stay registered in `facets` so search-ui
+          // renders them and handles bucket selection. They also get a
+          // parallel entry in externallyHandledFacets so the connector
+          // knows to rewrite the agg + filter at request time and unwrap
+          // the response shape afterwards.
+          if (facet.nestedPath) {
+            acc.externallyHandledFacets[facet.field] = {
+              ...baseConfig,
+              type: "nested",
+              display: facet.type,
+              size: facet.maxSize || facet.initialSize,
+            };
+          }
           break;
       }
 
