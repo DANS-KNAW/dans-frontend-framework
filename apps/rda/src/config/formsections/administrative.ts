@@ -89,20 +89,16 @@ const section: InitialSectionType = {
         url: "https://zenodo.org/communities/rda",
       },
     },
-    // {
-    //   type: "text",
-    //   name: "maintenancePlan",
-    //   label: {
-    //     en: "Maintenance and Retirement Plan",
-    //     nl: "Onderhouds- en Bewaarplan",
-    //   },
-    //   multiline: true,
-    //   fullWidth: true,
-    //   description: {
-    //     en: "Describe how this deposit will be maintained over time and under what conditions it will be retired.",
-    //     nl: "Beschrijf hoe dit deposit in de loop van de tijd zal worden onderhouden en onder welke voorwaarden het zal worden beëindigd.",
-    //   },
-    // },
+    {
+      type: "text",
+      name: "doi",
+      label:  "Digital Object Identifier",
+      description: {
+        en: "Fill this in if you already have a Digital Object Identifier for this deposit, otherwise leave blank.",
+        nl: "Vul dit in als u al een Digitaal Object Identifier voor dit deposit heeft. Laat anders leeg.",
+      },
+      noIndicator: true,
+    },
   ],
 };
 
