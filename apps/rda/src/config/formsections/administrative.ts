@@ -92,7 +92,10 @@ const section: InitialSectionType = {
     {
       type: "text",
       name: "doi",
-      label:  "Digital Object Identifier",
+      label:  {
+        en: "Exisiting Digital Object Identifier",
+        nl: "Al bestaande Digital Object Identifier",
+      },
       description: {
         en: "Fill this in if you already have a Digital Object Identifier for this deposit, otherwise leave blank.",
         nl: "Vul dit in als u al een Digitaal Object Identifier voor dit deposit heeft. Laat anders leeg.",
