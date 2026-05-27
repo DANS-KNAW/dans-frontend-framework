@@ -73,6 +73,8 @@ type LinkSetDraft = {
   contexts: LinkContextDraft[];
 };
 
+// The 'Exchangeable' types are needed to translate the internal JSON structure to a FAIRiCat Linkset JSON structure
+
 type ExchangeableLink = {
   href: string;
   type?: string;
@@ -95,9 +97,9 @@ const RELATION_CONFIG: {
   id: LinkRelationId;
   label: string;
 }[] = [
-  { key: "serviceDocLinkRelation", id: "service-doc", label: "Service documentation" },
-  { key: "serviceDescLinkRelation", id: "service-desc", label: "Service description" },
-  { key: "serviceMetaLinkRelation", id: "service-meta", label: "Service metadata" },
+  { key: "serviceDocLinkRelation", id: "service-doc", label: "Documentation" },
+  { key: "serviceDescLinkRelation", id: "service-desc", label: "Description" },
+  { key: "serviceMetaLinkRelation", id: "service-meta", label: "Metadata" },
 ];
 
 const createEmptyTarget = (): LinkTargetDraft => ({
@@ -382,17 +384,17 @@ function AttributeEditor() {
     <Stack spacing={3} sx={{ maxWidth: 1000, mx: "auto", px: 2, py: 3 }}>
       <Typography variant="h4">Attribute Editor</Typography>
       <Typography variant="body1">
-        Edit FAIRiCat LinkSet values using input fields. A valid absolute URL is required for each
-        context anchor and target href.
+        Edit Service Attributes as a FAIRiCat LinkSet. A valid absolute URL is required for each
+        service and its added links.
       </Typography>
 
       {draft.contexts.map((context, contextIndex) => (
         <Paper key={`context-${contextIndex}`} sx={{ p: 2 }} variant="outlined">
           <Stack spacing={2}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Typography variant="h6">Context {contextIndex + 1}</Typography>
+              <Typography variant="h6">Service {contextIndex + 1}</Typography>
               <IconButton
-                aria-label={`Remove context ${contextIndex + 1}`}
+                aria-label={`Remove service ${contextIndex + 1}`}
                 color="error"
                 onClick={() => removeContext(contextIndex)}
               >
@@ -402,7 +404,7 @@ function AttributeEditor() {
 
             <TextField
               fullWidth
-              label="Anchor URL"
+              label="URL"
               value={context.anchor}
               onChange={(event) => {
                 const value = event.target.value;
@@ -445,7 +447,7 @@ function AttributeEditor() {
                         <Paper key={`${relation.id}-${targetIndex}`} sx={{ p: 1.5 }} variant="outlined">
                           <Stack spacing={1.5}>
                             <Stack direction="row" justifyContent="space-between" alignItems="center">
-                              <Typography variant="body2">Target {targetIndex + 1}</Typography>
+                              <Typography variant="body2">Link {targetIndex + 1}</Typography>
                               <IconButton
                                 aria-label={`Remove ${relation.id} target ${targetIndex + 1}`}
                                 color="error"
@@ -459,7 +461,7 @@ function AttributeEditor() {
 
                             <TextField
                               fullWidth
-                              label="Href URL"
+                              label="URL"
                               value={target.href}
                               onChange={(event) =>
                                 updateRelationTarget(
@@ -512,7 +514,7 @@ function AttributeEditor() {
                           startIcon={<Add />}
                           onClick={() => addRelationTarget(contextIndex, relationConfig.key)}
                         >
-                          Add target
+                          Add Link
                         </Button>
                       </Box>
                     </Stack>
@@ -526,7 +528,7 @@ function AttributeEditor() {
 
       <Box>
         <Button variant="outlined" startIcon={<Add />} onClick={addContext}>
-          Add context
+          Add service 
         </Button>
       </Box>
 
@@ -550,9 +552,9 @@ function AttributeEditor() {
       <Paper variant="outlined" sx={{ p: 2 }}>
         <Stack spacing={1.5}>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography variant="h6">Linkset JSON preview (Exchangeable)</Typography>
+            <Typography variant="h6">Linkset preview; Exchangeable as FAIRiCat Linkset JSON</Typography>
             <Button variant="outlined" onClick={downloadExchangeableJson}>
-              Download JSON
+              Download Linkset JSON
             </Button>
           </Stack>
           <Box
