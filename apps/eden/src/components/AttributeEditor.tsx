@@ -13,54 +13,41 @@ import {
 import { useMemo, useState } from "react";
 
 /**
- * AttributeEditor 
+ * AttributeEditor
  * It will be implemented as a FAIRiCat Linkset editor for the services
- * 
  */
 
-
 export type LinkTarget = {
-    href: URL; // not sure it is mandatory... but it would be strange to not have it
-    type?: string; // actually we would like mime types here
-    title?: string;
-    // officially there is more, but we skip it for now
-}
-
-// For FAIRiCat, we have three types of link relations: 
-// service-doc, service-desc, and service-meta. 
+  href: URL;
+  type?: string;
+  title?: string;
+};
 
 export type ServiceDocLinkRelation = {
-    id: "service-doc";
-    targets: LinkTarget[];
-}
+  id: "service-doc";
+  targets: LinkTarget[];
+};
 
 export type ServiceDescLinkRelation = {
-    id: "service-desc";
-    targets: LinkTarget[];
-}
+  id: "service-desc";
+  targets: LinkTarget[];
+};
 
 export type ServiceMetaLinkRelation = {
-    id: "service-meta";
-    targets: LinkTarget[];
-}
+  id: "service-meta";
+  targets: LinkTarget[];
+};
 
-// LinkContext as specified for FAIRiCat
-// Note that a general LinkContext (for a general linkset) would have an array of LinkRelation
-// but the id's would have to be unique, so we can only have one of each relation in the context.
 export type LinkContext = {
-    anchor: URL; // the service URL
-    //relations: (ServiceDocLinkRelation | ServiceDescLinkRelation | ServiceMetaLinkRelation)[];
-    // my guess is that is can only be one of each
-    serviceDocLinkRelation?: ServiceDocLinkRelation;
-    serviceDescLinkRelation?: ServiceDescLinkRelation;
-    serviceMetaLinkRelation?: ServiceMetaLinkRelation;
-    // Note that the JSON representation must be an array with these relations in it
-}
+  anchor: URL;
+  serviceDocLinkRelation?: ServiceDocLinkRelation;
+  serviceDescLinkRelation?: ServiceDescLinkRelation;
+  serviceMetaLinkRelation?: ServiceMetaLinkRelation;
+};
 
-// A LinkSet is an array of LinkContexts; for a specific repository in our case?
 export type LinkSet = {
-    contexts: LinkContext[];
-}
+  contexts: LinkContext[];
+};
 
 type LinkRelationId = "service-doc" | "service-desc" | "service-meta";
 
@@ -84,6 +71,23 @@ type LinkContextDraft = {
 
 type LinkSetDraft = {
   contexts: LinkContextDraft[];
+};
+
+type ExchangeableLink = {
+  href: string;
+  type?: string;
+  title?: string;
+};
+
+type ExchangeableLinkContext = {
+  anchor: string;
+  "service-doc"?: ExchangeableLink[];
+  "service-desc"?: ExchangeableLink[];
+  "service-meta"?: ExchangeableLink[];
+};
+
+type ExchangeableLinkSet = {
+  linkset: ExchangeableLinkContext[];
 };
 
 const RELATION_CONFIG: {
@@ -198,12 +202,65 @@ function parseDraftToLinkSet(draft: LinkSetDraft): { parsed?: LinkSet; errors: s
   };
 }
 
+function toExchangeableLinkSet(linkSet: LinkSet): ExchangeableLinkSet {
+  return {
+    linkset: linkSet.contexts.map((context) => ({
+      anchor: context.anchor.toString(),
+      "service-doc": context.serviceDocLinkRelation?.targets.map((target) => ({
+        href: target.href.toString(),
+        type: target.type,
+        title: target.title,
+      })),
+      "service-desc": context.serviceDescLinkRelation?.targets.map((target) => ({
+        href: target.href.toString(),
+        type: target.type,
+        title: target.title,
+      })),
+      "service-meta": context.serviceMetaLinkRelation?.targets.map((target) => ({
+        href: target.href.toString(),
+        type: target.type,
+        title: target.title,
+      })),
+    })),
+  };
+}
+
+function toExchangeableLinkSetDraft(draft: LinkSetDraft): ExchangeableLinkSet {
+  return {
+    linkset: draft.contexts.map((context) => ({
+      anchor: context.anchor,
+      "service-doc": context.serviceDocLinkRelation?.targets.map((target) => ({
+        href: target.href,
+        type: target.type.trim() || undefined,
+        title: target.title.trim() || undefined,
+      })),
+      "service-desc": context.serviceDescLinkRelation?.targets.map((target) => ({
+        href: target.href,
+        type: target.type.trim() || undefined,
+        title: target.title.trim() || undefined,
+      })),
+      "service-meta": context.serviceMetaLinkRelation?.targets.map((target) => ({
+        href: target.href,
+        type: target.type.trim() || undefined,
+        title: target.title.trim() || undefined,
+      })),
+    })),
+  };
+}
+
 function AttributeEditor() {
   const [draft, setDraft] = useState<LinkSetDraft>({
     contexts: [createEmptyContext()],
   });
 
   const conversionResult = useMemo(() => parseDraftToLinkSet(draft), [draft]);
+  const exchangeablePreview = useMemo(
+    () =>
+      conversionResult.parsed
+        ? toExchangeableLinkSet(conversionResult.parsed)
+        : toExchangeableLinkSetDraft(draft),
+    [conversionResult.parsed, draft],
+  );
 
   const updateContext = (contextIndex: number, updater: (context: LinkContextDraft) => LinkContextDraft) => {
     setDraft((previous) => ({
@@ -479,7 +536,7 @@ function AttributeEditor() {
 
       <Paper variant="outlined" sx={{ p: 2 }}>
         <Stack spacing={1.5}>
-          <Typography variant="h6">LinkSet JSON preview</Typography>
+          <Typography variant="h6">Linkset JSON preview (Exchangeable)</Typography>
           <Box
             component="pre"
             sx={{
@@ -491,15 +548,7 @@ function AttributeEditor() {
               fontSize: 13,
             }}
           >
-            {JSON.stringify(
-              conversionResult.parsed
-                ? conversionResult.parsed
-                : {
-                    contexts: draft.contexts,
-                  },
-              null,
-              2,
-            )}
+            {JSON.stringify(exchangeablePreview, null, 2)}
           </Box>
         </Stack>
       </Paper>
