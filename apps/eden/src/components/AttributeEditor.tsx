@@ -1,4 +1,4 @@
-import { Add, Delete } from "@mui/icons-material";
+import { Add, Delete, HelpOutline } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useMemo, useState } from "react";
+import { Tooltip } from "@mui/material";
 
 /**
  * AttributeEditor
@@ -96,10 +97,11 @@ const RELATION_CONFIG: {
   key: keyof Omit<LinkContextDraft, "anchor">;
   id: LinkRelationId;
   label: string;
+  helpText: string;
 }[] = [
-  { key: "serviceDocLinkRelation", id: "service-doc", label: "Documentation" },
-  { key: "serviceDescLinkRelation", id: "service-desc", label: "Description" },
-  { key: "serviceMetaLinkRelation", id: "service-meta", label: "Metadata" },
+  { key: "serviceDocLinkRelation", id: "service-doc", label: "Documentation", helpText: "Provide human-readable information about the service's documentation" },
+  { key: "serviceDescLinkRelation", id: "service-desc", label: "Description", helpText: "Provide a machine-readable description of the service" },
+  { key: "serviceMetaLinkRelation", id: "service-meta", label: "Metadata", helpText: "Provide further information about the service" },
 ];
 
 const createEmptyTarget = (): LinkTargetDraft => ({
@@ -402,19 +404,24 @@ function AttributeEditor() {
               </IconButton>
             </Stack>
 
-            <TextField
-              fullWidth
-              label="URL"
-              value={context.anchor}
-              onChange={(event) => {
-                const value = event.target.value;
-                updateContext(contextIndex, (currentContext) => ({
-                  ...currentContext,
-                  anchor: value,
-                }));
-              }}
-              placeholder="https://service.example.org"
-            />
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <TextField
+                fullWidth
+                label="URL"
+                value={context.anchor}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  updateContext(contextIndex, (currentContext) => ({
+                    ...currentContext,
+                    anchor: value,
+                  }));
+                }}
+                placeholder="https://service.example.org"
+              />
+              <Tooltip title="Enter the service's base URL (e.g., https://example.org)">
+                <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
+              </Tooltip>
+            </Stack>
 
             <Divider />
 
@@ -424,7 +431,12 @@ function AttributeEditor() {
               return (
                 <Stack key={relationConfig.id} spacing={1.5} sx={{ pl: 0.5 }}>
                   <Stack direction="row" alignItems="center" justifyContent="space-between">
-                    <Typography variant="subtitle1">{relationConfig.label}</Typography>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      <Typography variant="subtitle1">{relationConfig.label}</Typography>
+                      <Tooltip title={`${relationConfig.helpText}`}>
+                        <HelpOutline fontSize="small" sx={{ cursor: "pointer" }} />
+                      </Tooltip>
+                    </Stack>
                     <Stack direction="row" alignItems="center" spacing={1}>
                       <Typography variant="body2">Enabled</Typography>
                       <Switch
@@ -459,51 +471,68 @@ function AttributeEditor() {
                               </IconButton>
                             </Stack>
 
-                            <TextField
-                              fullWidth
-                              label="URL"
-                              value={target.href}
-                              onChange={(event) =>
-                                updateRelationTarget(
-                                  contextIndex,
-                                  relationConfig.key,
-                                  targetIndex,
-                                  "href",
-                                  event.target.value,
-                                )
-                              }
-                              placeholder="https://service.example.org/openapi"
-                            />
-                            <TextField
-                              fullWidth
-                              label="Type (optional)"
-                              value={target.type}
-                              onChange={(event) =>
-                                updateRelationTarget(
-                                  contextIndex,
-                                  relationConfig.key,
-                                  targetIndex,
-                                  "type",
-                                  event.target.value,
-                                )
-                              }
-                              placeholder="application/json"
-                            />
-                            <TextField
-                              fullWidth
-                              label="Title (optional)"
-                              value={target.title}
-                              onChange={(event) =>
-                                updateRelationTarget(
-                                  contextIndex,
-                                  relationConfig.key,
-                                  targetIndex,
-                                  "title",
-                                  event.target.value,
-                                )
-                              }
-                              placeholder="OpenAPI document"
-                            />
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                              <TextField
+                                fullWidth
+                                label="URL"
+                                value={target.href}
+                                onChange={(event) =>
+                                  updateRelationTarget(
+                                    contextIndex,
+                                    relationConfig.key,
+                                    targetIndex,
+                                    "href",
+                                    event.target.value,
+                                  )
+                                }
+                                placeholder="https://service.example.org/openapi"
+                              />
+                              <Tooltip title="Provide the link's URL (e.g., https://example.org/openapi)">
+                                <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
+                              </Tooltip>
+                            </Stack>
+
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                              <TextField
+                                fullWidth
+                                label="Type (optional)"
+                                value={target.type}
+                                onChange={(event) =>
+                                  updateRelationTarget(
+                                    contextIndex,
+                                    relationConfig.key,
+                                    targetIndex,
+                                    "type",
+                                    event.target.value,
+                                  )
+                                }
+                                placeholder="application/json"
+                              />
+                              <Tooltip title="Specify the MIME type (e.g., application/json)">
+                                <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
+                              </Tooltip>
+                            </Stack>
+
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                              <TextField
+                                fullWidth
+                                label="Title (optional)"
+                                value={target.title}
+                                onChange={(event) =>
+                                  updateRelationTarget(
+                                    contextIndex,
+                                    relationConfig.key,
+                                    targetIndex,
+                                    "title",
+                                    event.target.value,
+                                  )
+                                }
+                                placeholder="OpenAPI document"
+                              />
+                              <Tooltip title="Provide a descriptive title for the link (e.g., OpenAPI document)">
+                                <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
+                              </Tooltip>
+                            </Stack>
                           </Stack>
                         </Paper>
                       ))}
