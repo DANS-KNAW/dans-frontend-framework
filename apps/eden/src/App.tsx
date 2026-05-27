@@ -15,6 +15,7 @@ import { AppWrapper } from "@dans-framework/wrapper";
 import { ElasticWrapper } from "@dans-framework/elastic";
 import { esConfig, esResultConfig } from "./config/elasticConfig";
 import { SingleRecord } from "@dans-framework/elastic-result";
+import AttributeEditor from "./components/AttributeEditor";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -26,6 +27,8 @@ const App = () => {
         return <ElasticWrapper config={esConfig} dashRoute={page.slug} />
       case "search":
         return <ElasticWrapper config={esConfig} resultRoute={page.slug} />
+      case "attribute-editor":
+        return <AttributeEditor />;
       case "record":
         return <SingleRecord config={esResultConfig} />;
       default:
