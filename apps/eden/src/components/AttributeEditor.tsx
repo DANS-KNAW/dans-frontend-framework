@@ -262,6 +262,19 @@ function AttributeEditor() {
     [conversionResult.parsed, draft],
   );
 
+  const downloadExchangeableJson = () => {
+    const payload = JSON.stringify(exchangeablePreview, null, 2);
+    const blob = new Blob([payload], { type: "application/json" });
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = "exchangeable-linkset.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(objectUrl);
+  };
+
   const updateContext = (contextIndex: number, updater: (context: LinkContextDraft) => LinkContextDraft) => {
     setDraft((previous) => ({
       contexts: previous.contexts.map((context, currentIndex) =>
@@ -536,7 +549,12 @@ function AttributeEditor() {
 
       <Paper variant="outlined" sx={{ p: 2 }}>
         <Stack spacing={1.5}>
-          <Typography variant="h6">Linkset JSON preview (Exchangeable)</Typography>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6">Linkset JSON preview (Exchangeable)</Typography>
+            <Button variant="outlined" onClick={downloadExchangeableJson}>
+              Download JSON
+            </Button>
+          </Stack>
           <Box
             component="pre"
             sx={{
