@@ -24,15 +24,16 @@ export type LinkTarget = {
   title?: string;
 };
 
+export type ServiceDescLinkRelation = {
+  id: "service-desc";
+  targets: LinkTarget[];
+};
+
 export type ServiceDocLinkRelation = {
   id: "service-doc";
   targets: LinkTarget[];
 };
 
-export type ServiceDescLinkRelation = {
-  id: "service-desc";
-  targets: LinkTarget[];
-};
 
 export type ServiceMetaLinkRelation = {
   id: "service-meta";
@@ -41,8 +42,8 @@ export type ServiceMetaLinkRelation = {
 
 export type LinkContext = {
   anchor: URL;
-  serviceDocLinkRelation?: ServiceDocLinkRelation;
   serviceDescLinkRelation?: ServiceDescLinkRelation;
+  serviceDocLinkRelation?: ServiceDocLinkRelation;
   serviceMetaLinkRelation?: ServiceMetaLinkRelation;
 };
 
@@ -50,7 +51,7 @@ export type LinkSet = {
   contexts: LinkContext[];
 };
 
-type LinkRelationId = "service-doc" | "service-desc" | "service-meta";
+type LinkRelationId = "service-desc" | "service-doc" | "service-meta";
 
 type LinkTargetDraft = {
   href: string;
@@ -65,8 +66,8 @@ type LinkRelationDraft = {
 
 type LinkContextDraft = {
   anchor: string;
-  serviceDocLinkRelation?: LinkRelationDraft;
   serviceDescLinkRelation?: LinkRelationDraft;
+  serviceDocLinkRelation?: LinkRelationDraft;
   serviceMetaLinkRelation?: LinkRelationDraft;
 };
 
@@ -84,8 +85,8 @@ type ExchangeableLink = {
 
 type ExchangeableLinkContext = {
   anchor: string;
-  "service-doc"?: ExchangeableLink[];
   "service-desc"?: ExchangeableLink[];
+  "service-doc"?: ExchangeableLink[];
   "service-meta"?: ExchangeableLink[];
 };
 
@@ -99,8 +100,8 @@ const RELATION_CONFIG: {
   label: string;
   helpText: string;
 }[] = [
-  { key: "serviceDocLinkRelation", id: "service-doc", label: "Documentation", helpText: "Provide human-readable information about the service's documentation" },
   { key: "serviceDescLinkRelation", id: "service-desc", label: "Description", helpText: "Provide a machine-readable description of the service" },
+  { key: "serviceDocLinkRelation", id: "service-doc", label: "Documentation", helpText: "Provide human-readable information about the service's documentation" },
   { key: "serviceMetaLinkRelation", id: "service-meta", label: "Metadata", helpText: "Provide further information about the service" },
 ];
 
@@ -163,16 +164,6 @@ function parseDraftToLinkSet(draft: LinkSetDraft): { parsed?: LinkSet; errors: s
 
     return {
       anchor: anchorUrl ?? new URL("https://invalid.local"),
-      serviceDocLinkRelation: context.serviceDocLinkRelation
-        ? {
-            id: "service-doc",
-            targets: parseRelationTargets(
-              contextIndex,
-              "service-doc",
-              context.serviceDocLinkRelation.targets,
-            ),
-          }
-        : undefined,
       serviceDescLinkRelation: context.serviceDescLinkRelation
         ? {
             id: "service-desc",
@@ -180,6 +171,16 @@ function parseDraftToLinkSet(draft: LinkSetDraft): { parsed?: LinkSet; errors: s
               contextIndex,
               "service-desc",
               context.serviceDescLinkRelation.targets,
+            ),
+          }
+        : undefined,
+      serviceDocLinkRelation: context.serviceDocLinkRelation
+        ? {
+            id: "service-doc",
+            targets: parseRelationTargets(
+              contextIndex,
+              "service-doc",
+              context.serviceDocLinkRelation.targets,
             ),
           }
         : undefined,
@@ -210,12 +211,12 @@ function toExchangeableLinkSet(linkSet: LinkSet): ExchangeableLinkSet {
   return {
     linkset: linkSet.contexts.map((context) => ({
       anchor: context.anchor.toString(),
-      "service-doc": context.serviceDocLinkRelation?.targets.map((target) => ({
+      "service-desc": context.serviceDescLinkRelation?.targets.map((target) => ({
         href: target.href.toString(),
         type: target.type,
         title: target.title,
       })),
-      "service-desc": context.serviceDescLinkRelation?.targets.map((target) => ({
+      "service-doc": context.serviceDocLinkRelation?.targets.map((target) => ({
         href: target.href.toString(),
         type: target.type,
         title: target.title,
@@ -233,12 +234,12 @@ function toExchangeableLinkSetDraft(draft: LinkSetDraft): ExchangeableLinkSet {
   return {
     linkset: draft.contexts.map((context) => ({
       anchor: context.anchor,
-      "service-doc": context.serviceDocLinkRelation?.targets.map((target) => ({
+      "service-desc": context.serviceDescLinkRelation?.targets.map((target) => ({
         href: target.href,
         type: target.type.trim() || undefined,
         title: target.title.trim() || undefined,
       })),
-      "service-desc": context.serviceDescLinkRelation?.targets.map((target) => ({
+      "service-doc": context.serviceDocLinkRelation?.targets.map((target) => ({
         href: target.href,
         type: target.type.trim() || undefined,
         title: target.title.trim() || undefined,
