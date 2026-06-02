@@ -385,10 +385,12 @@ function AttributeEditor() {
 
   return (
     <Stack spacing={3} sx={{ maxWidth: 1000, mx: "auto", px: 2, py: 3 }}>
-      <Typography variant="h4">Attribute Editor</Typography>
+      <Typography variant="h4">FAIRiCat LinkSet Editor</Typography>
       <Typography variant="body1">
-        Edit Service Attributes as a FAIRiCat LinkSet. A valid absolute URL is required for each
-        service and its added links.
+        Create or Edit a <a href="https://signposting.org/FAIRiCat" target="_blank" rel="noreferrer">FAIRiCat LinkSet</a> 
+        , which repositories can use to advertise the interoperability affordances they provide. 
+        <br />
+        A valid absolute URL is required for each service and its added links. 
       </Typography>
 
       {draft.contexts.map((context, contextIndex) => (
@@ -419,7 +421,7 @@ function AttributeEditor() {
                 }}
                 placeholder="https://service.example.org"
               />
-              <Tooltip title="Enter the service's base URL (e.g., https://example.org)">
+              <Tooltip title="Enter the service's base URL; the LinkSet 'anchor' (e.g., https://example.org)">
                 <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
               </Tooltip>
             </Stack>
