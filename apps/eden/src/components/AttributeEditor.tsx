@@ -388,7 +388,7 @@ function AttributeEditor() {
       <Typography variant="h4">FAIRiCat LinkSet Editor</Typography>
       <Typography variant="body1">
         Create or Edit a <a href="https://signposting.org/FAIRiCat" target="_blank" rel="noreferrer">FAIRiCat LinkSet</a> 
-        , which repositories can use to advertise the interoperability affordances they provide. 
+        , which repositories can use to advertise the interoperability affordances (services)they provide. 
         <br />
         A valid absolute URL is required for each service and its added links. 
       </Typography>
