@@ -253,7 +253,7 @@ function toExchangeableLinkSetDraft(draft: LinkSetDraft): ExchangeableLinkSet {
   };
 }
 
-function AttributeEditor() {
+function LinkSetEditor() {
   const [draft, setDraft] = useState<LinkSetDraft>({
     contexts: [createEmptyContext()],
   });
@@ -608,4 +608,4 @@ function AttributeEditor() {
   );
 }
 
-export default AttributeEditor;
+export default LinkSetEditor;

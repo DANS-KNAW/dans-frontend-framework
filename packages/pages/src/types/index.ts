@@ -19,7 +19,7 @@ export type Template =
   | "fair-guidance"
   | "create-assessment"
   | "accessibility-statement"
-  | "attribute-editor"
+  | "linkset-editor"
   ;
 
 /**
