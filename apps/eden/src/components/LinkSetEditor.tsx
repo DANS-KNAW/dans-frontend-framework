@@ -1,5 +1,6 @@
 import { Add, Delete, HelpOutline } from "@mui/icons-material";
 import {
+  Alert,
   Box,
   Button,
   Divider,
@@ -10,7 +11,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { ChangeEvent, DragEvent, useMemo, useRef, useState } from "react";
 import { Tooltip } from "@mui/material";
 
 /**
@@ -253,10 +254,117 @@ function toExchangeableLinkSetDraft(draft: LinkSetDraft): ExchangeableLinkSet {
   };
 }
 
+function parseExchangeableLinkSetToDraft(input: unknown): { draft?: LinkSetDraft; error?: string } {
+  if (!input || typeof input !== "object") {
+    return { error: "Invalid JSON structure: expected an object with a linkset array." };
+  }
+
+  const rawLinkset = (input as { linkset?: unknown }).linkset;
+  if (!Array.isArray(rawLinkset)) {
+    return { error: "Invalid JSON structure: linkset must be an array." };
+  }
+
+  const buildTargets = (value: unknown, contextIndex: number, relationId: LinkRelationId) => {
+    if (!Array.isArray(value)) {
+      return {
+        error: `Context ${contextIndex + 1}, ${relationId}: relation must be an array of links.`,
+      };
+    }
+
+    const targets: LinkTargetDraft[] = [];
+
+    for (let targetIndex = 0; targetIndex < value.length; targetIndex += 1) {
+      const rawTarget = value[targetIndex];
+
+      if (!rawTarget || typeof rawTarget !== "object") {
+        return {
+          error: `Context ${contextIndex + 1}, ${relationId} target ${targetIndex + 1}: target must be an object.`,
+        };
+      }
+
+      const href = (rawTarget as { href?: unknown }).href;
+      if (typeof href !== "string") {
+        return {
+          error: `Context ${contextIndex + 1}, ${relationId} target ${targetIndex + 1}: href must be a string.`,
+        };
+      }
+
+      const type = (rawTarget as { type?: unknown }).type;
+      const title = (rawTarget as { title?: unknown }).title;
+
+      targets.push({
+        href,
+        type: typeof type === "string" ? type : "",
+        title: typeof title === "string" ? title : "",
+      });
+    }
+
+    return {
+      targets: targets.length > 0 ? targets : [createEmptyTarget()],
+    };
+  };
+
+  const contexts: LinkContextDraft[] = [];
+
+  for (let contextIndex = 0; contextIndex < rawLinkset.length; contextIndex += 1) {
+    const rawContext = rawLinkset[contextIndex];
+
+    if (!rawContext || typeof rawContext !== "object") {
+      return {
+        error: `Context ${contextIndex + 1}: each context must be an object.`,
+      };
+    }
+
+    const anchor = (rawContext as { anchor?: unknown }).anchor;
+    if (typeof anchor !== "string") {
+      return {
+        error: `Context ${contextIndex + 1}: anchor must be a string.`,
+      };
+    }
+
+    const contextDraft: LinkContextDraft = { anchor };
+    const relationEntries: ["service-desc" | "service-doc" | "service-meta", keyof Omit<LinkContextDraft, "anchor">, LinkRelationId][] = [
+      ["service-desc", "serviceDescLinkRelation", "service-desc"],
+      ["service-doc", "serviceDocLinkRelation", "service-doc"],
+      ["service-meta", "serviceMetaLinkRelation", "service-meta"],
+    ];
+
+    for (const [exchangeableKey, draftKey, relationId] of relationEntries) {
+      if (Object.prototype.hasOwnProperty.call(rawContext, exchangeableKey)) {
+        const parsedTargets = buildTargets(
+          (rawContext as Record<string, unknown>)[exchangeableKey],
+          contextIndex,
+          relationId,
+        );
+
+        if (parsedTargets.error) {
+          return { error: parsedTargets.error };
+        }
+
+        contextDraft[draftKey] = {
+          id: relationId,
+          targets: parsedTargets.targets ?? [createEmptyTarget()],
+        };
+      }
+    }
+
+    contexts.push(contextDraft);
+  }
+
+  return {
+    draft: {
+      contexts: contexts.length > 0 ? contexts : [createEmptyContext()],
+    },
+  };
+}
+
 function LinkSetEditor() {
   const [draft, setDraft] = useState<LinkSetDraft>({
     contexts: [createEmptyContext()],
   });
+  const [uploadSuccessMessage, setUploadSuccessMessage] = useState<string>("");
+  const [uploadError, setUploadError] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const conversionResult = useMemo(() => parseDraftToLinkSet(draft), [draft]);
   const exchangeablePreview = useMemo(
@@ -278,6 +386,52 @@ function LinkSetEditor() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(objectUrl);
+  };
+
+  const handleUploadFile = async (file: File) => {
+    setUploadError("");
+    setUploadSuccessMessage("");
+
+    if (!file.name.toLowerCase().endsWith(".json")) {
+      setUploadError("Please upload a .json file.");
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      const parsedJson: unknown = JSON.parse(text);
+      const parsedDraft = parseExchangeableLinkSetToDraft(parsedJson);
+
+      if (parsedDraft.error || !parsedDraft.draft) {
+        setUploadError(parsedDraft.error ?? "Unable to parse the uploaded JSON file.");
+        return;
+      }
+
+      setDraft(parsedDraft.draft);
+      setUploadSuccessMessage(`Uploaded: ${file.name}`);
+    } catch {
+      setUploadError("Unable to read the file. Ensure it is valid JSON.");
+    }
+  };
+
+  const onFileInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    await handleUploadFile(file);
+    event.target.value = "";
+  };
+
+  const onDropUpload = async (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    await handleUploadFile(file);
   };
 
   const updateContext = (contextIndex: number, updater: (context: LinkContextDraft) => LinkContextDraft) => {
@@ -392,6 +546,37 @@ function LinkSetEditor() {
         <br />
         A valid absolute URL is required for each service and its added links. 
       </Typography>
+
+      <Paper variant="outlined" sx={{ p: 2 }}>
+        <Stack spacing={1.5}>
+          <Typography variant="h6">Upload FAIRiCat LinkSet JSON</Typography>
+          <Box
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={onDropUpload}
+            sx={{
+              border: "2px dashed",
+              borderColor: "divider",
+              borderRadius: 1,
+              p: 3,
+              textAlign: "center",
+              cursor: "pointer",
+              backgroundColor: "grey.50",
+            }}
+          >
+            <Typography variant="body1">Drag and drop a .json file here, or click to browse.</Typography>
+          </Box>
+          <input
+            ref={fileInputRef}
+            type="file"
+            hidden
+            accept=".json,application/json"
+            onChange={onFileInputChange}
+          />
+          {uploadSuccessMessage && <Alert severity="success">{uploadSuccessMessage}</Alert>}
+          {uploadError && <Alert severity="error">{uploadError}</Alert>}
+        </Stack>
+      </Paper>
 
       {draft.contexts.map((context, contextIndex) => (
         <Paper key={`context-${contextIndex}`} sx={{ p: 2 }} variant="outlined">
