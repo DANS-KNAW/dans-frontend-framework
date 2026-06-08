@@ -181,7 +181,7 @@ function LinkSetEditor() {
     setImportedDraft(createMockFetchedDraft(value));
     setImportedFilename(resolvedFilename);
     setImportSource("url");
-    setUrlSuccessMessage(`Fetched: ${resolvedFilename}`);
+    setUrlSuccessMessage(`Demo loaded (fake data): ${resolvedFilename}`);
     setFetchStatus("success");
   };
 
@@ -362,7 +362,7 @@ function LinkSetEditor() {
         <>
           <Typography variant="h4">Edit or create your LinkSet</Typography>
           <Typography variant="body1">
-            Choose how to cedit or create your FAIRiCat LinkSet.
+            Choose how to edit or create your FAIRiCat LinkSet.
             <br/>
             With a {" "}
             <a href="https://signposting.org/FAIRiCat" target="_blank" rel="noreferrer">
@@ -439,6 +439,9 @@ function LinkSetEditor() {
                 />
               ) : (
                 <Stack spacing={2}>
+                  <Alert severity="info">
+                    Demo mode: URL import currently uses fake data and does not fetch remote JSON yet.
+                  </Alert>
                   <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
                     <TextField
                       fullWidth
@@ -477,7 +480,7 @@ function LinkSetEditor() {
 
               {importedFilename && importSource && (
                 <Alert severity="success">
-                  Ready to import: {importedFilename} ({importSource === "upload" ? "upload" : "URL"})
+                  Ready to import: {importedFilename} ({importSource === "upload" ? "upload" : "URL demo"})
                 </Alert>
               )}
 
@@ -552,8 +555,13 @@ function LinkSetEditor() {
               Start over
             </Button>
             <Stack direction="row" spacing={1}>
-              <Button variant="outlined">Save draft</Button>
-              <Button variant="contained">Store</Button>
+              {/* Disabled until persistence endpoints are implemented. */}
+              <Button variant="outlined" disabled>
+                Save draft
+              </Button>
+              <Button variant="contained" disabled>
+                Store
+              </Button>
             </Stack>
           </Stack>
         </>

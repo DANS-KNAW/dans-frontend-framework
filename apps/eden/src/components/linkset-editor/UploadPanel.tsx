@@ -9,6 +9,7 @@ type UploadPanelProps = {
 
 function UploadPanel({ onFileSelected, uploadSuccessMessage, uploadError }: UploadPanelProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const helperTextId = "upload-dropzone-helper-text";
 
   const onFileInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -30,12 +31,24 @@ function UploadPanel({ onFileSelected, uploadSuccessMessage, uploadError }: Uplo
     await onFileSelected(file);
   };
 
+  const onDropzoneKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      fileInputRef.current?.click();
+    }
+  };
+
   return (
     <Paper variant="outlined" sx={{ p: 2 }}>
       <Stack spacing={1.5}>
         <Typography variant="h6">Upload a FAIRiCat LinkSet JSON file</Typography>
         <Box
+          role="button"
+          tabIndex={0}
+          aria-label="Upload FAIRiCat LinkSet JSON file"
+          aria-describedby={helperTextId}
           onClick={() => fileInputRef.current?.click()}
+          onKeyDown={onDropzoneKeyDown}
           onDragOver={(event) => event.preventDefault()}
           onDrop={onDropUpload}
           sx={{
@@ -46,9 +59,16 @@ function UploadPanel({ onFileSelected, uploadSuccessMessage, uploadError }: Uplo
             textAlign: "center",
             cursor: "pointer",
             backgroundColor: "grey.50",
+            outline: "none",
+            "&:focus-visible": {
+              borderColor: "primary.main",
+              boxShadow: (theme) => `0 0 0 3px ${theme.palette.primary.main}33`,
+            },
           }}
         >
-          <Typography variant="body1">Drag and drop a .json file here, or click to browse.</Typography>
+          <Typography id={helperTextId} variant="body1">
+            Drag and drop a .json file here, or press Enter/Space to browse.
+          </Typography>
         </Box>
         <input
           ref={fileInputRef}
