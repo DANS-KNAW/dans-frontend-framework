@@ -13,8 +13,8 @@ function ValidationPanel({ errors }: ValidationPanelProps) {
           <Typography color="success.main">LinkSet draft is valid.</Typography>
         ) : (
           <Stack spacing={0.5}>
-            {errors.map((error) => (
-              <Typography key={error} color="error">
+            {errors.map((error, index) => (
+              <Typography key={`${index}-${error}`} color="error">
                 {error}
               </Typography>
             ))}

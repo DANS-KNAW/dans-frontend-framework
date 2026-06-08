@@ -35,7 +35,7 @@ export function parseDraftToLinkSet(draft: LinkSetDraft): { parsed?: LinkSet; er
       const hrefUrl = parseUrl(target.href);
       if (!hrefUrl) {
         errors.push(
-          `Context ${contextIndex + 1}, ${relationId} target ${targetIndex + 1}: href must be a valid absolute URL`,
+          `Link ${contextIndex + 1}, ${relationId} target ${targetIndex + 1}: href must be a valid absolute URL`,
         );
       }
 
@@ -50,7 +50,7 @@ export function parseDraftToLinkSet(draft: LinkSetDraft): { parsed?: LinkSet; er
   const contexts: LinkContext[] = draft.contexts.map((context, contextIndex) => {
     const anchorUrl = parseUrl(context.anchor);
     if (!anchorUrl) {
-      errors.push(`Context ${contextIndex + 1}: anchor must be a valid absolute URL`);
+      errors.push(`Link ${contextIndex + 1}: anchor must be a valid absolute URL`);
     }
 
     return {
