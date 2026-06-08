@@ -103,6 +103,7 @@ function LinkSetEditor() {
   const [urlErrorMessage, setUrlErrorMessage] = useState<string>("");
 
   const [cameFromImport, setCameFromImport] = useState<boolean>(false);
+  const canApplyImport = Boolean(importedDraft && importedFilename && importSource);
 
   const conversionResult = useMemo(() => parseDraftToLinkSet(draft), [draft]);
   const exchangeablePreview = useMemo(
@@ -130,6 +131,9 @@ function LinkSetEditor() {
     setUploadError("");
     setUploadSuccessMessage("");
     setImportStepError("");
+    setImportedDraft(null);
+    setImportedFilename("");
+    setImportSource(null);
 
     if (!file.name.toLowerCase().endsWith(".json")) {
       setUploadError("Please upload a .json file.");
@@ -160,6 +164,9 @@ function LinkSetEditor() {
     setUrlErrorMessage("");
     setUrlSuccessMessage("");
     setImportStepError("");
+    setImportedDraft(null);
+    setImportedFilename("");
+    setImportSource(null);
 
     const value = urlValue.trim();
     if (!value) {
@@ -492,7 +499,7 @@ function LinkSetEditor() {
             <Button onClick={resetFlow} startIcon={<ArrowBackOutlined />}>
               Cancel
             </Button>
-            <Button variant="contained" onClick={applyImportAndEdit}>
+            <Button variant="contained" onClick={applyImportAndEdit} disabled={!canApplyImport}>
               Import & edit
             </Button>
           </Stack>
