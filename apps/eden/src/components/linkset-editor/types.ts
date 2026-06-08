@@ -1,3 +1,7 @@
+/**
+ * The basic types for the  FAIRiCat LinkSet, using model and naming as specified in FAIRiCat 
+ */
+
 export type LinkTarget = {
   href: URL;
   type?: string;
@@ -32,6 +36,11 @@ export type LinkSet = {
 
 export type LinkRelationId = "service-desc" | "service-doc" | "service-meta";
 
+/** 
+ * The Draft versions, which are less strict 
+ * and are designed to be used for user input in the editor.
+ */
+
 export type LinkTargetDraft = {
   href: string;
   type: string;
@@ -56,6 +65,11 @@ export type LinkSetDraft = {
 
 export type LinkContextRelationKey = keyof Omit<LinkContextDraft, "anchor">;
 
+/**
+ * Exchangeable versions are used for import/export and are designed to be easily serializable to/from JSON. 
+ * The FAIRiCat JSON has a slightly different structure than what we get when serializing the basic model.  
+ */
+
 export type ExchangeableLink = {
   href: string;
   type?: string;
@@ -72,6 +86,10 @@ export type ExchangeableLinkContext = {
 export type ExchangeableLinkSet = {
   linkset: ExchangeableLinkContext[];
 };
+
+/**
+ * Helper types and constants for the editor UI 
+ */
 
 export type RelationConfig = {
   key: LinkContextRelationKey;
