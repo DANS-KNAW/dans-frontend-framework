@@ -33,7 +33,7 @@ function UploadPanel({ onFileSelected, uploadSuccessMessage, uploadError }: Uplo
   return (
     <Paper variant="outlined" sx={{ p: 2 }}>
       <Stack spacing={1.5}>
-        <Typography variant="h6">Upload FAIRiCat LinkSet JSON</Typography>
+        <Typography variant="h6">Upload a FAIRiCat LinkSet JSON file</Typography>
         <Box
           onClick={() => fileInputRef.current?.click()}
           onDragOver={(event) => event.preventDefault()}
