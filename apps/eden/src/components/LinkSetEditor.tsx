@@ -59,29 +59,6 @@ type Step = "choose" | "import" | "edit";
 type ImportTab = "upload" | "url";
 type FetchStatus = "idle" | "loading" | "success" | "error";
 
-const createMockFetchedDraft = (urlValue: string): LinkSetDraft => {
-  const normalizedUrl = urlValue.trim();
-  const anchor = normalizedUrl.length > 0 ? normalizedUrl : "https://service.example.org";
-
-  return {
-    contexts: [
-      {
-        anchor,
-        serviceDocLinkRelation: {
-          id: "service-doc",
-          targets: [
-            {
-              href: `${anchor.replace(/\/$/, "")}/docs`,
-              type: "text/html",
-              title: "Service documentation",
-            },
-          ],
-        },
-      },
-    ],
-  };
-};
-
 function LinkSetEditor() {
   const [currentStep, setCurrentStep] = useState<Step>("choose");
   const [activeTab, setActiveTab] = useState<ImportTab>("upload");
@@ -175,21 +152,45 @@ function LinkSetEditor() {
       return;
     }
 
-    await new Promise((resolve) => {
-      window.setTimeout(resolve, 1000);
-    });
+    try {
+      // application/linkset+json is the official one 
+      // but allow application/json as well for flexibility
+      const response = await fetch(value, {
+        headers: {
+          Accept: "application/linkset+json, application/json",
+        },
+      });
 
-    const safeName = value
-      .replace(/^https?:\/\//, "")
-      .replace(/[^a-zA-Z0-9.-]/g, "-")
-      .slice(0, 48);
-    const resolvedFilename = `${safeName || "fairicat-linkset"}.json`;
+      if (!response.ok) {
+        setFetchStatus("error");
+        setUrlErrorMessage(`Failed to fetch URL (${response.status} ${response.statusText}).`);
+        return;
+      }
 
-    setImportedDraft(createMockFetchedDraft(value));
-    setImportedFilename(resolvedFilename);
-    setImportSource("url");
-    setUrlSuccessMessage(`Demo loaded (fake data): ${resolvedFilename}`);
-    setFetchStatus("success");
+      const payload = (await response.json()) as unknown;
+      const parsedDraft = parseExchangeableLinkSetToDraft(payload);
+
+      if (parsedDraft.error || !parsedDraft.draft) {
+        setFetchStatus("error");
+        setUrlErrorMessage(parsedDraft.error ?? "Fetched JSON could not be parsed as a LinkSet.");
+        return;
+      }
+
+      const safeName = value
+        .replace(/^https?:\/\//, "")
+        .replace(/[^a-zA-Z0-9.-]/g, "-")
+        .slice(0, 48);
+      const resolvedFilename = `${safeName || "fairicat-linkset"}.json`;
+
+      setImportedDraft(parsedDraft.draft);
+      setImportedFilename(resolvedFilename);
+      setImportSource("url");
+      setUrlSuccessMessage(`Loaded from URL: ${resolvedFilename}`);
+      setFetchStatus("success");
+    } catch {
+      setFetchStatus("error");
+      setUrlErrorMessage("Unable to fetch URL or parse JSON. Check CORS, network access, and JSON format.");
+    }
   };
 
   const startFromScratch = () => {
@@ -446,9 +447,6 @@ function LinkSetEditor() {
                 />
               ) : (
                 <Stack spacing={2}>
-                  <Alert severity="info">
-                    Demo mode: URL import currently uses fake data and does not fetch remote JSON yet.
-                  </Alert>
                   <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
                     <TextField
                       fullWidth
@@ -487,7 +485,7 @@ function LinkSetEditor() {
 
               {importedFilename && importSource && (
                 <Alert severity="success">
-                  Ready to import: {importedFilename} ({importSource === "upload" ? "upload" : "URL demo"})
+                  Ready to import: {importedFilename} ({importSource === "upload" ? "upload" : "URL"})
                 </Alert>
               )}
 
