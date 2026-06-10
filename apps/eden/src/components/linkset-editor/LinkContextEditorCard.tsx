@@ -18,6 +18,7 @@ import {
   LinkTargetDraft,
   RELATION_CONFIG,
 } from "./types";
+import MediaTypeInput from "./MediaTypeInput";
 import UrlInput from "./UrlInput";
 
 type LinkContextEditorCardProps = {
@@ -162,21 +163,21 @@ function LinkContextEditorCard({
                         </Stack>
 
                         <Stack direction="row" alignItems="center" spacing={1}>
-                          <TextField
-                            fullWidth
-                            label="Type (optional)"
-                            value={target.type}
-                            onChange={(event) =>
-                              onUpdateRelationTarget(
-                                contextIndex,
-                                relationConfig.key,
-                                targetIndex,
-                                "type",
-                                event.target.value,
-                              )
-                            }
-                            placeholder="application/json"
-                          />
+                          <Box sx={{ flex: 1 }}>
+                            <MediaTypeInput
+                              label="Type (optional)"
+                              value={target.type}
+                              onChange={(value) =>
+                                onUpdateRelationTarget(
+                                  contextIndex,
+                                  relationConfig.key,
+                                  targetIndex,
+                                  "type",
+                                  value,
+                                )
+                              }
+                            />
+                          </Box>
                           <Tooltip title="Specify the MIME type (e.g., application/json)">
                             <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
                           </Tooltip>
