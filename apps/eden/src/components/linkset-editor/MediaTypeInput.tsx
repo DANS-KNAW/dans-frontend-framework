@@ -72,28 +72,19 @@ export interface MediaTypeInputProps {
 
 const MAJORS: MajorType[] = [
   "application",
-  "audio",
-  "chemical",
-  "example",
-  "font",
+  "text",
   "image",
+  "audio",
+  "video",
+  "font",
   "message",
   "model",
   "multipart",
-  "text",
-  "video",
+  "chemical",
+  "example",
 ];
 
 const KNOWN_SUBS: Record<MajorType, SubEntry[]> = {
-  image: [
-    { value: "png", label: "PNG image" },
-    { value: "jpeg", label: "JPEG image" },
-    { value: "gif", label: "GIF" },
-    { value: "webp", label: "WebP" },
-    { value: "svg+xml", label: "SVG vector" },
-    { value: "tiff", label: "TIFF" },
-    { value: "avif", label: "AVIF" },
-  ],
   application: [
     { value: "json", label: "JSON data" },
     { value: "xml", label: "XML" },
@@ -109,6 +100,25 @@ const KNOWN_SUBS: Record<MajorType, SubEntry[]> = {
       label: "Excel (xlsx)",
     },
     { value: "vnd.api+json", label: "JSON:API" },
+    //application/gzip — gzip-compressed data
+    //application/x-tar — TAR archive
+    //application/trig — TriG, Turtle with named graphs
+    //application/n3 — N3 alternative registration
+    //application/n-triples — N-Triples, line-based, good for streaming
+    //application/n-quads — N-Quads, N-Triples with a graph name
+    //application/sparql-query — SPARQL query document
+    //application/sparql-update — SPARQL Update document
+    //application/sparql-results+json — SPARQL results as JSON
+    //application/sparql-results+xml — SPARQL results as XML
+    //application/rss+xml — RSS feed
+    //application/atom+xml — Atom feed
+    //application/xhtml+xml — XHTML
+    //application/owl+xml — OWL ontology in XML
+    //application/skos+rdf — SKOS vocabulary
+    //application/schema+json — JSON Schema
+    //application/shacl+json — SHACL shapes in JSON-LD
+    //application/geo+json — GeoJSON
+    //application/gml+xml — Geography Markup Language
   ],
   text: [
     { value: "plain", label: "Plain text" },
@@ -119,6 +129,17 @@ const KNOWN_SUBS: Record<MajorType, SubEntry[]> = {
     { value: "markdown", label: "Markdown" },
     { value: "xml", label: "XML text" },
     { value: "tab-separated-values", label: "TSV" },
+    //text/turtle — Turtle, most human-readable RDF
+    //text/n3 — Notation3, Turtle superset with rules
+  ],
+  image: [
+    { value: "png", label: "PNG image" },
+    { value: "jpeg", label: "JPEG image" },
+    { value: "gif", label: "GIF" },
+    { value: "webp", label: "WebP" },
+    { value: "svg+xml", label: "SVG vector" },
+    { value: "tiff", label: "TIFF" },
+    { value: "avif", label: "AVIF" },
   ],
   audio: [
     { value: "mpeg", label: "MP3" },
