@@ -21,13 +21,13 @@ import {
   Stack,
   Tab,
   Tabs,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useMemo, useState } from "react";
 import LinkContextEditorCard from "./linkset-editor/LinkContextEditorCard";
 import PreviewPanel from "./linkset-editor/PreviewPanel";
 import UploadPanel from "./linkset-editor/UploadPanel";
+import UrlInput from "./linkset-editor/UrlInput";
 import ValidationPanel from "./linkset-editor/ValidationPanel";
 import {
   createEmptyContext,
@@ -448,24 +448,30 @@ function LinkSetEditor() {
               ) : (
                 <Stack spacing={2}>
                   <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-                    <TextField
-                      fullWidth
-                      label="LinkSet URL"
-                      placeholder="https://example.org/linkset.json"
-                      value={urlValue}
-                      onChange={(event) => {
-                        setUrlValue(event.target.value);
-                        if (fetchStatus !== "idle") {
-                          setFetchStatus("idle");
-                        }
-                        setUrlErrorMessage("");
-                        setUrlSuccessMessage("");
-                      }}
-                    />
+                    <Box sx={{ flex: 1 }}>
+                      <UrlInput
+                        value={urlValue}
+                        onChange={(value) => {
+                          setUrlValue(value);
+                          if (fetchStatus !== "idle") {
+                            setFetchStatus("idle");
+                          }
+                          setUrlErrorMessage("");
+                          setUrlSuccessMessage("");
+                        }}
+                        onConfirmed={() => {
+                          // Reachability feedback is already shown inside UrlInput.
+                        }}
+                        enableUrlCheck={false}
+                      />
+                    </Box>
                     <Button
-                      variant="outlined"
+                      variant="contained"
+                      color="primary"
+                      startIcon={<LinkOutlined />}
                       onClick={handleFetchFromUrl}
                       disabled={fetchStatus === "loading"}
+                      sx={{ fontWeight: 600 }}
                     >
                       {fetchStatus === "loading" ? (
                         <Stack direction="row" spacing={1} alignItems="center">

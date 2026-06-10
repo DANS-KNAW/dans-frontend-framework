@@ -18,6 +18,7 @@ import {
   LinkTargetDraft,
   RELATION_CONFIG,
 } from "./types";
+import UrlInput from "./UrlInput";
 
 type LinkContextEditorCardProps = {
   context: LinkContextDraft;
@@ -55,6 +56,14 @@ function LinkContextEditorCard({
   onAddRelationTarget,
   onRemoveRelationTarget,
 }: LinkContextEditorCardProps) {
+  const handleAnchorConfirmed = () => {
+    // Confirmation metadata is currently handled inside UrlInput.
+  };
+
+  const handleTargetConfirmed = () => {
+    // Confirmation metadata is currently handled inside UrlInput.
+  };
+
   return (
     <Paper sx={{ p: 2 }} variant="outlined">
       <Stack spacing={2}>
@@ -70,13 +79,14 @@ function LinkContextEditorCard({
         </Stack>
 
         <Stack direction="row" alignItems="center" spacing={1}>
-          <TextField
-            fullWidth
-            label="URL"
-            value={context.anchor}
-            onChange={(event) => onUpdateAnchor(contextIndex, event.target.value)}
-            placeholder="https://service.example.org"
-          />
+          <Box sx={{ flex: 1 }}>
+            <UrlInput
+              value={context.anchor}
+              onChange={(value) => onUpdateAnchor(contextIndex, value)}
+              onConfirmed={handleAnchorConfirmed}
+              enableUrlCheck={false}
+            />
+          </Box>
           <Tooltip title="Enter the service's base URL; the LinkSet 'anchor' (e.g., https://example.org)">
             <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
           </Tooltip>
@@ -131,21 +141,21 @@ function LinkContextEditorCard({
                         </Stack>
 
                         <Stack direction="row" alignItems="center" spacing={1}>
-                          <TextField
-                            fullWidth
-                            label="URL"
-                            value={target.href}
-                            onChange={(event) =>
-                              onUpdateRelationTarget(
-                                contextIndex,
-                                relationConfig.key,
-                                targetIndex,
-                                "href",
-                                event.target.value,
-                              )
-                            }
-                            placeholder="https://service.example.org/openapi"
-                          />
+                          <Box sx={{ flex: 1 }}>
+                            <UrlInput
+                              value={target.href}
+                              onChange={(value) =>
+                                onUpdateRelationTarget(
+                                  contextIndex,
+                                  relationConfig.key,
+                                  targetIndex,
+                                  "href",
+                                  value,
+                                )
+                              }
+                              onConfirmed={handleTargetConfirmed}
+                            />
+                          </Box>
                           <Tooltip title="Provide the link's URL (e.g., https://example.org/openapi)">
                             <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
                           </Tooltip>
