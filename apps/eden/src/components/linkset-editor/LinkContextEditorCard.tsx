@@ -8,9 +8,9 @@ import {
   Stack,
   Switch,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import { Tooltip } from "@mui/material";
 import {
   LinkContextDraft,
   LinkContextRelationKey,
@@ -78,7 +78,9 @@ function LinkContextEditorCard({
             placeholder="https://service.example.org"
           />
           <Tooltip title="Enter the service's base URL; the LinkSet 'anchor' (e.g., https://example.org)">
-            <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
+             <IconButton size="small" aria-label="Anchor URL help" sx={{ p: 0.5, ml: 0.5 }}>
+               <HelpOutline fontSize="small" />
+             </IconButton>
           </Tooltip>
         </Stack>
 
@@ -93,7 +95,9 @@ function LinkContextEditorCard({
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <Typography variant="subtitle1">{relationConfig.label}</Typography>
                   <Tooltip title={relationConfig.helpText}>
-                    <HelpOutline fontSize="small" sx={{ cursor: "pointer" }} />
+                    <IconButton size="small" aria-label={`Help with ${relationConfig.label}`} sx={{ p: 0.5 }}>
+                      <HelpOutline fontSize="small" />
+                    </IconButton>
                   </Tooltip>
                 </Stack>
                 <Stack direction="row" alignItems="center" spacing={1}>
@@ -147,7 +151,9 @@ function LinkContextEditorCard({
                             placeholder="https://service.example.org/openapi"
                           />
                           <Tooltip title="Provide the link's URL (e.g., https://example.org/openapi)">
-                            <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
+                            <IconButton size="small" aria-label="Help with link URL" sx={{ p: 0.5, ml: 0 }}>
+                              <HelpOutline fontSize="small" />
+                            </IconButton>
                           </Tooltip>
                         </Stack>
 
@@ -168,7 +174,9 @@ function LinkContextEditorCard({
                             placeholder="application/json"
                           />
                           <Tooltip title="Specify the MIME type (e.g., application/json)">
-                            <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
+                            <IconButton size="small" aria-label="Help with MIME type" sx={{ p: 0.5, ml: 0 }}>
+                              <HelpOutline fontSize="small" />
+                            </IconButton>
                           </Tooltip>
                         </Stack>
 
@@ -189,7 +197,9 @@ function LinkContextEditorCard({
                             placeholder="OpenAPI document"
                           />
                           <Tooltip title="Provide a descriptive title for the link (e.g., OpenAPI document)">
-                            <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
+                            <IconButton size="small" aria-label="Help with link title" sx={{ p: 0.5, ml: 0 }}>
+                              <HelpOutline fontSize="small" />
+                            </IconButton>
                           </Tooltip>
                         </Stack>
                       </Stack>

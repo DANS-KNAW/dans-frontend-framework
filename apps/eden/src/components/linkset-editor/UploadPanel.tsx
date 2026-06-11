@@ -1,5 +1,5 @@
 import { Alert, Box, Paper, Stack, Typography } from "@mui/material";
-import { ChangeEvent, DragEvent, useRef } from "react";
+import { ChangeEvent, DragEvent, KeyboardEvent, useRef } from "react";
 
 type UploadPanelProps = {
   onFileSelected: (file: File) => Promise<void> | void;
@@ -31,7 +31,7 @@ function UploadPanel({ onFileSelected, uploadSuccessMessage, uploadError }: Uplo
     await onFileSelected(file);
   };
 
-  const onDropzoneKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+  const onDropzoneKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       fileInputRef.current?.click();

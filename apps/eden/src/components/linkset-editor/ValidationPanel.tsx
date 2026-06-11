@@ -10,11 +10,11 @@ function ValidationPanel({ errors }: ValidationPanelProps) {
       <Stack spacing={1.5}>
         <Typography variant="h6">Validation</Typography>
         {errors.length === 0 ? (
-          <Typography color="success.main">LinkSet draft is valid.</Typography>
+          <Typography sx={{ color: 'success.main' }}>LinkSet draft is valid.</Typography>
         ) : (
           <Stack spacing={0.5}>
             {errors.map((error, index) => (
-              <Typography key={`${index}-${error}`} color="error">
+              <Typography key={`${index}-${error}`} sx={{ color: 'error.main' }}>
                 {error}
               </Typography>
             ))}

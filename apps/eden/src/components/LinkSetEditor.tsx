@@ -372,7 +372,7 @@ function LinkSetEditor() {
             Choose how to edit or create your FAIRiCat LinkSet.
             <br/>
             With a {" "}
-            <a href="https://signposting.org/FAIRiCat" target="_blank" rel="noreferrer">
+            <a href="https://signposting.org/FAIRiCat" target="_blank" rel="noopener noreferrer">
               FAIRiCat LinkSet
             </a>
             {" "} repositories can advertise the interoperability affordances (services)
