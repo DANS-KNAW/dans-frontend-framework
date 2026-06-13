@@ -1,4 +1,5 @@
 import { Box, Button, Paper, Stack, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { ExchangeableLinkSet } from "./types";
 
 type PreviewPanelProps = {
@@ -7,13 +8,14 @@ type PreviewPanelProps = {
 };
 
 function PreviewPanel({ preview, onDownload }: PreviewPanelProps) {
+  const { t } = useTranslation('linkset-editor');
   return (
     <Paper variant="outlined" sx={{ p: 2 }}>
       <Stack spacing={1.5}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">Linkset preview; Exchangeable as FAIRiCat Linkset JSON</Typography>
+          <Typography variant="h6">{t('previewPanel.heading')}</Typography>
           <Button variant="outlined" onClick={onDownload}>
-            Download Linkset JSON
+            {t('previewPanel.downloadButton')}
           </Button>
         </Stack>
         <Box

@@ -1,0 +1,89 @@
+{
+  "chooseStep": {
+    "heading": "Edit or create your LinkSet",
+    "description": "Choose how to edit or create your FAIRiCat LinkSet.",
+    "fairiCatIntro": "With a FAIRiCat LinkSet repositories can advertise the interoperability affordances (services) they provide.",
+    "scratch": {
+      "title": "Start new from scratch",
+      "description": "Open an empty editor and create a new LinkSet manually."
+    },
+    "import": {
+      "title": "Import a file",
+      "description": "Import an existing LinkSet from upload or URL, then continue editing."
+    }
+  },
+  "importStep": {
+    "heading": "Import LinkSet",
+    "uploadTab": "Upload",
+    "urlTab": "URL",
+    "urlDemoAlert": "Demo mode: URL import currently uses fake data and does not fetch remote JSON yet.",
+    "urlLabel": "LinkSet URL",
+    "urlPlaceholder": "https://example.org/linkset.json",
+    "fetchButton": "Fetch",
+    "fetching": "Fetching",
+    "cancel": "Cancel",
+    "importAndEdit": "Import & edit",
+    "readyToImport": "Ready to import: {{filename}} ({{source}})",
+    "uploadSource": "upload",
+    "urlSource": "URL demo"
+  },
+  "editStep": {
+    "heading": "FAIRiCat LinkSet Editor",
+    "imported": "Imported",
+    "anchorDescription": "A valid absolute URL (link anchor) is required for each service and its added links.",
+    "addService": "Add service",
+    "startOver": "Start over",
+    "saveDraft": "Save draft",
+    "store": "Store"
+  },
+  "breadcrumbs": {
+    "newLinkSet": "New LinkSet",
+    "import": "Import",
+    "edit": "Edit"
+  },
+  "service": {
+    "heading": "Service {{index}}",
+    "removeAriaLabel": "Remove service {{index}}",
+    "urlLabel": "URL",
+    "anchorHelp": "Enter the service's base URL; the LinkSet 'anchor' (e.g., https://example.org)",
+    "anchorHelpAriaLabel": "Anchor URL help",
+    "relationHelpAriaLabel": "Help with {{label}}"
+  },
+  "relations": {
+    "description": {
+      "label": "Description",
+      "helpText": "Provide a machine-readable description of the service"
+    },
+    "documentation": {
+      "label": "Documentation",
+      "helpText": "Provide human-readable information about the service's documentation"
+    },
+    "metadata": {
+      "label": "Metadata",
+      "helpText": "Provide further information about the service"
+    },
+    "addTarget": "Add target",
+    "removeTarget": "Remove target"
+  },
+  "uploadPanel": {
+    "heading": "Upload a FAIRiCat LinkSet JSON file",
+    "dropzoneHelp": "Drag and drop a .json file here, or press Enter/Space to browse.",
+    "dropzoneAriaLabel": "Upload FAIRiCat LinkSet JSON file",
+    "errorNoJson": "Please upload a .json file.",
+    "errorParseFailed": "Unable to parse the uploaded JSON file.",
+    "errorReadFailed": "Unable to read the file. Ensure it is valid JSON."
+  },
+  "previewPanel": {
+    "heading": "Linkset preview; Exchangeable as FAIRiCat Linkset JSON",
+    "downloadButton": "Download Linkset JSON"
+  },
+  "validationPanel": {
+    "heading": "Validation",
+    "validMessage": "LinkSet draft is valid."
+  },
+  "fields": {
+    "url": "URL",
+    "title": "Title",
+    "type": "Type"
+  }
+}

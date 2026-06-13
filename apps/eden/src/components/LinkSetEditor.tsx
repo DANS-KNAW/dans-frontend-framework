@@ -25,6 +25,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import LinkContextEditorCard from "./linkset-editor/LinkContextEditorCard";
 import PreviewPanel from "./linkset-editor/PreviewPanel";
 import UploadPanel from "./linkset-editor/UploadPanel";
@@ -83,6 +84,7 @@ const createMockFetchedDraft = (urlValue: string): LinkSetDraft => {
 };
 
 function LinkSetEditor() {
+  const { t } = useTranslation('linkset-editor');
   const [currentStep, setCurrentStep] = useState<Step>("choose");
   const [activeTab, setActiveTab] = useState<ImportTab>("upload");
   const [urlValue, setUrlValue] = useState<string>("");
@@ -136,7 +138,7 @@ function LinkSetEditor() {
     setImportSource(null);
 
     if (!file.name.toLowerCase().endsWith(".json")) {
-      setUploadError("Please upload a .json file.");
+      setUploadError(t('uploadPanel.errorNoJson'));
       return;
     }
 
@@ -146,7 +148,7 @@ function LinkSetEditor() {
       const parsedDraft = parseExchangeableLinkSetToDraft(parsedJson);
 
       if (parsedDraft.error || !parsedDraft.draft) {
-        setUploadError(parsedDraft.error ?? "Unable to parse the uploaded JSON file.");
+        setUploadError(parsedDraft.error ?? t('uploadPanel.errorParseFailed'));
         return;
       }
 
@@ -155,7 +157,7 @@ function LinkSetEditor() {
       setImportSource("upload");
       setUploadSuccessMessage(`Uploaded: ${file.name}`);
     } catch {
-      setUploadError("Unable to read the file. Ensure it is valid JSON.");
+      setUploadError(t('uploadPanel.errorReadFailed'));
     }
   };
 
@@ -171,7 +173,7 @@ function LinkSetEditor() {
     const value = urlValue.trim();
     if (!value) {
       setFetchStatus("error");
-      setUrlErrorMessage("Enter a URL before fetching.");
+      setUrlErrorMessage(t('importStep.urlLabel') + " is required.");
       return;
     }
 
@@ -188,7 +190,7 @@ function LinkSetEditor() {
     setImportedDraft(createMockFetchedDraft(value));
     setImportedFilename(resolvedFilename);
     setImportSource("url");
-    setUrlSuccessMessage(`Demo loaded (fake data): ${resolvedFilename}`);
+    setUrlSuccessMessage(t('importStep.urlDemoAlert'));
     setFetchStatus("success");
   };
 
@@ -206,7 +208,7 @@ function LinkSetEditor() {
 
   const applyImportAndEdit = () => {
     if (!importedDraft) {
-      setImportStepError("Import a file or fetch from URL before continuing.");
+      setImportStepError(t('importStep.importAndEdit') + " requires imported data.");
       return;
     }
 
@@ -241,14 +243,14 @@ function LinkSetEditor() {
     return (
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Breadcrumbs aria-label="LinkSet flow breadcrumbs">
-          <Typography color="text.primary">New LinkSet</Typography>
+          <Typography color="text.primary">{t('breadcrumbs.newLinkSet')}</Typography>
           {(currentStep === "import" || cameFromImport) && (
-            <Typography color="text.primary">Import</Typography>
+            <Typography color="text.primary">{t('breadcrumbs.import')}</Typography>
           )}
-          {currentStep === "edit" && <Typography color="text.primary">Edit</Typography>}
+          {currentStep === "edit" && <Typography color="text.primary">{t('breadcrumbs.edit')}</Typography>}
         </Breadcrumbs>
         <Button size="small" onClick={resetFlow} startIcon={<ArrowBackOutlined />}>
-          Start over
+          {t('editStep.startOver')}
         </Button>
       </Stack>
     );
@@ -367,16 +369,11 @@ function LinkSetEditor() {
 
       {currentStep === "choose" && (
         <>
-          <Typography variant="h4">Edit or create your LinkSet</Typography>
+          <Typography variant="h4">{t('chooseStep.heading')}</Typography>
           <Typography variant="body1">
-            Choose how to edit or create your FAIRiCat LinkSet.
+            {t('chooseStep.description')}
             <br/>
-            With a {" "}
-            <a href="https://signposting.org/FAIRiCat" target="_blank" rel="noopener noreferrer">
-              FAIRiCat LinkSet
-            </a>
-            {" "} repositories can advertise the interoperability affordances (services)
-            they provide.
+            {t('chooseStep.fairiCatIntro')}
           </Typography>
 
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
@@ -385,9 +382,9 @@ function LinkSetEditor() {
                 <CardContent>
                   <Stack spacing={1.5}>
                     <NoteAddOutlined color="primary" />
-                    <Typography variant="h6">Start new from scratch</Typography>
+                    <Typography variant="h6">{t('chooseStep.scratch.title')}</Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Open an empty editor and create a new LinkSet manually.
+                      {t('chooseStep.scratch.description')}
                     </Typography>
                   </Stack>
                 </CardContent>
@@ -399,9 +396,9 @@ function LinkSetEditor() {
                 <CardContent>
                   <Stack spacing={1.5}>
                     <FileUploadOutlined color="primary" />
-                    <Typography variant="h6">Import a file</Typography>
+                    <Typography variant="h6">{t('chooseStep.import.title')}</Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Import an existing LinkSet from upload or URL, then continue editing.
+                      {t('chooseStep.import.description')}
                     </Typography>
                   </Stack>
                 </CardContent>
@@ -413,7 +410,7 @@ function LinkSetEditor() {
 
       {currentStep === "import" && (
         <>
-          <Typography variant="h4">Import LinkSet</Typography>
+          <Typography variant="h4">{t('importStep.heading')}</Typography>
 
           <Paper variant="outlined" sx={{ p: 2 }}>
             <Stack spacing={2}>
@@ -428,13 +425,13 @@ function LinkSetEditor() {
                   value="upload"
                   icon={<CloudUploadOutlined fontSize="small" />}
                   iconPosition="start"
-                  label="Upload"
+                  label={t('importStep.uploadTab')}
                 />
                 <Tab
                   value="url"
                   icon={<LinkOutlined fontSize="small" />}
                   iconPosition="start"
-                  label="URL"
+                  label={t('importStep.urlTab')}
                 />
               </Tabs>
 
@@ -447,13 +444,13 @@ function LinkSetEditor() {
               ) : (
                 <Stack spacing={2}>
                   <Alert severity="info">
-                    Demo mode: URL import currently uses fake data and does not fetch remote JSON yet.
+                    {t('importStep.urlDemoAlert')}
                   </Alert>
                   <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
                     <TextField
                       fullWidth
-                      label="LinkSet URL"
-                      placeholder="https://example.org/linkset.json"
+                      label={t('importStep.urlLabel')}
+                      placeholder={t('importStep.urlPlaceholder')}
                       value={urlValue}
                       onChange={(event) => {
                         setUrlValue(event.target.value);
@@ -472,10 +469,10 @@ function LinkSetEditor() {
                       {fetchStatus === "loading" ? (
                         <Stack direction="row" spacing={1} alignItems="center">
                           <CircularProgress size={16} />
-                          <span>Fetching</span>
+                          <span>{t('importStep.fetching')}</span>
                         </Stack>
                       ) : (
-                        "Fetch"
+                        t('importStep.fetchButton')
                       )}
                     </Button>
                   </Stack>
@@ -487,7 +484,10 @@ function LinkSetEditor() {
 
               {importedFilename && importSource && (
                 <Alert severity="success">
-                  Ready to import: {importedFilename} ({importSource === "upload" ? "upload" : "URL demo"})
+                  {t('importStep.readyToImport', {
+                    filename: importedFilename,
+                    source: importSource === "upload" ? t('importStep.uploadSource') : t('importStep.urlSource')
+                  })}
                 </Alert>
               )}
 
@@ -497,10 +497,10 @@ function LinkSetEditor() {
 
           <Stack direction="row" justifyContent="space-between">
             <Button onClick={resetFlow} startIcon={<ArrowBackOutlined />}>
-              Cancel
+              {t('importStep.cancel')}
             </Button>
             <Button variant="contained" onClick={applyImportAndEdit} disabled={!canApplyImport}>
-              Import & edit
+              {t('importStep.importAndEdit')}
             </Button>
           </Stack>
         </>
@@ -509,19 +509,19 @@ function LinkSetEditor() {
       {currentStep === "edit" && (
         <>
           <Stack direction="row" alignItems="center" spacing={1}>
-            <Typography variant="h4">FAIRiCat LinkSet Editor</Typography>
+            <Typography variant="h4">{t('editStep.heading')}</Typography>
             {cameFromImport && (
               <Chip
                 color="success"
                 icon={<CheckCircleOutlined />}
-                label="Imported"
+                label={t('editStep.imported')}
                 size="small"
               />
             )}
           </Stack>
 
           <Typography variant="body1">
-            A valid absolute URL (link anchor) is required for each service and its added links.
+            {t('editStep.anchorDescription')}
           </Typography>
 
           <Paper variant="outlined" sx={{ p: 2 }}>
@@ -547,7 +547,7 @@ function LinkSetEditor() {
 
               <Box>
                 <Button variant="outlined" startIcon={<Add />} onClick={addContext}>
-                  Add service
+                  {t('editStep.addService')}
                 </Button>
               </Box>
             </Stack>
@@ -559,15 +559,15 @@ function LinkSetEditor() {
 
           <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" spacing={1.5}>
             <Button onClick={resetFlow} startIcon={<ArrowBackOutlined />}>
-              Start over
+              {t('editStep.startOver')}
             </Button>
             <Stack direction="row" spacing={1}>
               {/* Disabled until persistence endpoints are implemented. */}
               <Button variant="outlined" disabled>
-                Save draft
+                {t('editStep.saveDraft')}
               </Button>
               <Button variant="contained" disabled>
-                Store
+                {t('editStep.store')}
               </Button>
             </Stack>
           </Stack>
