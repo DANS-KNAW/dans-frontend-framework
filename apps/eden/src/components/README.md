@@ -11,7 +11,7 @@ __NOTE__ This is not a finished product!
 
 Current FAIRiCat LinkSet (JSON) editor workflow is a 3-step flow:
 
-1. Choose start mode: user picks `Start new from scratch` or `Import a file` on the LinkSet editor page .
+1. Choose start mode: user picks `Start new from scratch` or `Import a file` on the LinkSet editor page.
 
 2. Import (optional): import via JSON upload (validated against expected linkset structure) or via URL fetch (Fetch is not implemented yet!).  
 
@@ -50,6 +50,6 @@ As a simple example we can use linkset from the FAIRiCat specification:
 - Provide a way to extract/import information from the registry or harvester to prefill the LinkSet editor form. 
 - Provide a way to store; in the registry, or the harvester, or maybe even in the browser (as draft)
 - Improve the edit form: 
-  - Input for the URL could be improved, maybe even detect the mimi-type biy a HEAD request
-  - The type field should be restricted to a list of mime-type, possibly vau autocomplete. 
+  - Input for the URL could be improved, maybe even detect the MIME type via a HEAD request. 
+  - The type field should be restricted to a list of MIME types, possibly via autocomplete. 
   - Allow selection of standard documentations; possible for common services as OAI, OpenAPI, SPARQL etc. Maybe we can provide selection from this. 

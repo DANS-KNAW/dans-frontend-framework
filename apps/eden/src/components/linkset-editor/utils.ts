@@ -126,17 +126,17 @@ export function toExchangeableLinkSetDraft(draft: LinkSetDraft): ExchangeableLin
     linkset: draft.contexts.map((context) => ({
       anchor: context.anchor,
       "service-desc": context.serviceDescLinkRelation?.targets.map((target) => ({
-        href: target.href,
+        href: target.href.trim(),
         type: target.type.trim() || undefined,
         title: target.title.trim() || undefined,
       })),
       "service-doc": context.serviceDocLinkRelation?.targets.map((target) => ({
-        href: target.href,
+        href: target.href.trim(),
         type: target.type.trim() || undefined,
         title: target.title.trim() || undefined,
       })),
       "service-meta": context.serviceMetaLinkRelation?.targets.map((target) => ({
-        href: target.href,
+        href: target.href.trim(),
         type: target.type.trim() || undefined,
         title: target.title.trim() || undefined,
       })),

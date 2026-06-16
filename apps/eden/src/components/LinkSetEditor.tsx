@@ -17,6 +17,11 @@ import {
   CardContent,
   Chip,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Paper,
   Stack,
   Tab,
@@ -24,6 +29,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import LinkContextEditorCard from "./linkset-editor/LinkContextEditorCard";
 import PreviewPanel from "./linkset-editor/PreviewPanel";
 import UploadPanel from "./linkset-editor/UploadPanel";
@@ -60,6 +66,7 @@ type ImportTab = "upload" | "url";
 type FetchStatus = "idle" | "loading" | "success" | "error";
 
 function LinkSetEditor() {
+  const { t } = useTranslation('linkset-editor');
   const [currentStep, setCurrentStep] = useState<Step>("choose");
   const [activeTab, setActiveTab] = useState<ImportTab>("upload");
   const [urlValue, setUrlValue] = useState<string>("");
@@ -69,6 +76,7 @@ function LinkSetEditor() {
     contexts: [createEmptyContext()],
   });
 
+  // Could use useReducer grouping all import-related state, but maybe later on after more refactoring
   const [importedDraft, setImportedDraft] = useState<LinkSetDraft | null>(null);
   const [importedFilename, setImportedFilename] = useState<string>("");
   const [importSource, setImportSource] = useState<"upload" | "url" | null>(null);
@@ -78,9 +86,12 @@ function LinkSetEditor() {
   const [uploadError, setUploadError] = useState<string>("");
   const [urlSuccessMessage, setUrlSuccessMessage] = useState<string>("");
   const [urlErrorMessage, setUrlErrorMessage] = useState<string>("");
+  const [confirmDialogMessage, setConfirmDialogMessage] = useState<string>("");
+  const [pendingConfirmAction, setPendingConfirmAction] = useState<(() => void) | null>(null);
 
   const [cameFromImport, setCameFromImport] = useState<boolean>(false);
   const canApplyImport = Boolean(importedDraft && importedFilename && importSource);
+  const isConfirmDialogOpen = Boolean(pendingConfirmAction);
 
   const conversionResult = useMemo(() => parseDraftToLinkSet(draft), [draft]);
   const exchangeablePreview = useMemo(
@@ -113,7 +124,7 @@ function LinkSetEditor() {
     setImportSource(null);
 
     if (!file.name.toLowerCase().endsWith(".json")) {
-      setUploadError("Please upload a .json file.");
+      setUploadError(t('uploadPanel.errorNoJson'));
       return;
     }
 
@@ -123,16 +134,16 @@ function LinkSetEditor() {
       const parsedDraft = parseExchangeableLinkSetToDraft(parsedJson);
 
       if (parsedDraft.error || !parsedDraft.draft) {
-        setUploadError(parsedDraft.error ?? "Unable to parse the uploaded JSON file.");
+        setUploadError(parsedDraft.error ?? t('uploadPanel.errorParseFailed'));
         return;
       }
 
       setImportedDraft(parsedDraft.draft);
       setImportedFilename(file.name);
       setImportSource("upload");
-      setUploadSuccessMessage(`Uploaded: ${file.name}`);
+      setUploadSuccessMessage(t('importStep.uploadedSuccess', { filename: file.name }));
     } catch {
-      setUploadError("Unable to read the file. Ensure it is valid JSON.");
+      setUploadError(t('uploadPanel.errorReadFailed'));
     }
   };
 
@@ -148,7 +159,7 @@ function LinkSetEditor() {
     const value = urlValue.trim();
     if (!value) {
       setFetchStatus("error");
-      setUrlErrorMessage("Enter a URL before fetching.");
+      setUrlErrorMessage(t('importStep.urlRequired'));
       return;
     }
 
@@ -163,7 +174,12 @@ function LinkSetEditor() {
 
       if (!response.ok) {
         setFetchStatus("error");
-        setUrlErrorMessage(`Failed to fetch URL (${response.status} ${response.statusText}).`);
+        setUrlErrorMessage(
+          t('importStep.fetchFailed', {
+            status: response.status,
+            statusText: response.statusText,
+          }),
+        );
         return;
       }
 
@@ -172,7 +188,7 @@ function LinkSetEditor() {
 
       if (parsedDraft.error || !parsedDraft.draft) {
         setFetchStatus("error");
-        setUrlErrorMessage(parsedDraft.error ?? "Fetched JSON could not be parsed as a LinkSet.");
+        setUrlErrorMessage(parsedDraft.error ?? t('importStep.fetchParseFailed'));
         return;
       }
 
@@ -185,11 +201,11 @@ function LinkSetEditor() {
       setImportedDraft(parsedDraft.draft);
       setImportedFilename(resolvedFilename);
       setImportSource("url");
-      setUrlSuccessMessage(`Loaded from URL: ${resolvedFilename}`);
+      setUrlSuccessMessage(t('importStep.loadedFromUrl', { filename: resolvedFilename }));
       setFetchStatus("success");
     } catch {
       setFetchStatus("error");
-      setUrlErrorMessage("Unable to fetch URL or parse JSON. Check CORS, network access, and JSON format.");
+      setUrlErrorMessage(t('importStep.fetchFailedGeneric'));
     }
   };
 
@@ -207,7 +223,7 @@ function LinkSetEditor() {
 
   const applyImportAndEdit = () => {
     if (!importedDraft) {
-      setImportStepError("Import a file or fetch from URL before continuing.");
+      setImportStepError(t('importStep.importRequiresData'));
       return;
     }
 
@@ -242,14 +258,14 @@ function LinkSetEditor() {
     return (
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Breadcrumbs aria-label="LinkSet flow breadcrumbs">
-          <Typography color="text.primary">New LinkSet</Typography>
+          <Typography color="text.primary">{t('breadcrumbs.newLinkSet')}</Typography>
           {(currentStep === "import" || cameFromImport) && (
-            <Typography color="text.primary">Import</Typography>
+            <Typography color="text.primary">{t('breadcrumbs.import')}</Typography>
           )}
-          {currentStep === "edit" && <Typography color="text.primary">Edit</Typography>}
+          {currentStep === "edit" && <Typography color="text.primary">{t('breadcrumbs.edit')}</Typography>}
         </Breadcrumbs>
         <Button size="small" onClick={resetFlow} startIcon={<ArrowBackOutlined />}>
-          Start over
+          {t('editStep.startOver')}
         </Button>
       </Stack>
     );
@@ -272,7 +288,24 @@ function LinkSetEditor() {
     }));
   };
 
-  const removeContext = (contextIndex: number) => {
+  const requestDeletionConfirmation = (message: string, onConfirm: () => void) => {
+    setConfirmDialogMessage(message);
+    setPendingConfirmAction(() => onConfirm);
+  };
+
+  const closeConfirmDialog = () => {
+    setPendingConfirmAction(null);
+    setConfirmDialogMessage("");
+  };
+
+  const confirmDialogAction = () => {
+    if (pendingConfirmAction) {
+      pendingConfirmAction();
+    }
+    closeConfirmDialog();
+  };
+
+  const performRemoveContext = (contextIndex: number) => {
     setDraft((previous) => {
       const nextContexts = previous.contexts.filter(
         (_, currentIndex) => currentIndex !== contextIndex,
@@ -283,7 +316,7 @@ function LinkSetEditor() {
     });
   };
 
-  const toggleRelation = (
+  const performToggleRelation = (
     contextIndex: number,
     relationKey: LinkContextRelationKey,
     relationId: LinkRelationId,
@@ -293,6 +326,83 @@ function LinkSetEditor() {
       ...context,
       [relationKey]: enabled ? createRelation(relationId) : undefined,
     }));
+  };
+
+  const performRemoveRelationTarget = (
+    contextIndex: number,
+    relationKey: LinkContextRelationKey,
+    targetIndex: number,
+  ) => {
+    updateContext(contextIndex, (context) => {
+      const relation = context[relationKey];
+      if (!relation) {
+        return context;
+      }
+
+      const nextTargets = relation.targets.filter(
+        (_, currentTargetIndex) => currentTargetIndex !== targetIndex,
+      );
+
+      return {
+        ...context,
+        [relationKey]: {
+          ...relation,
+          targets: nextTargets.length > 0 ? nextTargets : [createEmptyTarget()],
+        },
+      };
+    });
+  };
+
+  const removeContext = (contextIndex: number) => {
+    const contextToRemove = draft.contexts[contextIndex];
+    const hasContextInput = Boolean(
+      contextToRemove &&
+        (
+          contextToRemove.anchor.trim() ||
+          contextToRemove.serviceDescLinkRelation?.targets.some(
+            (target) => target.href.trim() || target.type.trim() || target.title.trim(),
+          ) ||
+          contextToRemove.serviceDocLinkRelation?.targets.some(
+            (target) => target.href.trim() || target.type.trim() || target.title.trim(),
+          ) ||
+          contextToRemove.serviceMetaLinkRelation?.targets.some(
+            (target) => target.href.trim() || target.type.trim() || target.title.trim(),
+          )
+        ),
+    );
+
+    if (hasContextInput) {
+      requestDeletionConfirmation(t("service.confirmDeleteWithInput"), () =>
+        performRemoveContext(contextIndex),
+      );
+      return;
+    }
+
+    performRemoveContext(contextIndex);
+  };
+
+  const toggleRelation = (
+    contextIndex: number,
+    relationKey: LinkContextRelationKey,
+    relationId: LinkRelationId,
+    enabled: boolean,
+  ) => {
+    if (!enabled) {
+      const relation = draft.contexts[contextIndex]?.[relationKey];
+      const hasRelationInput = relation?.targets.some(
+        (target) =>
+          target.href.trim() || target.type.trim() || target.title.trim(),
+      );
+
+      if (hasRelationInput) {
+        requestDeletionConfirmation(t("relations.confirmDisableWithInput"), () =>
+          performToggleRelation(contextIndex, relationKey, relationId, enabled),
+        );
+        return;
+      }
+    }
+
+    performToggleRelation(contextIndex, relationKey, relationId, enabled);
   };
 
   const updateRelationTarget = (
@@ -342,24 +452,23 @@ function LinkSetEditor() {
     relationKey: LinkContextRelationKey,
     targetIndex: number,
   ) => {
-    updateContext(contextIndex, (context) => {
-      const relation = context[relationKey];
-      if (!relation) {
-        return context;
-      }
+    const relation = draft.contexts[contextIndex]?.[relationKey];
+    const targetToRemove = relation?.targets[targetIndex];
+    const hasTargetInput = Boolean(
+      targetToRemove &&
+        (targetToRemove.href.trim() ||
+          targetToRemove.type.trim() ||
+          targetToRemove.title.trim()),
+    );
 
-      const nextTargets = relation.targets.filter(
-        (_, currentTargetIndex) => currentTargetIndex !== targetIndex,
+    if (hasTargetInput) {
+      requestDeletionConfirmation(t("relations.confirmDeleteTargetWithInput"), () =>
+        performRemoveRelationTarget(contextIndex, relationKey, targetIndex),
       );
+      return;
+    }
 
-      return {
-        ...context,
-        [relationKey]: {
-          ...relation,
-          targets: nextTargets.length > 0 ? nextTargets : [createEmptyTarget()],
-        },
-      };
-    });
+    performRemoveRelationTarget(contextIndex, relationKey, targetIndex);
   };
 
   return (
@@ -368,16 +477,11 @@ function LinkSetEditor() {
 
       {currentStep === "choose" && (
         <>
-          <Typography variant="h4">Edit or create your LinkSet</Typography>
+          <Typography variant="h4">{t('chooseStep.heading')}</Typography>
           <Typography variant="body1">
-            Choose how to edit or create your FAIRiCat LinkSet.
+            {t('chooseStep.description')}
             <br/>
-            With a {" "}
-            <a href="https://signposting.org/FAIRiCat" target="_blank" rel="noreferrer">
-              FAIRiCat LinkSet
-            </a>
-            {" "} repositories can advertise the interoperability affordances (services)
-            they provide.
+            {t('chooseStep.fairiCatIntro')}
           </Typography>
 
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
@@ -386,9 +490,9 @@ function LinkSetEditor() {
                 <CardContent>
                   <Stack spacing={1.5}>
                     <NoteAddOutlined color="primary" />
-                    <Typography variant="h6">Start new from scratch</Typography>
+                    <Typography variant="h6">{t('chooseStep.scratch.title')}</Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Open an empty editor and create a new LinkSet manually.
+                      {t('chooseStep.scratch.description')}
                     </Typography>
                   </Stack>
                 </CardContent>
@@ -400,9 +504,9 @@ function LinkSetEditor() {
                 <CardContent>
                   <Stack spacing={1.5}>
                     <FileUploadOutlined color="primary" />
-                    <Typography variant="h6">Import a file</Typography>
+                    <Typography variant="h6">{t('chooseStep.import.title')}</Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Import an existing LinkSet from upload or URL, then continue editing.
+                      {t('chooseStep.import.description')}
                     </Typography>
                   </Stack>
                 </CardContent>
@@ -414,7 +518,7 @@ function LinkSetEditor() {
 
       {currentStep === "import" && (
         <>
-          <Typography variant="h4">Import LinkSet</Typography>
+          <Typography variant="h4">{t('importStep.heading')}</Typography>
 
           <Paper variant="outlined" sx={{ p: 2 }}>
             <Stack spacing={2}>
@@ -429,13 +533,13 @@ function LinkSetEditor() {
                   value="upload"
                   icon={<CloudUploadOutlined fontSize="small" />}
                   iconPosition="start"
-                  label="Upload"
+                  label={t('importStep.uploadTab')}
                 />
                 <Tab
                   value="url"
                   icon={<LinkOutlined fontSize="small" />}
                   iconPosition="start"
-                  label="URL"
+                  label={t('importStep.urlTab')}
                 />
               </Tabs>
 
@@ -447,6 +551,9 @@ function LinkSetEditor() {
                 />
               ) : (
                 <Stack spacing={2}>
+                  <Alert severity="info">
+                    {t('importStep.urlDemoAlert')}
+                  </Alert>
                   <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
                     <Box sx={{ flex: 1 }}>
                       <UrlInput
@@ -476,10 +583,10 @@ function LinkSetEditor() {
                       {fetchStatus === "loading" ? (
                         <Stack direction="row" spacing={1} alignItems="center">
                           <CircularProgress size={16} />
-                          <span>Fetching</span>
+                          <span>{t('importStep.fetching')}</span>
                         </Stack>
                       ) : (
-                        "Fetch"
+                        t('importStep.fetchButton')
                       )}
                     </Button>
                   </Stack>
@@ -491,7 +598,10 @@ function LinkSetEditor() {
 
               {importedFilename && importSource && (
                 <Alert severity="success">
-                  Ready to import: {importedFilename} ({importSource === "upload" ? "upload" : "URL"})
+                  {t('importStep.readyToImport', {
+                    filename: importedFilename,
+                    source: importSource === "upload" ? t('importStep.uploadSource') : t('importStep.urlSource')
+                  })}
                 </Alert>
               )}
 
@@ -501,10 +611,10 @@ function LinkSetEditor() {
 
           <Stack direction="row" justifyContent="space-between">
             <Button onClick={resetFlow} startIcon={<ArrowBackOutlined />}>
-              Cancel
+              {t('importStep.cancel')}
             </Button>
             <Button variant="contained" onClick={applyImportAndEdit} disabled={!canApplyImport}>
-              Import & edit
+              {t('importStep.importAndEdit')}
             </Button>
           </Stack>
         </>
@@ -513,19 +623,19 @@ function LinkSetEditor() {
       {currentStep === "edit" && (
         <>
           <Stack direction="row" alignItems="center" spacing={1}>
-            <Typography variant="h4">FAIRiCat LinkSet Editor</Typography>
+            <Typography variant="h4">{t('editStep.heading')}</Typography>
             {cameFromImport && (
               <Chip
                 color="success"
                 icon={<CheckCircleOutlined />}
-                label="Imported"
+                label={t('editStep.imported')}
                 size="small"
               />
             )}
           </Stack>
 
           <Typography variant="body1">
-            A valid absolute URL (link anchor) is required for each service and its added links.
+            {t('editStep.anchorDescription')}
           </Typography>
 
           <Paper variant="outlined" sx={{ p: 2 }}>
@@ -551,7 +661,7 @@ function LinkSetEditor() {
 
               <Box>
                 <Button variant="outlined" startIcon={<Add />} onClick={addContext}>
-                  Add service
+                  {t('editStep.addService')}
                 </Button>
               </Box>
             </Stack>
@@ -563,20 +673,39 @@ function LinkSetEditor() {
 
           <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" spacing={1.5}>
             <Button onClick={resetFlow} startIcon={<ArrowBackOutlined />}>
-              Start over
+              {t('editStep.startOver')}
             </Button>
             <Stack direction="row" spacing={1}>
               {/* Disabled until persistence endpoints are implemented. */}
               <Button variant="outlined" disabled>
-                Save draft
+                {t('editStep.saveDraft')}
               </Button>
               <Button variant="contained" disabled>
-                Store
+                {t('editStep.store')}
               </Button>
             </Stack>
           </Stack>
         </>
       )}
+
+      <Dialog
+        open={isConfirmDialogOpen}
+        onClose={closeConfirmDialog}
+        aria-labelledby="delete-confirmation-dialog-title"
+      >
+        <DialogTitle id="delete-confirmation-dialog-title">
+          {t("confirmDialog.title")}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>{confirmDialogMessage}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeConfirmDialog}>{t("confirmDialog.cancel")}</Button>
+          <Button color="error" variant="contained" onClick={confirmDialogAction}>
+            {t("confirmDialog.confirm")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   );
 }

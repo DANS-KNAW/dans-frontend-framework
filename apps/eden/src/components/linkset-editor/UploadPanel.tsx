@@ -1,5 +1,6 @@
 import { Alert, Box, Paper, Stack, Typography } from "@mui/material";
-import { ChangeEvent, DragEvent, useRef } from "react";
+import { ChangeEvent, DragEvent, KeyboardEvent, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 type UploadPanelProps = {
   onFileSelected: (file: File) => Promise<void> | void;
@@ -8,6 +9,7 @@ type UploadPanelProps = {
 };
 
 function UploadPanel({ onFileSelected, uploadSuccessMessage, uploadError }: UploadPanelProps) {
+  const { t } = useTranslation('linkset-editor');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const helperTextId = "upload-dropzone-helper-text";
 
@@ -31,7 +33,7 @@ function UploadPanel({ onFileSelected, uploadSuccessMessage, uploadError }: Uplo
     await onFileSelected(file);
   };
 
-  const onDropzoneKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+  const onDropzoneKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       fileInputRef.current?.click();
@@ -41,11 +43,11 @@ function UploadPanel({ onFileSelected, uploadSuccessMessage, uploadError }: Uplo
   return (
     <Paper variant="outlined" sx={{ p: 2 }}>
       <Stack spacing={1.5}>
-        <Typography variant="h6">Upload a FAIRiCat LinkSet JSON file</Typography>
+        <Typography variant="h6">{t('uploadPanel.heading')}</Typography>
         <Box
           role="button"
           tabIndex={0}
-          aria-label="Upload FAIRiCat LinkSet JSON file"
+          aria-label={t('uploadPanel.dropzoneAriaLabel')}
           aria-describedby={helperTextId}
           onClick={() => fileInputRef.current?.click()}
           onKeyDown={onDropzoneKeyDown}
@@ -67,7 +69,7 @@ function UploadPanel({ onFileSelected, uploadSuccessMessage, uploadError }: Uplo
           }}
         >
           <Typography id={helperTextId} variant="body1">
-            Drag and drop a .json file here, or press Enter/Space to browse.
+            {t('uploadPanel.dropzoneHelp')}
           </Typography>
         </Box>
         <input

@@ -8,9 +8,10 @@ import {
   Stack,
   Switch,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import { Tooltip } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import {
   LinkContextDraft,
   LinkContextRelationKey,
@@ -65,13 +66,14 @@ function LinkContextEditorCard({
     // Confirmation metadata is currently handled inside UrlInput.
   };
 
+  const { t } = useTranslation('linkset-editor');
   return (
     <Paper sx={{ p: 2 }} variant="outlined">
       <Stack spacing={2}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">Service {contextIndex + 1}</Typography>
+          <Typography variant="h6">{t('service.heading', { index: contextIndex + 1 })}</Typography>
           <IconButton
-            aria-label={`Remove service ${contextIndex + 1}`}
+            aria-label={t('service.removeAriaLabel', { index: contextIndex + 1 })}
             color="error"
             onClick={() => onRemoveContext(contextIndex)}
           >
@@ -88,8 +90,10 @@ function LinkContextEditorCard({
               enableUrlCheck={false}
             />
           </Box>
-          <Tooltip title="Enter the service's base URL; the LinkSet 'anchor' (e.g., https://example.org)">
-            <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
+          <Tooltip title={t('service.anchorHelp')}>
+            <IconButton size="small" aria-label={t('service.anchorHelpAriaLabel')} sx={{ p: 0.5, ml: 0.5 }}>
+              <HelpOutline fontSize="small" />
+            </IconButton>
           </Tooltip>
         </Stack>
 
@@ -97,18 +101,27 @@ function LinkContextEditorCard({
 
         {RELATION_CONFIG.map((relationConfig) => {
           const relation = context[relationConfig.key];
+          
+          // Get translated label and helpText
+          const labelKey = relationConfig.id === 'service-desc' ? 'relations.description' 
+                         : relationConfig.id === 'service-doc' ? 'relations.documentation'
+                         : 'relations.metadata';
+          const translatedLabel = t(`${labelKey}.label`);
+          const translatedHelpText = t(`${labelKey}.helpText`);
 
           return (
             <Stack key={relationConfig.id} spacing={1.5} sx={{ pl: 0.5 }}>
               <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography variant="subtitle1">{relationConfig.label}</Typography>
-                  <Tooltip title={relationConfig.helpText}>
-                    <HelpOutline fontSize="small" sx={{ cursor: "pointer" }} />
+                  <Typography variant="subtitle1">{translatedLabel}</Typography>
+                  <Tooltip title={translatedHelpText}>
+                    <IconButton size="small" aria-label={t('service.relationHelpAriaLabel', { label: translatedLabel })} sx={{ p: 0.5 }}>
+                      <HelpOutline fontSize="small" />
+                    </IconButton>
                   </Tooltip>
                 </Stack>
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography variant="body2">Enabled</Typography>
+                  <Typography variant="body2">{t('service.enabledLabel')}</Typography>
                   <Switch
                     checked={Boolean(relation)}
                     onChange={(_, enabled) =>
@@ -129,9 +142,11 @@ function LinkContextEditorCard({
                     <Paper key={`${relation.id}-${targetIndex}`} sx={{ p: 1.5 }} variant="outlined">
                       <Stack spacing={1.5}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
-                          <Typography variant="body2">Link {targetIndex + 1}</Typography>
+                          <Typography variant="body2">
+                            {t('relations.linkLabel', { index: targetIndex + 1 })}
+                          </Typography>
                           <IconButton
-                            aria-label={`Remove ${relation.id} target ${targetIndex + 1}`}
+                            aria-label={t('relations.removeTarget')}
                             color="error"
                             onClick={() =>
                               onRemoveRelationTarget(contextIndex, relationConfig.key, targetIndex)
@@ -157,15 +172,17 @@ function LinkContextEditorCard({
                               onConfirmed={handleTargetConfirmed}
                             />
                           </Box>
-                          <Tooltip title="Provide the link's URL (e.g., https://example.org/openapi)">
-                            <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
+                          <Tooltip title={t('relations.urlHelpTooltip')}>
+                            <IconButton size="small" aria-label={t('relations.urlHelpAriaLabel')} sx={{ p: 0.5, ml: 0 }}>
+                              <HelpOutline fontSize="small" />
+                            </IconButton>
                           </Tooltip>
                         </Stack>
 
                         <Stack direction="row" alignItems="center" spacing={1}>
                           <Box sx={{ flex: 1 }}>
                             <MediaTypeInput
-                              label="Type (optional)"
+                              label={t('fields.typeOptional')}
                               value={target.type}
                               onChange={(value) =>
                                 onUpdateRelationTarget(
@@ -178,15 +195,17 @@ function LinkContextEditorCard({
                               }
                             />
                           </Box>
-                          <Tooltip title="Specify the MIME type (e.g., application/json)">
-                            <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
+                          <Tooltip title={t('relations.typeHelpTooltip')}>
+                            <IconButton size="small" aria-label={t('relations.typeHelpAriaLabel')} sx={{ p: 0.5, ml: 0 }}>
+                              <HelpOutline fontSize="small" />
+                            </IconButton>
                           </Tooltip>
                         </Stack>
 
                         <Stack direction="row" alignItems="center" spacing={1}>
                           <TextField
                             fullWidth
-                            label="Title (optional)"
+                            label={t('fields.titleOptional')}
                             value={target.title}
                             onChange={(event) =>
                               onUpdateRelationTarget(
@@ -197,10 +216,12 @@ function LinkContextEditorCard({
                                 event.target.value,
                               )
                             }
-                            placeholder="OpenAPI document"
+                            placeholder={t('relations.titlePlaceholder')}
                           />
-                          <Tooltip title="Provide a descriptive title for the link (e.g., OpenAPI document)">
-                            <HelpOutline fontSize="small" sx={{ ml: 1, cursor: "pointer" }} />
+                          <Tooltip title={t('relations.titleHelpTooltip')}>
+                            <IconButton size="small" aria-label={t('relations.titleHelpAriaLabel')} sx={{ p: 0.5, ml: 0 }}>
+                              <HelpOutline fontSize="small" />
+                            </IconButton>
                           </Tooltip>
                         </Stack>
                       </Stack>
@@ -213,7 +234,7 @@ function LinkContextEditorCard({
                       startIcon={<Add />}
                       onClick={() => onAddRelationTarget(contextIndex, relationConfig.key)}
                     >
-                      Add Link
+                      {t('relations.addTarget')}
                     </Button>
                   </Box>
                 </Stack>

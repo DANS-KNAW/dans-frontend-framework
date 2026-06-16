@@ -19,8 +19,7 @@ export type Template =
   | "fair-guidance"
   | "create-assessment"
   | "accessibility-statement"
-  | "linkset-editor"
-  ;
+  | "linkset-editor";
 
 /**
  * Type for language-specific content that can be either string or JSX
