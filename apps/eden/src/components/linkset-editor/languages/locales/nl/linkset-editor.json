@@ -44,6 +44,7 @@
     "store": "Opslaan"
   },
   "breadcrumbs": {
+    "ariaLabel": "LinkSet-stapnavigatie",
     "newLinkSet": "Nieuwe LinkSet",
     "import": "Importeren",
     "edit": "Bewerken"
@@ -104,6 +105,52 @@
     "title": "Verwijderen bevestigen",
     "cancel": "Annuleren",
     "confirm": "Verwijderen"
+  },
+  "urlInput": {
+    "checkButton": "URL controleren",
+    "openButton": "Openen om te controleren",
+    "hint": {
+      "idle": "Plak een directe link.",
+      "invalidFormat": "URL moet beginnen met https:// of http://",
+      "validFormatWithCheck": "Ziet er goed uit - klik op URL controleren of Openen om bereikbaarheid te controleren.",
+      "validFormatWithoutCheck": "Ziet er goed uit - klik op Openen om bereikbaarheid te controleren.",
+      "checking": "Bereikbaarheid controleren...",
+      "success": "Bereikbaarheid bevestigd."
+    },
+    "outcome": {
+      "ok": "URL bereikbaar bevestigd.",
+      "wrongType": "Dit type is niet toegestaan. Controleer de link of toegestane typen.",
+      "tooLarge": "Resource overschrijdt de limiet van 25 MB. Gebruik een kleinere resource of splits deze op.",
+      "notFound": "Resource niet gevonden (404). Controleer de URL of probeer een andere link.",
+      "networkError": "Kon deze URL niet bereiken. Deze kan privé zijn, offline of verzoeken blokkeren.",
+      "cors": "Kon deze URL niet bereiken. Deze kan privé zijn, offline of verzoeken blokkeren."
+    },
+    "details": {
+      "status": "Status",
+      "contentType": "Content-Type",
+      "contentLength": "Content-Length",
+      "lastModified": "Laatst gewijzigd"
+    }
+  },
+  "mediaTypeInput": {
+    "label": "Mediatype",
+    "majorTypeLabel": "Hoofdtype",
+    "placeholderSubtype": "subtype...",
+    "placeholderGeneral": "bijv. image/png of begin met typen...",
+    "unlockAriaLabel": "Hoofdtype ontgrendelen",
+    "group": {
+      "major": "Hoofdtypen",
+      "known": "Bekende typen",
+      "sub": "Subtypen"
+    },
+    "hint": {
+      "empty": "Begin met het typen van een hoofdtype of een volledig type zoals image/png",
+      "typingMajor": "Typ verder - of kies een hoofdtype uit de lijst",
+      "lockedNoSub": "Typ nu of kies een subtype",
+      "invalidChars": "Ongeldige tekens - gebruik letters, cijfers, koppeltekens, punten of +",
+      "known": "{{label}} - bekend type",
+      "unknownValid": "Geldig formaat - subtype niet in veelgebruikte lijst, controleer bij twijfel"
+    }
   },
   "fields": {
     "url": "URL",

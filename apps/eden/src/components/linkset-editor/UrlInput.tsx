@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { type ReactNode, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export type CheckStatus =
   | "idle"
@@ -63,13 +64,13 @@ const MAX_BYTES = 26_214_400;
 const CORS_PROXY_PREFIX = "https://proxy.corsfix.com/?";
 
 
-const OUTCOME_HINTS: Record<HeadResult["outcomeReason"], string> = {
-  ok: "URL confirmed reachable.",
-  "wrong-type": "This type is not allowed. Check the link or allowed types.",
-  "too-large": "Resource exceeds the 25 MB limit. Try a smaller resource or split it.",
-  "not-found": "Resource not found (404). Double-check the URL or try a different link.",
-  "network-error": "Could not reach this URL. It may be private, offline, or blocking requests.",
-  cors: "Could not reach this URL. It may be private, offline, or blocking requests.",
+const OUTCOME_HINT_KEYS: Record<HeadResult["outcomeReason"], string> = {
+  ok: "urlInput.outcome.ok",
+  "wrong-type": "urlInput.outcome.wrongType",
+  "too-large": "urlInput.outcome.tooLarge",
+  "not-found": "urlInput.outcome.notFound",
+  "network-error": "urlInput.outcome.networkError",
+  cors: "urlInput.outcome.cors",
 };
 
 const inferNetworkReason = (error: unknown): "network-error" | "cors" => {
@@ -216,41 +217,28 @@ async function checkUrl(
 const getFormatValidation = (
   value: string,
   enableUrlCheck: boolean,
-): { status: "idle" | "invalid-format" | "valid-format"; hint: string } => {
+): { status: "idle" | "invalid-format" | "valid-format" } => {
   const trimmed = value.trim();
 
   if (!trimmed) {
-    return { status: "idle", hint: "Enter a URL to begin." };
+    return { status: "idle" };
   }
 
   if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://")) {
-    return {
-      status: "invalid-format",
-      hint: "URL must start with https:// or http://",
-    };
+    return { status: "invalid-format" };
   }
 
   try {
     const parsed = new URL(trimmed);
     if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-      return {
-        status: "invalid-format",
-        hint: "URL must start with https:// or http://",
-      };
+      return { status: "invalid-format" };
     }
   } catch {
-    return {
-      status: "invalid-format",
-      hint: "URL must start with https:// or http://",
-    };
+    return { status: "invalid-format" };
   }
 
-  return {
-    status: "valid-format",
-    hint: enableUrlCheck
-      ? "Looks good — click Check URL or Open to verify it's reachable."
-      : "Looks good — click Open to verify it's reachable.",
-  };
+  void enableUrlCheck;
+  return { status: "valid-format" };
 };
 
 const formatContentLength = (value: number | null): string => {
@@ -296,57 +284,66 @@ const getHintState = (
   checkStatus: CheckStatus,
   lastResult: HeadResult | null,
   enableUrlCheck: boolean,
+  t: (key: string) => string,
 ): HintState => {
   switch (checkStatus) {
     case "idle":
       return {
         icon: <InfoOutlined fontSize="inherit" />,
         color: "text.secondary",
-        text: "Paste a direct link.",
+        text: t("urlInput.hint.idle"),
       };
     case "invalid-format":
       return {
         icon: <WarningAmberOutlined fontSize="inherit" />,
         color: "warning.main",
-        text: "URL must start with https:// or http://",
+        text: t("urlInput.hint.invalidFormat"),
       };
     case "valid-format":
       return {
         icon: <CheckCircleOutlineOutlined fontSize="inherit" />,
         color: "info.main",
         text: enableUrlCheck
-          ? "Looks good — click Check URL or Open to verify it's reachable."
-          : "Looks good — click Open to verify it's reachable.",
+          ? t("urlInput.hint.validFormatWithCheck")
+          : t("urlInput.hint.validFormatWithoutCheck"),
       };
     case "checking":
       return {
         icon: <CircularProgress size={13} />,
         color: "text.secondary",
-        text: "Checking reachability…",
+        text: t("urlInput.hint.checking"),
       };
     case "success":
       return {
         icon: <CheckCircleOutlineOutlined fontSize="inherit" />,
         color: "success.main",
-        text: "Confirmed reachable.",
+        text: t("urlInput.hint.success"),
       };
     case "warning":
       return {
         icon: <WarningAmberOutlined fontSize="inherit" />,
         color: "warning.main",
-        text: lastResult ? OUTCOME_HINTS[lastResult.outcomeReason] : OUTCOME_HINTS["network-error"],
+        text: t(
+          lastResult
+            ? OUTCOME_HINT_KEYS[lastResult.outcomeReason]
+            : OUTCOME_HINT_KEYS["network-error"],
+        ),
       };
     case "error":
       return {
         icon: <ErrorOutlineOutlined fontSize="inherit" />,
         color: "error.main",
-        text: lastResult ? OUTCOME_HINTS[lastResult.outcomeReason] : OUTCOME_HINTS["network-error"],
+        text: t(
+          lastResult
+            ? OUTCOME_HINT_KEYS[lastResult.outcomeReason]
+            : OUTCOME_HINT_KEYS["network-error"],
+        ),
       };
     default:
       return {
         icon: <InfoOutlined fontSize="inherit" />,
         color: "text.secondary",
-        text: "Paste a direct link.",
+        text: t("urlInput.hint.idle"),
       };
   }
 };
@@ -367,6 +364,7 @@ function UrlInput({
   useProxy = true,
   forceOpenInNewWindow = false,
 }: UrlInputProps) {
+  const { t } = useTranslation("linkset-editor");
   const [checkStatus, setCheckStatus] = useState<CheckStatus>("idle");
   const [lastResult, setLastResult] = useState<HeadResult | null>(null);
 
@@ -375,8 +373,8 @@ function UrlInput({
     [value, enableUrlCheck],
   );
   const hintState = useMemo(
-    () => getHintState(checkStatus, lastResult, enableUrlCheck),
-    [checkStatus, lastResult, enableUrlCheck],
+    () => getHintState(checkStatus, lastResult, enableUrlCheck, t),
+    [checkStatus, lastResult, enableUrlCheck, t],
   );
   const shouldShowResultPanel =
     (checkStatus === "success" || checkStatus === "warning" || checkStatus === "error") &&
@@ -419,7 +417,7 @@ function UrlInput({
     <Stack spacing={0.75}>
       <TextField
         fullWidth
-        label="URL"
+        label={t("fields.url")}
         value={value}
         onChange={(event) => handleChange(event.target.value)}
         onKeyDown={(event) => {
@@ -445,7 +443,7 @@ function UrlInput({
                         void handleCheck();
                       }}
                     >
-                      Check URL
+                      {t("urlInput.checkButton")}
                     </Button>
                   )}
                   <Button
@@ -462,7 +460,7 @@ function UrlInput({
                       window.open(value.trim(), "_blank", "noopener,noreferrer");
                     }}
                   >
-                    Open to verify
+                    {t("urlInput.openButton")}
                   </Button>
                 </Stack>
               </InputAdornment>
@@ -515,28 +513,28 @@ function UrlInput({
 
               <Grid container spacing={0.75}>
                 <Grid size={6}>
-                  <Typography variant="caption" color="text.secondary">Status</Typography>
+                  <Typography variant="caption" color="text.secondary">{t("urlInput.details.status")}</Typography>
                 </Grid>
                 <Grid size={6}>
                   <Typography variant="caption">{lastResult.status ?? "—"}</Typography>
                 </Grid>
 
                 <Grid size={6}>
-                  <Typography variant="caption" color="text.secondary">Content-Type</Typography>
+                  <Typography variant="caption" color="text.secondary">{t("urlInput.details.contentType")}</Typography>
                 </Grid>
                 <Grid size={6}>
                   <Typography variant="caption">{lastResult.contentType ?? "—"}</Typography>
                 </Grid>
 
                 <Grid size={6}>
-                  <Typography variant="caption" color="text.secondary">Content-Length</Typography>
+                  <Typography variant="caption" color="text.secondary">{t("urlInput.details.contentLength")}</Typography>
                 </Grid>
                 <Grid size={6}>
                   <Typography variant="caption">{formatContentLength(lastResult.contentLength)}</Typography>
                 </Grid>
 
                 <Grid size={6}>
-                  <Typography variant="caption" color="text.secondary">Last-Modified</Typography>
+                  <Typography variant="caption" color="text.secondary">{t("urlInput.details.lastModified")}</Typography>
                 </Grid>
                 <Grid size={6}>
                   <Typography variant="caption">{lastResult.lastModified ?? "—"}</Typography>

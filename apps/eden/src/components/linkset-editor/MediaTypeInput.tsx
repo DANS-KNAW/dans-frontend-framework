@@ -29,6 +29,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 
 export type MajorType =
   | "application"
@@ -185,7 +186,7 @@ const SUB_REGEX = /^[a-zA-Z0-9][a-zA-Z0-9!#$&\-^_.+]*$/;
 
 type Suggestion = {
   key: string;
-  group: "Major types" | "Known types" | "Subtypes";
+  group: "major" | "known" | "sub";
   left: string;
   right: string;
   major: MajorType;
@@ -253,10 +254,13 @@ function MediaTypeInput({
   value,
   onChange,
   onConfirmed,
-  label = "Media type",
+  label,
   size = "medium",//"small",
 }: MediaTypeInputProps) {
+  const { t } = useTranslation("linkset-editor");
   const [inputValue, setInputValue] = useState<string>("");
+    const inputLabel = label ?? t("mediaTypeInput.label");
+
   const [lockedMajor, setLockedMajor] = useState<MajorType | null>(null);
   const [open, setOpen] = useState<boolean>(false);
   const [hiIdx, setHiIdx] = useState<number>(-1);
@@ -292,9 +296,9 @@ function MediaTypeInput({
       const query = inputValue.trim().toLowerCase();
       const majorMatches = MAJORS.filter((major) => major.startsWith(query)).map((major) => ({
         key: `major:${major}`,
-        group: "Major types" as const,
+        group: "major" as const,
         left: major,
-        right: "Major type",
+        right: t("mediaTypeInput.majorTypeLabel"),
         major,
         sub: "",
       }));
@@ -306,7 +310,7 @@ function MediaTypeInput({
           if (full.toLowerCase().includes(query)) {
             knownAll.push({
               key: `known:${major}/${sub.value}`,
-              group: "Known types",
+              group: "known",
               left: full,
               right: sub.label,
               major,
@@ -333,13 +337,13 @@ function MediaTypeInput({
       })
       .map((entry) => ({
         key: `sub:${lockedMajor}/${entry.value}`,
-        group: "Subtypes" as const,
+        group: "sub" as const,
         left: `${lockedMajor}/${entry.value}`,
         right: entry.label,
         major: lockedMajor,
         sub: entry.value,
       }));
-  }, [inputValue, lockedMajor]);
+  }, [inputValue, lockedMajor, t]);
 
   const validationState = useMemo<ValidationState>(() => {
     if (!lockedMajor && !inputValue) {
@@ -373,7 +377,7 @@ function MediaTypeInput({
       return {
         icon: InfoOutlined,
         color: "text.primary",
-        text: "Start typing a major type or a full type like image/png",
+        text: t("mediaTypeInput.hint.empty"),
       };
     }
 
@@ -381,7 +385,7 @@ function MediaTypeInput({
       return {
         icon: InfoOutlined,
         color: "text.secondary",
-        text: "Keep typing — or pick a major type from the list",
+        text: t("mediaTypeInput.hint.typingMajor"),
       };
     }
 
@@ -389,7 +393,7 @@ function MediaTypeInput({
       return {
         icon: InfoOutlined,
         color: "info.main",
-        text: "Now type or pick a subtype",
+        text: t("mediaTypeInput.hint.lockedNoSub"),
       };
     }
 
@@ -397,7 +401,7 @@ function MediaTypeInput({
       return {
         icon: ErrorOutlined,
         color: "error.main",
-        text: "Invalid characters — use letters, digits, hyphens, dots, or +",
+        text: t("mediaTypeInput.hint.invalidChars"),
       };
     }
 
@@ -406,16 +410,16 @@ function MediaTypeInput({
       return {
         icon: CheckCircleOutlined,
         color: "success.main",
-        text: `${knownLabel} — well-known type`,
+        text: t("mediaTypeInput.hint.known", { label: knownLabel }),
       };
     }
 
     return {
       icon: HelpOutlined,
       color: "text.secondary",
-      text: "Valid format — subtype not in common list, double-check if unsure",
+      text: t("mediaTypeInput.hint.unknownValid"),
     };
-  }, [validationState, lockedMajor, inputValue]);
+  }, [validationState, lockedMajor, inputValue, t]);
 
   useEffect(() => {
     if (!lockedMajor || !inputValue) {
@@ -479,7 +483,8 @@ function MediaTypeInput({
     return () => {
       cancelled = true;
     };
-  }, [value, assembledValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
   const pickSuggestion = (suggestion: Suggestion) => {
     lockMajor(suggestion.major, suggestion.sub);
@@ -571,10 +576,14 @@ function MediaTypeInput({
       <Box ref={setAnchorEl}>
         <TextField
           fullWidth
-          label={label}
+          label={inputLabel}
           size={size}
           value={inputValue}
-          placeholder={lockedMajor ? "subtype…" : "e.g. image/png or start typing…"}
+          placeholder={
+            lockedMajor
+              ? t("mediaTypeInput.placeholderSubtype")
+              : t("mediaTypeInput.placeholderGeneral")
+          }
           onFocus={() => {
             if (suggestions.length > 0) {
               setOpen(true);
@@ -628,7 +637,7 @@ function MediaTypeInput({
                 <InputAdornment position="end">
                   <IconButton
                     size="small"
-                    aria-label="Unlock major type"
+                    aria-label={t("mediaTypeInput.unlockAriaLabel")}
                     onClick={unlockMajor}
                   >
                     <CloseOutlined fontSize="small" />
@@ -656,7 +665,15 @@ function MediaTypeInput({
             <MenuList dense>
               {groupedSuggestions.map((group, groupIdx) => (
                 <Box key={group.name}>
-                  {groupIdx > 0 && <ListSubheader disableSticky>{group.name}</ListSubheader>}
+                  {groupIdx > 0 && (
+                    <ListSubheader disableSticky>
+                      {group.name === "major"
+                        ? t("mediaTypeInput.group.major")
+                        : group.name === "known"
+                          ? t("mediaTypeInput.group.known")
+                          : t("mediaTypeInput.group.sub")}
+                    </ListSubheader>
+                  )}
                   {group.items.map((item) => {
                     rowIndex += 1;
                     const currentIdx = rowIndex;

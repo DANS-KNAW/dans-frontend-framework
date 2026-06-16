@@ -257,7 +257,7 @@ function LinkSetEditor() {
 
     return (
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Breadcrumbs aria-label="LinkSet flow breadcrumbs">
+        <Breadcrumbs aria-label={t('breadcrumbs.ariaLabel')}>
           <Typography color="text.primary">{t('breadcrumbs.newLinkSet')}</Typography>
           {(currentStep === "import" || cameFromImport) && (
             <Typography color="text.primary">{t('breadcrumbs.import')}</Typography>
