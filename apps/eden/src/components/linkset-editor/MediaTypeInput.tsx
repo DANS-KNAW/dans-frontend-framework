@@ -268,7 +268,7 @@ function MediaTypeInput({
 
   const inputRef = useRef<HTMLInputElement | null>(null);
   const previousValidationRef = useRef<ValidationState>("empty");
-  const previousValuePropRef = useRef<string | undefined>(value);
+  const previousValuePropRef = useRef<string | undefined>(undefined);
 
   const assembledValue = lockedMajor ? `${lockedMajor}/${inputValue}` : inputValue;
 
@@ -289,6 +289,39 @@ function MediaTypeInput({
     requestAnimationFrame(() => {
       inputRef.current?.focus();
     });
+  };
+
+  const handleTextChange = (
+    nextRaw: string,
+    options?: {
+      openSuggestions?: boolean;
+      forceUnlocked?: boolean;
+    },
+  ) => {
+    const shouldOpen = options?.openSuggestions ?? true;
+    const forceUnlocked = options?.forceUnlocked ?? false;
+
+    if (forceUnlocked && lockedMajor) {
+      setLockedMajor(null);
+    }
+
+    const effectiveLockedMajor = forceUnlocked ? null : lockedMajor;
+
+    if (!effectiveLockedMajor) {
+      const parsed = parseMaybeType(nextRaw);
+      if (parsed) {
+        lockMajor(parsed.major, parsed.sub);
+        setOpen(shouldOpen);
+        return;
+      }
+
+      setInputValue(nextRaw);
+      setOpen(shouldOpen);
+      return;
+    }
+
+    setInputValue(nextRaw);
+    setOpen(shouldOpen);
   };
 
   const suggestions = useMemo<Suggestion[]>(() => {
@@ -466,47 +499,16 @@ function MediaTypeInput({
       return;
     }
 
-    const parsed = parseMaybeType(value);
-    const nextMajor = parsed ? parsed.major : null;
-    const nextInput = parsed ? parsed.sub : value;
-
-    let cancelled = false;
-    queueMicrotask(() => {
-      if (cancelled) {
-        return;
-      }
-
-      setLockedMajor(nextMajor);
-      setInputValue(nextInput);
+    handleTextChange(value, {
+      openSuggestions: false,
+      forceUnlocked: true,
     });
-
-    return () => {
-      cancelled = true;
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   const pickSuggestion = (suggestion: Suggestion) => {
     lockMajor(suggestion.major, suggestion.sub);
     setOpen(false);
-  };
-
-  const handleTextChange = (nextRaw: string) => {
-    if (!lockedMajor) {
-      const parsed = parseMaybeType(nextRaw);
-      if (parsed) {
-        lockMajor(parsed.major, parsed.sub);
-        setOpen(true);
-        return;
-      }
-
-      setInputValue(nextRaw);
-      setOpen(true);
-      return;
-    }
-
-    setInputValue(nextRaw);
-    setOpen(true);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
