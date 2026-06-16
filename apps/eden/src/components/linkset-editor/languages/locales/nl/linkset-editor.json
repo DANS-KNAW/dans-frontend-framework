@@ -4,7 +4,7 @@
     "description": "Kies hoe u uw FAIRiCat LinkSet wilt bewerken of maken.",
     "fairiCatIntro": "Met een FAIRiCat LinkSet kunnen repositories de interoperabiliteitsvoordelen (services) die zij bieden adverteren.",
     "scratch": {
-      "title": "Begin nieuw van nul",
+      "title": "Begin nieuw en leeg",
       "description": "Open een lege editor en maak handmatig een nieuwe LinkSet."
     },
     "import": {
@@ -44,6 +44,7 @@
   "service": {
     "heading": "Service {{index}}",
     "removeAriaLabel": "Service {{index}} verwijderen",
+    "confirmDeleteWithInput": "Deze service bevat invoer en wordt verwijderd. Doorgaan?",
     "urlLabel": "URL",
     "anchorHelp": "Voer de basis-URL van de service in; de LinkSet 'anchor' (bijv. https://example.org)",
     "anchorHelpAriaLabel": "Hulp bij anker-URL",
@@ -62,6 +63,8 @@
       "label": "Metagegevens",
       "helpText": "Geef aanvullende informatie over de service"
     },
+    "confirmDisableWithInput": "Deze relatie bevat invoer en wordt verwijderd. Doorgaan?",
+    "confirmDeleteTargetWithInput": "Dit relatiedoel bevat invoer en wordt verwijderd. Doorgaan?",
     "addTarget": "Doel toevoegen",
     "removeTarget": "Doel verwijderen"
   },
@@ -80,6 +83,11 @@
   "validationPanel": {
     "heading": "Validatie",
     "validMessage": "LinkSet-concept is geldig."
+  },
+  "confirmDialog": {
+    "title": "Verwijderen bevestigen",
+    "cancel": "Annuleren",
+    "confirm": "Verwijderen"
   },
   "fields": {
     "url": "URL",

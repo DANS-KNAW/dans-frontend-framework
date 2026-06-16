@@ -17,6 +17,11 @@ import {
   CardContent,
   Chip,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Paper,
   Stack,
   Tab,
@@ -94,6 +99,7 @@ function LinkSetEditor() {
     contexts: [createEmptyContext()],
   });
 
+  // Could use useReducer grouping all import-related state, but maybe later on after more refactoring
   const [importedDraft, setImportedDraft] = useState<LinkSetDraft | null>(null);
   const [importedFilename, setImportedFilename] = useState<string>("");
   const [importSource, setImportSource] = useState<"upload" | "url" | null>(null);
@@ -103,9 +109,12 @@ function LinkSetEditor() {
   const [uploadError, setUploadError] = useState<string>("");
   const [urlSuccessMessage, setUrlSuccessMessage] = useState<string>("");
   const [urlErrorMessage, setUrlErrorMessage] = useState<string>("");
+  const [confirmDialogMessage, setConfirmDialogMessage] = useState<string>("");
+  const [pendingConfirmAction, setPendingConfirmAction] = useState<(() => void) | null>(null);
 
   const [cameFromImport, setCameFromImport] = useState<boolean>(false);
   const canApplyImport = Boolean(importedDraft && importedFilename && importSource);
+  const isConfirmDialogOpen = Boolean(pendingConfirmAction);
 
   const conversionResult = useMemo(() => parseDraftToLinkSet(draft), [draft]);
   const exchangeablePreview = useMemo(
@@ -273,7 +282,24 @@ function LinkSetEditor() {
     }));
   };
 
-  const removeContext = (contextIndex: number) => {
+  const requestDeletionConfirmation = (message: string, onConfirm: () => void) => {
+    setConfirmDialogMessage(message);
+    setPendingConfirmAction(() => onConfirm);
+  };
+
+  const closeConfirmDialog = () => {
+    setPendingConfirmAction(null);
+    setConfirmDialogMessage("");
+  };
+
+  const confirmDialogAction = () => {
+    if (pendingConfirmAction) {
+      pendingConfirmAction();
+    }
+    closeConfirmDialog();
+  };
+
+  const performRemoveContext = (contextIndex: number) => {
     setDraft((previous) => {
       const nextContexts = previous.contexts.filter(
         (_, currentIndex) => currentIndex !== contextIndex,
@@ -284,7 +310,7 @@ function LinkSetEditor() {
     });
   };
 
-  const toggleRelation = (
+  const performToggleRelation = (
     contextIndex: number,
     relationKey: LinkContextRelationKey,
     relationId: LinkRelationId,
@@ -294,6 +320,83 @@ function LinkSetEditor() {
       ...context,
       [relationKey]: enabled ? createRelation(relationId) : undefined,
     }));
+  };
+
+  const performRemoveRelationTarget = (
+    contextIndex: number,
+    relationKey: LinkContextRelationKey,
+    targetIndex: number,
+  ) => {
+    updateContext(contextIndex, (context) => {
+      const relation = context[relationKey];
+      if (!relation) {
+        return context;
+      }
+
+      const nextTargets = relation.targets.filter(
+        (_, currentTargetIndex) => currentTargetIndex !== targetIndex,
+      );
+
+      return {
+        ...context,
+        [relationKey]: {
+          ...relation,
+          targets: nextTargets.length > 0 ? nextTargets : [createEmptyTarget()],
+        },
+      };
+    });
+  };
+
+  const removeContext = (contextIndex: number) => {
+    const contextToRemove = draft.contexts[contextIndex];
+    const hasContextInput = Boolean(
+      contextToRemove &&
+        (
+          contextToRemove.anchor.trim() ||
+          contextToRemove.serviceDescLinkRelation?.targets.some(
+            (target) => target.href.trim() || target.type.trim() || target.title.trim(),
+          ) ||
+          contextToRemove.serviceDocLinkRelation?.targets.some(
+            (target) => target.href.trim() || target.type.trim() || target.title.trim(),
+          ) ||
+          contextToRemove.serviceMetaLinkRelation?.targets.some(
+            (target) => target.href.trim() || target.type.trim() || target.title.trim(),
+          )
+        ),
+    );
+
+    if (hasContextInput) {
+      requestDeletionConfirmation(t("service.confirmDeleteWithInput"), () =>
+        performRemoveContext(contextIndex),
+      );
+      return;
+    }
+
+    performRemoveContext(contextIndex);
+  };
+
+  const toggleRelation = (
+    contextIndex: number,
+    relationKey: LinkContextRelationKey,
+    relationId: LinkRelationId,
+    enabled: boolean,
+  ) => {
+    if (!enabled) {
+      const relation = draft.contexts[contextIndex]?.[relationKey];
+      const hasRelationInput = relation?.targets.some(
+        (target) =>
+          target.href.trim() || target.type.trim() || target.title.trim(),
+      );
+
+      if (hasRelationInput) {
+        requestDeletionConfirmation(t("relations.confirmDisableWithInput"), () =>
+          performToggleRelation(contextIndex, relationKey, relationId, enabled),
+        );
+        return;
+      }
+    }
+
+    performToggleRelation(contextIndex, relationKey, relationId, enabled);
   };
 
   const updateRelationTarget = (
@@ -343,24 +446,23 @@ function LinkSetEditor() {
     relationKey: LinkContextRelationKey,
     targetIndex: number,
   ) => {
-    updateContext(contextIndex, (context) => {
-      const relation = context[relationKey];
-      if (!relation) {
-        return context;
-      }
+    const relation = draft.contexts[contextIndex]?.[relationKey];
+    const targetToRemove = relation?.targets[targetIndex];
+    const hasTargetInput = Boolean(
+      targetToRemove &&
+        (targetToRemove.href.trim() ||
+          targetToRemove.type.trim() ||
+          targetToRemove.title.trim()),
+    );
 
-      const nextTargets = relation.targets.filter(
-        (_, currentTargetIndex) => currentTargetIndex !== targetIndex,
+    if (hasTargetInput) {
+      requestDeletionConfirmation(t("relations.confirmDeleteTargetWithInput"), () =>
+        performRemoveRelationTarget(contextIndex, relationKey, targetIndex),
       );
+      return;
+    }
 
-      return {
-        ...context,
-        [relationKey]: {
-          ...relation,
-          targets: nextTargets.length > 0 ? nextTargets : [createEmptyTarget()],
-        },
-      };
-    });
+    performRemoveRelationTarget(contextIndex, relationKey, targetIndex);
   };
 
   return (
@@ -573,6 +675,25 @@ function LinkSetEditor() {
           </Stack>
         </>
       )}
+
+      <Dialog
+        open={isConfirmDialogOpen}
+        onClose={closeConfirmDialog}
+        aria-labelledby="delete-confirmation-dialog-title"
+      >
+        <DialogTitle id="delete-confirmation-dialog-title">
+          {t("confirmDialog.title")}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>{confirmDialogMessage}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeConfirmDialog}>{t("confirmDialog.cancel")}</Button>
+          <Button color="error" variant="contained" onClick={confirmDialogAction}>
+            {t("confirmDialog.confirm")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   );
 }

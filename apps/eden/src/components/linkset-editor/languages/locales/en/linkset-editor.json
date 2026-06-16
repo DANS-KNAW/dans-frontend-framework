@@ -44,6 +44,7 @@
   "service": {
     "heading": "Service {{index}}",
     "removeAriaLabel": "Remove service {{index}}",
+    "confirmDeleteWithInput": "This service contains input and will be deleted. Continue?",
     "urlLabel": "URL",
     "anchorHelp": "Enter the service's base URL; the LinkSet 'anchor' (e.g., https://example.org)",
     "anchorHelpAriaLabel": "Anchor URL help",
@@ -62,6 +63,8 @@
       "label": "Metadata",
       "helpText": "Provide further information about the service"
     },
+    "confirmDisableWithInput": "This relation contains input and will be deleted. Continue?",
+    "confirmDeleteTargetWithInput": "This relation target contains input and will be deleted. Continue?",
     "addTarget": "Add target",
     "removeTarget": "Remove target"
   },
@@ -80,6 +83,11 @@
   "validationPanel": {
     "heading": "Validation",
     "validMessage": "LinkSet draft is valid."
+  },
+  "confirmDialog": {
+    "title": "Confirm deletion",
+    "cancel": "Cancel",
+    "confirm": "Delete"
   },
   "fields": {
     "url": "URL",
