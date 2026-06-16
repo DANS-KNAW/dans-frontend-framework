@@ -1,0 +1,97 @@
+{
+  "chooseStep": {
+    "heading": "Bewerk of maak uw LinkSet",
+    "description": "Kies hoe u uw FAIRiCat LinkSet wilt bewerken of maken.",
+    "fairiCatIntro": "Met een FAIRiCat LinkSet kunnen repositories de interoperabiliteitsvoordelen (services) die zij bieden adverteren.",
+    "scratch": {
+      "title": "Begin nieuw en leeg",
+      "description": "Open een lege editor en maak handmatig een nieuwe LinkSet."
+    },
+    "import": {
+      "title": "Een bestand importeren",
+      "description": "Importeer een bestaande LinkSet van upload of URL, en ga dan verder met bewerken."
+    }
+  },
+  "importStep": {
+    "heading": "LinkSet importeren",
+    "uploadTab": "Upload",
+    "urlTab": "URL",
+    "urlDemoAlert": "Demomodus: URL-import gebruikt momenteel nep-gegevens en haalt geen externe JSON op.",
+    "urlLabel": "LinkSet URL",
+    "urlPlaceholder": "https://example.org/linkset.json",
+    "fetchButton": "Ophalen",
+    "fetching": "Bezig met ophalen",
+    "cancel": "Annuleren",
+    "importAndEdit": "Importeren & bewerken",
+    "readyToImport": "Klaar om te importeren: {{filename}} ({{source}})",
+    "uploadSource": "upload",
+    "urlSource": "URL demo"
+  },
+  "editStep": {
+    "heading": "FAIRiCat LinkSet Editor",
+    "imported": "Geïmporteerd",
+    "anchorDescription": "Een geldige absolute URL (link anchor) is vereist voor elke service en bijgevoegde koppelingen.",
+    "addService": "Service toevoegen",
+    "startOver": "Opnieuw beginnen",
+    "saveDraft": "Concept opslaan",
+    "store": "Opslaan"
+  },
+  "breadcrumbs": {
+    "newLinkSet": "Nieuwe LinkSet",
+    "import": "Importeren",
+    "edit": "Bewerken"
+  },
+  "service": {
+    "heading": "Service {{index}}",
+    "removeAriaLabel": "Service {{index}} verwijderen",
+    "confirmDeleteWithInput": "Deze service bevat invoer en wordt verwijderd. Doorgaan?",
+    "urlLabel": "URL",
+    "anchorHelp": "Voer de basis-URL van de service in; de LinkSet 'anchor' (bijv. https://example.org)",
+    "anchorHelpAriaLabel": "Hulp bij anker-URL",
+    "relationHelpAriaLabel": "Hulp bij {{label}}"
+  },
+  "relations": {
+    "description": {
+      "label": "Beschrijving",
+      "helpText": "Geef een machineleesbare beschrijving van de service"
+    },
+    "documentation": {
+      "label": "Documentatie",
+      "helpText": "Geef mensleesbare informatie over de documentatie van de service"
+    },
+    "metadata": {
+      "label": "Metagegevens",
+      "helpText": "Geef aanvullende informatie over de service"
+    },
+    "confirmDisableWithInput": "Deze relatie bevat invoer en wordt verwijderd. Doorgaan?",
+    "confirmDeleteTargetWithInput": "Dit relatiedoel bevat invoer en wordt verwijderd. Doorgaan?",
+    "addTarget": "Doel toevoegen",
+    "removeTarget": "Doel verwijderen"
+  },
+  "uploadPanel": {
+    "heading": "Upload een FAIRiCat LinkSet JSON-bestand",
+    "dropzoneHelp": "Sleep hier een .json-bestand heen, of druk op Enter/Spatie om te bladeren.",
+    "dropzoneAriaLabel": "Upload FAIRiCat LinkSet JSON-bestand",
+    "errorNoJson": "Laad alstublieft een .json-bestand.",
+    "errorParseFailed": "Kan het geüploade JSON-bestand niet parseren.",
+    "errorReadFailed": "Kan het bestand niet lezen. Zorg ervoor dat het geldige JSON is."
+  },
+  "previewPanel": {
+    "heading": "Linkset-voorbeeld; uitwisselbaar als FAIRiCat Linkset JSON",
+    "downloadButton": "Download Linkset JSON"
+  },
+  "validationPanel": {
+    "heading": "Validatie",
+    "validMessage": "LinkSet-concept is geldig."
+  },
+  "confirmDialog": {
+    "title": "Verwijderen bevestigen",
+    "cancel": "Annuleren",
+    "confirm": "Verwijderen"
+  },
+  "fields": {
+    "url": "URL",
+    "title": "Titel",
+    "type": "Type"
+  }
+}
