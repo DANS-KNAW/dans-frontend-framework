@@ -63,6 +63,30 @@ export interface MediaTypeValue {
   full: string;
 }
 
+/**
+ * Single-field autocomplete for entering IANA media types (e.g. "image/png").
+ * 
+ * The major type locks into a prefix chip once matched; subtype remains free text
+ * with suggestions scoped to the locked major type.
+ * The sub types suggested are based on curated lists of known much used subtypes for each major type, 
+ * but the user can enter any valid subtype string. 
+ * While it allows free-text for the sub-types (there are just too many at IANA) 
+ * the format of the media type is still validated, 
+ * and the user gets feedback on whether the current input is 
+ * a known media type, an unknown but valid media type, or invalid format.
+ * 
+ * The delete/backspace key will unlock the major type if the subtype field is empty, allowing the user to change the major type.
+ * The whole input can be cleared to start over with the button that appears when a major type is locked.
+ * 
+ * @param value - The current media type value (e.g. "image/png"). If provided, the component will be controlled.
+ * @param onChange - Callback invoked when the media type value changes.
+ * @param onConfirmed - Callback invoked when a valid media type is confirmed (either known or unknown-valid).
+ * @param label - Optional label for the input field. Defaults to a localized string.
+ * @param size - Size of the input field. Can be "small" or "medium". Defaults to "medium". 
+ * 
+ * @example
+ * <MediaTypeInput value={formData.mediaType}  />
+ */
 export interface MediaTypeInputProps {
   value?: string;
   onChange?: (value: string) => void;
@@ -182,8 +206,18 @@ const KNOWN_SUBS: Record<MajorType, SubEntry[]> = {
   example: [{ value: "example", label: "Example type" }],
 };
 
+/**
+ * Regex for validating the subtype part of a media type, according to the syntax rules defined in RFC 6838.
+ * The subtype must start with an alphanumeric character, followed by zero or more characters that can be alphanumeric or one of the allowed special characters: ! # $ & - ^ _ . +
+ * This regex does not allow spaces or slashes, and ensures that the subtype is not empty.
+ */
 const SUB_REGEX = /^[a-zA-Z0-9][a-zA-Z0-9!#$&\-^_.+]*$/;
 
+/**
+ * Suggestion represents an item in the autocomplete dropdown. 
+ * It can be a major type suggestion, a known subtype suggestion, or a general subtype suggestion within a locked major type. 
+ * Each suggestion includes the text to display on the left (the media type), the text to display on the right (a human-friendly label), and metadata about the major and subtype it represents.
+ */
 type Suggestion = {
   key: string;
   group: "major" | "known" | "sub";
@@ -193,6 +227,10 @@ type Suggestion = {
   sub: string;
 };
 
+/**
+ * HintState represents the state of the hint message shown below the input field, including the icon to display, the color of the text, and the hint text itself.
+ * The hint message provides feedback to the user about the current state of their input, such as whether they are typing a major type, have locked a major type without a subtype, have entered invalid characters, or have entered a known or unknown but valid media type.
+ */
 type HintState = {
   icon: typeof InfoOutlined;
   color: string;
@@ -259,13 +297,19 @@ function MediaTypeInput({
 }: MediaTypeInputProps) {
   const { t } = useTranslation("linkset-editor");
   const [inputValue, setInputValue] = useState<string>("");
-    const inputLabel = label ?? t("mediaTypeInput.label");
+  const inputLabel = label ?? t("mediaTypeInput.label");
 
+  // The 'locked' major type; once a major type is locked, the user can only edit the subtype. 
   const [lockedMajor, setLockedMajor] = useState<MajorType | null>(null);
+  // The open state of the suggestions popper
   const [open, setOpen] = useState<boolean>(false);
+  // The highlighted index in the suggestions list
   const [hiIdx, setHiIdx] = useState<number>(-1);
+  // The anchor element for the popper
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
 
+  // Refs to keep track of the input element, 
+  // previous validation state, and previous value prop
   const inputRef = useRef<HTMLInputElement | null>(null);
   const previousValidationRef = useRef<ValidationState>("empty");
   const previousValuePropRef = useRef<string | undefined>(undefined);
@@ -291,6 +335,17 @@ function MediaTypeInput({
     });
   };
 
+  /**
+   * Handles changes to the input text, updating the internal state 
+   * and determining whether to lock the major type or keep it unlocked. 
+   * 
+   * @param nextRaw The next raw input value
+   * @param options Options for handling the text change
+   * @param options.openSuggestions Whether to open the suggestions popper
+   * @param options.forceUnlocked Whether to force unlock the major type
+   * 
+   * @returns void
+   */
   const handleTextChange = (
     nextRaw: string,
     options?: {
