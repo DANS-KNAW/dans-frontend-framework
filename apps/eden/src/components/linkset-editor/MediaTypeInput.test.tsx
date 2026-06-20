@@ -2,6 +2,8 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import MediaTypeInput from "./MediaTypeInput";
 
+// Mock the translation function to return the key itself for testing, 
+// with special handling for well-known types
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string, options?: Record<string, unknown>) => {

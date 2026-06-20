@@ -82,6 +82,7 @@ export interface HeadResult {
  * and the component will attempt to use a CORS proxy for the HEAD request to avoid CORS issues.
  *
  * Note: Possible improvement would be to suggest https when no protocol is given and allow the user to select either https (default) or http via a dropdown at the front. 
+ * Another improvement would be to detect characters that need escaping and suggest doing so.
  * 
 */
 export interface UrlInputProps {
