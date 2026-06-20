@@ -40,6 +40,7 @@
     "anchorDescription": "Een geldige absolute URL (link anchor) is vereist voor elke service en bijgevoegde koppelingen.",
     "addService": "Service toevoegen",
     "startOver": "Opnieuw beginnen",
+    "confirmStartOverWithInput": "Deze LinkSet bevat invoer en wordt gereset. Doorgaan?",
     "saveDraft": "Concept opslaan",
     "store": "Opslaan"
   },

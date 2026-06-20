@@ -41,6 +41,7 @@ import {
   createRelation,
   LinkContextDraft,
   LinkContextRelationKey,
+  LinkRelationDraft,
   LinkRelationId,
   LinkSetDraft,
   LinkTargetDraft,
@@ -264,7 +265,7 @@ function LinkSetEditor() {
           )}
           {currentStep === "edit" && <Typography color="text.primary">{t('breadcrumbs.edit')}</Typography>}
         </Breadcrumbs>
-        <Button size="small" onClick={resetFlow} startIcon={<ArrowBackOutlined />}>
+        <Button size="small" onClick={handleStartOver} startIcon={<ArrowBackOutlined />}>
           {t('editStep.startOver')}
         </Button>
       </Stack>
@@ -303,6 +304,43 @@ function LinkSetEditor() {
       pendingConfirmAction();
     }
     closeConfirmDialog();
+  };
+
+  const targetHasInput = (target: LinkTargetDraft) =>
+    Boolean(target.href.trim() || target.type.trim() || target.title.trim());
+
+  const relationHasInput = (relation?: LinkRelationDraft) =>
+    Boolean(relation?.targets.some(targetHasInput));
+
+  const contextHasInput = (context: LinkContextDraft) =>
+    Boolean(
+      context.anchor.trim() ||
+        context.serviceDescLinkRelation ||
+        context.serviceDocLinkRelation ||
+        context.serviceMetaLinkRelation ||
+        relationHasInput(context.serviceDescLinkRelation) ||
+        relationHasInput(context.serviceDocLinkRelation) ||
+        relationHasInput(context.serviceMetaLinkRelation),
+    );
+
+  const hasStartOverInput = () => {
+    const hasDraftInput =
+      draft.contexts.length > 1 || draft.contexts.some(contextHasInput);
+
+    const hasImportInput = Boolean(
+      urlValue.trim() || importedDraft || importedFilename || importSource,
+    );
+
+    return hasDraftInput || hasImportInput;
+  };
+
+  const handleStartOver = () => {
+    if (hasStartOverInput()) {
+      requestDeletionConfirmation(t("editStep.confirmStartOverWithInput"), resetFlow);
+      return;
+    }
+
+    resetFlow();
   };
 
   const performRemoveContext = (contextIndex: number) => {
@@ -672,7 +710,7 @@ function LinkSetEditor() {
           <PreviewPanel preview={exchangeablePreview} onDownload={downloadExchangeableJson} />
 
           <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" spacing={1.5}>
-            <Button onClick={resetFlow} startIcon={<ArrowBackOutlined />}>
+            <Button onClick={handleStartOver} startIcon={<ArrowBackOutlined />}>
               {t('editStep.startOver')}
             </Button>
             <Stack direction="row" spacing={1}>

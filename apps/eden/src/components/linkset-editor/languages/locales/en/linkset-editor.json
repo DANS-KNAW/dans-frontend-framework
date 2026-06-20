@@ -40,6 +40,7 @@
     "anchorDescription": "A valid absolute URL (link anchor) is required for each service and its added links.",
     "addService": "Add service",
     "startOver": "Start over",
+    "confirmStartOverWithInput": "This LinkSet contains input and will be reset. Continue?",
     "saveDraft": "Save draft",
     "store": "Store"
   },
