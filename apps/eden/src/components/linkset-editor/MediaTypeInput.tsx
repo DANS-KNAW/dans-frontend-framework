@@ -85,7 +85,7 @@ export interface MediaTypeValue {
  * @param size - Size of the input field. Can be "small" or "medium". Defaults to "medium". 
  * 
  * @example
- * <MediaTypeInput value={formData.mediaType}  />
+ * <MediaTypeInput value={formData.mediaType}  onChange={handleMediaTypeChange} />
  */
 export interface MediaTypeInputProps {
   value?: string;

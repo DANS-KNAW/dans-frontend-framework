@@ -40,6 +40,50 @@ export interface HeadResult {
   outcomeReason: "ok" | "wrong-type" | "too-large" | "not-found" | "network-error" | "cors";
 }
 
+/**
+ * UrlInput is a component that allows users to input a URL and optionally checks its validity and accessibility by performing a HEAD request.
+ * It provides feedback on the URL format, accessibility, content type, and size. The component also handles CORS issues by optionally using a proxy for the HEAD request.
+ * Users can choose to disable the URL check if they prefer to only verify the URL themselves.
+ * 
+ * The URL Check is using a HEAD request to determine if the URL is reachable and usable. 
+ * Note that most URLs will be remote relative to the client origin, so CORS will often prevent us from getting a successful response.
+ * In those cases, we could attempt to use a public CORS proxy to perform the check, but that also has limitations and may not always work.
+ * Because of this, we want to allow users to disable the check entirely (enableUrlCheck) and just rely on them to verify the URL themselves by opening it in a new tab.
+ *
+ * Verification is supported via a button that opens the URL in a new tab or window . 
+ * There is an option to attempt to use a popup window for better user experience, but it is a bit experimental
+ *
+ * @params value - The current value of the URL input.
+ * @params onChange - Callback function that is called when the input value changes. Receives the new value as an argument.
+ * @params onConfirmed - Callback function that is called when a URL check is completed. Receives the result of the HEAD request as an argument.
+ * @params contentTypes - An optional array of content types to check against the response's Content-Type header. Can include wildcards (e.g., "image/*").
+ * @params contentTypesAllowed - If true, the content type must match one of the specified types. If false, the content type must not match any of the specified types. Defaults to true.
+ * @params enableUrlCheck - If true, the component will perform a HEAD request to check the URL's accessibility and validity. Defaults to true.
+ * @params useProxy - If true, the component will use a CORS proxy when performing the HEAD request to work around CORS issues. Defaults to true.
+ * @params forceOpenInNewWindow - If true, the "Open" button will attempt to open the URL in a popup window instead of a standard new tab. Defaults to false.
+ * 
+ * @example
+ * <UrlInput
+ *   value={formData.url}
+ *   onChange={handleUrlChange}
+ *   onConfirmed={(result) => console.log("URL check result:", result)}
+ *   contentTypes={["image/*", "application/pdf"]}
+ *   contentTypesAllowed={true}
+ *   enableUrlCheck={true}
+ *   useProxy={true}
+ *   forceOpenInNewWindow={false}
+ * /> 
+ * 
+ * In this example, the UrlInput component is used to input a URL. 
+ * It checks that the URL is valid and performs a HEAD request to verify that the URL is accessible 
+ * and returns a content type that matches either "image/*" or "application/pdf". 
+ * The results of the check are logged to the console. 
+ * The "Open" button will open the URL in a new tab, 
+ * and the component will attempt to use a CORS proxy for the HEAD request to avoid CORS issues.
+ *
+ * Note: Possible improvement would be to suggest https when no protocol is given and allow the user to select either https (default) or http via a dropdown at the front. 
+ * 
+*/
 export interface UrlInputProps {
   value: string;
   onChange: (value: string) => void;
@@ -48,9 +92,11 @@ export interface UrlInputProps {
   contentTypesAllowed?: boolean; // Allow means that others are disallowed, while disallow means that others are allowed
   enableUrlCheck?: boolean; // Disable when checking almost always fails because of CORS and we do not want to use a proxy
   useProxy?: boolean; // If we will use a proxy when doing the URL check
-  forceOpenInNewWindow?: boolean; // Best-effort popup/window behavior instead of standard new tab
+  forceOpenInNewWindow?: boolean; // Open in popup/window instead of standard new tab
 }
 
+// used at the HEAD request level, so it doesn't guarantee that the actual content is within limits, but it gives us a hint and allows us to warn users about potentially large files before they attempt to open them.
+// note that it is fixed for now, but it could be made configurable in the future if needed.
 const MAX_BYTES = 26_214_400;
 
 // To work around CORS issues when checking URLs, we use a public CORS proxy. 
@@ -257,6 +303,7 @@ const formatContentLength = (value: number | null): string => {
   return `${value} B`;
 };
 
+// Bit experimental, not sure this is a good UX
 const openInNewWindow = (url: string) => {
   const windowName = `url_verify_${Date.now()}`;
   const openedWindow = window.open(
@@ -348,12 +395,6 @@ const getHintState = (
   }
 };
 
-/**
- * The URL Check is using a HEAD request to determine if the URL is reachable and usable. 
- * Note that most URLs will be remote relative to the client origin, so CORS will often prevent us from getting a successful response.
- * In those cases, we could attempt to use a public CORS proxy to perform the check, but that also has limitations and may not always work.
- * Because of this, we want to allow users to disable the check entirely (enableUrlCheck) and just rely on them to verify the URL themselves by opening it in a new tab.
- */
 function UrlInput({
   value,
   onChange,
