@@ -36,6 +36,8 @@ interface HiddenFacet extends BaseFacet {
 
 interface ListFacet extends BaseFacet {
   type: "list" | "piechart";
+  singleSelect?: boolean;
+  optionLabels?: Record<string, string>;
 }
 
 interface GeoFacet extends BaseFacet {
@@ -111,12 +113,10 @@ export interface ESUIFacet {
   orientation?: "horizontal" | "vertical";
   format?: string;
   showEmptyBuckets?: boolean;
-  // Predicate forwarded from SimpleConfig; consumed by ElasticSearch.tsx
-  // to hide facet panels based on the active _category filter.
   showWhen?: (activeCategory?: string) => boolean;
-  // Non-empty when the facet targets a field inside a nested object.
-  // nestedAggregations.ts consumes this to wrap aggs + filters.
   nestedPath?: string;
+  singleSelect?: boolean;
+  optionLabels?: Record<string, string>;
 }
 
 export interface ESUISortOption {
@@ -202,6 +202,8 @@ const { facets, disjunctiveFacets, externallyHandledFacets } =
         ...(facet.width && { width: facet.width }),
         ...(facet.showWhen && { showWhen: facet.showWhen }),
         ...(facet.nestedPath && { nestedPath: facet.nestedPath }),
+        ...("singleSelect" in facet && facet.singleSelect && { singleSelect: true }),
+        ...("optionLabels" in facet && facet.optionLabels && { optionLabels: facet.optionLabels }),
       };
 
       switch (facet.type) {

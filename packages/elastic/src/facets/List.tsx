@@ -1,4 +1,5 @@
 import Checkbox from "@mui/material/Checkbox";
+import Radio from "@mui/material/Radio";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { type FacetViewProps } from "@elastic/react-search-ui-views";
@@ -17,6 +18,10 @@ interface ListFacetProps extends FacetViewProps {
   setFilterType: (type: FilterType) => void;
   customFilterType: FilterType;
   defaultShow: number;
+  // When true, render as a single-select (radio).
+  singleSelect?: boolean;
+  // Optional raw-value → display-label map.
+  optionLabels?: Record<string, string>;
 }
 
 export default function ListFacet({
@@ -30,6 +35,8 @@ export default function ListFacet({
   setFilterType,
   customFilterType,
   defaultShow,
+  singleSelect,
+  optionLabels,
 }: ListFacetProps) {
   const { t } = useTranslation('elastic');
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,14 +58,16 @@ export default function ListFacet({
 
   return (
     <>
-      <FilterFacet
-        customFilterType={customFilterType}
-        setFilterType={setFilterType}
-        showSearch={showSearch}
-        options={options}
-        setSearchTerm={setSearchTerm}
-        searchTerm={searchTerm}
-      />
+      {!singleSelect && (
+        <FilterFacet
+          customFilterType={customFilterType}
+          setFilterType={setFilterType}
+          showSearch={showSearch}
+          options={options}
+          setSearchTerm={setSearchTerm}
+          searchTerm={searchTerm}
+        />
+      )}
 
       { options.length === 0 && (
         <Typography variant="body2" color="textSecondary" sx={{ my: 2, textAlign: 'center' }}>
@@ -79,29 +88,46 @@ export default function ListFacet({
               disablePadding
               disableGutters
             >
-              <ListItemButton 
-                role={undefined} 
+              <ListItemButton
+                role={undefined}
                 onClick={() => {
-                  option.selected
-                    ? onRemove(option.value as any)
-                    : onSelect(option.value as any)
-                }} 
+                  if (option.selected) {
+                    onRemove(option.value as any);
+                  } else {
+                    if (singleSelect) {
+                      options.forEach((o) => o.selected && onRemove(o.value as any));
+                    }
+                    onSelect(option.value as any);
+                  }
+                }}
                 dense
               >
                 <ListItemIcon sx={{ minWidth: '1.2rem' }}>
-                  <Checkbox
-                    edge="start"
-                    checked={option.selected}
-                    tabIndex={-1}
-                    disableRipple
-                    inputProps={{ 'aria-labelledby': labelId }}
-                    size="small"
-                    sx={{ p: 0, }}
-                  />
+                  {singleSelect ? (
+                    <Radio
+                      edge="start"
+                      checked={option.selected}
+                      tabIndex={-1}
+                      disableRipple
+                      inputProps={{ 'aria-labelledby': labelId }}
+                      size="small"
+                      sx={{ p: 0 }}
+                    />
+                  ) : (
+                    <Checkbox
+                      edge="start"
+                      checked={option.selected}
+                      tabIndex={-1}
+                      disableRipple
+                      inputProps={{ 'aria-labelledby': labelId }}
+                      size="small"
+                      sx={{ p: 0, }}
+                    />
+                  )}
                 </ListItemIcon>
-                <ListItemText 
-                  id={labelId} 
-                  primary={String(option.value)} 
+                <ListItemText
+                  id={labelId}
+                  primary={optionLabels?.[String(option.value)] ?? String(option.value)}
                   sx={{ m: 0 }}
                 />
               </ListItemButton>

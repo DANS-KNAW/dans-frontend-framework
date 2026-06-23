@@ -15,6 +15,7 @@
     "@dans-framework/i18n": "workspace:*",
     "@dans-framework/layout": "workspace:*",
     "@dans-framework/pages": "workspace:*",
+    "@dans-framework/shared-store": "workspace:*",
     "@dans-framework/theme": "workspace:*",
     "@dans-framework/utils": "workspace:*",
     "@dans-framework/wrapper": "workspace:*",

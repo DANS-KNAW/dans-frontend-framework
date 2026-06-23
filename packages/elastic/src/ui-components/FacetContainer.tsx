@@ -94,8 +94,14 @@ export default function FacetContainer({
                     defaultShow: config.show,
                   }
                 : {})}
+              {...(config.display === "list" && config.singleSelect
+                ? { singleSelect: true }
+                : {})}
+              {...(config.display === "list" && config.optionLabels
+                ? { optionLabels: config.optionLabels }
+                : {})}
               {...(config.display === "barchart"
-                ? { 
+                ? {
                     orientation: config.orientation,
                     legend: config.legend,
                   }

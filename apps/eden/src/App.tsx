@@ -14,8 +14,9 @@ import { useEmbedHandler } from "@dans-framework/utils";
 import { AppWrapper } from "@dans-framework/wrapper";
 import { ElasticWrapper } from "@dans-framework/elastic";
 import { esConfig, esResultConfig } from "./config/elasticConfig";
-import { SingleRecord } from "@dans-framework/elastic-result";
 import LinkSetEditor from "./components/LinkSetEditor";
+import RecordDetails from "./RecordDetails";
+import SearchWithDefaultCategory from "./SearchWithDefaultCategory";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -26,11 +27,11 @@ const App = () => {
       case "dashboard":
         return <ElasticWrapper config={esConfig} dashRoute={page.slug} />
       case "search":
-        return <ElasticWrapper config={esConfig} resultRoute={page.slug} />
+        return <SearchWithDefaultCategory resultRoute={page.slug} />
       case "linkset-editor":
         return <LinkSetEditor />;
       case "record":
-        return <SingleRecord config={esResultConfig} />;
+        return <RecordDetails config={esResultConfig} />;
       default:
         return <Generic {...page} />;
     }
