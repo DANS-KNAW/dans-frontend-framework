@@ -18,11 +18,18 @@
     "urlTab": "URL",
     "urlDemoAlert": "Demo mode: URL import currently uses fake data and does not fetch remote JSON yet.",
     "urlLabel": "LinkSet URL",
+    "urlRequired": "LinkSet URL is required.",
     "urlPlaceholder": "https://example.org/linkset.json",
     "fetchButton": "Fetch",
     "fetching": "Fetching",
+    "fetchFailed": "Failed to fetch URL ({{status}} {{statusText}}).",
+    "fetchParseFailed": "Fetched JSON could not be parsed as a LinkSet.",
+    "fetchFailedGeneric": "Unable to fetch URL or parse JSON. Check CORS, network access, and JSON format.",
     "cancel": "Cancel",
     "importAndEdit": "Import & edit",
+    "importRequiresData": "Import & edit requires imported data.",
+    "uploadedSuccess": "Uploaded: {{filename}}",
+    "loadedFromUrl": "Loaded from URL: {{filename}}",
     "readyToImport": "Ready to import: {{filename}} ({{source}})",
     "uploadSource": "upload",
     "urlSource": "URL demo"
@@ -33,10 +40,12 @@
     "anchorDescription": "A valid absolute URL (link anchor) is required for each service and its added links.",
     "addService": "Add service",
     "startOver": "Start over",
+    "confirmStartOverWithInput": "This LinkSet contains input and will be reset. Continue?",
     "saveDraft": "Save draft",
     "store": "Store"
   },
   "breadcrumbs": {
+    "ariaLabel": "LinkSet flow breadcrumbs",
     "newLinkSet": "New LinkSet",
     "import": "Import",
     "edit": "Edit"
@@ -45,6 +54,7 @@
     "heading": "Service {{index}}",
     "removeAriaLabel": "Remove service {{index}}",
     "confirmDeleteWithInput": "This service contains input and will be deleted. Continue?",
+    "enabledLabel": "Enabled",
     "urlLabel": "URL",
     "anchorHelp": "Enter the service's base URL; the LinkSet 'anchor' (e.g., https://example.org)",
     "anchorHelpAriaLabel": "Anchor URL help",
@@ -63,6 +73,14 @@
       "label": "Metadata",
       "helpText": "Provide further information about the service"
     },
+    "linkLabel": "Link {{index}}",
+    "urlHelpTooltip": "Provide the link's URL (e.g., https://example.org/openapi)",
+    "urlHelpAriaLabel": "Help with link URL",
+    "typeHelpTooltip": "Specify the MIME type (e.g., application/json)",
+    "typeHelpAriaLabel": "Help with MIME type",
+    "titlePlaceholder": "OpenAPI document",
+    "titleHelpTooltip": "Provide a descriptive title for the link (e.g., OpenAPI document)",
+    "titleHelpAriaLabel": "Help with link title",
     "confirmDisableWithInput": "This relation contains input and will be deleted. Continue?",
     "confirmDeleteTargetWithInput": "This relation target contains input and will be deleted. Continue?",
     "addTarget": "Add target",
@@ -89,9 +107,57 @@
     "cancel": "Cancel",
     "confirm": "Delete"
   },
+  "urlInput": {
+    "checkButton": "Check URL",
+    "openButton": "Open to verify",
+    "hint": {
+      "idle": "Paste a direct link.",
+      "invalidFormat": "Enter a valid URL (for example: example.org/resource or https://example.org/resource).",
+      "validFormatWithCheck": "Looks good - click Check URL or Open to verify it's reachable.",
+      "validFormatWithoutCheck": "Looks good - click Open to verify it's reachable.",
+      "checking": "Checking reachability...",
+      "success": "Confirmed reachable."
+    },
+    "outcome": {
+      "ok": "URL confirmed reachable.",
+      "wrongType": "This type is not allowed. Check the link or allowed types.",
+      "tooLarge": "Resource exceeds the 25 MB limit. Try a smaller resource or split it.",
+      "notFound": "Resource not found (404). Double-check the URL or try a different link.",
+      "networkError": "Could not reach this URL. It may be private, offline, or blocking requests.",
+      "cors": "Could not reach this URL. It may be private, offline, or blocking requests."
+    },
+    "details": {
+      "status": "Status",
+      "contentType": "Content-Type",
+      "contentLength": "Content-Length",
+      "lastModified": "Last-Modified"
+    }
+  },
+  "mediaTypeInput": {
+    "label": "Media type",
+    "majorTypeLabel": "Major type",
+    "placeholderSubtype": "subtype...",
+    "placeholderGeneral": "e.g. image/png or start typing...",
+    "unlockAriaLabel": "Unlock major type",
+    "group": {
+      "major": "Major types",
+      "known": "Known types",
+      "sub": "Subtypes"
+    },
+    "hint": {
+      "empty": "Start typing a major type or a full type like image/png",
+      "typingMajor": "Keep typing - or pick a major type from the list",
+      "lockedNoSub": "Now type or pick a subtype",
+      "invalidChars": "Invalid characters - use letters, digits, hyphens, dots, or +",
+      "known": "{{label}} - well-known type",
+      "unknownValid": "Valid format - subtype not in common list, double-check if unsure"
+    }
+  },
   "fields": {
     "url": "URL",
     "title": "Title",
+    "titleOptional": "Title (optional)",
+    "typeOptional": "Type (optional)",
     "type": "Type"
   }
 }

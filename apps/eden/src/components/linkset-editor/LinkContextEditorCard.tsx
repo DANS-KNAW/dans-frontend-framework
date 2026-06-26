@@ -19,6 +19,8 @@ import {
   LinkTargetDraft,
   RELATION_CONFIG,
 } from "./types";
+import MediaTypeInput from "./MediaTypeInput";
+import UrlInput from "./UrlInput";
 
 type LinkContextEditorCardProps = {
   context: LinkContextDraft;
@@ -56,6 +58,14 @@ function LinkContextEditorCard({
   onAddRelationTarget,
   onRemoveRelationTarget,
 }: LinkContextEditorCardProps) {
+  const handleAnchorConfirmed = () => {
+    // Confirmation metadata is currently handled inside UrlInput.
+  };
+
+  const handleTargetConfirmed = () => {
+    // Confirmation metadata is currently handled inside UrlInput.
+  };
+
   const { t } = useTranslation('linkset-editor');
   return (
     <Paper sx={{ p: 2 }} variant="outlined">
@@ -72,17 +82,18 @@ function LinkContextEditorCard({
         </Stack>
 
         <Stack direction="row" alignItems="center" spacing={1}>
-          <TextField
-            fullWidth
-            label={t('service.urlLabel')}
-            value={context.anchor}
-            onChange={(event) => onUpdateAnchor(contextIndex, event.target.value)}
-            placeholder="https://service.example.org"
-          />
+          <Box sx={{ flex: 1 }}>
+            <UrlInput
+              value={context.anchor}
+              onChange={(value) => onUpdateAnchor(contextIndex, value)}
+              onConfirmed={handleAnchorConfirmed}
+              enableUrlCheck={false}
+            />
+          </Box>
           <Tooltip title={t('service.anchorHelp')}>
-             <IconButton size="small" aria-label={t('service.anchorHelpAriaLabel')} sx={{ p: 0.5, ml: 0.5 }}>
-               <HelpOutline fontSize="small" />
-             </IconButton>
+            <IconButton size="small" aria-label={t('service.anchorHelpAriaLabel')} sx={{ p: 0.5, ml: 0.5 }}>
+              <HelpOutline fontSize="small" />
+            </IconButton>
           </Tooltip>
         </Stack>
 
@@ -110,7 +121,7 @@ function LinkContextEditorCard({
                   </Tooltip>
                 </Stack>
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography variant="body2">Enabled</Typography>
+                  <Typography variant="body2">{t('service.enabledLabel')}</Typography>
                   <Switch
                     checked={Boolean(relation)}
                     onChange={(_, enabled) =>
@@ -131,7 +142,9 @@ function LinkContextEditorCard({
                     <Paper key={`${relation.id}-${targetIndex}`} sx={{ p: 1.5 }} variant="outlined">
                       <Stack spacing={1.5}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
-                          <Typography variant="body2">Link {targetIndex + 1}</Typography>
+                          <Typography variant="body2">
+                            {t('relations.linkLabel', { index: targetIndex + 1 })}
+                          </Typography>
                           <IconButton
                             aria-label={t('relations.removeTarget')}
                             color="error"
@@ -144,23 +157,46 @@ function LinkContextEditorCard({
                         </Stack>
 
                         <Stack direction="row" alignItems="center" spacing={1}>
-                          <TextField
-                            fullWidth
-                            label={t('fields.url')}
-                            value={target.href}
-                            onChange={(event) =>
-                              onUpdateRelationTarget(
-                                contextIndex,
-                                relationConfig.key,
-                                targetIndex,
-                                "href",
-                                event.target.value,
-                              )
-                            }
-                            placeholder="https://service.example.org/openapi"
-                          />
-                          <Tooltip title="Provide the link's URL (e.g., https://example.org/openapi)">
-                            <IconButton size="small" aria-label="Help with link URL" sx={{ p: 0.5, ml: 0 }}>
+                          <Box sx={{ flex: 1 }}>
+                            <UrlInput
+                              value={target.href}
+                              onChange={(value) =>
+                                onUpdateRelationTarget(
+                                  contextIndex,
+                                  relationConfig.key,
+                                  targetIndex,
+                                  "href",
+                                  value,
+                                )
+                              }
+                              onConfirmed={handleTargetConfirmed}
+                            />
+                          </Box>
+                          <Tooltip title={t('relations.urlHelpTooltip')}>
+                            <IconButton size="small" aria-label={t('relations.urlHelpAriaLabel')} sx={{ p: 0.5, ml: 0 }}>
+                              <HelpOutline fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        </Stack>
+
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                          <Box sx={{ flex: 1 }}>
+                            <MediaTypeInput
+                              label={t('fields.typeOptional')}
+                              value={target.type}
+                              onChange={(value) =>
+                                onUpdateRelationTarget(
+                                  contextIndex,
+                                  relationConfig.key,
+                                  targetIndex,
+                                  "type",
+                                  value,
+                                )
+                              }
+                            />
+                          </Box>
+                          <Tooltip title={t('relations.typeHelpTooltip')}>
+                            <IconButton size="small" aria-label={t('relations.typeHelpAriaLabel')} sx={{ p: 0.5, ml: 0 }}>
                               <HelpOutline fontSize="small" />
                             </IconButton>
                           </Tooltip>
@@ -169,30 +205,7 @@ function LinkContextEditorCard({
                         <Stack direction="row" alignItems="center" spacing={1}>
                           <TextField
                             fullWidth
-                            label={`${t('fields.type')} (optional)`}
-                            value={target.type}
-                            onChange={(event) =>
-                              onUpdateRelationTarget(
-                                contextIndex,
-                                relationConfig.key,
-                                targetIndex,
-                                "type",
-                                event.target.value,
-                              )
-                            }
-                            placeholder="application/json"
-                          />
-                          <Tooltip title="Specify the MIME type (e.g., application/json)">
-                            <IconButton size="small" aria-label="Help with MIME type" sx={{ p: 0.5, ml: 0 }}>
-                              <HelpOutline fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                        </Stack>
-
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          <TextField
-                            fullWidth
-                            label={`${t('fields.title')} (optional)`}
+                            label={t('fields.titleOptional')}
                             value={target.title}
                             onChange={(event) =>
                               onUpdateRelationTarget(
@@ -203,10 +216,10 @@ function LinkContextEditorCard({
                                 event.target.value,
                               )
                             }
-                            placeholder="OpenAPI document"
+                            placeholder={t('relations.titlePlaceholder')}
                           />
-                          <Tooltip title="Provide a descriptive title for the link (e.g., OpenAPI document)">
-                            <IconButton size="small" aria-label="Help with link title" sx={{ p: 0.5, ml: 0 }}>
+                          <Tooltip title={t('relations.titleHelpTooltip')}>
+                            <IconButton size="small" aria-label={t('relations.titleHelpAriaLabel')} sx={{ p: 0.5, ml: 0 }}>
                               <HelpOutline fontSize="small" />
                             </IconButton>
                           </Tooltip>

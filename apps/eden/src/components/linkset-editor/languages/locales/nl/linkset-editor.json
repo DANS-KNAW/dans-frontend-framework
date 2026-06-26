@@ -18,11 +18,18 @@
     "urlTab": "URL",
     "urlDemoAlert": "Demomodus: URL-import gebruikt momenteel nep-gegevens en haalt geen externe JSON op.",
     "urlLabel": "LinkSet URL",
+    "urlRequired": "LinkSet URL is verplicht.",
     "urlPlaceholder": "https://example.org/linkset.json",
     "fetchButton": "Ophalen",
     "fetching": "Bezig met ophalen",
+    "fetchFailed": "Ophalen van URL mislukt ({{status}} {{statusText}}).",
+    "fetchParseFailed": "Opgehaalde JSON kon niet als LinkSet worden geparseerd.",
+    "fetchFailedGeneric": "Kan URL niet ophalen of JSON niet parseren. Controleer CORS, netwerktoegang en JSON-formaat.",
     "cancel": "Annuleren",
     "importAndEdit": "Importeren & bewerken",
+    "importRequiresData": "Importeren & bewerken vereist geïmporteerde data.",
+    "uploadedSuccess": "Geüpload: {{filename}}",
+    "loadedFromUrl": "Geladen vanaf URL: {{filename}}",
     "readyToImport": "Klaar om te importeren: {{filename}} ({{source}})",
     "uploadSource": "upload",
     "urlSource": "URL demo"
@@ -33,10 +40,12 @@
     "anchorDescription": "Een geldige absolute URL (link anchor) is vereist voor elke service en bijgevoegde koppelingen.",
     "addService": "Service toevoegen",
     "startOver": "Opnieuw beginnen",
+    "confirmStartOverWithInput": "Deze LinkSet bevat invoer en wordt gereset. Doorgaan?",
     "saveDraft": "Concept opslaan",
     "store": "Opslaan"
   },
   "breadcrumbs": {
+    "ariaLabel": "LinkSet-stapnavigatie",
     "newLinkSet": "Nieuwe LinkSet",
     "import": "Importeren",
     "edit": "Bewerken"
@@ -45,6 +54,7 @@
     "heading": "Service {{index}}",
     "removeAriaLabel": "Service {{index}} verwijderen",
     "confirmDeleteWithInput": "Deze service bevat invoer en wordt verwijderd. Doorgaan?",
+    "enabledLabel": "Ingeschakeld",
     "urlLabel": "URL",
     "anchorHelp": "Voer de basis-URL van de service in; de LinkSet 'anchor' (bijv. https://example.org)",
     "anchorHelpAriaLabel": "Hulp bij anker-URL",
@@ -63,6 +73,14 @@
       "label": "Metagegevens",
       "helpText": "Geef aanvullende informatie over de service"
     },
+    "linkLabel": "Link {{index}}",
+    "urlHelpTooltip": "Geef de URL van de link op (bijv. https://example.org/openapi)",
+    "urlHelpAriaLabel": "Hulp bij link-URL",
+    "typeHelpTooltip": "Specificeer het MIME-type (bijv. application/json)",
+    "typeHelpAriaLabel": "Hulp bij MIME-type",
+    "titlePlaceholder": "OpenAPI-document",
+    "titleHelpTooltip": "Geef een beschrijvende titel voor de link (bijv. OpenAPI-document)",
+    "titleHelpAriaLabel": "Hulp bij linktitel",
     "confirmDisableWithInput": "Deze relatie bevat invoer en wordt verwijderd. Doorgaan?",
     "confirmDeleteTargetWithInput": "Dit relatiedoel bevat invoer en wordt verwijderd. Doorgaan?",
     "addTarget": "Doel toevoegen",
@@ -89,9 +107,57 @@
     "cancel": "Annuleren",
     "confirm": "Verwijderen"
   },
+  "urlInput": {
+    "checkButton": "URL controleren",
+    "openButton": "Openen om te controleren",
+    "hint": {
+      "idle": "Plak een directe link.",
+      "invalidFormat": "Voer een geldige URL in (bijvoorbeeld: example.org/resource of https://example.org/resource).",
+      "validFormatWithCheck": "Ziet er goed uit - klik op URL controleren of Openen om bereikbaarheid te controleren.",
+      "validFormatWithoutCheck": "Ziet er goed uit - klik op Openen om bereikbaarheid te controleren.",
+      "checking": "Bereikbaarheid controleren...",
+      "success": "Bereikbaarheid bevestigd."
+    },
+    "outcome": {
+      "ok": "URL bereikbaar bevestigd.",
+      "wrongType": "Dit type is niet toegestaan. Controleer de link of toegestane typen.",
+      "tooLarge": "Resource overschrijdt de limiet van 25 MB. Gebruik een kleinere resource of splits deze op.",
+      "notFound": "Resource niet gevonden (404). Controleer de URL of probeer een andere link.",
+      "networkError": "Kon deze URL niet bereiken. Deze kan privé zijn, offline of verzoeken blokkeren.",
+      "cors": "Kon deze URL niet bereiken. Deze kan privé zijn, offline of verzoeken blokkeren."
+    },
+    "details": {
+      "status": "Status",
+      "contentType": "Content-Type",
+      "contentLength": "Content-Length",
+      "lastModified": "Laatst gewijzigd"
+    }
+  },
+  "mediaTypeInput": {
+    "label": "Mediatype",
+    "majorTypeLabel": "Hoofdtype",
+    "placeholderSubtype": "subtype...",
+    "placeholderGeneral": "bijv. image/png of begin met typen...",
+    "unlockAriaLabel": "Hoofdtype ontgrendelen",
+    "group": {
+      "major": "Hoofdtypen",
+      "known": "Bekende typen",
+      "sub": "Subtypen"
+    },
+    "hint": {
+      "empty": "Begin met het typen van een hoofdtype of een volledig type zoals image/png",
+      "typingMajor": "Typ verder - of kies een hoofdtype uit de lijst",
+      "lockedNoSub": "Typ nu of kies een subtype",
+      "invalidChars": "Ongeldige tekens - gebruik letters, cijfers, koppeltekens, punten of +",
+      "known": "{{label}} - bekend type",
+      "unknownValid": "Geldig formaat - subtype niet in veelgebruikte lijst, controleer bij twijfel"
+    }
+  },
   "fields": {
     "url": "URL",
     "title": "Titel",
+    "titleOptional": "Titel (optioneel)",
+    "typeOptional": "Type (optioneel)",
     "type": "Type"
   }
 }

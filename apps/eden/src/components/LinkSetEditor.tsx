@@ -26,7 +26,6 @@ import {
   Stack,
   Tab,
   Tabs,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useMemo, useState } from "react";
@@ -34,6 +33,7 @@ import { useTranslation } from "react-i18next";
 import LinkContextEditorCard from "./linkset-editor/LinkContextEditorCard";
 import PreviewPanel from "./linkset-editor/PreviewPanel";
 import UploadPanel from "./linkset-editor/UploadPanel";
+import UrlInput from "./linkset-editor/UrlInput";
 import ValidationPanel from "./linkset-editor/ValidationPanel";
 import {
   createEmptyContext,
@@ -41,6 +41,7 @@ import {
   createRelation,
   LinkContextDraft,
   LinkContextRelationKey,
+  LinkRelationDraft,
   LinkRelationId,
   LinkSetDraft,
   LinkTargetDraft,
@@ -64,29 +65,6 @@ export type {
 type Step = "choose" | "import" | "edit";
 type ImportTab = "upload" | "url";
 type FetchStatus = "idle" | "loading" | "success" | "error";
-
-const createMockFetchedDraft = (urlValue: string): LinkSetDraft => {
-  const normalizedUrl = urlValue.trim();
-  const anchor = normalizedUrl.length > 0 ? normalizedUrl : "https://service.example.org";
-
-  return {
-    contexts: [
-      {
-        anchor,
-        serviceDocLinkRelation: {
-          id: "service-doc",
-          targets: [
-            {
-              href: `${anchor.replace(/\/$/, "")}/docs`,
-              type: "text/html",
-              title: "Service documentation",
-            },
-          ],
-        },
-      },
-    ],
-  };
-};
 
 function LinkSetEditor() {
   const { t } = useTranslation('linkset-editor');
@@ -164,7 +142,7 @@ function LinkSetEditor() {
       setImportedDraft(parsedDraft.draft);
       setImportedFilename(file.name);
       setImportSource("upload");
-      setUploadSuccessMessage(`Uploaded: ${file.name}`);
+      setUploadSuccessMessage(t('importStep.uploadedSuccess', { filename: file.name }));
     } catch {
       setUploadError(t('uploadPanel.errorReadFailed'));
     }
@@ -182,25 +160,54 @@ function LinkSetEditor() {
     const value = urlValue.trim();
     if (!value) {
       setFetchStatus("error");
-      setUrlErrorMessage(t('importStep.urlLabel') + " is required.");
+      setUrlErrorMessage(t('importStep.urlRequired'));
       return;
     }
 
-    await new Promise((resolve) => {
-      window.setTimeout(resolve, 1000);
-    });
+    try {
+      // application/linkset+json is the official one 
+      // but allow application/json as well for flexibility
+      const response = await fetch(value, {
+        headers: {
+          Accept: "application/linkset+json, application/json",
+        },
+      });
 
-    const safeName = value
-      .replace(/^https?:\/\//, "")
-      .replace(/[^a-zA-Z0-9.-]/g, "-")
-      .slice(0, 48);
-    const resolvedFilename = `${safeName || "fairicat-linkset"}.json`;
+      if (!response.ok) {
+        setFetchStatus("error");
+        setUrlErrorMessage(
+          t('importStep.fetchFailed', {
+            status: response.status,
+            statusText: response.statusText,
+          }),
+        );
+        return;
+      }
 
-    setImportedDraft(createMockFetchedDraft(value));
-    setImportedFilename(resolvedFilename);
-    setImportSource("url");
-    setUrlSuccessMessage(t('importStep.urlDemoAlert'));
-    setFetchStatus("success");
+      const payload = (await response.json()) as unknown;
+      const parsedDraft = parseExchangeableLinkSetToDraft(payload);
+
+      if (parsedDraft.error || !parsedDraft.draft) {
+        setFetchStatus("error");
+        setUrlErrorMessage(parsedDraft.error ?? t('importStep.fetchParseFailed'));
+        return;
+      }
+
+      const safeName = value
+        .replace(/^https?:\/\//, "")
+        .replace(/[^a-zA-Z0-9.-]/g, "-")
+        .slice(0, 48);
+      const resolvedFilename = `${safeName || "fairicat-linkset"}.json`;
+
+      setImportedDraft(parsedDraft.draft);
+      setImportedFilename(resolvedFilename);
+      setImportSource("url");
+      setUrlSuccessMessage(t('importStep.loadedFromUrl', { filename: resolvedFilename }));
+      setFetchStatus("success");
+    } catch {
+      setFetchStatus("error");
+      setUrlErrorMessage(t('importStep.fetchFailedGeneric'));
+    }
   };
 
   const startFromScratch = () => {
@@ -217,7 +224,7 @@ function LinkSetEditor() {
 
   const applyImportAndEdit = () => {
     if (!importedDraft) {
-      setImportStepError(t('importStep.importAndEdit') + " requires imported data.");
+      setImportStepError(t('importStep.importRequiresData'));
       return;
     }
 
@@ -251,14 +258,14 @@ function LinkSetEditor() {
 
     return (
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Breadcrumbs aria-label="LinkSet flow breadcrumbs">
+        <Breadcrumbs aria-label={t('breadcrumbs.ariaLabel')}>
           <Typography color="text.primary">{t('breadcrumbs.newLinkSet')}</Typography>
           {(currentStep === "import" || cameFromImport) && (
             <Typography color="text.primary">{t('breadcrumbs.import')}</Typography>
           )}
           {currentStep === "edit" && <Typography color="text.primary">{t('breadcrumbs.edit')}</Typography>}
         </Breadcrumbs>
-        <Button size="small" onClick={resetFlow} startIcon={<ArrowBackOutlined />}>
+        <Button size="small" onClick={handleStartOver} startIcon={<ArrowBackOutlined />}>
           {t('editStep.startOver')}
         </Button>
       </Stack>
@@ -297,6 +304,43 @@ function LinkSetEditor() {
       pendingConfirmAction();
     }
     closeConfirmDialog();
+  };
+
+  const targetHasInput = (target: LinkTargetDraft) =>
+    Boolean(target.href.trim() || target.type.trim() || target.title.trim());
+
+  const relationHasInput = (relation?: LinkRelationDraft) =>
+    Boolean(relation?.targets.some(targetHasInput));
+
+  const contextHasInput = (context: LinkContextDraft) =>
+    Boolean(
+      context.anchor.trim() ||
+        context.serviceDescLinkRelation ||
+        context.serviceDocLinkRelation ||
+        context.serviceMetaLinkRelation ||
+        relationHasInput(context.serviceDescLinkRelation) ||
+        relationHasInput(context.serviceDocLinkRelation) ||
+        relationHasInput(context.serviceMetaLinkRelation),
+    );
+
+  const hasStartOverInput = () => {
+    const hasDraftInput =
+      draft.contexts.length > 1 || draft.contexts.some(contextHasInput);
+
+    const hasImportInput = Boolean(
+      urlValue.trim() || importedDraft || importedFilename || importSource,
+    );
+
+    return hasDraftInput || hasImportInput;
+  };
+
+  const handleStartOver = () => {
+    if (hasStartOverInput()) {
+      requestDeletionConfirmation(t("editStep.confirmStartOverWithInput"), resetFlow);
+      return;
+    }
+
+    resetFlow();
   };
 
   const performRemoveContext = (contextIndex: number) => {
@@ -549,24 +593,30 @@ function LinkSetEditor() {
                     {t('importStep.urlDemoAlert')}
                   </Alert>
                   <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-                    <TextField
-                      fullWidth
-                      label={t('importStep.urlLabel')}
-                      placeholder={t('importStep.urlPlaceholder')}
-                      value={urlValue}
-                      onChange={(event) => {
-                        setUrlValue(event.target.value);
-                        if (fetchStatus !== "idle") {
-                          setFetchStatus("idle");
-                        }
-                        setUrlErrorMessage("");
-                        setUrlSuccessMessage("");
-                      }}
-                    />
+                    <Box sx={{ flex: 1 }}>
+                      <UrlInput
+                        value={urlValue}
+                        onChange={(value) => {
+                          setUrlValue(value);
+                          if (fetchStatus !== "idle") {
+                            setFetchStatus("idle");
+                          }
+                          setUrlErrorMessage("");
+                          setUrlSuccessMessage("");
+                        }}
+                        onConfirmed={() => {
+                          // Reachability feedback is already shown inside UrlInput.
+                        }}
+                        enableUrlCheck={false}
+                      />
+                    </Box>
                     <Button
-                      variant="outlined"
+                      variant="contained"
+                      color="primary"
+                      startIcon={<LinkOutlined />}
                       onClick={handleFetchFromUrl}
                       disabled={fetchStatus === "loading"}
+                      sx={{ fontWeight: 600 }}
                     >
                       {fetchStatus === "loading" ? (
                         <Stack direction="row" spacing={1} alignItems="center">
@@ -660,7 +710,7 @@ function LinkSetEditor() {
           <PreviewPanel preview={exchangeablePreview} onDownload={downloadExchangeableJson} />
 
           <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" spacing={1.5}>
-            <Button onClick={resetFlow} startIcon={<ArrowBackOutlined />}>
+            <Button onClick={handleStartOver} startIcon={<ArrowBackOutlined />}>
               {t('editStep.startOver')}
             </Button>
             <Stack direction="row" spacing={1}>
