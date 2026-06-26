@@ -12,7 +12,9 @@ import {
   Collapse,
   Grid,
   InputAdornment,
+  MenuItem,
   Paper,
+  Select,
   Stack,
   TextField,
   Typography,
@@ -110,6 +112,9 @@ const MAX_BYTES = 26_214_400;
 // https://api.cors.lol/?url="
 const CORS_PROXY_PREFIX = "https://proxy.corsfix.com/?";
 
+type UrlProtocol = "https://" | "http://";
+const DEFAULT_PROTOCOL: UrlProtocol = "https://";
+
 
 const OUTCOME_HINT_KEYS: Record<HeadResult["outcomeReason"], string> = {
   ok: "urlInput.outcome.ok",
@@ -135,6 +140,45 @@ const parseContentLength = (value: string | null): number | null => {
 
   const parsed = Number.parseInt(value, 10);
   return Number.isNaN(parsed) ? null : parsed;
+};
+
+const splitUrlValue = (value: string): { protocol: UrlProtocol; urlWithoutProtocol: string } => {
+  if (value.startsWith("http://")) {
+    return {
+      protocol: "http://",
+      urlWithoutProtocol: value.slice("http://".length),
+    };
+  }
+
+  if (value.startsWith("https://")) {
+    return {
+      protocol: "https://",
+      urlWithoutProtocol: value.slice("https://".length),
+    };
+  }
+
+  return {
+    protocol: DEFAULT_PROTOCOL,
+    urlWithoutProtocol: value,
+  };
+};
+
+const composeUrlValue = (protocol: UrlProtocol, urlWithoutProtocol: string): string => {
+  const trimmed = urlWithoutProtocol.trim();
+  if (!trimmed) {
+    return "";
+  }
+
+  return `${protocol}${trimmed}`;
+};
+
+const composeOutgoingValue = (protocol: UrlProtocol, urlWithoutProtocol: string): string => {
+  const trimmed = urlWithoutProtocol.trim();
+  if (!trimmed) {
+    return protocol;
+  }
+
+  return `${protocol}${trimmed}`;
 };
 
 async function checkUrl(
@@ -263,7 +307,6 @@ async function checkUrl(
 
 const getFormatValidation = (
   value: string,
-  enableUrlCheck: boolean,
 ): { status: "idle" | "invalid-format" | "valid-format" } => {
   const trimmed = value.trim();
 
@@ -271,20 +314,28 @@ const getFormatValidation = (
     return { status: "idle" };
   }
 
-  if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://")) {
-    return { status: "invalid-format" };
+  if (trimmed === "http://" || trimmed === "https://") {
+    return { status: "idle" };
   }
 
+  const candidateUrl =
+    trimmed.startsWith("http://") || trimmed.startsWith("https://")
+      ? trimmed
+      : `${DEFAULT_PROTOCOL}${trimmed}`;
+
   try {
-    const parsed = new URL(trimmed);
+    const parsed = new URL(candidateUrl);
     if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return { status: "invalid-format" };
+    }
+
+    if (!parsed.hostname) {
       return { status: "invalid-format" };
     }
   } catch {
     return { status: "invalid-format" };
   }
 
-  void enableUrlCheck;
   return { status: "valid-format" };
 };
 
@@ -409,10 +460,22 @@ function UrlInput({
   const { t } = useTranslation("linkset-editor");
   const [checkStatus, setCheckStatus] = useState<CheckStatus>("idle");
   const [lastResult, setLastResult] = useState<HeadResult | null>(null);
+  const [isProtocolMenuOpen, setIsProtocolMenuOpen] = useState(false);
+  const { protocol: protocolFromValue, urlWithoutProtocol } = useMemo(() => splitUrlValue(value), [value]);
+  const [selectedProtocol, setSelectedProtocol] = useState<UrlProtocol>(protocolFromValue);
+  const effectiveProtocol =
+    value.startsWith("http://") || value.startsWith("https://")
+      ? protocolFromValue
+      : selectedProtocol;
+
+  const composedUrlValue = useMemo(
+    () => composeUrlValue(effectiveProtocol, urlWithoutProtocol),
+    [effectiveProtocol, urlWithoutProtocol],
+  );
 
   const formatValidation = useMemo(
-    () => getFormatValidation(value, enableUrlCheck),
-    [value, enableUrlCheck],
+    () => getFormatValidation(composedUrlValue),
+    [composedUrlValue],
   );
   const hintState = useMemo(
     () => getHintState(checkStatus, lastResult, enableUrlCheck, t),
@@ -422,8 +485,33 @@ function UrlInput({
     (checkStatus === "success" || checkStatus === "warning" || checkStatus === "error") &&
     lastResult !== null;
 
-  const handleChange = (nextValue: string) => {
-    const validation = getFormatValidation(nextValue, enableUrlCheck);
+  const handleChange = (nextUrlWithoutProtocol: string) => {
+    const hasProtocol =
+      nextUrlWithoutProtocol.startsWith("http://") ||
+      nextUrlWithoutProtocol.startsWith("https://");
+
+    const nextParts = hasProtocol
+      ? splitUrlValue(nextUrlWithoutProtocol.trim())
+      : {
+          protocol: effectiveProtocol,
+          urlWithoutProtocol: nextUrlWithoutProtocol,
+        };
+
+    if (hasProtocol) {
+      setSelectedProtocol(nextParts.protocol);
+    }
+
+    const nextValue = composeOutgoingValue(nextParts.protocol, nextParts.urlWithoutProtocol);
+    const validation = getFormatValidation(nextValue);
+    setCheckStatus(validation.status);
+    setLastResult(null);
+    onChange(nextValue);
+  };
+
+  const handleProtocolChange = (nextProtocol: UrlProtocol) => {
+    setSelectedProtocol(nextProtocol);
+    const nextValue = composeOutgoingValue(nextProtocol, urlWithoutProtocol);
+    const validation = getFormatValidation(nextValue);
     setCheckStatus(validation.status);
     setLastResult(null);
     onChange(nextValue);
@@ -441,7 +529,7 @@ function UrlInput({
     setCheckStatus("checking");
     setLastResult(null);
 
-    const result = await checkUrl(value.trim(), contentTypes, contentTypesAllowed, useProxy);
+    const result = await checkUrl(composedUrlValue.trim(), contentTypes, contentTypesAllowed, useProxy);
 
     if (result.outcome === "success") {
       setCheckStatus("success");
@@ -460,7 +548,7 @@ function UrlInput({
       <TextField
         fullWidth
         label={t("fields.url")}
-        value={value}
+        value={urlWithoutProtocol}
         onChange={(event) => handleChange(event.target.value)}
         onKeyDown={(event) => {
           if (
@@ -470,10 +558,60 @@ function UrlInput({
           ) {
             event.preventDefault();
             void handleCheck();
+            return;
+          }
+
+          if (
+            (event.key === "ArrowDown" || event.key === "ArrowUp") &&
+            !urlWithoutProtocol.trim()
+          ) {
+            event.preventDefault();
+            setIsProtocolMenuOpen(true);
+            return;
+          }
+
+          if (event.key === "Backspace" && !urlWithoutProtocol.trim()) {
+            event.preventDefault();
+            setIsProtocolMenuOpen(true);
           }
         }}
         slotProps={{
           input: {
+            startAdornment: (
+              <InputAdornment
+                position="start"
+                sx={{
+                  mr: 0,
+                  alignSelf: "stretch",
+                  maxHeight: "none",
+                }}
+              >
+                <Select
+                  value={effectiveProtocol}
+                  open={isProtocolMenuOpen}
+                  variant="standard"
+                  disableUnderline
+                  onClose={() => setIsProtocolMenuOpen(false)}
+                  onOpen={() => setIsProtocolMenuOpen(true)}
+                  onChange={(event) => handleProtocolChange(event.target.value as UrlProtocol)}
+                  sx={{
+                    px: 1,
+                    borderRight: 1,
+                    borderColor: "divider",
+                    height: "100%",
+                    minWidth: 105,
+                    "& .MuiSelect-select": {
+                      py: 1.5,
+                      pr: 3,
+                      fontWeight: 600,
+                    },
+                  }}
+                >
+                  <MenuItem value="https://">https://</MenuItem>
+                  <MenuItem value="http://">http://</MenuItem>
+                </Select>
+              </InputAdornment>
+            ),
             endAdornment: (
               <InputAdornment position="end">
                 <Stack direction="row" spacing={1}>
@@ -495,11 +633,11 @@ function UrlInput({
                     disabled={formatValidation.status !== "valid-format"}
                     onClick={() => {
                       if (forceOpenInNewWindow) {
-                        openInNewWindow(value.trim());
+                        openInNewWindow(composedUrlValue.trim());
                         return;
                       }
 
-                      window.open(value.trim(), "_blank", "noopener,noreferrer");
+                      window.open(composedUrlValue.trim(), "_blank", "noopener,noreferrer");
                     }}
                   >
                     {t("urlInput.openButton")}

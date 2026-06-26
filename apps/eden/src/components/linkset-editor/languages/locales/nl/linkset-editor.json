@@ -112,7 +112,7 @@
     "openButton": "Openen om te controleren",
     "hint": {
       "idle": "Plak een directe link.",
-      "invalidFormat": "URL moet beginnen met https:// of http://",
+      "invalidFormat": "Voer een geldige URL in (bijvoorbeeld: example.org/resource of https://example.org/resource).",
       "validFormatWithCheck": "Ziet er goed uit - klik op URL controleren of Openen om bereikbaarheid te controleren.",
       "validFormatWithoutCheck": "Ziet er goed uit - klik op Openen om bereikbaarheid te controleren.",
       "checking": "Bereikbaarheid controleren...",

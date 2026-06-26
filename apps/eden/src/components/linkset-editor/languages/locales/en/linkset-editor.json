@@ -112,7 +112,7 @@
     "openButton": "Open to verify",
     "hint": {
       "idle": "Paste a direct link.",
-      "invalidFormat": "URL must start with https:// or http://",
+      "invalidFormat": "Enter a valid URL (for example: example.org/resource or https://example.org/resource).",
       "validFormatWithCheck": "Looks good - click Check URL or Open to verify it's reachable.",
       "validFormatWithoutCheck": "Looks good - click Open to verify it's reachable.",
       "checking": "Checking reachability...",
