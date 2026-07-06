@@ -11,7 +11,6 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import EmailIcon from "@mui/icons-material/Email";
 import parse from "html-react-parser";
-import Button from "@mui/material/Button";
 import { Link as RouterLink } from "react-router-dom";
 
 const Footer = ({ top, bottom }: FooterType) => {
@@ -116,51 +115,32 @@ const FooterContent = ({
         </Box>
       )}
       {links &&
-        links.map((item, j) => {
-          // Type guard: check if item has onClick property (Button)
-          if ("onClick" in item) {
-            return (
-              <Button
-                key={`button-${j}`}
-                onClick={item.onClick}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  textDecoration: "none",
-                  textTransform: "none",
-                  padding: 0,
-                  minWidth: "auto",
-                  justifyContent: "flex-start",
-                  fontWeight: 400,
-                  // Font 13 px in rem
-                  fontSize: 16,
-                  "&:hover": {
-                    backgroundColor: "transparent",
-                  },
-                }}
-              >
-                {renderIcon(item.icon)}
-                {lookupLanguageString(item.name, i18n.language)}
-              </Button>
-            );
-          } else {
-            // It's a Link
-            return (
-              <Link
-                href={item.internal ? undefined : item.link}
-                to={item.internal ? item.link : undefined}
-                underline="none"
-                target={item.internal ? "_self" : "_blank"}
-                key={`link-${j}`}
-                sx={{ display: "flex", alignItems: "center" }}
-                component={item.internal ? RouterLink : "a"}
-              >
-                {renderIcon(item.icon)}
-                {lookupLanguageString(item.name, i18n.language)}
-              </Link>
-            );
-          }
-        })}
+        links.map((item, j) => (
+            <Link
+              key={`link-${j}`}
+              underline="none"
+              sx={{
+                display: "flex",
+                alignItems: "center",
+              }}
+              {...("onClick" in item
+                ? {
+                    component: "button",
+                    type: "button",
+                    onClick: item.onClick,
+                  }
+                : {
+                    component: item.internal ? RouterLink : "a",
+                    href: item.internal ? undefined : item.link,
+                    to: item.internal ? item.link : undefined,
+                    target: item.internal ? "_self" : "_blank",
+                  })}
+            >
+              {renderIcon(item.icon)}
+              {lookupLanguageString(item.name, i18n.language)}
+            </Link>
+          ))
+        }
     </Stack>
   );
 };

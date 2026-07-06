@@ -94,7 +94,7 @@ const section: InitialSectionType = {
         en: "UN Sustainable Development Goals",
         nl: "UN Duurzame Ontwikkelingsdoelen",
       },
-      required: true,
+      required: false,
       description: {
         en: "Links to UN Sustainable Development Goals",
         nl: "Links naar UN Duurzame Ontwikkelingsdoelen",
