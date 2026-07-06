@@ -5,6 +5,7 @@ import type {
   RdaInterestGroupsResponse,
   RdaDomainsResponse,
   GorcResponse,
+  UnsdgResponse
 } from "../../../types/Api";
 import i18n from "i18next";
 
@@ -30,7 +31,7 @@ const addParentHierarchy = (data: GorcResponse[], itemId: string): string => {
 
 export const rdaApi = createApi({
   reducerPath: "rdaApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://globhut.labs.dans.knaw.nl" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "https://api.kb-rda.org" }),
   endpoints: (build) => ({
     fetchRdaDomain: build.query({
       query: () => "domains",
@@ -134,6 +135,24 @@ export const rdaApi = createApi({
         error: i18n.t("metadata:apiFetchError", { api: "GORC" }),
       }),
     }),
+    fetchUnsdg: build.query({
+      query: () => "sdg",
+      transformResponse: (response: UnsdgResponse[]) => {
+        return response.length > 0
+          ? {
+              response: response.map((item) => ({
+                label: `SDG ${item.code}: ${item.title}`,
+                value: item.code,
+                idLabel: "UNSDG code",
+                id: item.code,
+              })),
+            }
+          : [];
+      },
+      transformErrorResponse: () => ({
+        error: i18n.t("metadata:apiFetchError", { api: "UN SDGs" }),
+      }),
+    }),
   }),
 });
 
@@ -143,4 +162,5 @@ export const {
   useFetchRdaPathwayQuery,
   useFetchRdaWorkingGroupQuery,
   useFetchGorcQuery,
+  useFetchUnsdgQuery,
 } = rdaApi;

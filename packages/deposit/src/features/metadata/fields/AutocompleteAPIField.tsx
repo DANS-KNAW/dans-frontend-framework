@@ -40,8 +40,8 @@ import {
   useFetchRdaPathwayQuery,
   useFetchRdaDomainQuery,
   useFetchRdaInterestGroupQuery,
+  useFetchUnsdgQuery,
 } from "../api/rdaApi";
-import { useFetchUnsdgQuery } from "../api/unsdg";
 import { SingleField } from "../MetadataFields";
 
 /*
@@ -386,8 +386,9 @@ export const SheetsField = ({ field, groupName, groupIndex }: AutocompleteFieldP
 };
 
 export const UnSustainableDevelopmentGoalsField = ({ field, groupName, groupIndex }: AutocompleteFieldProps) => {
-  // Fetch data right away
-  const { data, isFetching, isLoading } = useFetchUnsdgQuery<QueryReturnType>(null);
+  // Fetch data if field is opened
+  const [touched, setTouched] = useState(false);
+  const { data, isFetching, isLoading } = useFetchUnsdgQuery<QueryReturnType>(null, { skip: !touched });
   const newField = {
     ...field,
     options: data && data.response ? data.response : [],
@@ -399,6 +400,7 @@ export const UnSustainableDevelopmentGoalsField = ({ field, groupName, groupInde
       groupName={groupName}
       groupIndex={groupIndex}
       isLoading={isLoading || isFetching}
+      onOpen={() => setTouched(true)}
     />
   );
 }
