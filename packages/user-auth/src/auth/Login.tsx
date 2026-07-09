@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
@@ -7,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import { LoginButton } from "../user/Buttons";
 import { useSearchParams } from "react-router-dom";
 
-export const LoginPage = () => {
+export const LoginPage = ({ message }: { message?: ReactNode }) => {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
@@ -35,9 +36,11 @@ export const LoginPage = () => {
         </Grid>
 
         <Grid size={{ xs: 12, md: 7 }} offset={{ md: 2.5 }}>
-          <Typography sx={{ textAlign: "center" }}>
-            {t("loginMessage", { ns: "auth" })}
-          </Typography>
+          {message ?? (
+            <Typography sx={{ textAlign: "center" }}>
+              {t("loginMessage", { ns: "auth" })}
+            </Typography>
+          )}
           <Box mt={4} display="flex" justifyContent="center">
             <LoginButton variant="contained" />
           </Box>
