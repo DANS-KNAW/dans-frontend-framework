@@ -10,4 +10,8 @@ export default defineConfig({
       typescript: true,
     }),
   ],
+  test: {
+    environment: "jsdom",
+    setupFiles: "./test/setup.ts",
+  },
 });

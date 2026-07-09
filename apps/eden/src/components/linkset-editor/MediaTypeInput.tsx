@@ -1,0 +1,798 @@
+import {
+  CheckCircleOutlined,
+  CloseOutlined,
+  ErrorOutlined,
+  HelpOutlined,
+  InfoOutlined,
+} from "@mui/icons-material";
+import {
+  Box,
+  ClickAwayListener,
+  IconButton,
+  InputAdornment,
+  ListSubheader,
+  MenuItem,
+  MenuList,
+  Paper,
+  Popper,
+  Stack,
+  SvgIcon,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import {
+  type KeyboardEvent,
+  type ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useTranslation } from "react-i18next";
+
+export type MajorType =
+  | "application"
+  | "audio"
+  | "chemical"
+  | "example"
+  | "font"
+  | "image"
+  | "message"
+  | "model"
+  | "multipart"
+  | "text"
+  | "video";
+
+export interface SubEntry {
+  value: string;
+  label: string;
+}
+
+export type ValidationState =
+  | "empty"
+  | "typing-major"
+  | "locked-no-sub"
+  | "invalid-chars"
+  | "known"
+  | "unknown-valid";
+
+export interface MediaTypeValue {
+  major: MajorType;
+  sub: string;
+  full: string;
+}
+
+/**
+ * Single-field autocomplete for entering IANA media types (e.g. "image/png").
+ * 
+ * The major type locks into a prefix chip once matched; subtype remains free text
+ * with suggestions scoped to the locked major type.
+ * The sub types suggested are based on curated lists of known much used subtypes for each major type, 
+ * but the user can enter any valid subtype string. 
+ * While it allows free-text for the sub-types (there are just too many at IANA) 
+ * the format of the media type is still validated, 
+ * and the user gets feedback on whether the current input is 
+ * a known media type, an unknown but valid media type, or invalid format.
+ * 
+ * The delete/backspace key will unlock the major type if the subtype field is empty, allowing the user to change the major type.
+ * The whole input can be cleared to start over with the button that appears when a major type is locked.
+ * 
+ * @param value - The current media type value (e.g. "image/png"). If provided, the component will be controlled.
+ * @param onChange - Callback invoked when the media type value changes.
+ * @param onConfirmed - Callback invoked when a valid media type is confirmed (either known or unknown-valid).
+ * @param label - Optional label for the input field. Defaults to a localized string.
+ * @param size - Size of the input field. Can be "small" or "medium". Defaults to "medium". 
+ * 
+ * @example
+ * <MediaTypeInput value={formData.mediaType}  onChange={handleMediaTypeChange} />
+ */
+export interface MediaTypeInputProps {
+  value?: string;
+  onChange?: (value: string) => void;
+  onConfirmed?: (result: MediaTypeValue) => void;
+  label?: string;
+  size?: "small" | "medium";
+}
+
+const MAJORS: MajorType[] = [
+  "application",
+  "text",
+  "image",
+  "audio",
+  "video",
+  "font",
+  "message",
+  "model",
+  "multipart",
+  "chemical",
+  "example",
+];
+
+const KNOWN_SUBS: Record<MajorType, SubEntry[]> = {
+  application: [
+    { value: "json", label: "JSON data" },
+    { value: "xml", label: "XML" },
+    { value: "pdf", label: "PDF" },
+    { value: "zip", label: "ZIP archive" },
+    { value: "octet-stream", label: "Binary" },
+    { value: "rdf+xml", label: "RDF/XML" },
+    { value: "ld+json", label: "JSON-LD" },
+    { value: "x-ndjson", label: "NDJSON" },
+    { value: "vnd.ms-excel", label: "Excel (legacy)" },
+    {
+      value: "vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      label: "Excel (xlsx)",
+    },
+    { value: "vnd.api+json", label: "JSON:API" },
+    //application/gzip — gzip-compressed data
+    //application/x-tar — TAR archive
+    //application/trig — TriG, Turtle with named graphs
+    //application/n3 — N3 alternative registration
+    //application/n-triples — N-Triples, line-based, good for streaming
+    //application/n-quads — N-Quads, N-Triples with a graph name
+    //application/sparql-query — SPARQL query document
+    //application/sparql-update — SPARQL Update document
+    //application/sparql-results+json — SPARQL results as JSON
+    //application/sparql-results+xml — SPARQL results as XML
+    //application/rss+xml — RSS feed
+    //application/atom+xml — Atom feed
+    //application/xhtml+xml — XHTML
+    //application/owl+xml — OWL ontology in XML
+    //application/skos+rdf — SKOS vocabulary
+    //application/schema+json — JSON Schema
+    //application/shacl+json — SHACL shapes in JSON-LD
+    //application/geo+json — GeoJSON
+    //application/gml+xml — Geography Markup Language
+  ],
+  text: [
+    { value: "plain", label: "Plain text" },
+    { value: "csv", label: "CSV" },
+    { value: "html", label: "HTML" },
+    { value: "css", label: "CSS" },
+    { value: "javascript", label: "JavaScript" },
+    { value: "markdown", label: "Markdown" },
+    { value: "xml", label: "XML text" },
+    { value: "tab-separated-values", label: "TSV" },
+    //text/turtle — Turtle, most human-readable RDF
+    //text/n3 — Notation3, Turtle superset with rules
+  ],
+  image: [
+    { value: "png", label: "PNG image" },
+    { value: "jpeg", label: "JPEG image" },
+    { value: "gif", label: "GIF" },
+    { value: "webp", label: "WebP" },
+    { value: "svg+xml", label: "SVG vector" },
+    { value: "tiff", label: "TIFF" },
+    { value: "avif", label: "AVIF" },
+  ],
+  audio: [
+    { value: "mpeg", label: "MP3" },
+    { value: "ogg", label: "Ogg" },
+    { value: "wav", label: "WAV" },
+    { value: "webm", label: "WebM audio" },
+    { value: "aac", label: "AAC" },
+  ],
+  video: [
+    { value: "mp4", label: "MP4" },
+    { value: "webm", label: "WebM video" },
+    { value: "ogg", label: "Ogg video" },
+    { value: "mpeg", label: "MPEG" },
+  ],
+  font: [
+    { value: "woff", label: "WOFF" },
+    { value: "woff2", label: "WOFF2" },
+    { value: "ttf", label: "TrueType" },
+    { value: "otf", label: "OpenType" },
+  ],
+  multipart: [
+    { value: "form-data", label: "Form data" },
+    { value: "mixed", label: "Mixed" },
+    { value: "alternative", label: "Alternative" },
+  ],
+  message: [
+    { value: "http", label: "HTTP message" },
+    { value: "rfc822", label: "Email RFC 822" },
+  ],
+  model: [
+    { value: "gltf+json", label: "glTF JSON" },
+    { value: "gltf-binary", label: "glTF binary" },
+    { value: "obj", label: "OBJ" },
+  ],
+  chemical: [
+    { value: "x-pdb", label: "Protein Data Bank" },
+    { value: "x-xyz", label: "XYZ format" },
+  ],
+  example: [{ value: "example", label: "Example type" }],
+};
+
+/**
+ * Regex for validating the subtype part of a media type, according to the syntax rules defined in RFC 6838.
+ * The subtype must start with an alphanumeric character, followed by zero or more characters that can be alphanumeric or one of the allowed special characters: ! # $ & - ^ _ . +
+ * This regex does not allow spaces or slashes, and ensures that the subtype is not empty.
+ */
+const SUB_REGEX = /^[a-zA-Z0-9][a-zA-Z0-9!#$&\-^_.+]*$/;
+
+/**
+ * Suggestion represents an item in the autocomplete dropdown. 
+ * It can be a major type suggestion, a known subtype suggestion, or a general subtype suggestion within a locked major type. 
+ * Each suggestion includes the text to display on the left (the media type), the text to display on the right (a human-friendly label), and metadata about the major and subtype it represents.
+ */
+type Suggestion = {
+  key: string;
+  group: "major" | "known" | "sub";
+  left: string;
+  right: string;
+  major: MajorType;
+  sub: string;
+};
+
+/**
+ * HintState represents the state of the hint message shown below the input field, including the icon to display, the color of the text, and the hint text itself.
+ * The hint message provides feedback to the user about the current state of their input, such as whether they are typing a major type, have locked a major type without a subtype, have entered invalid characters, or have entered a known or unknown but valid media type.
+ */
+type HintState = {
+  icon: typeof InfoOutlined;
+  color: string;
+  text: string;
+};
+
+const isMajorType = (value: string): value is MajorType => {
+  return (MAJORS as string[]).includes(value);
+};
+
+const findKnownLabel = (major: MajorType, sub: string): string | null => {
+  const lowered = sub.toLowerCase();
+  const match = KNOWN_SUBS[major].find((entry) => entry.value === lowered);
+  return match ? match.label : null;
+};
+
+const parseMaybeType = (raw: string): { major: MajorType; sub: string } | null => {
+  const slashIdx = raw.indexOf("/");
+  if (slashIdx <= 0) {
+    return null;
+  }
+
+  const majorPart = raw.slice(0, slashIdx).trim().toLowerCase();
+  const subPart = raw.slice(slashIdx + 1).trim();
+
+  if (!isMajorType(majorPart)) {
+    return null;
+  }
+
+  return { major: majorPart, sub: subPart };
+};
+
+const renderMatched = (text: string, query: string): ReactNode => {
+  if (!query) {
+    return text;
+  }
+
+  const lowerText = text.toLowerCase();
+  const lowerQuery = query.toLowerCase();
+  const start = lowerText.indexOf(lowerQuery);
+
+  if (start < 0) {
+    return text;
+  }
+
+  const end = start + query.length;
+  return (
+    <>
+      {text.slice(0, start)}
+      <Box component="strong" sx={{ color: "primary.main", fontWeight: 700 }}>
+        {text.slice(start, end)}
+      </Box>
+      {text.slice(end)}
+    </>
+  );
+};
+
+function MediaTypeInput({
+  value,
+  onChange,
+  onConfirmed,
+  label,
+  size = "medium",//"small",
+}: MediaTypeInputProps) {
+  const { t } = useTranslation("linkset-editor");
+  const [inputValue, setInputValue] = useState<string>("");
+  const inputLabel = label ?? t("mediaTypeInput.label");
+
+  // The 'locked' major type; once a major type is locked, the user can only edit the subtype. 
+  const [lockedMajor, setLockedMajor] = useState<MajorType | null>(null);
+  // The open state of the suggestions popper
+  const [open, setOpen] = useState<boolean>(false);
+  // The highlighted index in the suggestions list
+  const [hiIdx, setHiIdx] = useState<number>(-1);
+  // The anchor element for the popper
+  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+
+  // Refs to keep track of the input element, 
+  // previous validation state, and previous value prop
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const previousValidationRef = useRef<ValidationState>("empty");
+  const previousValuePropRef = useRef<string | undefined>(undefined);
+
+  const assembledValue = lockedMajor ? `${lockedMajor}/${inputValue}` : inputValue;
+
+  const lockMajor = (major: MajorType, subSoFar: string) => {
+    setLockedMajor(major);
+    setInputValue(subSoFar);
+    setHiIdx(-1);
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+      inputRef.current?.setSelectionRange(subSoFar.length, subSoFar.length);
+    });
+  };
+
+  const unlockMajor = () => {
+    setInputValue(lockedMajor ?? "");
+    setLockedMajor(null);
+    setHiIdx(-1);
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+    });
+  };
+
+  /**
+   * Handles changes to the input text, updating the internal state 
+   * and determining whether to lock the major type or keep it unlocked. 
+   * 
+   * @param nextRaw The next raw input value
+   * @param options Options for handling the text change
+   * @param options.openSuggestions Whether to open the suggestions popper
+   * @param options.forceUnlocked Whether to force unlock the major type
+   * 
+   * @returns void
+   */
+  const handleTextChange = (
+    nextRaw: string,
+    options?: {
+      openSuggestions?: boolean;
+      forceUnlocked?: boolean;
+    },
+  ) => {
+    const shouldOpen = options?.openSuggestions ?? true;
+    const forceUnlocked = options?.forceUnlocked ?? false;
+
+    if (forceUnlocked && lockedMajor) {
+      setLockedMajor(null);
+    }
+
+    const effectiveLockedMajor = forceUnlocked ? null : lockedMajor;
+
+    if (!effectiveLockedMajor) {
+      const parsed = parseMaybeType(nextRaw);
+      if (parsed) {
+        lockMajor(parsed.major, parsed.sub);
+        setOpen(shouldOpen);
+        return;
+      }
+
+      setInputValue(nextRaw);
+      setOpen(shouldOpen);
+      return;
+    }
+
+    setInputValue(nextRaw);
+    setOpen(shouldOpen);
+  };
+
+  const suggestions = useMemo<Suggestion[]>(() => {
+    if (!lockedMajor) {
+      const query = inputValue.trim().toLowerCase();
+      const majorMatches = MAJORS.filter((major) => major.startsWith(query)).map((major) => ({
+        key: `major:${major}`,
+        group: "major" as const,
+        left: major,
+        right: t("mediaTypeInput.majorTypeLabel"),
+        major,
+        sub: "",
+      }));
+
+      const knownAll: Suggestion[] = [];
+      for (const major of MAJORS) {
+        for (const sub of KNOWN_SUBS[major]) {
+          const full = `${major}/${sub.value}`;
+          if (full.toLowerCase().includes(query)) {
+            knownAll.push({
+              key: `known:${major}/${sub.value}`,
+              group: "known",
+              left: full,
+              right: sub.label,
+              major,
+              sub: sub.value,
+            });
+          }
+        }
+      }
+
+      return [...majorMatches, ...knownAll.slice(0, 6)];
+    }
+
+    const query = inputValue.trim().toLowerCase();
+    return KNOWN_SUBS[lockedMajor]
+      .filter((entry) => {
+        if (!query) {
+          return true;
+        }
+
+        return (
+          entry.value.toLowerCase().startsWith(query) ||
+          entry.label.toLowerCase().includes(query)
+        );
+      })
+      .map((entry) => ({
+        key: `sub:${lockedMajor}/${entry.value}`,
+        group: "sub" as const,
+        left: `${lockedMajor}/${entry.value}`,
+        right: entry.label,
+        major: lockedMajor,
+        sub: entry.value,
+      }));
+  }, [inputValue, lockedMajor, t]);
+
+  const validationState = useMemo<ValidationState>(() => {
+    if (!lockedMajor && !inputValue) {
+      return "empty";
+    }
+
+    if (!lockedMajor && inputValue) {
+      return "typing-major";
+    }
+
+    if (lockedMajor && !inputValue) {
+      return "locked-no-sub";
+    }
+
+    if (lockedMajor && !SUB_REGEX.test(inputValue)) {
+      return "invalid-chars";
+    }
+
+    if (
+      lockedMajor &&
+      KNOWN_SUBS[lockedMajor].some((entry) => entry.value === inputValue.toLowerCase())
+    ) {
+      return "known";
+    }
+
+    return "unknown-valid";
+  }, [inputValue, lockedMajor]);
+
+  const hintState = useMemo<HintState>(() => {
+    if (validationState === "empty") {
+      return {
+        icon: InfoOutlined,
+        color: "text.primary",
+        text: t("mediaTypeInput.hint.empty"),
+      };
+    }
+
+    if (validationState === "typing-major") {
+      return {
+        icon: InfoOutlined,
+        color: "text.secondary",
+        text: t("mediaTypeInput.hint.typingMajor"),
+      };
+    }
+
+    if (validationState === "locked-no-sub") {
+      return {
+        icon: InfoOutlined,
+        color: "info.main",
+        text: t("mediaTypeInput.hint.lockedNoSub"),
+      };
+    }
+
+    if (validationState === "invalid-chars") {
+      return {
+        icon: ErrorOutlined,
+        color: "error.main",
+        text: t("mediaTypeInput.hint.invalidChars"),
+      };
+    }
+
+    if (validationState === "known" && lockedMajor) {
+      const knownLabel = findKnownLabel(lockedMajor, inputValue) ?? `${lockedMajor}/${inputValue}`;
+      return {
+        icon: CheckCircleOutlined,
+        color: "success.main",
+        text: t("mediaTypeInput.hint.known", { label: knownLabel }),
+      };
+    }
+
+    return {
+      icon: HelpOutlined,
+      color: "text.secondary",
+      text: t("mediaTypeInput.hint.unknownValid"),
+    };
+  }, [validationState, lockedMajor, inputValue, t]);
+
+  useEffect(() => {
+    if (!lockedMajor || !inputValue) {
+      return;
+    }
+
+    onChange?.(`${lockedMajor}/${inputValue}`);
+  }, [lockedMajor, inputValue, onChange]);
+
+  useEffect(() => {
+    const prev = previousValidationRef.current;
+    const now = validationState;
+
+    if (
+      (now === "known" || now === "unknown-valid") &&
+      prev !== now &&
+      lockedMajor &&
+      inputValue
+    ) {
+      onConfirmed?.({
+        major: lockedMajor,
+        sub: inputValue,
+        full: `${lockedMajor}/${inputValue}`,
+      });
+    }
+
+    previousValidationRef.current = now;
+  }, [validationState, lockedMajor, inputValue, onConfirmed]);
+
+  useEffect(() => {
+    if (value === undefined) {
+      previousValuePropRef.current = value;
+      return;
+    }
+
+    // Only re-parse when the external prop value actually changes.
+    if (value === previousValuePropRef.current) {
+      return;
+    }
+
+    previousValuePropRef.current = value;
+
+    if (value === assembledValue) {
+      return;
+    }
+
+    handleTextChange(value, {
+      openSuggestions: false,
+      forceUnlocked: true,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
+  const pickSuggestion = (suggestion: Suggestion) => {
+    lockMajor(suggestion.major, suggestion.sub);
+    setOpen(false);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Escape") {
+      setOpen(false);
+      setHiIdx(-1);
+      return;
+    }
+
+    if (
+      lockedMajor &&
+      inputValue === "" &&
+      event.key === "Backspace"
+    ) {
+      event.preventDefault();
+      unlockMajor();
+      return;
+    }
+
+    if (!open || suggestions.length === 0) {
+      return;
+    }
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setHiIdx((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
+      return;
+    }
+
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setHiIdx((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+      return;
+    }
+
+    if (event.key === "Enter" && hiIdx >= 0 && hiIdx < suggestions.length) {
+      event.preventDefault();
+      pickSuggestion(suggestions[hiIdx]);
+    }
+  };
+
+  const groupedSuggestions = useMemo(() => {
+    const groups: Array<{
+      name: Suggestion["group"];
+      items: Suggestion[];
+    }> = [];
+
+    for (const suggestion of suggestions) {
+      const existing = groups.find((group) => group.name === suggestion.group);
+      if (existing) {
+        existing.items.push(suggestion);
+      } else {
+        groups.push({ name: suggestion.group, items: [suggestion] });
+      }
+    }
+
+    return groups;
+  }, [suggestions]);
+
+  let rowIndex = -1;
+  const hintIcon = hintState.icon;
+  const showFullTypeValue =
+    (validationState === "known" || validationState === "unknown-valid") && Boolean(assembledValue);
+
+  return (
+    <Stack spacing={0.75}>
+      <Box ref={setAnchorEl}>
+        <TextField
+          fullWidth
+          label={inputLabel}
+          size={size}
+          value={inputValue}
+          placeholder={
+            lockedMajor
+              ? t("mediaTypeInput.placeholderSubtype")
+              : t("mediaTypeInput.placeholderGeneral")
+          }
+          onFocus={() => {
+            if (suggestions.length > 0) {
+              setOpen(true);
+            }
+          }}
+          onClick={() => {
+            if (suggestions.length > 0) {
+              setOpen(true);
+            }
+          }}
+          onChange={(event) => handleTextChange(event.target.value)}
+          onKeyDown={handleKeyDown}
+          inputRef={inputRef}
+          slotProps={{
+            input: {
+              startAdornment: lockedMajor ? (
+                <InputAdornment
+                  position="start"
+                  sx={{
+                    mr: 0,
+                    alignSelf: "stretch",
+                    maxHeight: "none",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      px: 1.25,
+                      display: "flex",
+                      alignItems: "center",
+                      height: "100%",
+                      borderRight: 1,
+                      borderColor: "divider",
+                      bgcolor: "info.200",
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontFamily: "monospace",
+                        color: "info.main",
+                        fontWeight: 600,
+                        lineHeight: 1,
+                      }}
+                    >
+                      {`${lockedMajor} /`}
+                    </Typography>
+                  </Box>
+                </InputAdornment>
+              ) : undefined,
+              endAdornment: lockedMajor ? (
+                <InputAdornment position="end">
+                  <IconButton
+                    size="small"
+                    aria-label={t("mediaTypeInput.unlockAriaLabel")}
+                    onClick={unlockMajor}
+                  >
+                    <CloseOutlined fontSize="small" />
+                  </IconButton>
+                </InputAdornment>
+              ) : undefined,
+            },
+          }}
+        />
+      </Box>
+
+      <Popper
+        open={open && suggestions.length > 0}
+        anchorEl={anchorEl}
+        placement="bottom-start"
+        sx={{ zIndex: (theme) => theme.zIndex.modal + 1, width: anchorEl?.clientWidth }}
+      >
+        <ClickAwayListener
+          onClickAway={() => {
+            setOpen(false);
+            setHiIdx(-1);
+          }}
+        >
+          <Paper variant="outlined" sx={{ mt: 0.5, maxHeight: 180, overflow: "auto" }}>
+            <MenuList dense>
+              {groupedSuggestions.map((group, groupIdx) => (
+                <Box key={group.name}>
+                  {groupIdx > 0 && (
+                    <ListSubheader disableSticky>
+                      {group.name === "major"
+                        ? t("mediaTypeInput.group.major")
+                        : group.name === "known"
+                          ? t("mediaTypeInput.group.known")
+                          : t("mediaTypeInput.group.sub")}
+                    </ListSubheader>
+                  )}
+                  {group.items.map((item) => {
+                    rowIndex += 1;
+                    const currentIdx = rowIndex;
+                    const query = lockedMajor ? inputValue.trim() : inputValue.trim();
+                    return (
+                      <MenuItem
+                        key={item.key}
+                        selected={hiIdx === currentIdx}
+                        onMouseEnter={() => setHiIdx(currentIdx)}
+                        onClick={() => pickSuggestion(item)}
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          gap: 2,
+                          alignItems: "baseline",
+                        }}
+                      >
+                        <Typography variant="body2" sx={{ fontFamily: "monospace" }}>
+                          {renderMatched(item.left, query)}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ whiteSpace: "nowrap" }}>
+                          {item.right}
+                        </Typography>
+                      </MenuItem>
+                    );
+                  })}
+                </Box>
+              ))}
+            </MenuList>
+          </Paper>
+        </ClickAwayListener>
+      </Popper>
+
+      <Stack direction="row" spacing={0.75} alignItems="center" minHeight={20}>
+        <SvgIcon component={hintIcon} inheritViewBox sx={{ fontSize: 16, color: hintState.color }} />
+        <Typography variant="caption" color={hintState.color}>
+          {hintState.text}
+        </Typography>
+      </Stack>
+
+      {showFullTypeValue && (
+        <Box
+          sx={(theme) => ({
+            display: "inline-flex",
+            alignSelf: "flex-start",
+            px: 1,
+            py: 0.25,
+            borderRadius: 1,
+            border: 1,
+            borderColor: theme.palette.success.main,
+            bgcolor: alpha(theme.palette.success.main, 0.08),
+            color: theme.palette.success.dark,
+            fontFamily: "monospace",
+          })}
+        >
+          <Typography variant="caption" sx={{ fontFamily: "inherit", color: "inherit" }}>
+            {assembledValue}
+          </Typography>
+        </Box>
+      )}
+    </Stack>
+  );
+}
+
+export default MediaTypeInput;
