@@ -29,14 +29,20 @@ export const AuthWrapper = ({
   );
 };
 
-export const AuthRoute = ({ children }: { children: ReactNode }) => {
+export const AuthRoute = ({
+  children,
+  message,
+}: {
+  children: ReactNode;
+  message?: ReactNode;
+}) => {
   const auth = useAuth();
 
   if (auth.isAuthenticated) {
     return <>{children}</>;
   }
 
-  return <LoginPage />;
+  return <LoginPage message={message} />;
 };
 
 export const SignInCallback = () => {
