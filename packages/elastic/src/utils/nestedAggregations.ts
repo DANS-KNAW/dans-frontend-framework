@@ -1,17 +1,5 @@
 import type { ESUIFacet } from "./configConverter";
 
-// Nested-mapped fields (ES mapping `nested`) can't be aggregated or filtered
-// via a flat `terms` query. They need a `{nested: {path}}` wrapper around
-// both the aggregation and any filter clauses. search-ui itself doesn't know
-// how to do that.
-//
-// Strategy: nested facets live in BOTH `facets` (so search-ui renders them
-// like any list facet) and `externallyHandledFacets` (registry for this
-// connector). search-ui produces a normal `facet_bucket_<field>.aggs.<field>
-// .terms` aggregation; we rewrite that single inner agg into a nested wrap.
-// On response we unwrap the extra level so search-ui's bucket parser sees
-// the expected `aggregations.facet_bucket_<field>.<field>.buckets` shape.
-
 function nestedRegistry(
   externallyHandledFacets?: Record<string, ESUIFacet>,
 ): Map<string, string> {
@@ -25,8 +13,6 @@ function nestedRegistry(
   return out;
 }
 
-// Replace the inner terms-agg with `{ nested: {path}, aggs: { [field]: terms } }`
-// for every facet_bucket_<field> whose field is in the nested registry.
 export function wrapNestedFacetAggregations(
   esRequest: any,
   externallyHandledFacets?: Record<string, ESUIFacet>,
@@ -34,26 +20,30 @@ export function wrapNestedFacetAggregations(
   const nested = nestedRegistry(externallyHandledFacets);
   if (nested.size === 0 || !esRequest.aggs) return esRequest;
 
-  for (const [field, path] of nested.entries()) {
-    const bucketKey = `facet_bucket_${field}`;
-    const bucket = esRequest.aggs[bucketKey];
-    if (!bucket?.aggs?.[field]) continue;
+  for (const bucket of facetBuckets(esRequest.aggs)) {
+    for (const [field, path] of nested.entries()) {
+      const innerTerms = bucket.aggs?.[field];
+      if (!innerTerms || innerTerms.nested) continue;
 
-    const innerTerms = bucket.aggs[field];
-    bucket.aggs[field] = {
-      nested: { path },
-      aggs: {
-        [field]: innerTerms,
-      },
-    };
+      bucket.aggs[field] = {
+        nested: { path },
+        aggs: {
+          [field]: innerTerms,
+        },
+      };
+    }
   }
 
   return esRequest;
 }
 
-// Walk the compiled query and rewrite term/terms filters on nested fields
-// into `{ nested: { path, query: { term: {...} } } }`. Search-ui builds
-// filters under query.bool.filter[i].bool.filter[j] (post-filter style).
+function facetBuckets(aggs: Record<string, any>): any[] {
+  return Object.keys(aggs)
+    .filter((k) => k.startsWith("facet_bucket"))
+    .map((k) => aggs[k])
+    .filter(Boolean);
+}
+
 export function rewriteNestedFilters(
   esRequest: any,
   externallyHandledFacets?: Record<string, ESUIFacet>,
@@ -104,32 +94,24 @@ export function handleNestedFacets(
   return req;
 }
 
-// After ES processes the wrapped agg, the bucket structure is
-//   aggregations.facet_bucket_<field>.<field>.<field>.buckets
-// search-ui expects
-//   aggregations.facet_bucket_<field>.<field>.buckets
-// so we collapse one level for each nested facet.
 export function unwrapNestedAggregations(
   response: any,
   externallyHandledFacets?: Record<string, ESUIFacet>,
 ) {
   const nested = nestedRegistry(externallyHandledFacets);
   if (nested.size === 0) return;
-  // search-ui's interceptor sees the raw ES response at the top level here;
-  // older search-ui versions wrap it under .rawResponse. Check both.
   const aggs =
     response?.aggregations ??
     response?.rawResponse?.aggregations ??
     response?.body?.aggregations;
   if (!aggs) return;
 
-  for (const field of nested.keys()) {
-    const bucketKey = `facet_bucket_${field}`;
-    const bucket = aggs[bucketKey];
-    if (!bucket) continue;
-    const wrapped = bucket[field];
-    if (wrapped && wrapped[field]) {
-      bucket[field] = wrapped[field];
+  for (const bucket of facetBuckets(aggs)) {
+    for (const field of nested.keys()) {
+      const wrapped = bucket[field];
+      if (wrapped && wrapped[field]) {
+        bucket[field] = wrapped[field];
+      }
     }
   }
 }

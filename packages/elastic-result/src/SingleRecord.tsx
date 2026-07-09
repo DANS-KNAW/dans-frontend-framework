@@ -24,7 +24,9 @@ type Config = {
 }
 
 const getNestedValue = (obj: Record<string, any>, path: string): any =>
-  path.split('.').reduce((acc, key) => acc?.[key], obj);
+  // RDF predicates may contain dots in the local name (e.g. "trsp:att.4570870110"),
+  // so a literal key match takes precedence over path traversal
+  obj?.[path] ?? path.split('.').reduce((acc, key) => acc?.[key], obj);
 
 export default function SingleRecord({ config }: { config: Config }) {
   const { id } = useParams();
