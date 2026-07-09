@@ -16,7 +16,7 @@
     "heading": "LinkSet importeren",
     "uploadTab": "Upload",
     "urlTab": "URL",
-    "urlDemoAlert": "Demomodus: URL-import gebruikt momenteel nep-gegevens en haalt geen externe JSON op.",
+    "urlDemoAlert": "Plak een directe URL naar een LinkSet-JSON. Let op: sommige servers blokkeren browserverzoeken door CORS.",
     "urlLabel": "LinkSet URL",
     "urlRequired": "LinkSet URL is verplicht.",
     "urlPlaceholder": "https://example.org/linkset.json",
@@ -32,7 +32,7 @@
     "loadedFromUrl": "Geladen vanaf URL: {{filename}}",
     "readyToImport": "Klaar om te importeren: {{filename}} ({{source}})",
     "uploadSource": "upload",
-    "urlSource": "URL demo"
+    "urlSource": "URL"
   },
   "editStep": {
     "heading": "FAIRiCat LinkSet Editor",

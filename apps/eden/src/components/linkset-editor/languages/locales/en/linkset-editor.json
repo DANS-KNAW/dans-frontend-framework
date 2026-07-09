@@ -16,7 +16,7 @@
     "heading": "Import LinkSet",
     "uploadTab": "Upload",
     "urlTab": "URL",
-    "urlDemoAlert": "Demo mode: URL import currently uses fake data and does not fetch remote JSON yet.",
+    "urlDemoAlert": "Paste a direct URL to a LinkSet JSON. Note: some servers block browser requests due to CORS.",
     "urlLabel": "LinkSet URL",
     "urlRequired": "LinkSet URL is required.",
     "urlPlaceholder": "https://example.org/linkset.json",
@@ -32,7 +32,7 @@
     "loadedFromUrl": "Loaded from URL: {{filename}}",
     "readyToImport": "Ready to import: {{filename}} ({{source}})",
     "uploadSource": "upload",
-    "urlSource": "URL demo"
+    "urlSource": "URL"
   },
   "editStep": {
     "heading": "FAIRiCat LinkSet Editor",
