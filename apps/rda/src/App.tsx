@@ -124,7 +124,22 @@ const App = () => {
         );
       case "deposit":
         return (
-          <AuthRoute>
+          <AuthRoute
+            message={
+              <SupportDrawerLink
+                text={{
+                  en: "Please log in via your ORCID account, or refer to the ",
+                  nl: "Log in met uw ORCID-account of raadpleeg de ",
+                }}
+                linkText={{
+                  en: "Publisher Guidelines",
+                  nl: "Publisher Guidelines",
+                }}
+                topic="Publisher Guidelines"
+                suffix=" for set-up and further instructions."
+              />
+            }
+          >
             <SiteTitleWrapper page={page}>
               <Container maxWidth="lg" sx={{ py: { xs: 8, sm: 12 }, px: 3 }}>
                 <Typography
@@ -160,18 +175,39 @@ const App = () => {
                       i18n.language,
                     )}
                   </Typography>
-                  <SupportDrawerLink
-                    text={{
-                      en: "Please refer to the ",
-                      nl: "Raadpleeg de ",
+                  <Box
+                    sx={{
+                      mt: 3,
+                      maxWidth: "48rem",
+                      fontSize: "1rem",
+                      lineHeight: 2,
+                      color: "#4b5563",
+                      textWrap: "pretty",
+                      "& > p": { display: "inline", m: 0, maxWidth: "none" },
                     }}
-                    linkText={{
-                      en: "Publisher Guidelines",
-                      nl: "Publisher Guidelines",
-                    }}
-                    topic="Publisher Guidelines"
-                    suffix="."
-                  />
+                  >
+                    <SupportDrawerLink
+                      text={{
+                        en: "Please refer to the ",
+                        nl: "Raadpleeg de ",
+                      }}
+                      linkText={{
+                        en: "Publisher Guidelines",
+                        nl: "Publisher Guidelines",
+                      }}
+                      topic="Publisher Guidelines"
+                      suffix=" for instructions. Please also fill in and attach the "
+                    />
+                    <Link
+                      href="https://docs.google.com/document/d/14tPhRpNED61PjkTzCgWBmdojCuzAkcqo/edit"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={{ color: "#4F8E31" }}
+                    >
+                      RDA Cover Page
+                    </Link>
+                    {" to the PDF before publishing."}
+                  </Box>
                 </Box>
               </Container>
               <Deposit config={form} page={page} />
