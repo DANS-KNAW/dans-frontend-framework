@@ -31,7 +31,7 @@ const addParentHierarchy = (data: GorcResponse[], itemId: string): string => {
 
 export const rdaApi = createApi({
   reducerPath: "rdaApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://api.rda.dansdemo.nl" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "https://api.kb-rda.org" }),
   endpoints: (build) => ({
     fetchRdaDomain: build.query({
       query: () => "domains",
