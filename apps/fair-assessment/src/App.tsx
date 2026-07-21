@@ -1,7 +1,8 @@
 import { Suspense } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link as RouterLink } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
 import { ThemeWrapper } from "@dans-framework/theme";
 import { MenuBar, Footer } from "@dans-framework/layout";
 import { Generic, type Page } from "@dans-framework/pages";
@@ -31,6 +32,19 @@ import { AppWrapper } from "@dans-framework/wrapper";
 
 const queryClient = new QueryClient();
 
+const RecordPage = () => {
+  return (
+    <>
+      <SingleRecord config={esResultConfig} />
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 4, mb: 2 }}>
+        <Link component={RouterLink} to="/guidance" underline="hover" variant="body1">
+          Back to guidance overview
+        </Link>
+      </Box>
+    </>
+  );
+};
+
 const App = () => {
   const createElementByTemplate = (page: Page) => {
     switch (page.template) {
@@ -39,7 +53,7 @@ const App = () => {
       case "fair-guidance":
         return <ElasticWrapper config={esConfig} resultRoute={page.slug} />
       case "record":
-        return <SingleRecord config={esResultConfig} />;
+        return <RecordPage />;
       case "create-assessment":
         return <AuthRoute><Assessment /></AuthRoute>;
       default:
