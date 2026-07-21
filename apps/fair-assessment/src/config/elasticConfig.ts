@@ -3,50 +3,50 @@ import { type SimpleConfig } from "@dans-framework/elastic";
 export const esConfig: SimpleConfig = {
   searchFields: [
     { field: "bodyguidanceelement", weight: 3 },
-    { field: "descguidanceelement" },
+    { field: "test" },
     { field: "lodgde" },
     { field: "labelguidanceelement" },
   ],
   
   facets: [
     {
-      field: "criterion.name",
+      field: "criterion",
       type: "list",
       label: "Criterion",
     },
     {
-      field: "domain.name",
+      field: "domain",
       type: "list",
       label: "Domain",
     },
     {
-      field: "focus.name",
+      field: "focus",
       type: "piechart",
       label: "Focus",
     },
     {
-      field: "motivation.name",
+      field: "motivation",
       type: "list",
       label: "Motivation",
     },
     {
-      field: "test.name",
+      field: "test",
       type: "list",
       label: "Test",
     },
     {
-      field: "actor.name",
+      field: "actor",
       type: "piechart",
       label: "Actor",
     },
     {
-      field: "type.name",
+      field: "type",
       type: "barchart",
       orientation: "horizontal",
       label: "Type",
     },
     {
-      field: "source.name",
+      field: "source",
       type: "barchart",
       orientation: "horizontal",
       label: "Source",
@@ -59,8 +59,8 @@ export const esConfig: SimpleConfig = {
 
   searchResult: {
     title: "labelguidanceelement",
-    tags: ["motivation.name", "actor.name"],
-    description: "descguidanceelement",
+    tags: ["motivation", "actor"],
+    description: "bodyguidanceelement",
     linkToSlug: "guidance/record",
     linkToId: "lodgde",
   },
@@ -70,14 +70,16 @@ export const esConfig: SimpleConfig = {
 export const esResultConfig = {
   ...esConfig.searchResult,
   list: [
-    { label: "Actor", value: "actor.name" },
-    { label: "Criterion", value: "criterion.name" },
-    { label: "Domain", value: "domain.name" },
-    { label: "Focus", value: "focus.name" },
-    { label: "Motivation", value: "motivation.name" },
-    { label: "Test", value: "test.name" },
-    { label: "Type", value: "type.name" },
-    { label: "Source", value: "source.name" },
+    { label: "Guidance Element", value: "bodyguidanceelement" },
+    { label: "Guidance Type", value: "type" },
+    { label: "Criterion/Principle", value: "criterion" },
+    { label: "Domain", value: "domain" },
+    { label: "Focus Area", value: "focus" },
+    { label: "Motivation", value: "motivation" },
+    { label: "Associated Test", value: "test" },    
+    { label: "Guidance Resource", value: "source" },
+    { label: "Acting On", value: "actor" },
+    { label: "Persitent Identifier", value: "lodgde" },
   ],
   // chips: [
   //   { label: "Type", value: "@type" },
