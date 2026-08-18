@@ -1,6 +1,6 @@
 import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { ExchangeableLinkSet } from "./types";
+import { ExchangeableLinkSet } from "./linksetTypes";
 
 type PreviewPanelProps = {
   preview: ExchangeableLinkSet;

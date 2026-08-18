@@ -9,13 +9,13 @@
     },
     "import": {
       "title": "Een bestand importeren",
-      "description": "Importeer een bestaande LinkSet van upload of URL, en ga dan verder met bewerken."
+      "description": "Importeer een bestaande LinkSet en ga dan verder met bewerken."
     }
   },
   "importStep": {
     "heading": "LinkSet importeren",
-    "uploadTab": "Upload",
-    "urlTab": "URL",
+    "uploadTab": "Upload bestand",
+    "urlTab": "URL downloaden",
     "urlDemoAlert": "Plak een directe URL naar een LinkSet-JSON. Let op: sommige servers blokkeren browserverzoeken door CORS.",
     "urlLabel": "LinkSet URL",
     "urlRequired": "LinkSet URL is verplicht.",
@@ -30,9 +30,18 @@
     "importRequiresData": "Importeren & bewerken vereist geïmporteerde data.",
     "uploadedSuccess": "Geüpload: {{filename}}",
     "loadedFromUrl": "Geladen vanaf URL: {{filename}}",
+    "loadedFromRegistry": "Geladen uit register: {{title}} ({{count}} servicelinks gevonden)",
     "readyToImport": "Klaar om te importeren: {{filename}} ({{source}})",
     "uploadSource": "upload",
-    "urlSource": "URL"
+    "urlSource": "URL",
+    "registrySource": "register",
+    "registryTab": "Register",
+    "registryLabel": "Selecteer een LinkSet uit het register",
+    "registryPlaceholder": "Selecteer een LinkSet uit het register",
+    "registryFetchFailed": "Ophalen van LinkSet-register mislukt ({{status}} {{statusText}}).",
+    "registryFetchParseFailed": "Opgehaalde register-JSON kon niet worden geparseerd.",
+    "registryFetchFailedGeneric": "Kan register niet ophalen of JSON niet parseren. Controleer CORS, netwerktoegang en JSON-formaat.",
+    "registryFetchFailedGenericWithReason": "Kan register niet ophalen of JSON niet parseren: {{reason}}"
   },
   "editStep": {
     "heading": "FAIRiCat LinkSet Editor",
@@ -49,6 +58,9 @@
     "newLinkSet": "Nieuwe LinkSet",
     "import": "Importeren",
     "edit": "Bewerken"
+  },
+  "registryRepositoryView": {
+    "label": "Repository:"
   },
   "service": {
     "heading": "Service {{index}}",
@@ -93,6 +105,15 @@
     "errorNoJson": "Laad alstublieft een .json-bestand.",
     "errorParseFailed": "Kan het geüploade JSON-bestand niet parseren.",
     "errorReadFailed": "Kan het bestand niet lezen. Zorg ervoor dat het geldige JSON is."
+  },
+  "registryPanel": {
+    "heading": "Importeren uit repositoryregister",
+    "repositoryLabel": "Repository",
+    "action": "LinkSet ophalen",
+    "loading": "Bezig met ophalen",
+    "loadingRepositories": "Repositories laden",
+    "reload": "Repositories opnieuw laden",
+    "empty": "Er zijn geen repositories beschikbaar."
   },
   "previewPanel": {
     "heading": "Linkset-voorbeeld; uitwisselbaar als FAIRiCat Linkset JSON",

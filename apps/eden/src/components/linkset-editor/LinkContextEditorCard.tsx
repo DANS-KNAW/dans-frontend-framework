@@ -18,7 +18,7 @@ import {
   LinkRelationId,
   LinkTargetDraft,
   RELATION_CONFIG,
-} from "./types";
+} from "./linksetTypes";
 import MediaTypeInput from "./MediaTypeInput";
 import UrlInput from "./UrlInput";
 
