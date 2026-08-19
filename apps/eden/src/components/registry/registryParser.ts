@@ -65,8 +65,12 @@ function mapRepositoryRecord(record: unknown): RegistryRepository | null {
 }
 
 function selectServiceRecords(payload: unknown): unknown[] {
-  if (!isRecord(payload) || !Array.isArray(payload.services)) {
-    return [];
+  if (!isRecord(payload)) {
+    throw new Error("Invalid registry response: expected an object.");
+  }
+
+  if (!Array.isArray(payload.services)) {
+    throw new Error("Invalid registry response: expected a `services` array.");
   }
 
   return payload.services;
