@@ -17,7 +17,7 @@ function RegistryRepositoryView({ repository }: RegistryRepositoryViewProps) {
       <Typography variant="body2" fontWeight={600}>
         {repository.title}
       </Typography>
-      <Link href={repository.url} target="_blank" rel="noreferrer" variant="body2">
+      <Link href={repository.url} target="_blank" rel="noopener noreferrer" variant="body2">
         {repository.url}
       </Link>
     </Stack>

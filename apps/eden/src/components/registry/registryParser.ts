@@ -18,7 +18,7 @@ export function parseRegistryServicesToLinkSetDraft(
 ): LinkSetDraft {
   return {
     contexts: services.map((service) => ({
-      // We want a  resolvable URL, so we prefer that, most likely it is the same as the uri anyway. 
+      // We want a resolvable URL, so we prefer that, most likely it is the same as the uri anyway
       anchor: service.endpointUrl || service.uri,
       // We only have conformsTo, if it is present, we add a service-desc link relation.
       // This is far from optimal and the service API and the registry behind it should be improved
