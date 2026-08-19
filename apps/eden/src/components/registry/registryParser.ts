@@ -54,7 +54,7 @@ function mapRepositoryRecord(record: unknown): RegistryRepository | null {
     return null;
   }
 
-  const url = typeof record.uri === "string" ? record.uri : "";
+  const url = typeof record.uri === "string" ? safeHref(record.uri) : "";
   const title = typeof record.title === "string" && record.title ? record.title : url;
 
   if (!title || !url) {
@@ -82,13 +82,30 @@ function mapServiceRecord(record: unknown): RegistryServiceSummary | null {
   }
 
   return {
-    uri: record.uri,
+    uri: safeHref(record.uri),
     title: typeof record.title === "string" ? record.title : undefined,
-    conformsTo: typeof record.conformsTo === "string" ? record.conformsTo : undefined,
-    endpointUrl: typeof record.endpointUrl === "string" ? record.endpointUrl : undefined,
+    conformsTo: typeof record.conformsTo === "string" ? safeHref(record.conformsTo) : undefined,
+    endpointUrl: typeof record.endpointUrl === "string" ? safeHref(record.endpointUrl) : undefined,
   };
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function safeHref(url: string): string {
+  try {
+    const parsed = new URL(url);
+    if (["http:", "https:"].includes(parsed.protocol)) {
+      return parsed.toString();
+    }
+  } catch (error) {
+    // relative URL or invalid
+    // For FAIRiCAt Linksets only absolute URLs are allowed
+    // log a warning here, but we don't want to break the whole parsing for one invalid URL
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`Invalid URL: "${url}"`, error);
+    }
+  }
+  return ""; // fallback for anything unsafe
 }
