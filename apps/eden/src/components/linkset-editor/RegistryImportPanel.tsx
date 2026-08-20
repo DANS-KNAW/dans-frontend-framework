@@ -57,7 +57,9 @@ function RegistryImportPanel({
         <Typography variant="h6">{t('registryPanel.heading')}</Typography>
         {repositories.length === 0 ? (
           <Stack spacing={1.5}>
-            <Alert severity="info">{t('registryPanel.empty')}</Alert>
+            {!isLoadingRepositories ? (
+              <Alert severity="info">{t('registryPanel.empty')}</Alert>
+            ) : null}
             <Button
               variant="outlined"
               onClick={onReloadRepositories}
