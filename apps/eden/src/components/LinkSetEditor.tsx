@@ -5,6 +5,7 @@ import {
   FileUploadOutlined,
   LinkOutlined,
   NoteAddOutlined,
+  StorageOutlined,
   Add,
 } from "@mui/icons-material";
 import {
@@ -28,10 +29,14 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LinkContextEditorCard from "./linkset-editor/LinkContextEditorCard";
 import PreviewPanel from "./linkset-editor/PreviewPanel";
+import RegistryImportPanel from "./linkset-editor/RegistryImportPanel";
+import RegistryRepositoryView from "./registry/RegistryRepositoryView";
+import { fetchRegistryRepositories, fetchRegistryRepositoryLinkSetDraft } from "./registry/registryApi";
+import type { RegistryRepository } from "./registry/registryTypes";
 import UploadPanel from "./linkset-editor/UploadPanel";
 import UrlInput from "./linkset-editor/UrlInput";
 import ValidationPanel from "./linkset-editor/ValidationPanel";
@@ -45,7 +50,7 @@ import {
   LinkRelationId,
   LinkSetDraft,
   LinkTargetDraft,
-} from "./linkset-editor/types";
+} from "./linkset-editor/linksetTypes";
 import {
   parseDraftToLinkSet,
   parseExchangeableLinkSetToDraft,
@@ -60,29 +65,35 @@ export type {
   ServiceDescLinkRelation,
   ServiceDocLinkRelation,
   ServiceMetaLinkRelation,
-} from "./linkset-editor/types";
+} from "./linkset-editor/linksetTypes";
 
 type Step = "choose" | "import" | "edit";
-type ImportTab = "upload" | "url";
+type ImportTab = "registry" | "upload" | "url";
+type ImportSource = "registry" | "upload" | "url";
 type FetchStatus = "idle" | "loading" | "success" | "error";
 
 function LinkSetEditor() {
   const { t } = useTranslation('linkset-editor');
   const [currentStep, setCurrentStep] = useState<Step>("choose");
-  const [activeTab, setActiveTab] = useState<ImportTab>("upload");
+  const [activeTab, setActiveTab] = useState<ImportTab>("registry");
   const [urlValue, setUrlValue] = useState<string>("");
   const [fetchStatus, setFetchStatus] = useState<FetchStatus>("idle");
 
   const [draft, setDraft] = useState<LinkSetDraft>({
     contexts: [createEmptyContext()],
   });
+  const [registryRepository, setRegistryRepository] = useState<RegistryRepository | null>(null);
 
   // Could use useReducer grouping all import-related state, but maybe later on after more refactoring
   const [importedDraft, setImportedDraft] = useState<LinkSetDraft | null>(null);
   const [importedFilename, setImportedFilename] = useState<string>("");
-  const [importSource, setImportSource] = useState<"upload" | "url" | null>(null);
+  const [importSource, setImportSource] = useState<ImportSource | null>(null);
   const [importStepError, setImportStepError] = useState<string>("");
 
+  const [registrySuccessMessage, setRegistrySuccessMessage] = useState<string>("");
+  const [registryErrorMessage, setRegistryErrorMessage] = useState<string>("");
+  const [registryRepositories, setRegistryRepositories] = useState<RegistryRepository[]>([]);
+  const [isLoadingRegistryRepositories, setIsLoadingRegistryRepositories] = useState<boolean>(false);
   const [uploadSuccessMessage, setUploadSuccessMessage] = useState<string>("");
   const [uploadError, setUploadError] = useState<string>("");
   const [urlSuccessMessage, setUrlSuccessMessage] = useState<string>("");
@@ -103,6 +114,31 @@ function LinkSetEditor() {
     [conversionResult.parsed, draft],
   );
 
+  const loadRegistryRepositories = useCallback(async () => {
+    setIsLoadingRegistryRepositories(true);
+    setRegistryErrorMessage("");
+
+    try {
+      const repositories = await fetchRegistryRepositories();
+      setRegistryRepositories(repositories);
+    } catch (error) {
+      setRegistryRepositories([]);
+      setRegistryErrorMessage(
+        error instanceof Error
+          ? t('importStep.registryFetchFailedGenericWithReason', { reason: error.message })
+          : t('importStep.registryFetchFailedGeneric'),
+      );
+    } finally {
+      setIsLoadingRegistryRepositories(false);
+    }
+  }, [t]);
+
+  useEffect(() => {
+    if (currentStep === "import" && activeTab === "registry" && registryRepositories.length === 0) {
+      void loadRegistryRepositories();
+    }
+  }, [activeTab, currentStep, loadRegistryRepositories, registryRepositories.length]);
+
   const downloadExchangeableJson = () => {
     const payload = JSON.stringify(exchangeablePreview, null, 2);
     const blob = new Blob([payload], { type: "application/json" });
@@ -117,12 +153,15 @@ function LinkSetEditor() {
   };
 
   const handleUploadFile = async (file: File) => {
+    setRegistrySuccessMessage("");
+    setRegistryErrorMessage("");
     setUploadError("");
     setUploadSuccessMessage("");
     setImportStepError("");
     setImportedDraft(null);
     setImportedFilename("");
     setImportSource(null);
+    setRegistryRepository(null);
 
     if (!file.name.toLowerCase().endsWith(".json")) {
       setUploadError(t('uploadPanel.errorNoJson'));
@@ -148,14 +187,59 @@ function LinkSetEditor() {
     }
   };
 
-  const handleFetchFromUrl = async () => {
+  const handleSelectRegistryRepository = async (repository: RegistryRepository) => {
     setFetchStatus("loading");
+    setRegistryErrorMessage("");
+    setRegistrySuccessMessage("");
+    setUploadError("");
+    setUploadSuccessMessage("");
     setUrlErrorMessage("");
     setUrlSuccessMessage("");
     setImportStepError("");
     setImportedDraft(null);
     setImportedFilename("");
     setImportSource(null);
+    setRegistryRepository(null);
+
+    try {
+      const safeName = repository.title
+        .replace(/[^a-zA-Z0-9.-]/g, "-")
+        .slice(0, 48);
+      const resolvedFilename = `${safeName || "fairicat-linkset"}.json`;
+      const registryDraft = await fetchRegistryRepositoryLinkSetDraft(repository);
+
+      setImportedDraft(registryDraft);
+      setImportedFilename(resolvedFilename);
+      setImportSource("registry");
+      setRegistryRepository(repository);
+      setRegistrySuccessMessage(
+        t('importStep.loadedFromRegistry', {
+          title: repository.title,
+          count: registryDraft.contexts.length,
+        }),
+      );
+      setFetchStatus("success");
+    } catch (error) {
+      setFetchStatus("error");
+      setRegistryErrorMessage(
+        error instanceof Error
+          ? t('importStep.registryFetchFailedGenericWithReason', { reason: error.message })
+          : t('importStep.registryFetchFailedGeneric'),
+      );
+    }
+  };
+
+  const handleFetchFromUrl = async () => {
+    setFetchStatus("loading");
+    setRegistryErrorMessage("");
+    setRegistrySuccessMessage("");
+    setUrlErrorMessage("");
+    setUrlSuccessMessage("");
+    setImportStepError("");
+    setImportedDraft(null);
+    setImportedFilename("");
+    setImportSource(null);
+    setRegistryRepository(null);
 
     const value = urlValue.trim();
     if (!value) {
@@ -212,6 +296,7 @@ function LinkSetEditor() {
 
   const startFromScratch = () => {
     setDraft({ contexts: [createEmptyContext()] });
+    setRegistryRepository(null);
     setCurrentStep("edit");
     setCameFromImport(false);
     setImportStepError("");
@@ -236,14 +321,17 @@ function LinkSetEditor() {
 
   const resetFlow = () => {
     setCurrentStep("choose");
-    setActiveTab("upload");
+    setActiveTab("registry");
     setUrlValue("");
     setFetchStatus("idle");
     setDraft({ contexts: [createEmptyContext()] });
+    setRegistryRepository(null);
     setImportedDraft(null);
     setImportedFilename("");
     setImportSource(null);
     setImportStepError("");
+    setRegistrySuccessMessage("");
+    setRegistryErrorMessage("");
     setUploadSuccessMessage("");
     setUploadError("");
     setUrlSuccessMessage("");
@@ -328,7 +416,7 @@ function LinkSetEditor() {
       draft.contexts.length > 1 || draft.contexts.some(contextHasInput);
 
     const hasImportInput = Boolean(
-      urlValue.trim() || importedDraft || importedFilename || importSource,
+      urlValue.trim() || importedDraft || importedFilename || importSource || registryRepository,
     );
 
     return hasDraftInput || hasImportInput;
@@ -524,6 +612,20 @@ function LinkSetEditor() {
 
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
             <Card variant="outlined" sx={{ flex: 1 }}>
+              <CardActionArea onClick={goToImportStep} sx={{ height: "100%" }}>
+                <CardContent>
+                  <Stack spacing={1.5}>
+                    <FileUploadOutlined color="primary" />
+                    <Typography variant="h6">{t('chooseStep.import.title')}</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {t('chooseStep.import.description')}
+                    </Typography>
+                  </Stack>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+
+            <Card variant="outlined" sx={{ flex: 1 }}>
               <CardActionArea onClick={startFromScratch} sx={{ height: "100%" }}>
                 <CardContent>
                   <Stack spacing={1.5}>
@@ -537,19 +639,6 @@ function LinkSetEditor() {
               </CardActionArea>
             </Card>
 
-            <Card variant="outlined" sx={{ flex: 1 }}>
-              <CardActionArea onClick={goToImportStep} sx={{ height: "100%" }}>
-                <CardContent>
-                  <Stack spacing={1.5}>
-                    <FileUploadOutlined color="primary" />
-                    <Typography variant="h6">{t('chooseStep.import.title')}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {t('chooseStep.import.description')}
-                    </Typography>
-                  </Stack>
-                </CardContent>
-              </CardActionArea>
-            </Card>
           </Stack>
         </>
       )}
@@ -568,6 +657,12 @@ function LinkSetEditor() {
                 }}
               >
                 <Tab
+                  value="registry"
+                  icon={<StorageOutlined fontSize="small" />}
+                  iconPosition="start"
+                  label={t('importStep.registryTab')}
+                />
+                <Tab
                   value="upload"
                   icon={<CloudUploadOutlined fontSize="small" />}
                   iconPosition="start"
@@ -581,7 +676,17 @@ function LinkSetEditor() {
                 />
               </Tabs>
 
-              {activeTab === "upload" ? (
+              {activeTab === "registry" ? (
+                <RegistryImportPanel
+                  repositories={registryRepositories}
+                  onRepositorySelected={handleSelectRegistryRepository}
+                  onReloadRepositories={loadRegistryRepositories}
+                  isLoadingRepositories={isLoadingRegistryRepositories}
+                  isLoadingLinkSet={fetchStatus === "loading"}
+                  successMessage={registrySuccessMessage}
+                  errorMessage={registryErrorMessage}
+                />
+              ) : activeTab === "upload" ? (
                 <UploadPanel
                   onFileSelected={handleUploadFile}
                   uploadSuccessMessage={uploadSuccessMessage}
@@ -638,7 +743,12 @@ function LinkSetEditor() {
                 <Alert severity="success">
                   {t('importStep.readyToImport', {
                     filename: importedFilename,
-                    source: importSource === "upload" ? t('importStep.uploadSource') : t('importStep.urlSource')
+                    source:
+                      importSource === "upload"
+                        ? t('importStep.uploadSource')
+                        : importSource === "registry"
+                          ? t('importStep.registrySource')
+                          : t('importStep.urlSource')
                   })}
                 </Alert>
               )}
@@ -670,7 +780,21 @@ function LinkSetEditor() {
                 size="small"
               />
             )}
+            {registryRepository && (
+              <Chip
+                variant="outlined"
+                icon={<StorageOutlined />}
+                label={registryRepository.title}
+                size="small"
+              />
+            )}
           </Stack>
+
+          {registryRepository && (
+            <Paper variant="outlined" sx={{ p: 2 }}>
+              <RegistryRepositoryView repository={registryRepository} />
+            </Paper>
+          )}
 
           <Typography variant="body1">
             {t('editStep.anchorDescription')}

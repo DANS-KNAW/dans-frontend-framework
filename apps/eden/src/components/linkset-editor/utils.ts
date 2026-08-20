@@ -9,7 +9,7 @@ import {
   LinkSetDraft,
   LinkTarget,
   LinkTargetDraft,
-} from "./types";
+} from "./linksetTypes";
 
 function parseUrl(value: string): URL | null {
   if (!value.trim()) {

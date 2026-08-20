@@ -8,14 +8,14 @@
       "description": "Open an empty editor and create a new LinkSet manually."
     },
     "import": {
-      "title": "Import a file",
-      "description": "Import an existing LinkSet from upload or URL, then continue editing."
+      "title": "Import",
+      "description": "Import an existing LinkSet, then continue editing."
     }
   },
   "importStep": {
     "heading": "Import LinkSet",
-    "uploadTab": "Upload",
-    "urlTab": "URL",
+    "uploadTab": "Upload File",
+    "urlTab": "URL download",
     "urlDemoAlert": "Paste a direct URL to a LinkSet JSON. Note: some servers block browser requests due to CORS.",
     "urlLabel": "LinkSet URL",
     "urlRequired": "LinkSet URL is required.",
@@ -30,9 +30,18 @@
     "importRequiresData": "Import & edit requires imported data.",
     "uploadedSuccess": "Uploaded: {{filename}}",
     "loadedFromUrl": "Loaded from URL: {{filename}}",
+    "loadedFromRegistry": "Loaded from registry: {{title}} ({{count}} service links found)",
     "readyToImport": "Ready to import: {{filename}} ({{source}})",
     "uploadSource": "upload",
-    "urlSource": "URL"
+    "urlSource": "URL",
+    "registrySource": "registry",
+    "registryTab": "Registry",
+    "registryLabel": "Select a LinkSet from the registry",
+    "registryPlaceholder": "Select a LinkSet from the registry",
+    "registryFetchFailed": "Failed to fetch LinkSet registry ({{status}} {{statusText}}).",
+    "registryFetchParseFailed": "Fetched registry JSON could not be parsed.",
+    "registryFetchFailedGeneric": "Unable to fetch registry or parse JSON. Check CORS, network access, and JSON format.",
+    "registryFetchFailedGenericWithReason": "Unable to fetch registry or parse JSON: {{reason}}"
   },
   "editStep": {
     "heading": "FAIRiCat LinkSet Editor",
@@ -49,6 +58,9 @@
     "newLinkSet": "New LinkSet",
     "import": "Import",
     "edit": "Edit"
+  },
+  "registryRepositoryView": {
+    "label": "Repository:"
   },
   "service": {
     "heading": "Service {{index}}",
@@ -93,6 +105,15 @@
     "errorNoJson": "Please upload a .json file.",
     "errorParseFailed": "Unable to parse the uploaded JSON file.",
     "errorReadFailed": "Unable to read the file. Ensure it is valid JSON."
+  },
+  "registryPanel": {
+    "heading": "Import from repository registry",
+    "repositoryLabel": "Repository",
+    "action": "Retrieve LinkSet",
+    "loading": "Retrieving",
+    "loadingRepositories": "Loading repositories",
+    "reload": "Reload repositories",
+    "empty": "No repositories are available."
   },
   "previewPanel": {
     "heading": "Linkset preview; Exchangeable as FAIRiCat Linkset JSON",
