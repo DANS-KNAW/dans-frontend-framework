@@ -49,5 +49,12 @@ async function fetchRegistryJson(url: string): Promise<unknown> {
     throw new Error(`${response.status} ${response.statusText}`.trim());
   }
 
+  const contentType = response.headers.get("content-type") ?? "";
+  if (!/\bapplication\/json\b|\+json\b/i.test(contentType)) {
+    throw new Error(
+      `Registry API returned ${contentType || "an unknown content type"} for ${url}. Check VITE_REGISTRY_API_BASE_URL.`,
+    );
+  }
+
   return response.json() as Promise<unknown>;
 }
