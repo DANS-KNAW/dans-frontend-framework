@@ -1,6 +1,6 @@
 import { Alert, Button, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, Stack, Typography } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { RegistryRepository } from "../registry/registryTypes";
 
@@ -24,20 +24,12 @@ function RegistryImportPanel({
   errorMessage,
 }: RegistryImportPanelProps) {
   const { t } = useTranslation("linkset-editor");
-  const [selectedRepositoryUrl, setSelectedRepositoryUrl] = useState<string>(repositories[0]?.url ?? "");
+  const [selectedRepositoryUrl, setSelectedRepositoryUrl] = useState<string>("");
   const selectedRepository =
-    repositories.find((repository) => repository.url === selectedRepositoryUrl) ?? null;
-
-  useEffect(() => {
-    if (repositories.length === 0) {
-      setSelectedRepositoryUrl("");
-      return;
-    }
-
-    if (!repositories.some((repository) => repository.url === selectedRepositoryUrl)) {
-      setSelectedRepositoryUrl(repositories[0].url);
-    }
-  }, [repositories, selectedRepositoryUrl]);
+    repositories.find((repository) => repository.url === selectedRepositoryUrl) ??
+    repositories[0] ??
+    null;
+  const effectiveRepositoryUrl = selectedRepository?.url ?? "";
 
   const handleRepositoryChange = (event: SelectChangeEvent) => {
     setSelectedRepositoryUrl(event.target.value);
@@ -75,7 +67,7 @@ function RegistryImportPanel({
               <InputLabel id="registry-repository-label">{t('registryPanel.repositoryLabel')}</InputLabel>
               <Select
                 labelId="registry-repository-label"
-                value={selectedRepositoryUrl}
+                value={effectiveRepositoryUrl}
                 label={t('registryPanel.repositoryLabel')}
                 onChange={handleRepositoryChange}
               >
