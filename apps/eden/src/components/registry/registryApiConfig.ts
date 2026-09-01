@@ -5,12 +5,14 @@ const REGISTRY_API_BASE_URL =
 
 export type RegistryApiConfig = {
   repositoriesUrl: string;
+  corsProxyPrefix: string;
   requestInit?: RequestInit;
   repositoryServicesUrl: (repository: RegistryRepository) => string;
 };
 
 export const registryApiConfig: RegistryApiConfig = {
   repositoriesUrl: `${REGISTRY_API_BASE_URL}/repositories`,
+  corsProxyPrefix: `${REGISTRY_API_BASE_URL}/proxy?url=`,
 
   // TODO: Add public request options if the API needs them, for example headers.
   requestInit: undefined,
