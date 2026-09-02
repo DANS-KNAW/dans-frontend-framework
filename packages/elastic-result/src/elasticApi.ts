@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+const elasticsearchApiEndpoint = import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT.replace(/\/+$/, "");
+
 // Hide harvester provenance wrappers from the detail page. The fetch contract
 // (_source/:id) is unchanged; the guard is purely post-fetch so indices
 // without _category are unaffected.
@@ -12,7 +14,7 @@ function isInternal(doc: any): boolean {
 export const elasticResultApi = createApi({
   reducerPath: "elasticResultApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT}/${import.meta.env.VITE_ELASTICSEARCH_INDEX}/_source/`,
+    baseUrl: `${elasticsearchApiEndpoint}/${import.meta.env.VITE_ELASTICSEARCH_INDEX}/_source/`,
   }),
   endpoints: (build) => ({
     fetchRecord: build.query({
