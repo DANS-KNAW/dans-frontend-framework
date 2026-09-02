@@ -85,7 +85,7 @@ export default function FacetContainer({
               label={lookupLanguageString(config.label, i18n.language) || ''}
               view={FACET_VIEW_MAP[config.display as FacetDisplayType] as ComponentType<any>}
               isFilterable={config.display === "list"}
-              show={config.show || 10}
+              show={config.display === "timerange" ? config.ranges?.length : config.show || 10}
               filterType={localFilterType}
               {...(config.display === "list" || config.display === "barchart" || config.display === "piechart"
                 ? {  
