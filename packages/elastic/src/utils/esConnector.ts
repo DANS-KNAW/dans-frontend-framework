@@ -8,6 +8,8 @@ interface ExtendedQueryConfig extends QueryConfig {
   externallyHandledFacets?: Record<string, ESUIFacet>;
 }
 
+const elasticsearchApiEndpoint = `${import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT.replace(/\/+$/, "")}/`;
+
 // Exclude harvester-provenance docs (_category=_internal) from all search
 // results and facet counts. No-op for indices without a _category field:
 // `term` on a missing field matches zero docs, so must_not excludes nothing.
@@ -25,7 +27,7 @@ function excludeInternal(req: any): any {
 }
 
 const connector = new ElasticsearchAPIConnector({
-  host: import.meta.env.VITE_ELASTICSEARCH_API_ENDPOINT,
+  host: elasticsearchApiEndpoint,
   index: import.meta.env.VITE_ELASTICSEARCH_INDEX,
   interceptSearchRequest: async ({ requestBody, queryConfig }, next) => {
     let rewrittenReq = excludeInternal(requestBody);
