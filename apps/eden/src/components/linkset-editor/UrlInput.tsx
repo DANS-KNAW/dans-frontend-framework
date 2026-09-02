@@ -178,10 +178,7 @@ async function checkUrl(
   contentTypesAllowed: boolean = true,
   useProxy: boolean = true,
 ): Promise<HeadResult> {
-  //const proxiedUrl = `${registryApiConfig.corsProxyPrefix}${encodeURIComponent(url)}`;
-  // no url encoding needed
-  // Note that if that proxy url is empty it will effectively not proxy
-  const proxiedUrl = `${registryApiConfig.corsProxyPrefix}${url}`;
+  const proxiedUrl = `${registryApiConfig.corsProxyPrefix}${encodeURIComponent(url)}`;
   const fetchUrl = useProxy ? proxiedUrl : url;
 
   let response: Response;

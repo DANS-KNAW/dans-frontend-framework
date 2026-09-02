@@ -252,7 +252,7 @@ function LinkSetEditor() {
     }
 
     const fetchUrl = useProxyWithFetch
-      ? `${registryApiConfig.corsProxyPrefix}${value}`
+      ? `${registryApiConfig.corsProxyPrefix}${encodeURIComponent(value)}`
       : value;
 
     try {
