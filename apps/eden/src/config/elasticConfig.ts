@@ -1,6 +1,11 @@
 import { type SimpleConfig } from "@dans-framework/elastic";
 import { profileLabels } from "./profileLabels";
 
+const categoryLabels = {
+  "data-service": "Data Services",
+  repository: "Repository",
+};
+
 export const esConfig: SimpleConfig = {
   searchFields: [
     { field: "@id", weight: 3 },
@@ -14,14 +19,74 @@ export const esConfig: SimpleConfig = {
   // Facets are category-scoped: `showWhen` controls visibility based on the
   // currently-selected _category filter. No filter → only universal facets.
   facets: [
-    { field: "_category.keyword", type: "list", label: "Category", singleSelect: true },
-    { field: "@type.keyword", type: "list", label: "RDF type" },
+    {
+      field: "_category.keyword",
+      type: "list",
+      label: "Category",
+      singleSelect: true,
+      optionLabels: categoryLabels,
+    },
 
     {
-      field: "dct:type.keyword",
+      field: "trsp:hasApplicableProfile.keyword",
       type: "list",
-      label: "Record type",
+      label: "Attribute profiles",
+      optionLabels: profileLabels,
+      initialSize: 15,
       showWhen: (c) => c === "repository",
+    },
+
+    {
+      field: "dct:license.keyword",
+      type: "piechart",
+      label: "License",
+      showWhen: (c) => c === "repository",
+    },
+    {
+      field: "dcat:keyword.keyword",
+      type: "list",
+      label: "Keywords",
+      initialSize: 30,
+      showWhen: (c) => c === "repository",
+    },
+    {
+      field: "_policy.keyword",
+      type: "list",
+      label: "Policies applied",
+      showWhen: (c) => c === "repository",
+    },
+    {
+      field: "dct:publisher.foaf:name.keyword",
+      nestedPath: "dct:publisher",
+      type: "list",
+      label: "Publisher",
+      showWhen: (c) => c === "repository",
+    },
+    {
+      field: "dct:publisher.vcard:country.keyword",
+      nestedPath: "dct:publisher",
+      type: "piechart",
+      label: "Publisher country",
+      showWhen: (c) => c === "repository",
+    },
+
+    {
+      field: "dct:conformsTo.keyword",
+      type: "list",
+      label: "Standard / protocol",
+      showWhen: (c) => c === "data-service",
+    },
+    {
+      field: "dct:format.keyword",
+      type: "list",
+      label: "Format",
+      showWhen: (c) => c === "data-service",
+    },
+    {
+      field: "_parent.keyword",
+      type: "list",
+      label: "Parent repository",
+      showWhen: (c) => c === "data-service",
     },
 
     {
@@ -40,11 +105,14 @@ export const esConfig: SimpleConfig = {
       showWhen: (c) => !c || c === "repository",
     },
     {
-      field: "trsp:att.48BF7E1522.keyword",
-      nestedPath: "trsp:att",
-      type: "list",
+      field: "_yearEstablished",
+      type: "timerange",
       label: "Year established",
-      initialSize: 15,
+      interval: "year",
+      start: 1900,
+      end: "now",
+      width: "large",
+      showEmptyBuckets: false,
       showWhen: (c) => c === "repository",
     },
     {
@@ -111,66 +179,6 @@ export const esConfig: SimpleConfig = {
       initialSize: 15,
       showWhen: (c) => c === "repository",
     },
-    {
-      field: "trsp:hasApplicableProfile.keyword",
-      type: "list",
-      label: "KB profile",
-      optionLabels: profileLabels,
-      initialSize: 15,
-      showWhen: (c) => c === "repository",
-    },
-    {
-      field: "dct:license.keyword",
-      type: "piechart",
-      label: "License",
-      showWhen: (c) => c === "repository",
-    },
-    {
-      field: "dcat:keyword.keyword",
-      type: "list",
-      label: "Keywords",
-      initialSize: 30,
-      showWhen: (c) => c === "repository",
-    },
-    {
-      field: "_policy.keyword",
-      type: "list",
-      label: "Policies applied",
-      showWhen: (c) => c === "repository",
-    },
-    {
-      field: "dct:publisher.foaf:name.keyword",
-      nestedPath: "dct:publisher",
-      type: "list",
-      label: "Publisher",
-      showWhen: (c) => c === "repository",
-    },
-    {
-      field: "dct:publisher.vcard:country.keyword",
-      nestedPath: "dct:publisher",
-      type: "piechart",
-      label: "Publisher country",
-      showWhen: (c) => c === "repository",
-    },
-
-    {
-      field: "dct:conformsTo.keyword",
-      type: "list",
-      label: "Standard / protocol",
-      showWhen: (c) => c === "data-service",
-    },
-    {
-      field: "dct:format.keyword",
-      type: "list",
-      label: "Format",
-      showWhen: (c) => c === "data-service",
-    },
-    {
-      field: "_parent.keyword",
-      type: "list",
-      label: "Parent repository",
-      showWhen: (c) => c === "data-service",
-    },
 
     { field: "@id.keyword", type: "hidden" },
   ],
@@ -183,7 +191,7 @@ export const esConfig: SimpleConfig = {
 
   searchResult: {
     title: "dct:title",
-    tags: ["@type"],
+    description: "dct:description",
     linkToSlug: "record",
     linkToId: "@id",
   },
@@ -201,11 +209,15 @@ export const esResultConfig = {
     { label: "Certifications", value: "trsp:att.27C898E8A0" },
     { label: "Funding model", value: "trsp:att.6EF77F35F8" },
     { label: "Purpose", value: "trsp:att.035ACCB10D" },
-    { label: "KB profiles", value: "trsp:hasApplicableProfile" },
+    { label: "Attribute profiles", value: "trsp:hasApplicableProfile" },
+    { label: "Service type", value: "dct:type" },
     { label: "Parent repository", value: "_parent" },
     { label: "Conforms to", value: "dct:conformsTo" },
     { label: "Format", value: "dct:format" },
     { label: "Endpoint URL", value: "dcat:endpointURL" },
+    { label: "Endpoint availability", value: "_endpointAvailability" },
+    { label: "Validation score", value: "_validationScore" },
+    { label: "Last validated", value: "_validatedAt" },
     { label: "License", value: "dct:license" },
     { label: "Policies", value: "_policy" },
     { label: "Keywords", value: "dcat:keyword" },
@@ -214,6 +226,11 @@ export const esResultConfig = {
   chips: [{ label: "Type", value: "@type" }],
   externalLink: "@id",
   valueLabels: {
+    "_category": categoryLabels,
     "trsp:hasApplicableProfile": profileLabels,
+    "_endpointAvailability": {
+      true: "Available",
+      false: "Unavailable",
+    },
   } as Record<string, Record<string, string>>,
 };
