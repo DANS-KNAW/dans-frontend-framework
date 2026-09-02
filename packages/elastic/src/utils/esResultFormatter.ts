@@ -23,13 +23,24 @@ function getRaw(result: any, configKey: string): string | string[] | undefined {
   return String(value);
 }
 
+function joinValues(
+  value: string | string[] | undefined,
+  separator: string,
+): string | undefined {
+  return Array.isArray(value) ? value.join(separator) : value;
+}
+
 export function formatESResult(
   result: any,
   config: ResultViewConfig
 ): FormattedResult {
   return {
-    title: config.title ? getRaw(result, config.title) as string : undefined,
-    description: config.description ? getRaw(result, config.description) as string  : undefined,
+    title: config.title
+      ? joinValues(getRaw(result, config.title), " · ")
+      : undefined,
+    description: config.description
+      ? joinValues(getRaw(result, config.description), " ")
+      : undefined,
     tags: config.tags?.flatMap(key => {
       const v = getRaw(result, key);
       return v == null ? [] : Array.isArray(v) ? v : [v];
