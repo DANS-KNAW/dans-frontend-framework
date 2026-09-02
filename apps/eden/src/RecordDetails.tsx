@@ -1,5 +1,5 @@
 import { useRef, useState, type ReactNode } from "react";
-import { useParams } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -108,6 +108,23 @@ export default function RecordDetails({ config }: { config: Config }) {
     return map ? raw.map((v) => map[v] ?? v) : raw;
   };
 
+  const isDataService = valuesFor("_category").includes("data-service");
+  const repositoryOnlyDetails = new Set([
+    "trsp:att.4570870110",
+    "trsp:att.48BF7E1522",
+    "trsp:att.6A715E3A22",
+    "trsp:att.27C898E8A0",
+    "trsp:att.6EF77F35F8",
+    "trsp:att.035ACCB10D",
+    "trsp:hasApplicableProfile",
+  ]);
+  const dataServiceOnlyDetails = new Set([
+    "dct:type",
+    "_endpointAvailability",
+    "_validationScore",
+    "_validatedAt",
+  ]);
+
   const dedicated = new Set<string>([
     "dct:identifier", // Identifiers
     "dcat:keyword", // Keywords
@@ -121,6 +138,8 @@ export default function RecordDetails({ config }: { config: Config }) {
   const seenDetail = new Set<string>();
   const detailKeys = (config.list ?? [])
     .map((i) => i.value)
+    .filter((k) => !isDataService || !repositoryOnlyDetails.has(k))
+    .filter((k) => isDataService || !dataServiceOnlyDetails.has(k))
     .filter((k) => !dedicated.has(k) && !seenDetail.has(k) && seenDetail.add(k));
 
   const title = data[config.title] ? lookupLanguageString(data[config.title], i18n.language) : t("noTitle");
@@ -181,7 +200,7 @@ export default function RecordDetails({ config }: { config: Config }) {
         {/* About */}
         <SectionHeader>About</SectionHeader>
         {description ? (
-          <Typography sx={{ m: 0, maxWidth: "68ch", font: `400 16px/1.68 ${SANS}`, color: C.body }}>
+          <Typography sx={{ m: 0, font: `400 16px/1.68 ${SANS}`, color: C.body }}>
             {description}
           </Typography>
         ) : (
@@ -253,38 +272,34 @@ export default function RecordDetails({ config }: { config: Config }) {
 
         <SectionHeader>Details</SectionHeader>
         {detailKeys.map((key) => (
-          <DetailRow key={key} label={labelFor(key)} values={displayValuesFor(key)} />
+          <DetailRow
+            key={key}
+            label={labelFor(key)}
+            values={displayValuesFor(key)}
+            linkToRecord={key === "_parent"}
+          />
         ))}
 
         {/* Services */}
-        <SectionHeader>{labelFor("dcat:service")}</SectionHeader>
-        {services.length === 0 ? (
-          <NotSpecified />
-        ) : (
-          services.map((value, i) => (
-              <Link
-                key={i}
-                href={isUrl(value) ? value : undefined}
-                target="_blank"
-                rel="noopener"
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 2,
-                  py: "13px",
-                  borderBottom: `1px solid ${C.lineSoft}`,
-                  textDecoration: "none",
-                }}
-              >
-                <Box sx={{ fontFamily: MONO, fontSize: 12.5, color: C.text, minWidth: 0, wordBreak: "break-all" }}>
-                  {value}
+        {!isDataService && (
+          <>
+            <SectionHeader>{labelFor("dcat:service")}</SectionHeader>
+            {services.length === 0 ? (
+              <NotSpecified />
+            ) : (
+              services.map((value, i) => (
+                <Box
+                  key={i}
+                  sx={{
+                    py: "13px",
+                    borderBottom: `1px solid ${C.lineSoft}`,
+                  }}
+                >
+                  <RecordLink value={value} monospace />
                 </Box>
-                {isUrl(value) && (
-                  <Box sx={{ flex: "none", font: `500 12px/1 ${SANS}`, color: C.blue }}>Open &#8599;</Box>
-                )}
-              </Link>
-            ))
+              ))
+            )}
+          </>
         )}
 
         {/* Keywords */}
@@ -358,7 +373,85 @@ function SectionHeader({ children }: { children: ReactNode }) {
   );
 }
 
-function DetailRow({ label, values }: { label: string; values: string[] }) {
+function RecordLink({ value, monospace = false }: { value: string; monospace?: boolean }) {
+  const detailPath = `/record/${encodeURIComponent(value)}`;
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 2,
+      }}
+    >
+      <Link
+        component={RouterLink}
+        to={detailPath}
+        sx={{
+          fontFamily: monospace ? MONO : "inherit",
+          fontSize: monospace ? 12.5 : "inherit",
+          color: monospace ? C.text : C.blue,
+          minWidth: 0,
+          wordBreak: "break-all",
+          textDecoration: monospace ? "none" : "underline",
+          "&:hover": { color: C.blue, textDecoration: "underline" },
+        }}
+      >
+        {value}
+      </Link>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, flex: "none" }}>
+        <Link
+          component={RouterLink}
+          to={detailPath}
+          sx={{
+            font: `500 12px/1 ${SANS}`,
+            color: "#5b636d",
+            bgcolor: "#fff",
+            border: "1px solid #e2e5ea",
+            borderRadius: "6px",
+            px: "11px",
+            py: "7px",
+            textDecoration: "none",
+            "&:hover": { bgcolor: "#f5f6f8", borderColor: "#d3d8de" },
+          }}
+        >
+          Details
+        </Link>
+        {isUrl(value) && (
+          <Link
+            href={value}
+            target="_blank"
+            rel="noopener"
+            sx={{
+              font: `500 12px/1 ${SANS}`,
+              color: C.blue,
+              bgcolor: C.blueSoft,
+              border: `1px solid ${C.blueBorder}`,
+              borderRadius: "6px",
+              px: "11px",
+              py: "7px",
+              textDecoration: "none",
+              "&:hover": { bgcolor: "#e3eef8" },
+            }}
+          >
+            Open &#8599;
+          </Link>
+        )}
+      </Box>
+    </Box>
+  );
+}
+
+function DetailRow({
+  label,
+  values,
+  linkToRecord = false,
+}: {
+  label: string;
+  values: string[];
+  linkToRecord?: boolean;
+}) {
   return (
     <Box
       sx={{
@@ -389,7 +482,9 @@ function DetailRow({ label, values }: { label: string; values: string[] }) {
           </Box>
         ) : (
           values.map((v, i) =>
-            isUrl(v) ? (
+            linkToRecord ? (
+              <RecordLink key={i} value={v} />
+            ) : isUrl(v) ? (
               <Link key={i} href={v} target="_blank" rel="noopener" sx={{ color: C.blue, wordBreak: "break-all" }}>
                 {v}
               </Link>
@@ -404,4 +499,3 @@ function DetailRow({ label, values }: { label: string; values: string[] }) {
     </Box>
   );
 }
-
