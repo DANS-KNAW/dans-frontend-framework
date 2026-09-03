@@ -36,6 +36,7 @@ import PreviewPanel from "./linkset-editor/PreviewPanel";
 import RegistryImportPanel from "./linkset-editor/RegistryImportPanel";
 import RegistryRepositoryView from "./registry/RegistryRepositoryView";
 import { fetchRegistryRepositories, fetchRegistryRepositoryLinkSetDraft } from "./registry/registryApi";
+import { registryApiConfig } from "./registry/registryApiConfig";
 import type { RegistryRepository } from "./registry/registryTypes";
 import UploadPanel from "./linkset-editor/UploadPanel";
 import UrlInput from "./linkset-editor/UrlInput";
@@ -71,6 +72,8 @@ type Step = "choose" | "import" | "edit";
 type ImportTab = "registry" | "upload" | "url";
 type ImportSource = "registry" | "upload" | "url";
 type FetchStatus = "idle" | "loading" | "success" | "error";
+
+const useProxyWithFetch = true;
 
 function LinkSetEditor() {
   const { t } = useTranslation('linkset-editor');
@@ -248,10 +251,14 @@ function LinkSetEditor() {
       return;
     }
 
+    const fetchUrl = useProxyWithFetch
+      ? `${registryApiConfig.corsProxyPrefix}${encodeURIComponent(value)}`
+      : value;
+
     try {
       // application/linkset+json is the official one 
       // but allow application/json as well for flexibility
-      const response = await fetch(value, {
+      const response = await fetch(fetchUrl, {
         headers: {
           Accept: "application/linkset+json, application/json",
         },
@@ -713,6 +720,7 @@ function LinkSetEditor() {
                           // Reachability feedback is already shown inside UrlInput.
                         }}
                         enableUrlCheck={false}
+                        useProxy={true}
                       />
                     </Box>
                     <Button

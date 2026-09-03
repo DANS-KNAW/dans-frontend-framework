@@ -22,6 +22,7 @@ import {
 import { alpha } from "@mui/material/styles";
 import { type ReactNode, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { registryApiConfig } from "../registry/registryApiConfig";
 
 export type CheckStatus =
   | "idle"
@@ -102,16 +103,6 @@ export interface UrlInputProps {
 // note that it is fixed for now, but it could be made configurable in the future if needed.
 const MAX_BYTES = 26_214_400;
 
-// To work around CORS issues when checking URLs, we use a public CORS proxy. 
-// In a production application, you would likely want to implement your own proxy or use a more robust solution. 
-// Or have a backend service that performs the URL checks for you.
-// Should make this configurable in the future, but for now it's hardcoded. 
-// some url prefixes that might work: 
-// https://corsproxy.io/?url=
-// https://proxy.corsfix.com/?
-// https://api.cors.lol/?url="
-const CORS_PROXY_PREFIX = "https://proxy.corsfix.com/?";
-
 type UrlProtocol = "https://" | "http://";
 const DEFAULT_PROTOCOL: UrlProtocol = "https://";
 
@@ -187,8 +178,7 @@ async function checkUrl(
   contentTypesAllowed: boolean = true,
   useProxy: boolean = true,
 ): Promise<HeadResult> {
-  //const proxiedUrl = `${CORS_PROXY_PREFIX}${encodeURIComponent(url)}`;
-  const proxiedUrl = `${CORS_PROXY_PREFIX}${url}`;
+  const proxiedUrl = `${registryApiConfig.corsProxyPrefix}${encodeURIComponent(url)}`;
   const fetchUrl = useProxy ? proxiedUrl : url;
 
   let response: Response;
