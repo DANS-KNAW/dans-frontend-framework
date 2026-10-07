@@ -55,6 +55,7 @@ const form: FormConfig = {
       en: "Have you uploaded your recording, transcript and subtitles?",
       nl: "Heb je je opname, transcript en ondertiteling geüpload?",
     }, // optional custom file warning, will default to a generic warning if not set
+    allowMerging: true, // feature designed for ohsmart, sets a flag that instructs acp to merge this file with OHS metadata. Only for PDFs.
   },
 };
 

@@ -51,5 +51,6 @@
   "fileNoSize": "Cannot upload files of 0 bytes",
   "fileForbiddenCharacters": "File name contains forbidden characters: /:*?\"<>|;#",
   "termsMapped": "Terms mapped",
-  "deleteFile": "Delete file {{file}}"
+  "deleteFile": "Delete file {{file}}",
+  "merge": "Merge"
 }

@@ -58,6 +58,7 @@ const FilesTable = () => {
     displayProcesses = true,
     displayPrivate = true,
     embargoDate = false,
+    allowMerging = false,
   } = formConfig?.filesUpload || {};
 
   return selectedFiles.length !== 0 ?
@@ -85,6 +86,9 @@ const FilesTable = () => {
               <TableCell sx={{ p: 1 }}>{t("fileType")}</TableCell>
               {displayPrivate && (
                 <TableCell sx={{ p: 1, width: 10 }}>{t("private")}</TableCell>
+              )}
+              {allowMerging && (
+                <TableCell sx={{ p: 1, width: 10 }}>{t("merge")}</TableCell>
               )}
               {displayRoles && (
                 <TableCell sx={{ p: 1, width: 230 }}>{t("role")}</TableCell>
@@ -264,6 +268,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
     displayPrivate = true,
     convertFiles = true,
     embargoDate = false,
+    allowMerging = false,
   } = formConfig?.filesUpload || {};
 
   return (
@@ -381,6 +386,26 @@ const FileTableRow = ({ file }: FileItemProps) => {
               disabled={file.valid === false || rowDisabled}
               inputProps={{
                 "aria-label": t("privateToggle"),
+              }}
+            />
+          </TableCell>
+        )}
+        {allowMerging && (
+          <TableCell sx={{ p: 0, borderWidth: fileStatus ? 0 : 1 }}>
+            <Checkbox
+              checked={file.merge}
+              onChange={(e) =>
+                dispatch(
+                  setFileMeta({
+                    id: file.id,
+                    type: "merge",
+                    value: e.target.checked,
+                  }),
+                )
+              }
+              disabled={file.type !== "pdf" || file.valid === false || rowDisabled}
+              inputProps={{
+                "aria-label": t("mergeToggle"),
               }}
             />
           </TableCell>
