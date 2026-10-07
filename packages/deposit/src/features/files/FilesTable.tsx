@@ -271,6 +271,8 @@ const FileTableRow = ({ file }: FileItemProps) => {
     allowMerging = false,
   } = formConfig?.filesUpload || {};
 
+  console.log(file)
+
   return (
     <>
       <MotionRow
@@ -393,7 +395,7 @@ const FileTableRow = ({ file }: FileItemProps) => {
         {allowMerging && (
           <TableCell sx={{ p: 0, borderWidth: fileStatus ? 0 : 1 }}>
             <Checkbox
-              checked={file.merge}
+              checked={file.merge || false}
               onChange={(e) =>
                 dispatch(
                   setFileMeta({
