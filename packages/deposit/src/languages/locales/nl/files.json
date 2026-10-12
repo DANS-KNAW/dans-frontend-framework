@@ -52,5 +52,6 @@
   "fileForbiddenCharacters": "Bestandsnaam bevat tekens die niet zijn toegestaan: /:*?\"<>|;#",
   "termsMapped": "Terms mapped",
   "deleteFile": "Verwijder bestand {{file}}",
-  "merge": "Samenvoegen"
+  "merge": "Samenvoegen",
+  "mergeDescription": "Voeg dit bestand samen (bijv. een transcript) met je oral history specifieke metadata"
 }

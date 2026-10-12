@@ -88,7 +88,18 @@ const FilesTable = () => {
                 <TableCell sx={{ p: 1, width: 10 }}>{t("private")}</TableCell>
               )}
               {allowMerging && (
-                <TableCell sx={{ p: 1, width: 10 }}>{t("merge")}</TableCell>
+                <TableCell sx={{ p: 1, width: 10 }}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    {t("merge")}
+                    <Tooltip title={t("mergeDescription")}>
+                      <InfoRoundedIcon
+                        color="neutral"
+                        fontSize="small"
+                        sx={{ ml: 0.25 }}
+                      />
+                    </Tooltip>
+                  </Box>
+                  </TableCell>
               )}
               {displayRoles && (
                 <TableCell sx={{ p: 1, width: 230 }}>{t("role")}</TableCell>

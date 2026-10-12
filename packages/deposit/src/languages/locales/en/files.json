@@ -52,5 +52,6 @@
   "fileForbiddenCharacters": "File name contains forbidden characters: /:*?\"<>|;#",
   "termsMapped": "Terms mapped",
   "deleteFile": "Delete file {{file}}",
-  "merge": "Merge"
+  "merge": "Merge",
+  "mergeDescription": "Merge this file (e.g. a transcript) with your oral history specific metadata"
 }
