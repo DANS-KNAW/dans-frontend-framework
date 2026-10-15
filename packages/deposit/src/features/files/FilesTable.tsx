@@ -58,6 +58,7 @@ const FilesTable = () => {
     displayProcesses = true,
     displayPrivate = true,
     embargoDate = false,
+    allowMerging = false,
   } = formConfig?.filesUpload || {};
 
   return selectedFiles.length !== 0 ?
@@ -85,6 +86,20 @@ const FilesTable = () => {
               <TableCell sx={{ p: 1 }}>{t("fileType")}</TableCell>
               {displayPrivate && (
                 <TableCell sx={{ p: 1, width: 10 }}>{t("private")}</TableCell>
+              )}
+              {allowMerging && (
+                <TableCell sx={{ p: 1, width: 10 }}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    {t("merge")}
+                    <Tooltip title={t("mergeDescription")}>
+                      <InfoRoundedIcon
+                        color="neutral"
+                        fontSize="small"
+                        sx={{ ml: 0.25 }}
+                      />
+                    </Tooltip>
+                  </Box>
+                  </TableCell>
               )}
               {displayRoles && (
                 <TableCell sx={{ p: 1, width: 230 }}>{t("role")}</TableCell>
@@ -264,7 +279,10 @@ const FileTableRow = ({ file }: FileItemProps) => {
     displayPrivate = true,
     convertFiles = true,
     embargoDate = false,
+    allowMerging = false,
   } = formConfig?.filesUpload || {};
+
+  console.log(file)
 
   return (
     <>
@@ -381,6 +399,26 @@ const FileTableRow = ({ file }: FileItemProps) => {
               disabled={file.valid === false || rowDisabled}
               inputProps={{
                 "aria-label": t("privateToggle"),
+              }}
+            />
+          </TableCell>
+        )}
+        {allowMerging && (
+          <TableCell sx={{ p: 0, borderWidth: fileStatus ? 0 : 1 }}>
+            <Checkbox
+              checked={file.merge || false}
+              onChange={(e) =>
+                dispatch(
+                  setFileMeta({
+                    id: file.id,
+                    type: "merge",
+                    value: e.target.checked,
+                  }),
+                )
+              }
+              disabled={file.type !== "pdf" || file.valid === false || rowDisabled}
+              inputProps={{
+                "aria-label": t("mergeToggle"),
               }}
             />
           </TableCell>

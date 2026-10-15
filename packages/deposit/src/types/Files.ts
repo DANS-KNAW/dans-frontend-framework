@@ -16,7 +16,8 @@ export type FileActionType =
   | "submitSuccess"
   | "submitError"
   | "submittedFile"
-  | "embargo";
+  | "embargo"
+  | "merge";
 
 export interface ReduxFileActions {
   id: string;
@@ -49,6 +50,7 @@ export interface SelectedFile {
     [key: string]: any;
   };
   state?: string;
+  merge?: boolean;
 }
 
 export interface RejectedFiles extends FileRejection {

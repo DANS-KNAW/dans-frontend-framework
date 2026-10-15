@@ -22,6 +22,7 @@ export const formatFormData = (
       embargo: f.embargo,
       size: f.size,
       mimetype: f.mimeType,
+      merge: f.merge,
     }));
 
   return {

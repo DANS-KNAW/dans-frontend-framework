@@ -72,6 +72,7 @@ export interface FormConfig {
     maxSize?: number;
     disableFileWarning?: boolean | number;
     customFileWarning?: string | LanguageStrings;
+    allowMerging?: boolean;
   };
   displayName?: string | LanguageStrings;
   description?: string | LanguageStrings;

@@ -146,6 +146,7 @@ const FilesUpload = () => {
         location: "local" as FileLocation,
         url: URL.createObjectURL(file),
         private: false,
+        merge: false,
       };
     });
 
