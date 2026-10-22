@@ -111,6 +111,7 @@ export default function RecordDetails({ config }: { config: Config }) {
   const isDataService = valuesFor("_category").includes("data-service");
   const repositoryOnlyDetails = new Set([
     "trsp:att.4570870110",
+    "_language",
     "trsp:att.48BF7E1522",
     "trsp:att.6A715E3A22",
     "trsp:att.27C898E8A0",

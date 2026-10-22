@@ -6,6 +6,22 @@ const categoryLabels = {
   repository: "Repository",
 };
 
+const languageNames = new Intl.DisplayNames(["en"], {
+  type: "language",
+  fallback: "none",
+});
+
+// Names any ISO 639 code on lookup, so no code list has to be maintained.
+const languageLabels = new Proxy({} as Record<string, string>, {
+  get: (_, code) => {
+    try {
+      return languageNames.of(String(code));
+    } catch {
+      return undefined;
+    }
+  },
+});
+
 export const esConfig: SimpleConfig = {
   searchFields: [
     { field: "@id", weight: 3 },
@@ -96,6 +112,13 @@ export const esConfig: SimpleConfig = {
       label: "Country",
       tooltip: "Country in which the repository is located (TRSP attribute att.4570870110)",
       showWhen: (c) => !c || c === "repository",
+    },
+    {
+      field: "_language.keyword",
+      type: "list",
+      label: "Language",
+      optionLabels: languageLabels,
+      showWhen: (c) => c === "repository",
     },
     {
       field: "trsp:att.6A715E3A22.keyword",
@@ -204,6 +227,7 @@ export const esResultConfig = {
     { label: "RDF type", value: "@type" },
     { label: "Identifier", value: "dct:identifier" },
     { label: "Country", value: "trsp:att.4570870110" },
+    { label: "Language", value: "_language" },
     { label: "Year established", value: "trsp:att.48BF7E1522" },
     { label: "Repository type", value: "trsp:att.6A715E3A22" },
     { label: "Certifications", value: "trsp:att.27C898E8A0" },
@@ -228,6 +252,7 @@ export const esResultConfig = {
   valueLabels: {
     "_category": categoryLabels,
     "trsp:hasApplicableProfile": profileLabels,
+    "_language": languageLabels,
     "_endpointAvailability": {
       true: "Available",
       false: "Unavailable",
