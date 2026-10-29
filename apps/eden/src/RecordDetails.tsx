@@ -117,7 +117,6 @@ export default function RecordDetails({ config }: { config: Config }) {
     "trsp:att.27C898E8A0",
     "trsp:att.6EF77F35F8",
     "trsp:att.035ACCB10D",
-    "trsp:hasApplicableProfile",
     "_conformsTo",
   ]);
   const dataServiceOnlyDetails = new Set([

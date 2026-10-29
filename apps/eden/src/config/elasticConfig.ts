@@ -1,5 +1,4 @@
 import { type SimpleConfig } from "@dans-framework/elastic";
-import { profileLabels } from "./profileLabels";
 
 const categoryLabels = {
   "data-service": "Data Services",
@@ -46,15 +45,6 @@ export const esConfig: SimpleConfig = {
       field: "_conformsTo.keyword",
       type: "list",
       label: "Conforms to profile",
-      showWhen: (c) => c === "repository",
-    },
-
-    {
-      field: "trsp:hasApplicableProfile.keyword",
-      type: "list",
-      label: "Attribute profiles",
-      optionLabels: profileLabels,
-      initialSize: 15,
       showWhen: (c) => c === "repository",
     },
 
@@ -246,7 +236,6 @@ export const esResultConfig = {
     { label: "Certifications", value: "trsp:att.27C898E8A0" },
     { label: "Funding model", value: "trsp:att.6EF77F35F8" },
     { label: "Purpose", value: "trsp:att.035ACCB10D" },
-    { label: "Attribute profiles", value: "trsp:hasApplicableProfile" },
     { label: "Conforms to profile", value: "_conformsTo" },
     { label: "Service type", value: "dct:type" },
     { label: "Parent repository", value: "_parent" },
@@ -265,7 +254,6 @@ export const esResultConfig = {
   externalLink: "@id",
   valueLabels: {
     "_category": categoryLabels,
-    "trsp:hasApplicableProfile": profileLabels,
     "_language": languageLabels,
     "_endpointAvailability": {
       true: "Available",
