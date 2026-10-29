@@ -42,6 +42,12 @@ export const esConfig: SimpleConfig = {
       singleSelect: true,
       optionLabels: categoryLabels,
     },
+    {
+      field: "_conformsTo.keyword",
+      type: "list",
+      label: "Conforms to profile",
+      showWhen: (c) => c === "repository",
+    },
 
     {
       field: "trsp:hasApplicableProfile.keyword",
@@ -188,10 +194,17 @@ export const esConfig: SimpleConfig = {
       showWhen: (c) => c === "repository",
     },
     {
-      field: "trsp:att.7298144E24.keyword",
+      field: "trsp:att.6B7CED5897.keyword",
       nestedPath: "trsp:att",
       type: "list",
-      label: "APIs available",
+      label: "Data access",
+      showWhen: (c) => c === "repository",
+    },
+    {
+      field: "trsp:att.6C03AB58B8.keyword",
+      nestedPath: "trsp:att",
+      type: "list",
+      label: "Metadata schemas",
       showWhen: (c) => c === "repository",
     },
     {
@@ -234,6 +247,7 @@ export const esResultConfig = {
     { label: "Funding model", value: "trsp:att.6EF77F35F8" },
     { label: "Purpose", value: "trsp:att.035ACCB10D" },
     { label: "Attribute profiles", value: "trsp:hasApplicableProfile" },
+    { label: "Conforms to profile", value: "_conformsTo" },
     { label: "Service type", value: "dct:type" },
     { label: "Parent repository", value: "_parent" },
     { label: "Conforms to", value: "dct:conformsTo" },
