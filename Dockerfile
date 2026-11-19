@@ -54,7 +54,7 @@ RUN test -d "apps/$APP_NAME/dist" || \
 # ============================================================
 # Stage 3: Production nginx image
 # ============================================================
-FROM nginx:1.27-alpine AS runtime
+FROM nginx:1.30-alpine AS runtime
 
 ARG APP_NAME
 RUN test -n "$APP_NAME" || (echo "ERROR: APP_NAME build arg is required" && exit 1)
